@@ -1,0 +1,16 @@
+{
+  "name": "QVIO - Affordable AI for Every Human",
+  "short_name": "QVIO",
+  "description": "Affordable AI for India and the World",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#ff2244",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/ff2244/ffffff?text=QV",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
