@@ -794,7 +794,16 @@ code { color: #ff8899; }
 // ============================================================
 
 // ✅ API KEY - hardcoded and working
-const GEMINI_API_KEY = 'AIzaSyBCkKs2VPNgS_lVjT_tlvLLMbJ3vemJzHQ';
+// ✅ API KEY loaded securely from Vercel - never exposed in GitHub!
+let GEMINI_API_KEY = '';
+async function loadApiKey() {
+  try {
+    const res = await fetch('/api/config');
+    const data = await res.json();
+    GEMINI_API_KEY = data.apiKey;
+  } catch(e) { console.error('Key load failed', e); }
+}
+loadApiKey();
 
 let currentMode = 'casual';
 let isRecording = false;
