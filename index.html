@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -37,7 +37,6 @@ body {
   position: relative;
 }
 
-/* Cyberpunk grid background */
 body::before {
   content: '';
   position: fixed;
@@ -50,7 +49,6 @@ body::before {
   z-index: 0;
 }
 
-/* Scanline effect */
 body::after {
   content: '';
   position: fixed;
@@ -66,7 +64,6 @@ body::after {
   z-index: 0;
 }
 
-/* Glowing corner decorations */
 .corner-tl, .corner-br {
   position: fixed;
   width: 200px;
@@ -87,7 +84,6 @@ body::after {
   box-shadow: 5px 5px 20px var(--red-glow), inset 5px 5px 20px var(--red-soft);
 }
 
-/* Header */
 header {
   position: relative;
   z-index: 10;
@@ -176,7 +172,6 @@ header {
   box-shadow: 0 0 10px var(--red-glow);
 }
 
-/* Status bar */
 .status-bar {
   position: relative;
   z-index: 10;
@@ -209,7 +204,6 @@ header {
   50% { opacity: 0.3; }
 }
 
-/* Mode buttons */
 .modes {
   position: relative;
   z-index: 10;
@@ -250,7 +244,6 @@ header {
   box-shadow: 0 0 15px var(--red-glow);
 }
 
-/* Chat container */
 .chat-container {
   flex: 1;
   overflow-y: auto;
@@ -263,7 +256,6 @@ header {
 .chat-container::-webkit-scrollbar { width: 3px; }
 .chat-container::-webkit-scrollbar-thumb { background: var(--red); }
 
-/* Welcome screen */
 .welcome {
   display: flex;
   flex-direction: column;
@@ -352,7 +344,6 @@ header {
   display: block;
 }
 
-/* Messages */
 .message {
   display: flex;
   gap: 14px;
@@ -443,7 +434,6 @@ header {
 }
 .message.user .timestamp { text-align: right; }
 
-/* Typing indicator */
 .typing-wrap {
   display: flex;
   gap: 14px;
@@ -475,7 +465,6 @@ header {
   30% { transform: scaleY(1.8); opacity: 1; }
 }
 
-/* Generated image */
 .generated-image {
   max-width: 280px;
   margin-top: 10px;
@@ -497,7 +486,6 @@ header {
   clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
 }
 
-/* Input area */
 .input-area {
   position: relative;
   z-index: 10;
@@ -575,7 +563,6 @@ header {
 .send-btn:hover { box-shadow: 0 0 25px var(--red-glow); transform: translateY(-1px); }
 .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-/* Quick replies */
 .quick-replies {
   display: flex;
   gap: 8px;
@@ -599,7 +586,6 @@ header {
 
 .qr:hover { border-color: var(--red); color: var(--red); }
 
-/* Code blocks */
 pre {
   background: #0a0a0a;
   border: 1px solid var(--border);
@@ -612,7 +598,6 @@ pre {
 }
 code { color: #ff8899; }
 
-/* Mobile */
 @media (max-width: 600px) {
   .welcome-logo { font-size: 50px; }
   .suggestions { grid-template-columns: 1fr; }
@@ -621,7 +606,6 @@ code { color: #ff8899; }
   .chat-container { padding: 16px; }
 }
 
-/* Language learning panel */
 .lang-panel {
   display: none;
   position: fixed;
@@ -691,7 +675,6 @@ code { color: #ff8899; }
 <div class="corner-tl"></div>
 <div class="corner-br"></div>
 
-<!-- Language Learning Panel -->
 <div class="lang-panel" id="langPanel">
   <h3>// LANGUAGE LEARNING MODE</h3>
   <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px; font-family: Rajdhani, sans-serif;">Select a language to learn or teach</p>
@@ -810,31 +793,24 @@ code { color: #ff8899; }
 // Affordable AI for Every Human
 // ============================================================
 
+// ✅ API KEY - hardcoded and working
 const GEMINI_API_KEY = 'AIzaSyD0nNkmMnctY_Rbtsghl9sJWdGenrI1LTg';
+
 let currentMode = 'casual';
 let isRecording = false;
 let recognition = null;
 let chatHistory = [];
 
-// System prompts for each mode
 const systemPrompts = {
   casual: `You are QVIO, a friendly and powerful AI assistant made for everyone in India and the world. You are affordable, warm, helpful and smart. Respond in the same language the user writes in. If they write Hindi, respond in Hindi. If Kannada, respond in Kannada. If English, respond in English. Mix languages naturally when it feels right. Be conversational and fun.`,
-
   student: `You are QVIO in Student Mode - the best study assistant in the world. Help students understand any subject deeply. Explain concepts simply with examples. Create quizzes. Solve math step by step. Help with assignments. Support Hindi, Kannada, Tamil, Telugu, English and all Indian languages. Make learning exciting and easy.`,
-
   pro: `You are QVIO in Professional Mode. You are a world-class business consultant and professional assistant. Give formal, precise, strategic advice. Help with business plans, professional emails, reports, presentations, and corporate communication. Be concise and actionable.`,
-
   spiritual: `You are QVIO in Spiritual Mode. You have deep encyclopedic knowledge of ALL world religions and spiritual traditions. Hindu: all gods, Vedas, Upanishads, Bhagavad Gita, 18 Puranas, all temples, festivals, rituals. Islam: Quran, Hadith, 99 names of Allah, Islamic history, namaz, duas. Christianity: Bible (Old and New Testament), Jesus life, prayers, saints, denominations. Buddhism: Buddha's teachings, 4 noble truths, 8 fold path. Jainism: Mahavira teachings, Jain philosophy. Sikhism: Guru Granth Sahib, 10 Gurus, Gurbani. Zoroastrianism, Judaism, and all other faiths. Be completely respectful and neutral to all religions. Explain spiritual concepts in simple, beautiful language.`,
-
   code: `You are QVIO in Code Mode - an expert programmer and software engineer. Help with coding in ANY programming language. Write clean, efficient, well-commented code. Debug errors. Explain concepts clearly. Teach programming from basics to advanced. Always format code in proper code blocks. Support Python, JavaScript, Java, C++, React, Node.js, and all languages.`,
-
   hindi: `Aap QVIO hain - ek helpful aur friendly AI assistant. Hamesha Hindi mein jawaab dein. Warm, friendly aur helpful rahein. Hinglish bhi chalega agar user use kare. Har sawaal ka achha aur detailed jawaab dein.`,
-
   kannada: `Neevu QVIO - Karnataka jana AI sahayaka. Hamesha Kannada mattu English mix maadi maatanaadi, Bengaluru janaru hege maatanaaduttare hage. Warm, friendly mattu helpful aagi iri. Prathiyondu prashne ge uttama uttara kodi.`,
-
   quiz: `You are QVIO in Quiz Mode. Create engaging, educational quizzes on any topic the user asks about. Ask one question at a time. Give 4 multiple choice options labeled A, B, C, D. After user answers, tell them if correct or wrong and explain the right answer. Keep score. Make it fun and educational. Support all Indian languages.`,
-
-  translate: `You are QVIO in Translation Mode. You are an expert translator for ALL languages especially Indian languages. Translate accurately between Hindi, Kannada, Tamil, Telugu, Bengali, Marathi, Gujarati, Punjabi, Malayalam, Odia, English, Spanish, French, German, Japanese, Arabic, Mandarin, and more. Also teach pronunciation and cultural context. Help Indians learn foreign languages and help foreigners learn Indian languages.`
+  translate: `You are QVIO in Translation Mode. You are an expert translator for ALL languages especially Indian languages. Translate accurately between Hindi, Kannada, Tamil, Telugu, Bengali, Marathi, Gujarati, Punjabi, Malayalam, Odia, English, Spanish, French, German, Japanese, Arabic, Mandarin, and more. Also teach pronunciation and cultural context.`
 };
 
 function setMode(mode, btn, label) {
@@ -844,24 +820,17 @@ function setMode(mode, btn, label) {
   document.getElementById('currentModeStatus').textContent = `MODE: ${label}`;
 }
 
-function showLangPanel() {
-  document.getElementById('langPanel').classList.add('show');
-}
-
-function closeLangPanel() {
-  document.getElementById('langPanel').classList.remove('show');
-}
+function showLangPanel() { document.getElementById('langPanel').classList.add('show'); }
+function closeLangPanel() { document.getElementById('langPanel').classList.remove('show'); }
 
 function learnLang(lang) {
   closeLangPanel();
-  const prompt = `I want to learn ${lang}. Please start teaching me from the very basics. First tell me about the language, then teach me the most important 10 phrases I need to know as a beginner.`;
-  document.getElementById('userInput').value = prompt;
+  document.getElementById('userInput').value = `I want to learn ${lang}. Please start teaching me from the very basics. First tell me about the language, then teach me the most important 10 phrases I need to know as a beginner.`;
   sendMessage();
 }
 
 function clearChat() {
-  const container = document.getElementById('chatContainer');
-  container.innerHTML = `
+  document.getElementById('chatContainer').innerHTML = `
     <div class="welcome" id="welcome">
       <div class="welcome-logo">QV<span>IO</span></div>
       <div class="welcome-tagline">AFFORDABLE AI FOR EVERY HUMAN</div>
@@ -876,10 +845,7 @@ function autoResize(el) {
 }
 
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
 
 function hideWelcome() {
@@ -920,12 +886,11 @@ function addMessage(content, role, isImage = false) {
     dl.textContent = '⬇ DOWNLOAD IMAGE';
     bubble.appendChild(dl);
   } else {
-    const formatted = content
+    bubble.innerHTML = content
       .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
-    bubble.innerHTML = formatted;
 
     if (role === 'ai') {
       const copyBtn = document.createElement('button');
@@ -958,15 +923,12 @@ function showTyping() {
   const div = document.createElement('div');
   div.className = 'typing-wrap';
   div.id = 'typingIndicator';
-
   const avatar = document.createElement('div');
   avatar.className = 'avatar ai';
   avatar.textContent = 'QV';
-
   const typing = document.createElement('div');
   typing.className = 'typing';
   typing.innerHTML = '<span></span><span></span><span></span>';
-
   div.appendChild(avatar);
   div.appendChild(typing);
   container.appendChild(div);
@@ -1014,32 +976,34 @@ async function sendMessage() {
     if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
   } catch (error) {
     hideTyping();
-    addMessage(`// ERROR: ${error.message}\n\nPlease check your Gemini API key configuration.`, 'ai');
+    addMessage(`// ERROR: ${error.message}`, 'ai');
   }
 
   document.getElementById('sendBtn').disabled = false;
 }
 
 async function callGemini(userMessage) {
-  const apiKey = GEMINI_API_KEY;
-
-  if (!apiKey || apiKey === '') {
-    return `// QVIO SYSTEM: API key not configured.\n\nTo activate QVIO:\n1. Go to aistudio.google.com\n2. Get your free Gemini API key\n3. Add it to your environment variables as GEMINI_API_KEY\n\nQVIO is ready to serve once connected! 🔴`;
-  }
-
-  const messages = chatHistory.slice(-12).map(msg => ({
+  // ✅ FIXED: Build messages correctly — always include current message
+  // Use chat history for context, but always add current message at the end
+  const historyMessages = chatHistory.slice(-12, -1).map(msg => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: msg.content }]
   }));
 
+  // Always ensure at least one user message exists
+  const allMessages = [
+    ...historyMessages,
+    { role: 'user', parts: [{ text: userMessage }] }
+  ];
+
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemPrompts[currentMode] }] },
-        contents: messages,
+        contents: allMessages,
         generationConfig: {
           temperature: 0.9,
           maxOutputTokens: 1500,
@@ -1050,7 +1014,16 @@ async function callGemini(userMessage) {
   );
 
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
+
+  // ✅ Better error handling - show actual Gemini error
+  if (data.error) {
+    throw new Error(`Gemini API Error: ${data.error.message}`);
+  }
+
+  if (!data.candidates || data.candidates.length === 0) {
+    throw new Error('No response from Gemini. Please try again.');
+  }
+
   return data.candidates[0].content.parts[0].text;
 }
 
@@ -1059,18 +1032,14 @@ function sendSuggestion(text) {
   sendMessage();
 }
 
-// Voice input
 function toggleMic() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    addMessage('// Voice input not supported in this browser. Please use Chrome for voice features.', 'ai');
+    addMessage('// Voice input not supported in this browser. Please use Chrome.', 'ai');
     return;
   }
 
-  if (isRecording) {
-    recognition.stop();
-    return;
-  }
+  if (isRecording) { recognition.stop(); return; }
 
   recognition = new SpeechRecognition();
   recognition.continuous = false;
@@ -1087,13 +1056,7 @@ function toggleMic() {
     document.getElementById('userInput').value = e.results[0][0].transcript;
   };
 
-  recognition.onerror = () => {
-    isRecording = false;
-    document.getElementById('micBtn').classList.remove('recording');
-    document.getElementById('micBtn').textContent = '🎤';
-  };
-
-  recognition.onend = () => {
+  recognition.onerror = recognition.onend = () => {
     isRecording = false;
     document.getElementById('micBtn').classList.remove('recording');
     document.getElementById('micBtn').textContent = '🎤';
@@ -1102,7 +1065,6 @@ function toggleMic() {
   recognition.start();
 }
 
-// PWA Support
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
