@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QVIO Pricing — Affordable AI for Every Human</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#fafaf8; --white:#ffffff; --text:#0f0f0f; --text2:#4a4a4a; --text3:#999;
+  --border:#e8e8e4; --accent:#0055ff; --gold:#c9a84c; --gold-bg:#fffbf0;
+  --shadow:0 2px 12px rgba(0,0,0,0.06); --shadow-lg:0 20px 60px rgba(0,0,0,0.1);
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); }
+
+nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 40px; background:var(--white); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100;
+}
+.logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.logo-mark {
+  width:32px; height:32px; background:var(--text); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace; font-size:11px; color:white;
+}
+.logo-name { font-size:17px; font-weight:600; color:var(--text); }
+.logo-name span { color:var(--accent); }
+.back-btn {
+  padding:8px 16px; border:1px solid var(--border); border-radius:8px;
+  text-decoration:none; color:var(--text2); font-size:13px; font-weight:500; transition:all 0.15s;
+}
+.back-btn:hover { background:#f0f0f0; }
+
+.hero { text-align:center; padding:64px 24px 40px; max-width:640px; margin:0 auto; }
+.badge {
+  display:inline-flex; align-items:center; gap:8px; background:var(--white);
+  border:1px solid var(--border); padding:5px 14px; border-radius:20px;
+  font-size:12px; color:var(--text2); font-weight:500; margin-bottom:20px;
+}
+.badge-dot { width:6px; height:6px; background:#22c55e; border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.hero h1 {
+  font-family:'Playfair Display',serif; font-size:clamp(32px,5vw,52px);
+  font-weight:700; line-height:1.1; letter-spacing:-1px; margin-bottom:14px;
+}
+.hero h1 em { font-style:italic; color:var(--accent); }
+.hero p { font-size:16px; color:var(--text2); line-height:1.65; margin-bottom:28px; }
+
+.vs-bar {
+  display:inline-flex; background:var(--white); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; box-shadow:var(--shadow);
+}
+.vs-item {
+  padding:10px 20px; border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.vs-item:last-child { border-right:none; }
+.vs-lbl { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; }
+.vs-val { font-size:14px; font-weight:600; }
+.vs-val.strike { text-decoration:line-through; color:var(--text3); font-weight:400; }
+.vs-val.blue { color:var(--accent); }
+
+.toggle-wrap {
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  margin:40px 0 32px;
+}
+.toggle-lbl { font-size:14px; color:var(--text2); font-weight:500; }
+.toggle {
+  width:46px; height:24px; background:var(--border); border-radius:12px;
+  cursor:pointer; position:relative; transition:background 0.2s;
+}
+.toggle.on { background:var(--accent); }
+.toggle::after {
+  content:''; position:absolute; width:18px; height:18px; background:white;
+  border-radius:50%; top:3px; left:3px; transition:transform 0.2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform:translateX(22px); }
+.save-pill {
+  background:#dcfce7; color:#16a34a; font-size:11px; font-weight:600;
+  padding:3px 10px; border-radius:20px;
+}
+
+.grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:16px; max-width:1100px; margin:0 auto 80px; padding:0 24px;
+}
+
+.card {
+  background:var(--white); border:1.5px solid var(--border); border-radius:16px;
+  padding:28px 22px; display:flex; flex-direction:column; position:relative;
+  transition:all 0.2s;
+}
+.card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+.card.popular {
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold), 0 16px 40px rgba(201,168,76,0.15);
+  background:var(--gold-bg);
+}
+
+.popular-badge {
+  position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  background:var(--gold); color:white; font-size:10px; font-weight:700;
+  padding:4px 14px; border-radius:20px; white-space:nowrap;
+  text-transform:uppercase; letter-spacing:0.5px;
+}
+
+.plan-name {
+  font-family:'Playfair Display',serif; font-size:21px; font-weight:700;
+  color:var(--text); margin-bottom:2px;
+}
+.plan-sub {
+  font-size:11px; color:var(--text3); text-transform:uppercase;
+  letter-spacing:1px; margin-bottom:20px; font-weight:500;
+}
+
+.price-wrap { margin-bottom:20px; }
+.price-main { font-size:40px; font-weight:600; letter-spacing:-1.5px; line-height:1; }
+.card.popular .price-main { color:var(--gold); }
+.price-period { font-size:13px; color:var(--text3); margin-left:2px; }
+.price-annual {
+  font-size:11px; color:#16a34a; font-weight:500; margin-top:4px;
+  display:none;
+}
+.price-annual.show { display:block; }
+
+.divider { height:1px; background:var(--border); margin-bottom:18px; }
+
+.features { list-style:none; flex:1; margin-bottom:24px; }
+.features li {
+  display:flex; align-items:flex-start; gap:9px;
+  font-size:13px; color:var(--text2); margin-bottom:9px; line-height:1.4;
+}
+.features li.off { color:var(--text3); }
+.tick {
+  width:16px; height:16px; border-radius:50%; background:#dcfce7;
+  color:#16a34a; display:flex; align-items:center; justify-content:center;
+  font-size:9px; flex-shrink:0; margin-top:1px;
+}
+.cross {
+  width:16px; height:16px; border-radius:50%; background:#f3f3f3;
+  color:var(--text3); display:flex; align-items:center; justify-content:center;
+  font-size:9px; flex-shrink:0; margin-top:1px;
+}
+
+.btn {
+  width:100%; padding:13px; border-radius:10px; border:none;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all 0.15s; text-align:center;
+}
+.btn-free { background:var(--bg); border:1.5px solid var(--border); color:var(--text2); }
+.btn-free:hover { background:#ebebeb; }
+.btn-paid { background:var(--text); color:white; }
+.btn-paid:hover { background:#333; }
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold),#e8c96a);
+  color:white; box-shadow:0 4px 14px rgba(201,168,76,0.4);
+}
+.btn-gold:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(201,168,76,0.5); }
+
+/* Comparison table */
+.section { max-width:860px; margin:0 auto 72px; padding:0 24px; }
+.section-title {
+  font-family:'Playfair Display',serif; font-size:30px; font-weight:700;
+  text-align:center; margin-bottom:8px;
+}
+.section-sub { text-align:center; color:var(--text2); font-size:15px; margin-bottom:28px; }
+
+table {
+  width:100%; border-collapse:collapse; background:var(--white);
+  border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+thead th {
+  padding:14px 18px; font-size:12px; font-weight:600; background:var(--bg);
+  border-bottom:1px solid var(--border); text-align:center;
+}
+thead th:first-child { text-align:left; }
+thead th.hl { background:var(--gold-bg); color:#8a6a00; }
+tbody td {
+  padding:13px 18px; font-size:13px; color:var(--text2); text-align:center;
+  border-bottom:1px solid var(--border);
+}
+tbody td:first-child { text-align:left; font-weight:500; color:var(--text); }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#fafafa; }
+tbody td.hl { background:var(--gold-bg); }
+
+/* FAQ */
+.faq-item { border-bottom:1px solid var(--border); padding:18px 0; }
+.faq-q {
+  font-size:15px; font-weight:500; cursor:pointer;
+  display:flex; justify-content:space-between; gap:12px; user-select:none;
+}
+.faq-q::after { content:'+'; font-size:20px; color:var(--text3); transition:transform 0.2s; }
+.faq-item.open .faq-q::after { transform:rotate(45deg); }
+.faq-a { font-size:14px; color:var(--text2); line-height:1.65; margin-top:10px; display:none; }
+.faq-item.open .faq-a { display:block; }
+
+/* CTA */
+.cta { background:var(--text); color:white; text-align:center; padding:64px 24px; }
+.cta h2 { font-family:'Playfair Display',serif; font-size:34px; margin-bottom:10px; }
+.cta p { color:#aaa; font-size:15px; margin-bottom:24px; }
+.cta-btn {
+  display:inline-block; padding:14px 32px; background:white; color:var(--text);
+  text-decoration:none; font-weight:600; font-size:15px; border-radius:10px; transition:all 0.15s;
+}
+.cta-btn:hover { background:#f0f0f0; transform:translateY(-2px); }
+
+@media(max-width:900px) { .grid { grid-template-columns:repeat(2,1fr); } nav { padding:16px 20px; } }
+@media(max-width:560px) { .grid { grid-template-columns:1fr; } .vs-bar { flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">
+    <div class="logo-mark">QV</div>
+    <span class="logo-name">QV<span>IO</span></span>
+  </a>
+  <a class="back-btn" href="/">← Back to App</a>
+</nav>
+
+<section class="hero">
+  <div class="badge"><div class="badge-dot"></div> 3× cheaper than ChatGPT Plus</div>
+  <h1>AI for <em>every</em> human,<br>at every budget</h1>
+  <p>From students to professionals, from India to the world — powerful AI that doesn't cost a fortune. Start free, upgrade when you're ready.</p>
+  <div class="vs-bar">
+    <div class="vs-item"><span class="vs-lbl">ChatGPT Plus</span><span class="vs-val strike">₹1,700/mo</span></div>
+    <div class="vs-item"><span class="vs-lbl">Claude Pro</span><span class="vs-val strike">₹1,700/mo</span></div>
+    <div class="vs-item"><span class="vs-lbl">QVIO Premium</span><span class="vs-val blue">₹549/mo</span></div>
+  </div>
+</section>
+
+<div class="toggle-wrap">
+  <span class="toggle-lbl">Monthly</span>
+  <div class="toggle" id="tog" onclick="toggleBilling()"></div>
+  <span class="toggle-lbl">Annual</span>
+  <span class="save-pill">Save 5%</span>
+</div>
+
+<div class="grid">
+
+  <!-- FREE -->
+  <div class="card">
+    <div class="plan-name">Niḥśulka</div>
+    <div class="plan-sub">Free / Basic</div>
+    <div class="price-wrap">
+      <span class="price-main">₹0</span>
+      <span class="price-period">/month</span>
+    </div>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="tick">✓</span> 100 messages / month</li>
+      <li><span class="tick">✓</span> Casual & Student modes</li>
+      <li><span class="tick">✓</span> Hindi & Kannada modes</li>
+      <li><span class="tick">✓</span> Basic translations</li>
+      <li class="off"><span class="cross">✕</span> Image generation</li>
+      <li class="off"><span class="cross">✕</span> Pro & Code modes</li>
+      <li class="off"><span class="cross">✕</span> Voice input</li>
+      <li class="off"><span class="cross">✕</span> Priority responses</li>
+    </ul>
+    <button class="btn btn-free" onclick="window.location.href='/'">Start Free</button>
+  </div>
+
+  <!-- ALPAMULYA -->
+  <div class="card">
+    <div class="plan-name">Alpamūlya</div>
+    <div class="plan-sub">Low Budget / Starter</div>
+    <div class="price-wrap">
+      <span class="price-main" data-monthly="199" data-annual="189">₹199</span>
+      <span class="price-period">/month</span>
+      <div class="price-annual" id="a1">₹2,268/year — save ₹120</div>
+    </div>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="tick">✓</span> 300 messages / month</li>
+      <li><span class="tick">✓</span> All chat modes</li>
+      <li><span class="tick">✓</span> All 12 languages</li>
+      <li><span class="tick">✓</span> Basic translations</li>
+      <li><span class="tick">✓</span> 10 image generations</li>
+      <li><span class="tick">✓</span> Voice input</li>
+      <li class="off"><span class="cross">✕</span> Priority responses</li>
+      <li class="off"><span class="cross">✕</span> Early access features</li>
+    </ul>
+    <button class="btn btn-paid" onclick="startPayment('alpamulya')">Get Started</button>
+  </div>
+
+  <!-- MADHYAMA -->
+  <div class="card">
+    <div class="plan-name">Madhyama</div>
+    <div class="plan-sub">Intermediate / Standard</div>
+    <div class="price-wrap">
+      <span class="price-main" data-monthly="349" data-annual="332">₹349</span>
+      <span class="price-period">/month</span>
+      <div class="price-annual" id="a2">₹3,984/year — save ₹204</div>
+    </div>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="tick">✓</span> 500 messages / month</li>
+      <li><span class="tick">✓</span> All chat modes</li>
+      <li><span class="tick">✓</span> All 12 languages</li>
+      <li><span class="tick">✓</span> Advanced translations</li>
+      <li><span class="tick">✓</span> 50 image generations</li>
+      <li><span class="tick">✓</span> Voice input</li>
+      <li><span class="tick">✓</span> Priority responses</li>
+      <li class="off"><span class="cross">✕</span> Early access features</li>
+    </ul>
+    <button class="btn btn-paid" onclick="startPayment('madhyama')">Get Started</button>
+  </div>
+
+  <!-- SARVOTTAMA -->
+  <div class="card popular">
+    <div class="popular-badge">⭐ Most Popular</div>
+    <div class="plan-name">Sarvottama</div>
+    <div class="plan-sub">Premium / Best</div>
+    <div class="price-wrap">
+      <span class="price-main" data-monthly="549" data-annual="522">₹549</span>
+      <span class="price-period">/month</span>
+      <div class="price-annual" id="a3">₹6,264/year — save ₹324</div>
+    </div>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="tick">✓</span> Unlimited messages</li>
+      <li><span class="tick">✓</span> All chat modes</li>
+      <li><span class="tick">✓</span> All 12 languages</li>
+      <li><span class="tick">✓</span> Advanced translations</li>
+      <li><span class="tick">✓</span> Unlimited image generation</li>
+      <li><span class="tick">✓</span> Voice input</li>
+      <li><span class="tick">✓</span> Fastest priority responses</li>
+      <li><span class="tick">✓</span> Early access to new features</li>
+    </ul>
+    <button class="btn btn-gold" onclick="startPayment('sarvottama')">Go Premium →</button>
+  </div>
+
+</div>
+
+<!-- Comparison -->
+<div class="section">
+  <div class="section-title">Compare all plans</div>
+  <div class="section-sub">Everything you get with each tier</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Niḥśulka<br><small>Free</small></th>
+        <th>Alpamūlya<br><small>₹199</small></th>
+        <th>Madhyama<br><small>₹349</small></th>
+        <th class="hl">Sarvottama<br><small>₹549</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Messages / month</td><td>100</td><td>300</td><td>500</td><td class="hl">Unlimited</td></tr>
+      <tr><td>Image generation</td><td>❌</td><td>10</td><td>50</td><td class="hl">Unlimited</td></tr>
+      <tr><td>Chat modes</td><td>3 modes</td><td>All 9</td><td>All 9</td><td class="hl">All 9</td></tr>
+      <tr><td>Languages</td><td>5</td><td>All 12</td><td>All 12</td><td class="hl">All 12</td></tr>
+      <tr><td>Voice input</td><td>❌</td><td>✅</td><td>✅</td><td class="hl">✅</td></tr>
+      <tr><td>Priority responses</td><td>❌</td><td>❌</td><td>✅</td><td class="hl">✅ Fastest</td></tr>
+      <tr><td>Early access</td><td>❌</td><td>❌</td><td>❌</td><td class="hl">✅</td></tr>
+      <tr><td>Price/month</td><td>Free</td><td>₹199</td><td>₹349</td><td class="hl">₹549</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="section">
+  <div class="section-title">Frequently asked questions</div>
+  <div class="section-sub">Everything you need to know</div>
+
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What payment methods do you accept?</div>
+    <div class="faq-a">We accept all UPI apps (PhonePe, Google Pay, Paytm), debit cards, credit cards, and net banking. Payments are secured by Razorpay.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Can I cancel anytime?</div>
+    <div class="faq-a">Yes! Cancel anytime from your account settings. You keep access until the end of your billing period. No hidden charges.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">What happens when I run out of messages?</div>
+    <div class="faq-a">Your messages reset every month on your billing date. If you run out early, you can upgrade to a higher plan or wait for the next reset.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Is QVIO available in Indian languages?</div>
+    <div class="faq-a">Yes! QVIO supports Hindi, Kannada, Tamil, Telugu, Bengali, Marathi and more. You can chat in any Indian language and QVIO will reply in the same language.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How is QVIO cheaper than ChatGPT?</div>
+    <div class="faq-a">QVIO is built specifically for India with Indian pricing. ChatGPT Plus costs ₹1,700/month — QVIO Premium is ₹549/month with similar capabilities. Affordable AI for every human!</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Is my data safe?</div>
+    <div class="faq-a">Yes. QVIO does not store your conversations. Your chats are private and secure. We never sell your data.</div>
+  </div>
+</div>
+
+<div class="cta">
+  <h2>Start using QVIO today</h2>
+  <p>Free forever. Upgrade only when you need more.</p>
+  <a class="cta-btn" href="/">Try QVIO Free →</a>
+</div>
+
+<script>
+let isAnnual = false;
+
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  document.getElementById('tog').classList.toggle('on', isAnnual);
+
+  document.querySelectorAll('.price-main[data-monthly]').forEach(el => {
+    const price = isAnnual ? el.dataset.annual : el.dataset.monthly;
+    el.textContent = '₹' + price;
+  });
+
+  document.querySelectorAll('.price-annual').forEach(el => {
+    el.classList.toggle('show', isAnnual);
+  });
+}
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+
+function startPayment(plan) {
+  // Razorpay integration will go here
+  alert('Payment coming soon! For now, all features are free while we set up payments. 🚀');
+}
+</script>
+</body>
+</html>
