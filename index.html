@@ -5,679 +5,329 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QVIO - Affordable AI for Every Human</title>
 <meta name="description" content="QVIO - Affordable AI for India and the World">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #080808;
-  --bg2: #0f0f0f;
-  --surface: #141414;
-  --card: #1a1a1a;
-  --border: #2a2a2a;
-  --red: #ff2244;
-  --red2: #ff4466;
-  --red-glow: rgba(255,34,68,0.3);
-  --red-soft: rgba(255,34,68,0.1);
-  --text: #e8e8e8;
-  --muted: #666;
-  --white: #ffffff;
-}
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+:root {
+  --bg: #ffffff;
+  --bg2: #f8f8f8;
+  --surface: #f2f2f2;
+  --border: #e8e8e8;
+  --border2: #d0d0d0;
+  --text: #111111;
+  --text2: #555555;
+  --text3: #999999;
+  --accent: #0066ff;
+  --accent-soft: rgba(0,102,255,0.08);
+  --danger: #ff3b30;
+  --success: #34c759;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
 body {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
   height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: relative;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,34,68,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,34,68,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.05) 2px,
-    rgba(0,0,0,0.05) 4px
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
-.corner-tl, .corner-br {
-  position: fixed;
-  width: 200px;
-  height: 200px;
-  pointer-events: none;
-  z-index: 1;
-}
-.corner-tl {
-  top: 0; left: 0;
-  border-top: 2px solid var(--red);
-  border-left: 2px solid var(--red);
-  box-shadow: -5px -5px 20px var(--red-glow), inset -5px -5px 20px var(--red-soft);
-}
-.corner-br {
-  bottom: 0; right: 0;
-  border-bottom: 2px solid var(--red);
-  border-right: 2px solid var(--red);
-  box-shadow: 5px 5px 20px var(--red-glow), inset 5px 5px 20px var(--red-soft);
 }
 
 header {
-  position: relative;
-  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
-  background: rgba(8,8,8,0.95);
+  padding: 0 24px;
+  height: 56px;
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
-  border-bottom-color: var(--red);
-  box-shadow: 0 0 30px rgba(255,34,68,0.15);
-}
-
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.logo-icon {
-  width: 42px;
-  height: 42px;
-  border: 2px solid var(--red);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Orbitron', monospace;
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--red);
-  box-shadow: 0 0 15px var(--red-glow), inset 0 0 15px var(--red-soft);
-  clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
-  animation: iconPulse 3s ease-in-out infinite;
-}
-
-@keyframes iconPulse {
-  0%, 100% { box-shadow: 0 0 15px var(--red-glow), inset 0 0 15px var(--red-soft); }
-  50% { box-shadow: 0 0 30px var(--red-glow), inset 0 0 20px var(--red-soft); }
-}
-
-.logo-text {
-  font-family: 'Orbitron', monospace;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: 4px;
-  text-shadow: 0 0 20px var(--red-glow);
-}
-
-.logo-text span {
-  color: var(--red);
-  text-shadow: 0 0 20px var(--red);
-}
-
-.logo-sub {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-family: 'Rajdhani', sans-serif;
-  display: block;
-  margin-top: 2px;
-}
-
-.header-btns {
-  display: flex;
-  gap: 10px;
-}
-
-.hbtn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 8px 16px;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  letter-spacing: 1px;
-}
-
-.hbtn:hover {
-  border-color: var(--red);
-  color: var(--red);
-  box-shadow: 0 0 10px var(--red-glow);
-}
-
-.status-bar {
-  position: relative;
+  flex-shrink: 0;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 28px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--muted);
-  font-family: 'Orbitron', monospace;
-  letter-spacing: 1px;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.status-bar::-webkit-scrollbar { display: none; }
+
+.logo { display: flex; align-items: center; gap: 10px; }
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--text);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500; color: white; letter-spacing: 0.5px;
+}
+
+.logo-name { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+.logo-name span { color: var(--accent); }
+
+.logo-badge {
+  font-size: 10px; color: var(--text3);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 20px; font-weight: 500;
+}
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text2);
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 20px;
+}
 
 .status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00ff88;
-  box-shadow: 0 0 6px #00ff88;
-  animation: blink 2s infinite;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success);
+  animation: pulse 2s infinite;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+.hbtn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text2); padding: 6px 14px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
 }
+.hbtn:hover { background: var(--surface); color: var(--text); }
 
 .modes {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  gap: 6px;
-  padding: 10px 28px;
-  background: rgba(8,8,8,0.9);
+  display: flex; gap: 4px; padding: 10px 24px;
   border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
 }
 .modes::-webkit-scrollbar { display: none; }
 
 .mode-btn {
-  padding: 7px 16px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 12px;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  transition: all 0.2s;
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  text-transform: uppercase;
+  padding: 6px 14px; border: 1px solid transparent;
+  background: transparent; color: var(--text3); border-radius: 8px;
+  cursor: pointer; font-size: 12.5px; font-family: 'DM Sans', sans-serif;
+  font-weight: 500; white-space: nowrap; transition: all 0.15s;
 }
-
-.mode-btn:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-.mode-btn.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--white);
-  box-shadow: 0 0 15px var(--red-glow);
-}
+.mode-btn:hover { background: var(--surface); color: var(--text); }
+.mode-btn.active { background: var(--text); color: white; border-color: var(--text); }
 
 .chat-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px;
-  position: relative;
-  z-index: 5;
-  scrollbar-width: thin;
-  scrollbar-color: var(--red) transparent;
+  flex: 1; overflow-y: auto; padding: 24px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
 }
-.chat-container::-webkit-scrollbar { width: 3px; }
-.chat-container::-webkit-scrollbar-thumb { background: var(--red); }
+.chat-container::-webkit-scrollbar { width: 4px; }
+.chat-container::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
 .welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  text-align: center;
-  gap: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; height: 100%; text-align: center;
+  gap: 20px; max-width: 560px; margin: 0 auto;
 }
 
-.welcome-logo {
-  font-family: 'Orbitron', monospace;
-  font-size: 80px;
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: 8px;
-  text-shadow:
-    0 0 20px var(--red-glow),
-    0 0 40px var(--red-glow),
-    0 0 80px rgba(255,34,68,0.1);
-  animation: logoFlicker 4s ease-in-out infinite;
+.welcome-icon {
+  width: 56px; height: 56px; background: var(--text); border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 16px; color: white; font-weight: 500;
 }
 
-@keyframes logoFlicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--red-glow), 0 0 40px var(--red-glow); }
-  92% { opacity: 1; }
-  93% { opacity: 0.8; }
-  94% { opacity: 1; }
-  96% { opacity: 0.9; }
-  97% { opacity: 1; }
-}
-
-.welcome-logo span { color: var(--red); }
-
-.welcome-tagline {
-  font-family: 'Orbitron', monospace;
-  font-size: 13px;
-  color: var(--red);
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  border: 1px solid var(--red);
-  padding: 8px 20px;
-  box-shadow: 0 0 15px var(--red-glow);
-}
-
-.welcome p {
-  color: var(--muted);
-  font-size: 15px;
-  max-width: 500px;
-  line-height: 1.6;
-  font-family: 'Rajdhani', sans-serif;
-}
+.welcome h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.2; }
+.welcome h1 span { color: var(--accent); }
+.welcome p { font-size: 15px; color: var(--text2); line-height: 1.6; }
 
 .suggestions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 600px;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 8px; width: 100%;
 }
 
 .suggestion {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.2s;
-  font-size: 13px;
-  color: var(--text);
-  font-family: 'Rajdhani', sans-serif;
-  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-  letter-spacing: 0.5px;
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 14px 16px; border-radius: 12px; cursor: pointer;
+  text-align: left; transition: all 0.15s; font-size: 13px;
+  color: var(--text2); font-family: 'DM Sans', sans-serif;
+  line-height: 1.4; box-shadow: var(--shadow);
 }
-
 .suggestion:hover {
-  border-color: var(--red);
-  color: var(--red);
-  box-shadow: 0 0 15px var(--red-soft);
-  transform: translateY(-2px);
+  border-color: var(--accent); color: var(--accent);
+  background: var(--accent-soft); transform: translateY(-1px);
 }
-
-.suggestion .sicon {
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
+.suggestion .sicon { font-size: 16px; margin-bottom: 6px; display: block; }
 
 .message {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 20px;
-  animation: msgIn 0.3s ease;
+  display: flex; gap: 12px; margin-bottom: 20px;
+  animation: fadeIn 0.2s ease;
+  max-width: 760px; margin-left: auto; margin-right: auto;
 }
-
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
 .message.user { flex-direction: row-reverse; }
 
 .avatar {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  font-weight: 700;
-  flex-shrink: 0;
-  clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; flex-shrink: 0;
 }
+.avatar.ai { background: var(--text); color: white; }
+.avatar.usr { background: var(--accent); color: white; }
 
-.avatar.ai {
-  background: var(--red);
-  color: var(--white);
-  box-shadow: 0 0 15px var(--red-glow);
-}
-
-.avatar.usr {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--muted);
-}
-
-.msg-wrap { max-width: 72%; }
+.msg-wrap { max-width: calc(100% - 44px); }
 
 .bubble {
-  padding: 14px 18px;
-  font-size: 14px;
-  line-height: 1.7;
-  position: relative;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 0.3px;
+  padding: 12px 16px; font-size: 14px; line-height: 1.65;
+  border-radius: 12px; position: relative;
 }
-
 .message.ai .bubble {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--red);
-  clip-path: polygon(0% 0%, calc(100% - 12px) 0%, 100% 12px, 100% 100%, 12px 100%, 0% calc(100% - 12px));
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text); border-radius: 4px 12px 12px 12px;
 }
-
 .message.user .bubble {
-  background: rgba(255,34,68,0.15);
-  border: 1px solid var(--red);
-  clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
+  background: var(--accent); color: white;
+  border-radius: 12px 4px 12px 12px;
 }
 
 .copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 3px 8px;
-  font-size: 10px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 1px;
+  position: absolute; top: 8px; right: 8px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text3);
+  padding: 2px 8px; border-radius: 6px; font-size: 10px;
+  cursor: pointer; opacity: 0; transition: opacity 0.15s;
+  font-family: 'DM Sans', sans-serif; font-weight: 500;
 }
-
 .bubble:hover .copy-btn { opacity: 1; }
 
 .timestamp {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 4px;
-  font-family: 'Orbitron', monospace;
-  letter-spacing: 1px;
+  font-size: 10px; color: var(--text3); margin-top: 4px;
+  font-family: 'DM Mono', monospace;
 }
 .message.user .timestamp { text-align: right; }
 
 .typing-wrap {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 20px;
+  display: flex; gap: 12px; margin-bottom: 20px;
+  max-width: 760px; margin-left: auto; margin-right: auto;
 }
-
 .typing {
-  display: flex;
-  gap: 6px;
-  padding: 14px 20px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--red);
-  align-items: center;
+  display: flex; gap: 4px; padding: 14px 16px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px 12px 12px 12px; align-items: center;
 }
-
 .typing span {
-  width: 6px;
-  height: 6px;
-  background: var(--red);
-  box-shadow: 0 0 6px var(--red);
-  animation: typingDot 1.2s infinite;
+  width: 6px; height: 6px; background: var(--text3); border-radius: 50%;
+  animation: bounce 1.2s infinite;
 }
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typingDot {
-  0%, 60%, 100% { transform: scaleY(1); opacity: 0.4; }
-  30% { transform: scaleY(1.8); opacity: 1; }
-}
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-4px); opacity:1; } }
 
 .generated-image {
-  max-width: 280px;
-  margin-top: 10px;
-  border: 1px solid var(--red);
-  box-shadow: 0 0 20px var(--red-soft);
-  display: block;
+  max-width: 260px; margin-top: 8px; border-radius: 8px;
+  border: 1px solid var(--border); display: block;
 }
-
 .img-download {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 6px 16px;
-  background: var(--red);
-  color: var(--white);
-  text-decoration: none;
-  font-size: 12px;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 1px;
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  display: inline-block; margin-top: 8px; padding: 6px 14px;
+  background: var(--text); color: white; text-decoration: none;
+  font-size: 12px; font-family: 'DM Sans', sans-serif; border-radius: 6px; font-weight: 500;
 }
 
 .input-area {
-  position: relative;
-  z-index: 10;
-  padding: 14px 28px 18px;
-  background: rgba(8,8,8,0.97);
-  border-top: 1px solid var(--red);
-  box-shadow: 0 -10px 30px rgba(255,34,68,0.08);
+  padding: 12px 24px 16px; background: var(--bg);
+  border-top: 1px solid var(--border); flex-shrink: 0;
 }
 
 .input-wrapper {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 12px 16px;
-  transition: all 0.2s;
-  clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
+  display: flex; gap: 8px; align-items: flex-end;
+  background: var(--bg); border: 1px solid var(--border2); border-radius: 12px;
+  padding: 10px 12px; transition: all 0.15s; box-shadow: var(--shadow);
+  max-width: 760px; margin: 0 auto;
 }
-
 .input-wrapper:focus-within {
-  border-color: var(--red);
-  box-shadow: 0 0 20px var(--red-soft), inset 0 0 10px rgba(255,34,68,0.03);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 #userInput {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-size: 14px;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 0.5px;
-  resize: none;
-  max-height: 100px;
-  min-height: 24px;
-  line-height: 1.5;
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif;
+  resize: none; max-height: 120px; min-height: 22px; line-height: 1.5;
 }
+#userInput::placeholder { color: var(--text3); }
 
-#userInput::placeholder { color: var(--muted); }
-
-.input-btns { display: flex; gap: 8px; align-items: center; }
+.input-btns { display: flex; gap: 6px; align-items: center; }
 
 .mic-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 15px;
-  padding: 8px 10px;
-  transition: all 0.2s;
+  background: transparent; border: 1px solid var(--border); color: var(--text3);
+  cursor: pointer; font-size: 14px; padding: 7px 9px; border-radius: 8px;
+  transition: all 0.15s; line-height: 1;
 }
-
-.mic-btn:hover { border-color: var(--red); color: var(--red); }
-.mic-btn.recording { border-color: var(--red); color: var(--red); animation: pulse 1s infinite; box-shadow: 0 0 10px var(--red-glow); }
-
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.mic-btn:hover { background: var(--surface); color: var(--text); }
+.mic-btn.recording { background: #fff0f0; border-color: var(--danger); color: var(--danger); }
 
 .send-btn {
-  padding: 10px 20px;
-  background: var(--red);
-  border: none;
-  color: var(--white);
-  cursor: pointer;
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  transition: all 0.2s;
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  box-shadow: 0 0 15px var(--red-glow);
+  padding: 8px 16px; background: var(--text); border: none; color: white;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 500; border-radius: 8px; transition: all 0.15s;
 }
-
-.send-btn:hover { box-shadow: 0 0 25px var(--red-glow); transform: translateY(-1px); }
-.send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.send-btn:hover { background: #333; }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .quick-replies {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+  display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+  max-width: 760px; margin-left: auto; margin-right: auto;
 }
-
 .qr {
-  padding: 5px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  padding: 4px 12px; background: var(--bg); border: 1px solid var(--border);
+  color: var(--text3); font-size: 11.5px; cursor: pointer; border-radius: 20px;
+  transition: all 0.15s; font-family: 'DM Sans', sans-serif; font-weight: 500;
 }
-
-.qr:hover { border-color: var(--red); color: var(--red); }
+.qr:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 
 pre {
-  background: #0a0a0a;
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--red);
-  padding: 12px 16px;
-  overflow-x: auto;
-  font-size: 13px;
-  margin-top: 8px;
-  font-family: 'Courier New', monospace;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); padding: 12px 16px;
+  overflow-x: auto; font-size: 13px; margin-top: 8px; border-radius: 8px;
+  font-family: 'DM Mono', monospace;
 }
-code { color: #ff8899; }
+code { color: var(--accent); font-family: 'DM Mono', monospace; }
 
 @media (max-width: 600px) {
-  .welcome-logo { font-size: 50px; }
+  .welcome h1 { font-size: 22px; }
   .suggestions { grid-template-columns: 1fr; }
-  .msg-wrap { max-width: 85%; }
   header, .modes, .input-area { padding-left: 16px; padding-right: 16px; }
   .chat-container { padding: 16px; }
+  .logo-badge { display: none; }
 }
 
+.lang-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.3); z-index: 99; backdrop-filter: blur(2px);
+}
 .lang-panel {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 500px;
-  background: var(--bg2);
-  border: 1px solid var(--red);
-  box-shadow: 0 0 40px var(--red-glow);
-  z-index: 100;
-  padding: 24px;
-  clip-path: polygon(16px 0%, 100% 0%, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0% 100%, 0% 16px);
+  display: none; position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); width: 90%; max-width: 480px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12); z-index: 100; padding: 24px;
 }
-
-.lang-panel.show { display: block; }
-
-.lang-panel h3 {
-  font-family: 'Orbitron', monospace;
-  color: var(--red);
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.lang-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
+.lang-panel.show, .lang-overlay.show { display: block; }
+.lang-panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.lang-panel p { font-size: 13px; color: var(--text3); margin-bottom: 16px; }
+.lang-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 16px; }
 .lang-option {
-  padding: 10px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  cursor: pointer;
-  text-align: center;
-  font-size: 12px;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 1px;
-  transition: all 0.2s;
+  padding: 10px 8px; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer; text-align: center; font-size: 12px;
+  font-family: 'DM Sans', sans-serif; font-weight: 500; border-radius: 8px; transition: all 0.15s;
 }
-
-.lang-option:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
+.lang-option:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .close-panel {
-  background: var(--red);
-  border: none;
-  color: white;
-  padding: 8px 20px;
-  cursor: pointer;
-  font-family: 'Rajdhani', sans-serif;
-  letter-spacing: 2px;
-  font-size: 12px;
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 10px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; border-radius: 8px;
 }
+.close-panel:hover { background: var(--border); }
 </style>
 </head>
 <body>
 
-<div class="corner-tl"></div>
-<div class="corner-br"></div>
-
+<div class="lang-overlay" id="langOverlay" onclick="closeLangPanel()"></div>
 <div class="lang-panel" id="langPanel">
-  <h3>// LANGUAGE LEARNING MODE</h3>
-  <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px; font-family: Rajdhani, sans-serif;">Select a language to learn or teach</p>
+  <h3>Language Learning</h3>
+  <p>Choose a language to start learning</p>
   <div class="lang-grid">
     <div class="lang-option" onclick="learnLang('Hindi')">🇮🇳 Hindi</div>
     <div class="lang-option" onclick="learnLang('Kannada')">🌟 Kannada</div>
@@ -692,75 +342,60 @@ code { color: #ff8899; }
     <div class="lang-option" onclick="learnLang('German')">🇩🇪 German</div>
     <div class="lang-option" onclick="learnLang('Mandarin')">🇨🇳 Mandarin</div>
   </div>
-  <button class="close-panel" onclick="closeLangPanel()">CLOSE</button>
+  <button class="close-panel" onclick="closeLangPanel()">Close</button>
 </div>
 
 <header>
-  <div class="logo-wrap">
-    <div class="logo-icon">QV</div>
-    <div>
-      <div class="logo-text">QV<span>IO</span></div>
-      <div class="logo-sub">Affordable AI for Every Human</div>
-    </div>
+  <div class="logo">
+    <div class="logo-mark">QV</div>
+    <span class="logo-name">QV<span>IO</span></span>
+    <span class="logo-badge">Affordable AI</span>
   </div>
-  <div class="header-btns">
-    <button class="hbtn" onclick="showLangPanel()">🌐 LANGUAGES</button>
-    <button class="hbtn" onclick="clearChat()">⚡ CLEAR</button>
+  <div class="header-right">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      <span id="currentModeStatus">Casual</span>
+    </div>
+    <button class="hbtn" onclick="showLangPanel()">🌐 Languages</button>
+    <button class="hbtn" onclick="clearChat()">Clear</button>
   </div>
 </header>
 
-<div class="status-bar">
-  <div class="status-dot"></div>
-  <span>QVIO ONLINE</span>
-  <span style="margin: 0 8px; color: var(--border)">|</span>
-  <span>GEMINI 2.0 FLASH</span>
-  <span style="margin: 0 8px; color: var(--border)">|</span>
-  <span>INDIA + WORLD</span>
-  <span style="margin: 0 8px; color: var(--border)">|</span>
-  <span id="currentModeStatus">MODE: CASUAL</span>
-</div>
-
 <div class="modes">
-  <button class="mode-btn active" onclick="setMode('casual', this, 'CASUAL')">💬 CASUAL</button>
-  <button class="mode-btn" onclick="setMode('student', this, 'STUDENT')">📚 STUDENT</button>
-  <button class="mode-btn" onclick="setMode('pro', this, 'PRO')">💼 PRO</button>
-  <button class="mode-btn" onclick="setMode('spiritual', this, 'SPIRITUAL')">🙏 SPIRITUAL</button>
-  <button class="mode-btn" onclick="setMode('code', this, 'CODE')">💻 CODE</button>
-  <button class="mode-btn" onclick="setMode('hindi', this, 'HINDI')">🇮🇳 HINDI</button>
-  <button class="mode-btn" onclick="setMode('kannada', this, 'KANNADA')">🌟 KANNADA</button>
-  <button class="mode-btn" onclick="setMode('quiz', this, 'QUIZ')">🧠 QUIZ</button>
-  <button class="mode-btn" onclick="setMode('translate', this, 'TRANSLATE')">🔄 TRANSLATE</button>
+  <button class="mode-btn active" onclick="setMode('casual', this, 'Casual')">💬 Casual</button>
+  <button class="mode-btn" onclick="setMode('student', this, 'Student')">📚 Student</button>
+  <button class="mode-btn" onclick="setMode('pro', this, 'Pro')">💼 Pro</button>
+  <button class="mode-btn" onclick="setMode('spiritual', this, 'Spiritual')">🙏 Spiritual</button>
+  <button class="mode-btn" onclick="setMode('code', this, 'Code')">💻 Code</button>
+  <button class="mode-btn" onclick="setMode('hindi', this, 'Hindi')">🇮🇳 Hindi</button>
+  <button class="mode-btn" onclick="setMode('kannada', this, 'Kannada')">🌟 Kannada</button>
+  <button class="mode-btn" onclick="setMode('quiz', this, 'Quiz')">🧠 Quiz</button>
+  <button class="mode-btn" onclick="setMode('translate', this, 'Translate')">🔄 Translate</button>
 </div>
 
 <div class="chat-container" id="chatContainer">
   <div class="welcome" id="welcome">
-    <div class="welcome-logo">QV<span>IO</span></div>
-    <div class="welcome-tagline">AFFORDABLE AI FOR EVERY HUMAN</div>
-    <p>Your intelligent companion for learning, creating, and growing. Supporting 12+ languages including Hindi, Kannada, Tamil, Telugu, and more.</p>
+    <div class="welcome-icon">QV</div>
+    <h1>Hello, I'm <span>QVIO</span> 👋</h1>
+    <p>Affordable AI for India and the world. Ask me anything in any language — Hindi, Kannada, Tamil, English, or more.</p>
     <div class="suggestions">
       <div class="suggestion" onclick="sendSuggestion('Explain quantum physics in simple words')">
-        <span class="sicon">⚡</span>
-        Explain quantum physics simply
+        <span class="sicon">⚡</span>Explain quantum physics simply
       </div>
-      <div class="suggestion" onclick="sendSuggestion('create image: futuristic cyberpunk city at night')">
-        <span class="sicon">🎨</span>
-        Create image: cyberpunk city
+      <div class="suggestion" onclick="sendSuggestion('create image: futuristic Indian city at night')">
+        <span class="sicon">🎨</span>Create an AI image
       </div>
       <div class="suggestion" onclick="sendSuggestion('Teach me basic Hindi phrases')">
-        <span class="sicon">🇮🇳</span>
-        Teach me basic Hindi
+        <span class="sicon">🇮🇳</span>Teach me basic Hindi
       </div>
       <div class="suggestion" onclick="sendSuggestion('Help me write a business plan for my startup')">
-        <span class="sicon">💼</span>
-        Write a business plan
+        <span class="sicon">💼</span>Write a business plan
       </div>
       <div class="suggestion" onclick="sendSuggestion('Tell me about Bhagavad Gita teachings')">
-        <span class="sicon">🙏</span>
-        Bhagavad Gita teachings
+        <span class="sicon">🙏</span>Bhagavad Gita teachings
       </div>
       <div class="suggestion" onclick="sendSuggestion('Write a Python function to sort a list')">
-        <span class="sicon">💻</span>
-        Python code help
+        <span class="sicon">💻</span>Help me with code
       </div>
     </div>
   </div>
@@ -769,41 +404,27 @@ code { color: #ff8899; }
 <div class="input-area">
   <div class="input-wrapper">
     <textarea id="userInput"
-      placeholder="Ask QVIO anything... Type 'create image:' to generate images | Speak any language"
+      placeholder="Ask anything... type 'create image:' to generate images"
       rows="1"
       onkeydown="handleKey(event)"
       oninput="autoResize(this)"></textarea>
     <div class="input-btns">
       <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Voice Input">🎤</button>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()">SEND ▶</button>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send ↑</button>
     </div>
   </div>
   <div class="quick-replies">
-    <div class="qr" onclick="sendSuggestion('Surprise me with something interesting')">✨ SURPRISE</div>
-    <div class="qr" onclick="sendSuggestion('Help me study for my exam')">📚 STUDY</div>
-    <div class="qr" onclick="sendSuggestion('Tell me a joke in Hindi')">😂 JOKE</div>
-    <div class="qr" onclick="sendSuggestion('Motivate me')">💪 MOTIVATE</div>
-    <div class="qr" onclick="sendSuggestion('What can you do?')">❓ HELP</div>
+    <div class="qr" onclick="sendSuggestion('Surprise me with something interesting')">✨ Surprise me</div>
+    <div class="qr" onclick="sendSuggestion('Help me study for my exam')">📚 Study help</div>
+    <div class="qr" onclick="sendSuggestion('Tell me a joke in Hindi')">😂 Joke</div>
+    <div class="qr" onclick="sendSuggestion('Motivate me')">💪 Motivate</div>
+    <div class="qr" onclick="sendSuggestion('What can you do?')">❓ Help</div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// QVIO - Complete AI Application
-// Affordable AI for Every Human
-// ============================================================
-
-// ✅ API KEY - hardcoded and working
-// ✅ API KEY loaded securely from Vercel - never exposed in GitHub!
-let GEMINI_API_KEY = '';
-async function loadApiKey() {
-  try {
-    const res = await fetch('/api/config');
-    const data = await res.json();
-    GEMINI_API_KEY = data.apiKey;
-  } catch(e) { console.error('Key load failed', e); }
-}
-loadApiKey();
+const GROQ_API_KEY = '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';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 let currentMode = 'casual';
 let isRecording = false;
@@ -811,46 +432,53 @@ let recognition = null;
 let chatHistory = [];
 
 const systemPrompts = {
-  casual: `You are QVIO, a friendly and powerful AI assistant made for everyone in India and the world. You are affordable, warm, helpful and smart. Respond in the same language the user writes in. If they write Hindi, respond in Hindi. If Kannada, respond in Kannada. If English, respond in English. Mix languages naturally when it feels right. Be conversational and fun.`,
-  student: `You are QVIO in Student Mode - the best study assistant in the world. Help students understand any subject deeply. Explain concepts simply with examples. Create quizzes. Solve math step by step. Help with assignments. Support Hindi, Kannada, Tamil, Telugu, English and all Indian languages. Make learning exciting and easy.`,
-  pro: `You are QVIO in Professional Mode. You are a world-class business consultant and professional assistant. Give formal, precise, strategic advice. Help with business plans, professional emails, reports, presentations, and corporate communication. Be concise and actionable.`,
-  spiritual: `You are QVIO in Spiritual Mode. You have deep encyclopedic knowledge of ALL world religions and spiritual traditions. Hindu: all gods, Vedas, Upanishads, Bhagavad Gita, 18 Puranas, all temples, festivals, rituals. Islam: Quran, Hadith, 99 names of Allah, Islamic history, namaz, duas. Christianity: Bible (Old and New Testament), Jesus life, prayers, saints, denominations. Buddhism: Buddha's teachings, 4 noble truths, 8 fold path. Jainism: Mahavira teachings, Jain philosophy. Sikhism: Guru Granth Sahib, 10 Gurus, Gurbani. Zoroastrianism, Judaism, and all other faiths. Be completely respectful and neutral to all religions. Explain spiritual concepts in simple, beautiful language.`,
-  code: `You are QVIO in Code Mode - an expert programmer and software engineer. Help with coding in ANY programming language. Write clean, efficient, well-commented code. Debug errors. Explain concepts clearly. Teach programming from basics to advanced. Always format code in proper code blocks. Support Python, JavaScript, Java, C++, React, Node.js, and all languages.`,
-  hindi: `Aap QVIO hain - ek helpful aur friendly AI assistant. Hamesha Hindi mein jawaab dein. Warm, friendly aur helpful rahein. Hinglish bhi chalega agar user use kare. Har sawaal ka achha aur detailed jawaab dein.`,
-  kannada: `Neevu QVIO - Karnataka jana AI sahayaka. Hamesha Kannada mattu English mix maadi maatanaadi, Bengaluru janaru hege maatanaaduttare hage. Warm, friendly mattu helpful aagi iri. Prathiyondu prashne ge uttama uttara kodi.`,
-  quiz: `You are QVIO in Quiz Mode. Create engaging, educational quizzes on any topic the user asks about. Ask one question at a time. Give 4 multiple choice options labeled A, B, C, D. After user answers, tell them if correct or wrong and explain the right answer. Keep score. Make it fun and educational. Support all Indian languages.`,
-  translate: `You are QVIO in Translation Mode. You are an expert translator for ALL languages especially Indian languages. Translate accurately between Hindi, Kannada, Tamil, Telugu, Bengali, Marathi, Gujarati, Punjabi, Malayalam, Odia, English, Spanish, French, German, Japanese, Arabic, Mandarin, and more. Also teach pronunciation and cultural context.`
+  casual: `You are QVIO, a friendly and smart AI assistant for everyone in India and the world. Be warm, helpful and conversational. Respond in the same language the user writes in.`,
+  student: `You are QVIO in Student Mode - the best study assistant. Help students understand any subject with simple explanations. Solve math step by step. Support all Indian languages.`,
+  pro: `You are QVIO in Professional Mode. Give formal, precise, strategic advice. Help with business plans, emails, reports. Be concise and actionable.`,
+  spiritual: `You are QVIO in Spiritual Mode with deep knowledge of all world religions - Hindu, Islam, Christianity, Buddhism, Jainism, Sikhism and all faiths. Be respectful and neutral.`,
+  code: `You are QVIO in Code Mode - an expert programmer. Write clean, efficient code. Debug errors. Support all programming languages. Always use code blocks.`,
+  hindi: `Aap QVIO hain. Hamesha Hindi mein jawaab dein. Warm aur helpful rahein. Hinglish bhi chalega.`,
+  kannada: `Neevu QVIO. Hamesha Kannada mattu English mix maadi maatanaadi. Warm mattu helpful aagi iri.`,
+  quiz: `You are QVIO in Quiz Mode. Ask one question at a time with 4 options (A,B,C,D). After answer, explain if correct or wrong. Keep score. Make it fun!`,
+  translate: `You are QVIO in Translation Mode. Translate accurately between all languages, especially Indian ones. Also explain pronunciation and cultural context.`
 };
 
 function setMode(mode, btn, label) {
   currentMode = mode;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('currentModeStatus').textContent = `MODE: ${label}`;
+  document.getElementById('currentModeStatus').textContent = label;
 }
 
-function showLangPanel() { document.getElementById('langPanel').classList.add('show'); }
-function closeLangPanel() { document.getElementById('langPanel').classList.remove('show'); }
+function showLangPanel() {
+  document.getElementById('langPanel').classList.add('show');
+  document.getElementById('langOverlay').classList.add('show');
+}
+
+function closeLangPanel() {
+  document.getElementById('langPanel').classList.remove('show');
+  document.getElementById('langOverlay').classList.remove('show');
+}
 
 function learnLang(lang) {
   closeLangPanel();
-  document.getElementById('userInput').value = `I want to learn ${lang}. Please start teaching me from the very basics. First tell me about the language, then teach me the most important 10 phrases I need to know as a beginner.`;
+  document.getElementById('userInput').value = `I want to learn ${lang}. Teach me from basics — tell me about the language then the 10 most important beginner phrases.`;
   sendMessage();
 }
 
 function clearChat() {
   document.getElementById('chatContainer').innerHTML = `
     <div class="welcome" id="welcome">
-      <div class="welcome-logo">QV<span>IO</span></div>
-      <div class="welcome-tagline">AFFORDABLE AI FOR EVERY HUMAN</div>
-      <p>Chat cleared. Ready for new conversation!</p>
+      <div class="welcome-icon">QV</div>
+      <h1>Chat cleared!</h1>
+      <p>Ready for a new conversation. What's on your mind?</p>
     </div>`;
   chatHistory = [];
 }
 
 function autoResize(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function handleKey(e) {
@@ -874,7 +502,7 @@ function addMessage(content, role, isImage = false) {
 
   const avatar = document.createElement('div');
   avatar.className = `avatar ${role === 'ai' ? 'ai' : 'usr'}`;
-  avatar.textContent = role === 'ai' ? 'QV' : 'YOU';
+  avatar.textContent = role === 'ai' ? 'QV' : 'You';
 
   const wrap = document.createElement('div');
   wrap.className = 'msg-wrap';
@@ -884,44 +512,34 @@ function addMessage(content, role, isImage = false) {
 
   if (isImage) {
     const img = document.createElement('img');
-    img.src = content;
-    img.className = 'generated-image';
-    img.alt = 'QVIO Generated Image';
+    img.src = content; img.className = 'generated-image'; img.alt = 'QVIO Image';
     bubble.appendChild(img);
     const dl = document.createElement('a');
-    dl.href = content;
-    dl.download = 'qvio-generated.jpg';
-    dl.className = 'img-download';
-    dl.textContent = '⬇ DOWNLOAD IMAGE';
-    bubble.appendChild(dl);
+    dl.href = content; dl.download = 'qvio-image.jpg'; dl.className = 'img-download';
+    dl.textContent = '⬇ Download'; bubble.appendChild(dl);
   } else {
     bubble.innerHTML = content
       .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
-
     if (role === 'ai') {
       const copyBtn = document.createElement('button');
-      copyBtn.className = 'copy-btn';
-      copyBtn.textContent = '⧉ COPY';
+      copyBtn.className = 'copy-btn'; copyBtn.textContent = 'Copy';
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(content);
-        copyBtn.textContent = '✓ COPIED';
-        setTimeout(() => copyBtn.textContent = '⧉ COPY', 2000);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 2000);
       };
       bubble.appendChild(copyBtn);
     }
   }
 
   const time = document.createElement('div');
-  time.className = 'timestamp';
-  time.textContent = `// ${getTime()}`;
+  time.className = 'timestamp'; time.textContent = getTime();
 
-  wrap.appendChild(bubble);
-  wrap.appendChild(time);
-  div.appendChild(avatar);
-  div.appendChild(wrap);
+  wrap.appendChild(bubble); wrap.appendChild(time);
+  div.appendChild(avatar); div.appendChild(wrap);
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
@@ -930,23 +548,17 @@ function showTyping() {
   hideWelcome();
   const container = document.getElementById('chatContainer');
   const div = document.createElement('div');
-  div.className = 'typing-wrap';
-  div.id = 'typingIndicator';
+  div.className = 'typing-wrap'; div.id = 'typingIndicator';
   const avatar = document.createElement('div');
-  avatar.className = 'avatar ai';
-  avatar.textContent = 'QV';
+  avatar.className = 'avatar ai'; avatar.textContent = 'QV';
   const typing = document.createElement('div');
-  typing.className = 'typing';
-  typing.innerHTML = '<span></span><span></span><span></span>';
-  div.appendChild(avatar);
-  div.appendChild(typing);
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  typing.className = 'typing'; typing.innerHTML = '<span></span><span></span><span></span>';
+  div.appendChild(avatar); div.appendChild(typing);
+  container.appendChild(div); container.scrollTop = container.scrollHeight;
 }
 
 function hideTyping() {
-  const t = document.getElementById('typingIndicator');
-  if (t) t.remove();
+  const t = document.getElementById('typingIndicator'); if (t) t.remove();
 }
 
 async function sendMessage() {
@@ -954,129 +566,84 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  input.value = '';
-  input.style.height = 'auto';
+  input.value = ''; input.style.height = 'auto';
   document.getElementById('sendBtn').disabled = true;
 
   addMessage(text, 'user');
   chatHistory.push({ role: 'user', content: text });
 
-  // Image generation
   if (text.toLowerCase().startsWith('create image:') || text.toLowerCase().startsWith('image:')) {
     const prompt = text.replace(/^(create image:|image:)/i, '').trim();
     showTyping();
     setTimeout(() => {
       hideTyping();
-      addMessage(`// GENERATING IMAGE: "${prompt}"`, 'ai');
-      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', high quality, detailed, 4k, beautiful, professional')}&width=512&height=512&nologo=true`;
-      addMessage(imageUrl, 'ai', true);
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', high quality, 4k, beautiful')}&width=512&height=512&nologo=true`;
+      addMessage(url, 'ai', true);
       document.getElementById('sendBtn').disabled = false;
     }, 1500);
     return;
   }
 
   showTyping();
-
   try {
-    const response = await callGemini(text);
+    const response = await callGroq(text);
     hideTyping();
     addMessage(response, 'ai');
     chatHistory.push({ role: 'assistant', content: response });
     if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
   } catch (error) {
     hideTyping();
-    addMessage(`// ERROR: ${error.message}`, 'ai');
+    addMessage(`Sorry, something went wrong: ${error.message}. Please try again!`, 'ai');
   }
-
   document.getElementById('sendBtn').disabled = false;
 }
 
-async function callGemini(userMessage) {
-  // ✅ FIXED: Build messages correctly — always include current message
-  // Use chat history for context, but always add current message at the end
-  const historyMessages = chatHistory.slice(-12, -1).map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }]
-  }));
-
-  // Always ensure at least one user message exists
-  const allMessages = [
-    ...historyMessages,
-    { role: 'user', parts: [{ text: userMessage }] }
+async function callGroq(userMessage) {
+  const messages = [
+    { role: 'system', content: systemPrompts[currentMode] },
+    ...chatHistory.slice(-12, -1).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
+    { role: 'user', content: userMessage }
   ];
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompts[currentMode] }] },
-        contents: allMessages,
-        generationConfig: {
-          temperature: 0.9,
-          maxOutputTokens: 1500,
-          topP: 0.95
-        }
-      })
-    }
-  );
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROQ_API_KEY}`
+    },
+    body: JSON.stringify({ model: GROQ_MODEL, messages, temperature: 0.8, max_tokens: 1500 })
+  });
 
   const data = await response.json();
-
-  // ✅ Better error handling - show actual Gemini error
-  if (data.error) {
-    throw new Error(`Gemini API Error: ${data.error.message}`);
-  }
-
-  if (!data.candidates || data.candidates.length === 0) {
-    throw new Error('No response from Gemini. Please try again.');
-  }
-
-  return data.candidates[0].content.parts[0].text;
+  if (data.error) throw new Error(data.error.message);
+  return data.choices[0].message.content;
 }
 
 function sendSuggestion(text) {
-  document.getElementById('userInput').value = text;
-  sendMessage();
+  document.getElementById('userInput').value = text; sendMessage();
 }
 
 function toggleMic() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    addMessage('// Voice input not supported in this browser. Please use Chrome.', 'ai');
-    return;
-  }
-
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { addMessage('Voice input needs Chrome browser!', 'ai'); return; }
   if (isRecording) { recognition.stop(); return; }
-
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = 'en-IN';
-
+  recognition = new SR();
+  recognition.continuous = false; recognition.interimResults = false; recognition.lang = 'en-IN';
   recognition.onstart = () => {
     isRecording = true;
     document.getElementById('micBtn').classList.add('recording');
     document.getElementById('micBtn').textContent = '⏹';
   };
-
-  recognition.onresult = (e) => {
-    document.getElementById('userInput').value = e.results[0][0].transcript;
-  };
-
+  recognition.onresult = (e) => { document.getElementById('userInput').value = e.results[0][0].transcript; };
   recognition.onerror = recognition.onend = () => {
     isRecording = false;
     document.getElementById('micBtn').classList.remove('recording');
     document.getElementById('micBtn').textContent = '🎤';
   };
-
   recognition.start();
 }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
-}
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(() => {}); }
 </script>
 </body>
 </html>
