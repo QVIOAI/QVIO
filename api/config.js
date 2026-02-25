@@ -1,3 +1,3 @@
 export default function handler(req, res) {
-  res.json({ apiKey: process.env.GEMINI_API_KEY });
+  res.status(200).json({ apiKey: process.env.GEMINI_API_KEY });
 }
