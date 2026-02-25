@@ -577,7 +577,7 @@ async function sendMessage() {
     showTyping();
     setTimeout(() => {
       hideTyping();
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', high quality, 4k, beautiful')}&width=512&height=512&nologo=true`;
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', high quality, 4k, beautiful, professional')}?width=512&height=512&nologo=true&seed=${Date.now()}`;
       addMessage(url, 'ai', true);
       document.getElementById('sendBtn').disabled = false;
     }, 1500);
