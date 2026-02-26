@@ -6,35 +6,13 @@
 <title>QVIO — AI for Every Human</title>
 <meta name="description" content="QVIO - World's most multilingual AI. Faster than ChatGPT.">
 <meta name="theme-color" content="#ffffff">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<!-- QVIO v3.0 -->
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --bg:#fff;--bg2:#f7f7f7;--surface:#f0f0f0;
-  --border:#e8e8e8;--border2:#d0d0d0;
-  --text:#0f0f0f;--text2:#555;--text3:#999;
-  --accent:#0057ff;--accent-soft:rgba(0,87,255,0.08);
-  --user:#0057ff;--ai-bg:#f7f7f7;
-  --danger:#ff3b30;--success:#22c55e;
-  --shadow:0 1px 3px rgba(0,0,0,0.07);
-  --shadow-lg:0 8px 30px rgba(0,0,0,0.1);
-}
-[data-theme="dark"]{
-  --bg:#0d0d0d;--bg2:#161616;--surface:#222;
-  --border:#2a2a2a;--border2:#3a3a3a;
-  --text:#f0f0f0;--text2:#aaa;--text3:#555;
-  --accent:#4d8eff;--accent-soft:rgba(77,142,255,0.1);
-  --user:#2563eb;--ai-bg:#1a1a1a;
-  --shadow:0 1px 3px rgba(0,0,0,0.4);
-  --shadow-lg:0 8px 30px rgba(0,0,0,0.4);
-}
+:root{--bg:#fff;--bg2:#f7f7f7;--surface:#f0f0f0;--border:#e8e8e8;--border2:#d0d0d0;--text:#0f0f0f;--text2:#555;--text3:#999;--accent:#0057ff;--accent-soft:rgba(0,87,255,0.08);--user:#0057ff;--ai-bg:#f7f7f7;--danger:#ff3b30;--success:#22c55e;--shadow:0 1px 3px rgba(0,0,0,0.07);--shadow-lg:0 8px 30px rgba(0,0,0,0.1);}
+[data-theme="dark"]{--bg:#0d0d0d;--bg2:#161616;--surface:#222;--border:#2a2a2a;--border2:#3a3a3a;--text:#f0f0f0;--text2:#aaa;--text3:#555;--accent:#4d8eff;--accent-soft:rgba(77,142,255,0.1);--user:#2563eb;--ai-bg:#1a1a1a;--shadow:0 1px 3px rgba(0,0,0,0.4);--shadow-lg:0 8px 30px rgba(0,0,0,0.4);}
 body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:background .2s,color .2s;}
-
-/* NAV */
 header{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:52px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .logo{display:flex;align-items:center;gap:9px;}
 .lmark{width:28px;height:28px;background:var(--text);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:9px;color:var(--bg);}
@@ -46,20 +24,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 1
 .hbtn:hover{background:var(--surface);color:var(--text);}
 .sdot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;display:inline-block;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* MODES */
 .modes{display:flex;gap:3px;padding:7px 18px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
 .modes::-webkit-scrollbar{display:none;}
 .mbtn{padding:5px 12px;border:1px solid transparent;background:transparent;color:var(--text3);border-radius:8px;cursor:pointer;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;white-space:nowrap;transition:all .15s;}
 .mbtn:hover{background:var(--surface);color:var(--text);}
 .mbtn.on{background:var(--text);color:var(--bg);}
-
-/* CHAT */
 .chat{flex:1;overflow-y:auto;padding:20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .chat::-webkit-scrollbar{width:3px;}
 .chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
-
-/* WELCOME */
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;gap:14px;max-width:560px;margin:0 auto;padding:20px;}
 .wicon{width:48px;height:48px;background:var(--text);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:14px;color:var(--bg);}
 .welcome h1{font-size:clamp(20px,4vw,28px);font-weight:600;letter-spacing:-.5px;line-height:1.2;}
@@ -71,8 +43,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 1
 .sug{background:var(--bg);border:1px solid var(--border);padding:12px 14px;border-radius:11px;cursor:pointer;text-align:left;transition:all .15s;font-size:13px;color:var(--text2);font-family:"DM Sans",sans-serif;line-height:1.4;box-shadow:var(--shadow);}
 .sug:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:translateY(-1px);}
 .sug-i{font-size:15px;margin-bottom:4px;display:block;}
-
-/* MESSAGES */
 .msg{display:flex;gap:10px;margin-bottom:18px;animation:fadeup .2s ease;max-width:720px;margin-left:auto;margin-right:auto;}
 @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .msg.user{flex-direction:row-reverse;}
@@ -90,24 +60,16 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 1
 .msg-actions{display:flex;gap:3px;margin-top:4px;}
 .ts{font-size:10px;color:var(--text3);margin-top:3px;font-family:"DM Mono",monospace;}
 .msg.user .ts{text-align:right;}
-
-/* TYPING */
 .typing-wrap{display:flex;gap:10px;margin-bottom:18px;max-width:720px;margin-left:auto;margin-right:auto;}
 .typing{display:flex;gap:4px;padding:13px 15px;background:var(--ai-bg);border:1px solid var(--border);border-radius:3px 12px 12px 12px;align-items:center;}
 .typing span{width:5px;height:5px;background:var(--text3);border-radius:50%;animation:bounce 1.2s infinite;}
 .typing span:nth-child(2){animation-delay:.15s;}
 .typing span:nth-child(3){animation-delay:.3s;}
 @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
-
-/* IMAGES */
 .gen-img{max-width:240px;margin-top:8px;border-radius:8px;border:1px solid var(--border);display:block;}
 .img-dl{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:5px 12px;background:var(--text);color:var(--bg);text-decoration:none;font-size:12px;font-family:"DM Sans",sans-serif;border-radius:6px;font-weight:500;}
-
-/* MEMORY */
 .memory-bar{background:var(--accent-soft);border-bottom:1px solid var(--border);padding:6px 18px;font-size:11px;color:var(--accent);display:none;align-items:center;gap:6px;flex-shrink:0;}
 .memory-bar.show{display:flex;}
-
-/* INPUT */
 .input-area{padding:10px 18px 14px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0;}
 .input-box{display:flex;gap:7px;align-items:flex-end;background:var(--bg);border:1.5px solid var(--border2);border-radius:13px;padding:9px 11px;transition:all .15s;box-shadow:var(--shadow);max-width:720px;margin:0 auto;}
 .input-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
@@ -123,12 +85,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 1
 .qrs{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;max-width:720px;margin-left:auto;margin-right:auto;}
 .qr{padding:3px 10px;background:var(--bg);border:1px solid var(--border);color:var(--text3);font-size:11px;cursor:pointer;border-radius:20px;transition:all .15s;font-family:"DM Sans",sans-serif;font-weight:500;}
 .qr:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-
-/* CODE */
 pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);padding:12px 15px;overflow-x:auto;font-size:12.5px;margin:8px 0;border-radius:8px;font-family:"DM Mono",monospace;}
 code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
-
-/* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:99;backdrop-filter:blur(3px);}
 .overlay.show{display:block;}
 .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:92%;max-width:500px;background:var(--bg);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);z-index:100;padding:22px;max-height:85vh;overflow-y:auto;}
@@ -141,9 +99,6 @@ code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
 .lopt:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 .close-modal{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;border-radius:8px;margin-top:10px;}
 .close-modal:hover{background:var(--border);}
-
-/* MEMORY MODAL */
-.mem-name{font-size:22px;font-weight:600;margin-bottom:2px;}
 .mem-fact{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:6px;}
 .mem-del{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;margin-left:auto;}
 .mem-del:hover{color:var(--danger);}
@@ -152,142 +107,79 @@ code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
 .mem-input{flex:1;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;}
 .mem-input:focus{border-color:var(--accent);}
 .mem-add-btn{padding:8px 14px;background:var(--text);color:var(--bg);border:none;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
-
-/* SUPPORT */
 .support-qr{width:180px;height:180px;margin:12px auto;display:block;border-radius:10px;border:1px solid var(--border);}
 .upi-id{text-align:center;font-family:"DM Mono",monospace;font-size:13px;color:var(--text2);margin-top:6px;}
-
-/* SEARCH INDICATOR */
-.search-ind{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);padding:6px 12px;background:var(--surface);border-radius:20px;margin-bottom:8px;}
-.search-spin{width:10px;height:10px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-@media(max-width:600px){
-  .welcome h1{font-size:20px;}
-  .sugs{grid-template-columns:1fr;}
-  header,.modes,.input-area{padding-left:14px;padding-right:14px;}
-  .chat{padding:14px;}
-  .ltag{display:none!important;}
-}
+@media(max-width:600px){.welcome h1{font-size:20px;}.sugs{grid-template-columns:1fr;}header,.modes,.input-area{padding-left:14px;padding-right:14px;}.chat{padding:14px;}.ltag{display:none!important;}}
 </style>
 </head>
 <body>
-
-<!-- LANG MODAL -->
 <div class="overlay" id="lovl" onclick="closeModal('lang')"></div>
 <div class="modal" id="langM">
-  <h3>🌍 Language Learning</h3>
+  <h3>Language Learning</h3>
   <p>100+ languages — click any to start learning</p>
-  <div class="lang-section-title">🇮🇳 Indian Languages (22)</div>
+  <div class="lang-section-title">Indian Languages (22)</div>
   <div class="lgrid">
-    <div class="lopt" onclick="learnLang('Hindi')">🇮🇳 Hindi</div>
-    <div class="lopt" onclick="learnLang('Kannada')">🌟 Kannada</div>
-    <div class="lopt" onclick="learnLang('Tamil')">🌺 Tamil</div>
-    <div class="lopt" onclick="learnLang('Telugu')">🎭 Telugu</div>
-    <div class="lopt" onclick="learnLang('Bengali')">🐯 Bengali</div>
-    <div class="lopt" onclick="learnLang('Marathi')">🏔 Marathi</div>
-    <div class="lopt" onclick="learnLang('Gujarati')">🦁 Gujarati</div>
-    <div class="lopt" onclick="learnLang('Punjabi')">🌾 Punjabi</div>
-    <div class="lopt" onclick="learnLang('Malayalam')">🌴 Malayalam</div>
-    <div class="lopt" onclick="learnLang('Odia')">🎨 Odia</div>
-    <div class="lopt" onclick="learnLang('Assamese')">🦏 Assamese</div>
-    <div class="lopt" onclick="learnLang('Urdu')">🌹 Urdu</div>
-    <div class="lopt" onclick="learnLang('Sanskrit')">📜 Sanskrit</div>
-    <div class="lopt" onclick="learnLang('Nepali')">⛰ Nepali</div>
-    <div class="lopt" onclick="learnLang('Konkani')">🐚 Konkani</div>
-    <div class="lopt" onclick="learnLang('Maithili')">🎋 Maithili</div>
-    <div class="lopt" onclick="learnLang('Sindhi')">🌊 Sindhi</div>
-    <div class="lopt" onclick="learnLang('Dogri')">🦅 Dogri</div>
-    <div class="lopt" onclick="learnLang('Kashmiri')">❄️ Kashmiri</div>
-    <div class="lopt" onclick="learnLang('Manipuri')">🥁 Manipuri</div>
-    <div class="lopt" onclick="learnLang('Bodo')">🌿 Bodo</div>
-    <div class="lopt" onclick="learnLang('Santali')">🌳 Santali</div>
+    <div class="lopt" onclick="learnLang('Hindi')">Hindi</div>
+    <div class="lopt" onclick="learnLang('Kannada')">Kannada</div>
+    <div class="lopt" onclick="learnLang('Tamil')">Tamil</div>
+    <div class="lopt" onclick="learnLang('Telugu')">Telugu</div>
+    <div class="lopt" onclick="learnLang('Bengali')">Bengali</div>
+    <div class="lopt" onclick="learnLang('Marathi')">Marathi</div>
+    <div class="lopt" onclick="learnLang('Gujarati')">Gujarati</div>
+    <div class="lopt" onclick="learnLang('Punjabi')">Punjabi</div>
+    <div class="lopt" onclick="learnLang('Malayalam')">Malayalam</div>
+    <div class="lopt" onclick="learnLang('Odia')">Odia</div>
+    <div class="lopt" onclick="learnLang('Assamese')">Assamese</div>
+    <div class="lopt" onclick="learnLang('Urdu')">Urdu</div>
+    <div class="lopt" onclick="learnLang('Sanskrit')">Sanskrit</div>
+    <div class="lopt" onclick="learnLang('Nepali')">Nepali</div>
+    <div class="lopt" onclick="learnLang('Konkani')">Konkani</div>
+    <div class="lopt" onclick="learnLang('Maithili')">Maithili</div>
+    <div class="lopt" onclick="learnLang('Sindhi')">Sindhi</div>
+    <div class="lopt" onclick="learnLang('Dogri')">Dogri</div>
+    <div class="lopt" onclick="learnLang('Kashmiri')">Kashmiri</div>
+    <div class="lopt" onclick="learnLang('Manipuri')">Manipuri</div>
+    <div class="lopt" onclick="learnLang('Bodo')">Bodo</div>
+    <div class="lopt" onclick="learnLang('Santali')">Santali</div>
   </div>
-  <div class="lang-section-title">🌏 Asian Languages</div>
+  <div class="lang-section-title">Asian Languages</div>
   <div class="lgrid">
-    <div class="lopt" onclick="learnLang('Mandarin Chinese')">🇨🇳 Mandarin</div>
-    <div class="lopt" onclick="learnLang('Japanese')">🇯🇵 Japanese</div>
-    <div class="lopt" onclick="learnLang('Korean')">🇰🇷 Korean</div>
-    <div class="lopt" onclick="learnLang('Vietnamese')">🇻🇳 Vietnamese</div>
-    <div class="lopt" onclick="learnLang('Thai')">🇹🇭 Thai</div>
-    <div class="lopt" onclick="learnLang('Indonesian')">🇮🇩 Indonesian</div>
-    <div class="lopt" onclick="learnLang('Malay')">🇲🇾 Malay</div>
-    <div class="lopt" onclick="learnLang('Burmese')">🇲🇲 Burmese</div>
-    <div class="lopt" onclick="learnLang('Khmer')">🇰🇭 Khmer</div>
-    <div class="lopt" onclick="learnLang('Lao')">🇱🇦 Lao</div>
-    <div class="lopt" onclick="learnLang('Sinhala')">🇱🇰 Sinhala</div>
-    <div class="lopt" onclick="learnLang('Tibetan')">🏔 Tibetan</div>
-    <div class="lopt" onclick="learnLang('Mongolian')">🇲🇳 Mongolian</div>
-    <div class="lopt" onclick="learnLang('Tagalog')">🇵🇭 Tagalog</div>
-    <div class="lopt" onclick="learnLang('Cantonese')">🏮 Cantonese</div>
+    <div class="lopt" onclick="learnLang('Mandarin Chinese')">Mandarin</div>
+    <div class="lopt" onclick="learnLang('Japanese')">Japanese</div>
+    <div class="lopt" onclick="learnLang('Korean')">Korean</div>
+    <div class="lopt" onclick="learnLang('Vietnamese')">Vietnamese</div>
+    <div class="lopt" onclick="learnLang('Thai')">Thai</div>
+    <div class="lopt" onclick="learnLang('Indonesian')">Indonesian</div>
+    <div class="lopt" onclick="learnLang('Malay')">Malay</div>
+    <div class="lopt" onclick="learnLang('Burmese')">Burmese</div>
+    <div class="lopt" onclick="learnLang('Tagalog')">Tagalog</div>
   </div>
-  <div class="lang-section-title">🌍 Middle East & Africa</div>
+  <div class="lang-section-title">European Languages</div>
   <div class="lgrid">
-    <div class="lopt" onclick="learnLang('Arabic')">🌙 Arabic</div>
-    <div class="lopt" onclick="learnLang('Persian')">🇮🇷 Persian</div>
-    <div class="lopt" onclick="learnLang('Hebrew')">🇮🇱 Hebrew</div>
-    <div class="lopt" onclick="learnLang('Turkish')">🇹🇷 Turkish</div>
-    <div class="lopt" onclick="learnLang('Kurdish')">🌄 Kurdish</div>
-    <div class="lopt" onclick="learnLang('Swahili')">🌍 Swahili</div>
-    <div class="lopt" onclick="learnLang('Amharic')">🇪🇹 Amharic</div>
-    <div class="lopt" onclick="learnLang('Hausa')">🇳🇬 Hausa</div>
-    <div class="lopt" onclick="learnLang('Yoruba')">🥁 Yoruba</div>
-    <div class="lopt" onclick="learnLang('Igbo')">🦅 Igbo</div>
-    <div class="lopt" onclick="learnLang('Zulu')">🌿 Zulu</div>
-    <div class="lopt" onclick="learnLang('Afrikaans')">🇿🇦 Afrikaans</div>
-    <div class="lopt" onclick="learnLang('Somali')">🇸🇴 Somali</div>
-    <div class="lopt" onclick="learnLang('Pashto')">🇦🇫 Pashto</div>
-    <div class="lopt" onclick="learnLang('Azerbaijani')">🇦🇿 Azerbaijani</div>
+    <div class="lopt" onclick="learnLang('Spanish')">Spanish</div>
+    <div class="lopt" onclick="learnLang('French')">French</div>
+    <div class="lopt" onclick="learnLang('German')">German</div>
+    <div class="lopt" onclick="learnLang('Portuguese')">Portuguese</div>
+    <div class="lopt" onclick="learnLang('Russian')">Russian</div>
+    <div class="lopt" onclick="learnLang('Italian')">Italian</div>
+    <div class="lopt" onclick="learnLang('Dutch')">Dutch</div>
+    <div class="lopt" onclick="learnLang('Polish')">Polish</div>
+    <div class="lopt" onclick="learnLang('Greek')">Greek</div>
   </div>
-  <div class="lang-section-title">🌎 European Languages</div>
+  <div class="lang-section-title">Middle East and Africa</div>
   <div class="lgrid">
-    <div class="lopt" onclick="learnLang('Spanish')">🇪🇸 Spanish</div>
-    <div class="lopt" onclick="learnLang('French')">🇫🇷 French</div>
-    <div class="lopt" onclick="learnLang('German')">🇩🇪 German</div>
-    <div class="lopt" onclick="learnLang('Portuguese')">🇵🇹 Portuguese</div>
-    <div class="lopt" onclick="learnLang('Russian')">🇷🇺 Russian</div>
-    <div class="lopt" onclick="learnLang('Italian')">🇮🇹 Italian</div>
-    <div class="lopt" onclick="learnLang('Dutch')">🇳🇱 Dutch</div>
-    <div class="lopt" onclick="learnLang('Polish')">🇵🇱 Polish</div>
-    <div class="lopt" onclick="learnLang('Ukrainian')">🇺🇦 Ukrainian</div>
-    <div class="lopt" onclick="learnLang('Greek')">🇬🇷 Greek</div>
-    <div class="lopt" onclick="learnLang('Swedish')">🇸🇪 Swedish</div>
-    <div class="lopt" onclick="learnLang('Norwegian')">🇳🇴 Norwegian</div>
-    <div class="lopt" onclick="learnLang('Finnish')">🇫🇮 Finnish</div>
-    <div class="lopt" onclick="learnLang('Danish')">🇩🇰 Danish</div>
-    <div class="lopt" onclick="learnLang('Czech')">🇨🇿 Czech</div>
-    <div class="lopt" onclick="learnLang('Romanian')">🇷🇴 Romanian</div>
-    <div class="lopt" onclick="learnLang('Hungarian')">🇭🇺 Hungarian</div>
-    <div class="lopt" onclick="learnLang('Slovak')">🇸🇰 Slovak</div>
-    <div class="lopt" onclick="learnLang('Croatian')">🇭🇷 Croatian</div>
-    <div class="lopt" onclick="learnLang('Serbian')">🇷🇸 Serbian</div>
-    <div class="lopt" onclick="learnLang('Bulgarian')">🇧🇬 Bulgarian</div>
-    <div class="lopt" onclick="learnLang('Catalan')">🏴 Catalan</div>
-    <div class="lopt" onclick="learnLang('Welsh')">🏴 Welsh</div>
-    <div class="lopt" onclick="learnLang('Irish')">🇮🇪 Irish</div>
-    <div class="lopt" onclick="learnLang('Basque')">🌿 Basque</div>
-    <div class="lopt" onclick="learnLang('Latin')">🏛 Latin</div>
-    <div class="lopt" onclick="learnLang('Estonian')">🇪🇪 Estonian</div>
-    <div class="lopt" onclick="learnLang('Latvian')">🇱🇻 Latvian</div>
-    <div class="lopt" onclick="learnLang('Lithuanian')">🇱🇹 Lithuanian</div>
-    <div class="lopt" onclick="learnLang('Albanian')">🇦🇱 Albanian</div>
-  </div>
-  <div class="lang-section-title">🌐 Americas & Pacific</div>
-  <div class="lgrid">
-    <div class="lopt" onclick="learnLang('Nahuatl')">🌵 Nahuatl</div>
-    <div class="lopt" onclick="learnLang('Quechua')">🦙 Quechua</div>
-    <div class="lopt" onclick="learnLang('Hawaiian')">🌺 Hawaiian</div>
-    <div class="lopt" onclick="learnLang('Maori')">🇳🇿 Maori</div>
-    <div class="lopt" onclick="learnLang('Samoan')">🌊 Samoan</div>
-    <div class="lopt" onclick="learnLang('Guarani')">🌿 Guarani</div>
+    <div class="lopt" onclick="learnLang('Arabic')">Arabic</div>
+    <div class="lopt" onclick="learnLang('Persian')">Persian</div>
+    <div class="lopt" onclick="learnLang('Hebrew')">Hebrew</div>
+    <div class="lopt" onclick="learnLang('Turkish')">Turkish</div>
+    <div class="lopt" onclick="learnLang('Swahili')">Swahili</div>
+    <div class="lopt" onclick="learnLang('Amharic')">Amharic</div>
   </div>
   <button class="close-modal" onclick="closeModal('lang')">Close</button>
 </div>
-
-<!-- MEMORY MODAL -->
 <div class="overlay" id="movl" onclick="closeModal('mem')"></div>
 <div class="modal" id="memM">
-  <h3>🧠 QVIO Memory</h3>
+  <h3>QVIO Memory</h3>
   <p>QVIO remembers things about you to give better answers</p>
   <div id="memList"></div>
   <div class="mem-input-row">
@@ -296,18 +188,15 @@ code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
   </div>
   <button class="close-modal" onclick="closeModal('mem')" style="margin-top:12px;">Done</button>
 </div>
-
-<!-- SUPPORT MODAL -->
 <div class="overlay" id="sovl" onclick="closeModal('sup')"></div>
 <div class="modal" id="supM" style="text-align:center;">
-  <h3>❤️ Support QVIO</h3>
+  <h3>Support QVIO</h3>
   <p>Scan UPI QR to support development</p>
-  <img class="support-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=7019959745@fampay%26pn=QVIO%26cu=INR" alt="UPI QR">
-  <div class="upi-id">7019959745@fampay</div>
-  <div style="font-size:12px;color:var(--text3);margin-top:8px;">Any amount — ₹10, ₹50, ₹99 🙏</div>
+  <img class="support-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D7019959745%40fam%26pn%3DQVIO%26cu%3DINR" alt="UPI QR">
+  <div class="upi-id">7019959745@fam</div>
+  <div style="font-size:12px;color:var(--text3);margin-top:8px;">Any amount - Rs.10, Rs.50, Rs.99</div>
   <button class="close-modal" onclick="closeModal('sup')" style="margin-top:14px;">Close</button>
 </div>
-
 <header>
   <div class="logo">
     <div class="lmark">QV</div>
@@ -316,115 +205,105 @@ code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
   </div>
   <div class="hright">
     <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);"><span class="sdot"></span><span id="modeLabel">Casual</span></span>
-    <button class="hbtn" onclick="openModal('lang')">🌍 100+ Langs</button>
-    <button class="hbtn" onclick="openModal('mem')">🧠 Memory</button>
-    <button class="hbtn" onclick="openModal('sup')">❤️ Support</button>
-    <button class="hbtn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button class="hbtn" onclick="openModal('lang')">100+ Langs</button>
+    <button class="hbtn" onclick="openModal('mem')">Memory</button>
+    <button class="hbtn" onclick="openModal('sup')">Support</button>
+    <button class="hbtn" id="themeBtn" onclick="toggleTheme()">Dark</button>
     <button class="hbtn" onclick="clearChat()">Clear</button>
   </div>
 </header>
-
 <div class="memory-bar" id="memBar"></div>
-
 <div class="modes">
-  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
-  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
-  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
-  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
-  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
-  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
-  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
-  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
-  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
-  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
-  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
-  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
+  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">Casual</button>
+  <button class="mbtn" onclick="setMode('student',this,'Student')">Student</button>
+  <button class="mbtn" onclick="setMode('pro',this,'Pro')">Pro</button>
+  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">Spiritual</button>
+  <button class="mbtn" onclick="setMode('code',this,'Code')">Code</button>
+  <button class="mbtn" onclick="setMode('math',this,'Math')">Math</button>
+  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">Hindi</button>
+  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">Kannada</button>
+  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">Quiz</button>
+  <button class="mbtn" onclick="setMode('translate',this,'Translate')">Translate</button>
+  <button class="mbtn" onclick="setMode('write',this,'Write')">Write</button>
+  <button class="mbtn" onclick="setMode('news',this,'News')">News</button>
 </div>
-
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
     <div class="wicon">QV</div>
-    <h1>Hello, I'm <span>QVIO</span> 👋</h1>
-    <p>The world's most multilingual AI — 100+ languages, faster than ChatGPT, built for India and the world.</p>
+    <h1>Hello, I am <span>QVIO</span></h1>
+    <p>The world most multilingual AI. 100+ languages, faster than ChatGPT, built for India and the world.</p>
     <div class="mbanner" id="memBanner"></div>
     <div class="sugs">
-      <div class="sug" onclick="send('Explain quantum physics in simple words')"><span class="sug-i">⚡</span>Explain quantum physics simply</div>
-      <div class="sug" onclick="send('create image: futuristic Bangalore skyline at night')"><span class="sug-i">🎨</span>Generate an AI image</div>
-      <div class="sug" onclick="send('Teach me basic Japanese from scratch')"><span class="sug-i">🇯🇵</span>Learn a new language</div>
-      <div class="sug" onclick="send('Help me write a business plan for my AI startup')"><span class="sug-i">💼</span>Write a business plan</div>
-      <div class="sug" onclick="send('Solve: If x² + 5x + 6 = 0, find x')"><span class="sug-i">🔢</span>Solve a math problem</div>
-      <div class="sug" onclick="send('Write a Python web scraper')"><span class="sug-i">💻</span>Help me with code</div>
+      <div class="sug" onclick="send('Explain quantum physics in simple words')"><span class="sug-i">Flash</span>Explain quantum physics simply</div>
+      <div class="sug" onclick="send('create image: futuristic Bangalore skyline at night')"><span class="sug-i">Art</span>Generate an AI image</div>
+      <div class="sug" onclick="send('Teach me basic Japanese from scratch')"><span class="sug-i">Lang</span>Learn a new language</div>
+      <div class="sug" onclick="send('Help me write a business plan for my AI startup')"><span class="sug-i">Plan</span>Write a business plan</div>
+      <div class="sug" onclick="send('Solve this math problem step by step')"><span class="sug-i">Math</span>Solve a math problem</div>
+      <div class="sug" onclick="send('Write a Python web scraper')"><span class="sug-i">Code</span>Help me with code</div>
     </div>
   </div>
 </div>
-
 <div class="input-area">
   <div class="input-box">
-    <textarea id="inp" placeholder="Ask anything... type 'create image:' to generate images" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <textarea id="inp" placeholder="Ask anything... type create image: to generate images" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
     <div class="ibtns">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
-      <button class="sendbtn" id="sendBtn" onclick="sendMessage()">Send ↑</button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">Mic</button>
+      <button class="sendbtn" id="sendBtn" onclick="sendMessage()">Send</button>
     </div>
   </div>
   <div class="qrs">
-    <div class="qr" onclick="send('Surprise me with something amazing')">✨ Surprise</div>
-    <div class="qr" onclick="send('Help me study for my exam')">📚 Study</div>
-    <div class="qr" onclick="send('Tell me a joke')">😂 Joke</div>
-    <div class="qr" onclick="send('Motivate me right now')">💪 Motivate</div>
-    <div class="qr" onclick="send('What is happening in the world today?')">🌍 News</div>
-    <div class="qr" onclick="send('What can you do?')">❓ Help</div>
+    <div class="qr" onclick="send('Surprise me with something amazing')">Surprise</div>
+    <div class="qr" onclick="send('Help me study for my exam')">Study</div>
+    <div class="qr" onclick="send('Tell me a joke')">Joke</div>
+    <div class="qr" onclick="send('Motivate me right now')">Motivate</div>
+    <div class="qr" onclick="send('What is happening in the world today?')">News</div>
+    <div class="qr" onclick="send('What can you do?')">Help</div>
   </div>
 </div>
-
 <script>
-const GROQ_KEY = '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';
-const MODEL = 'llama-3.3-70b-versatile';
+var GROQ_KEY = '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';
+var MODEL = 'llama-3.3-70b-versatile';
+var mode = 'casual';
+var isRec = false;
+var recog = null;
+var chatHistory = [];
+var memory = {};
 
-let mode = 'casual';
-let isRec = false;
-let recog = null;
-let history = [];
-let memory = {};
-// memory = { name: 'Varun', facts: ['from Bangalore', 'studying for boards'] }
-
-const prompts = {
-  casual: `You are QVIO, a friendly, smart AI assistant for everyone in India and the world. Be warm, helpful, conversational. Always respond in the same language the user writes in. You support 100+ languages natively. If you know the user's name from memory context, use it naturally.`,
-  student: `You are QVIO in Student Mode — the ultimate study assistant. Explain any topic simply. Solve math step by step. Create summaries, flashcards, mnemonics. Support all Indian languages. Be encouraging.`,
-  pro: `You are QVIO in Professional Mode. Give precise, strategic, actionable advice. Help with business plans, emails, reports, presentations, negotiations. Be formal, concise, data-driven.`,
-  spiritual: `You are QVIO in Spiritual Mode with deep knowledge of ALL world religions — Hindu, Islam, Christianity, Buddhism, Jainism, Sikhism, Judaism, Taoism, Zoroastrianism and all faiths. Be respectful, neutral, and wise. Share teachings from multiple traditions.`,
-  code: `You are QVIO in Code Mode — an elite programmer. Write clean, efficient, well-commented code. Debug errors. Explain concepts. Support all programming languages. Always format code in code blocks.`,
-  math: `You are QVIO in Math Mode — a brilliant mathematician. Solve any math problem step by step. Show all working. Explain concepts clearly. Support algebra, calculus, statistics, geometry, number theory.`,
-  hindi: `Aap QVIO hain — ek smart aur helpful AI assistant. HAMESHA Hindi mein jawaab dein. Hinglish bhi chalega. Warm aur friendly rahein. User ke saath baat karein jaise ek dost.`,
-  kannada: `Neevu QVIO — ek smart AI assistant. YAVAAGALU Kannada matte English mix maadi maatanaadi. Warm mattu helpful aagi iri. Kelumegala uttarisuvaga vistaravagi heliri.`,
-  quiz: `You are QVIO in Quiz Mode — a fun, engaging quiz master! Ask ONE question at a time with 4 options (A, B, C, D). After the user answers, reveal if correct with a fun explanation. Keep a running score. Adjust difficulty based on performance. Make it exciting!`,
-  translate: `You are QVIO in Translation Mode — the world's best multilingual translator. Translate accurately between 100+ languages especially all Indian languages. Show the translation clearly, then provide pronunciation guide and cultural context when useful.`,
-  write: `You are QVIO in Writing Mode — a world-class writer and editor. Help write essays, stories, poems, emails, scripts, social media posts, and any content. Match the tone requested. Give feedback on writing. Support all languages.`,
-  news: `You are QVIO in News Mode. Summarize current events, explain news stories in simple language, provide balanced perspectives on topics. Note your knowledge cutoff and encourage verification of very recent news.`
+var prompts = {
+  casual: 'You are QVIO, a friendly smart AI for everyone in India and the world. Be warm, helpful, conversational. Always respond in the same language the user writes in. Support 100+ languages natively.',
+  student: 'You are QVIO Student Mode. Explain any topic simply. Solve math step by step. Create summaries and flashcards. Support all Indian languages. Be encouraging.',
+  pro: 'You are QVIO Professional Mode. Give precise strategic actionable advice. Help with business plans, emails, reports. Be formal and concise.',
+  spiritual: 'You are QVIO Spiritual Mode with deep knowledge of ALL world religions. Hindu, Islam, Christianity, Buddhism, Jainism, Sikhism and all faiths. Be respectful and neutral.',
+  code: 'You are QVIO Code Mode. Write clean efficient code. Debug errors. Explain concepts. Support all programming languages. Always format code in code blocks.',
+  math: 'You are QVIO Math Mode. Solve any math problem step by step. Show all working. Support algebra, calculus, statistics and geometry.',
+  hindi: 'Aap QVIO hain. HAMESHA Hindi mein jawaab dein. Hinglish bhi chalega. Warm aur friendly rahein.',
+  kannada: 'Neevu QVIO. YAVAAGALU Kannada matte English mix maadi maatanaadi. Warm mattu helpful aagi iri.',
+  quiz: 'You are QVIO Quiz Master. Ask ONE question at a time with 4 options A B C D. After user answers reveal if correct with explanation. Keep running score.',
+  translate: 'You are QVIO Translator. Translate accurately between 100+ languages especially all Indian languages. Show translation clearly with pronunciation guide.',
+  write: 'You are QVIO Writing Mode. Help write essays, stories, poems, emails, scripts. Match the tone requested. Support all languages.',
+  news: 'You are QVIO News Mode. Summarize current events, explain news in simple language, provide balanced perspectives.'
 };
 
-function getMemoryContext() {
-  const facts = memory.facts || [];
-  const name = memory.name || '';
+function getMemCtx() {
+  var facts = memory.facts || [];
+  var name = memory.name || '';
   if (!facts.length && !name) return '';
-  let ctx = '
-
-[MEMORY about this user: ';
-  if (name) ctx += `Name: ${name}. `;
+  var ctx = '\n\n[USER MEMORY: ';
+  if (name) ctx += 'Name is ' + name + '. ';
   if (facts.length) ctx += facts.join('. ');
-  ctx += ']';
-  return ctx;
+  return ctx + ']';
 }
 
-function updateMemoryUI() {
-  const bar = document.getElementById('memBar');
-  const banner = document.getElementById('memBanner');
-  const name = memory.name || '';
-  const facts = memory.facts || [];
+function updateMemUI() {
+  var bar = document.getElementById('memBar');
+  var banner = document.getElementById('memBanner');
+  var name = memory.name || '';
+  var facts = memory.facts || [];
   if (name || facts.length > 0) {
-    const txt = name ? `Hi ${name}! I remember ${facts.length} thing${facts.length !== 1 ? 's' : ''} about you.` : `I remember ${facts.length} thing${facts.length !== 1 ? 's' : ''} about you.`;
-    bar.textContent = '🧠 ' + txt;
+    var txt = name ? 'Hi ' + name + '! Memory active.' : 'Memory active with ' + facts.length + ' facts.';
+    bar.textContent = txt;
     bar.classList.add('show');
-    if (banner) { banner.textContent = '🧠 ' + txt; banner.classList.add('show'); }
+    if (banner) { banner.textContent = txt; banner.classList.add('show'); }
   } else {
     bar.classList.remove('show');
     if (banner) banner.classList.remove('show');
@@ -432,93 +311,73 @@ function updateMemoryUI() {
 }
 
 function renderMemList() {
-  const el = document.getElementById('memList');
-  const facts = memory.facts || [];
-  const name = memory.name || '';
-  let html = '';
-  if (name) {
-    html += `<div class="mem-fact">👤 Name: <strong>${name}</strong><button class="mem-del" onclick="delMem('name')">✕</button></div>`;
-  }
-  if (facts.length === 0 && !name) {
-    html = '<div class="mem-empty">No memories yet. Chat with QVIO and it will learn about you!</div>';
-  }
-  facts.forEach((f, i) => {
-    html += `<div class="mem-fact">💭 ${f}<button class="mem-del" onclick="delMem(${i})">✕</button></div>`;
-  });
+  var el = document.getElementById('memList');
+  var facts = memory.facts || [];
+  var name = memory.name || '';
+  var html = '';
+  if (name) html += '<div class="mem-fact">Name: ' + name + '<button class="mem-del" onclick="delMem(\'name\')">X</button></div>';
+  if (!facts.length && !name) html = '<div class="mem-empty">No memories yet.</div>';
+  facts.forEach(function(f, i) { html += '<div class="mem-fact">' + f + '<button class="mem-del" onclick="delMem(' + i + ')">X</button></div>'; });
   el.innerHTML = html;
 }
 
 function addMemFact() {
-  const val = document.getElementById('memInput').value.trim();
+  var val = document.getElementById('memInput').value.trim();
   if (!val) return;
   if (!memory.facts) memory.facts = [];
   memory.facts.push(val);
   document.getElementById('memInput').value = '';
   renderMemList();
-  updateMemoryUI();
+  updateMemUI();
 }
 
 function delMem(key) {
-  if (key === 'name') {
-    delete memory.name;
-  } else {
-    memory.facts.splice(key, 1);
-  }
+  if (key === 'name') { delete memory.name; } else { memory.facts.splice(key, 1); }
   renderMemList();
-  updateMemoryUI();
+  updateMemUI();
 }
 
-function extractMemory(text, response) {
-  const namePat = /my name is ([A-Z][a-z]+)/i;
-  const nm = text.match(namePat);
-  if (nm && !memory.name) {
-    memory.name = nm[1];
-    updateMemoryUI();
-  }
+function extractMem(text) {
+  var nm = text.match(/my name is ([A-Za-z]+)/i);
+  if (nm && !memory.name) { memory.name = nm[1]; updateMemUI(); }
 }
 
 function setMode(m, btn, label) {
   mode = m;
-  document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.mbtn').forEach(function(b) { b.classList.remove('on'); });
   btn.classList.add('on');
   document.getElementById('modeLabel').textContent = label;
 }
 
 function openModal(type) {
-  const map = { lang: ['lovl','langM'], mem: ['movl','memM'], sup: ['sovl','supM'] };
+  var map = { lang: ['lovl','langM'], mem: ['movl','memM'], sup: ['sovl','supM'] };
   document.getElementById(map[type][0]).classList.add('show');
   document.getElementById(map[type][1]).classList.add('show');
   if (type === 'mem') renderMemList();
 }
 
 function closeModal(type) {
-  const map = { lang: ['lovl','langM'], mem: ['movl','memM'], sup: ['sovl','supM'] };
+  var map = { lang: ['lovl','langM'], mem: ['movl','memM'], sup: ['sovl','supM'] };
   document.getElementById(map[type][0]).classList.remove('show');
   document.getElementById(map[type][1]).classList.remove('show');
 }
 
 function learnLang(lang) {
   closeModal('lang');
-  document.getElementById('inp').value = `I want to learn ${lang}. Start from the very basics — tell me about the language, how it sounds, then teach me the 10 most essential beginner phrases with pronunciation.`;
+  document.getElementById('inp').value = 'I want to learn ' + lang + '. Start from basics and teach me the 10 most essential beginner phrases with pronunciation.';
   sendMessage();
 }
 
 function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
+  var html = document.documentElement;
+  var isDark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
-
+  document.getElementById('themeBtn').textContent = isDark ? 'Dark' : 'Light';
 }
 
 function clearChat() {
-  document.getElementById('chat').innerHTML = `
-    <div class="welcome" id="welcome">
-      <div class="wicon">QV</div>
-      <h1>Chat cleared!</h1>
-      <p>Ready for a new conversation. What would you like to explore?</p>
-    </div>`;
-  history = [];
+  document.getElementById('chat').innerHTML = '<div class="welcome" id="welcome"><div class="wicon">QV</div><h1>Chat cleared!</h1><p>Ready for a new conversation!</p></div>';
+  chatHistory = [];
 }
 
 function autoResize(el) {
@@ -531,7 +390,7 @@ function handleKey(e) {
 }
 
 function hideWelcome() {
-  const w = document.getElementById('welcome');
+  var w = document.getElementById('welcome');
   if (w) w.remove();
 }
 
@@ -541,176 +400,206 @@ function getTime() {
 
 function renderText(t) {
   return t
-    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+    .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/^### (.*)/gm, '<h4 style="font-size:14px;font-weight:600;margin:8px 0 4px;">$1</h4>')
-    .replace(/^## (.*)/gm, '<h3 style="font-size:15px;font-weight:600;margin:10px 0 4px;">$1</h3>')
-    .replace(/^# (.*)/gm, '<h2 style="font-size:16px;font-weight:600;margin:10px 0 4px;">$1</h2>')
-    .replace(/^- (.*)/gm, '<div style="padding-left:14px;margin:2px 0;">• $1</div>')
-    .replace(/^(\d+)\. (.*)/gm, '<div style="padding-left:14px;margin:2px 0;">$1. $2</div>')
     .replace(/\n/g, '<br>');
 }
 
-function addMsg(content, role, isImg = false) {
+function addMsg(content, role, isImg) {
   hideWelcome();
-  const c = document.getElementById('chat');
-  const div = document.createElement('div');
+  var c = document.getElementById('chat');
+  var div = document.createElement('div');
   div.className = 'msg ' + role;
-
-  const av = document.createElement('div');
+  var av = document.createElement('div');
   av.className = 'av ' + (role === 'ai' ? 'ai' : 'usr');
   av.textContent = role === 'ai' ? 'QV' : 'You';
-
-  const wrap = document.createElement('div');
+  var wrap = document.createElement('div');
   wrap.className = 'mwrap';
-
-  const bub = document.createElement('div');
+  var bub = document.createElement('div');
   bub.className = 'bubble';
-
   if (isImg) {
-    const img = document.createElement('img');
-    img.src = content; img.className = 'gen-img'; img.alt = 'QVIO Generated Image';
-    img.onerror = () => { bub.innerHTML = '⚠️ Image generation failed. Try again!'; };
+    var img = document.createElement('img');
+    img.src = content;
+    img.className = 'gen-img';
+    img.alt = 'QVIO Image';
+    img.onerror = function() { bub.innerHTML = 'Image failed. Try again!'; };
     bub.appendChild(img);
-    const dl = document.createElement('a');
-    dl.href = content; dl.download = 'qvio.jpg'; dl.className = 'img-dl';
-    dl.innerHTML = '⬇ Download Image'; bub.appendChild(dl);
+    var dl = document.createElement('a');
+    dl.href = content;
+    dl.download = 'qvio.jpg';
+    dl.className = 'img-dl';
+    dl.textContent = 'Download';
+    bub.appendChild(dl);
+    wrap.appendChild(bub);
   } else {
     bub.innerHTML = renderText(content);
     if (role === 'ai') {
-      const cb = document.createElement('button');
-      cb.className = 'cpbtn'; cb.textContent = 'Copy';
-      cb.onclick = () => { navigator.clipboard.writeText(content); cb.textContent = '✓ Copied'; setTimeout(() => cb.textContent = 'Copy', 2000); };
+      var cb = document.createElement('button');
+      cb.className = 'cpbtn';
+      cb.textContent = 'Copy';
+      cb.onclick = function() { navigator.clipboard.writeText(content); cb.textContent = 'Copied!'; setTimeout(function() { cb.textContent = 'Copy'; }, 2000); };
       bub.appendChild(cb);
-      const actions = document.createElement('div');
+      var actions = document.createElement('div');
       actions.className = 'msg-actions';
-      const speakBtn = document.createElement('button');
-      speakBtn.className = 'spbtn'; speakBtn.title = 'Read aloud'; speakBtn.textContent = '🔊';
-      speakBtn.onclick = () => speakText(content, speakBtn);
-      actions.appendChild(speakBtn);
-      wrap.appendChild(bub); wrap.appendChild(actions);
+      var spk = document.createElement('button');
+      spk.className = 'spbtn';
+      spk.textContent = 'Speak';
+      spk.onclick = function() { speakText(content, spk); };
+      actions.appendChild(spk);
+      wrap.appendChild(bub);
+      wrap.appendChild(actions);
     } else {
       wrap.appendChild(bub);
     }
   }
-
-  const ts = document.createElement('div');
-  ts.className = 'ts'; ts.textContent = getTime();
+  var ts = document.createElement('div');
+  ts.className = 'ts';
+  ts.textContent = getTime();
   wrap.appendChild(ts);
-
-  div.appendChild(av); div.appendChild(wrap);
+  div.appendChild(av);
+  div.appendChild(wrap);
   c.appendChild(div);
   c.scrollTop = c.scrollHeight;
 }
 
-let currentUtterance = null;
+var curUtter = null;
 function speakText(text, btn) {
-  if (currentUtterance && window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel();
-    btn.textContent = '🔊'; currentUtterance = null; return;
+  if (curUtter && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel(); btn.textContent = 'Speak'; curUtter = null; return;
   }
-  const clean = text.replace(/<[^>]*>/g, '').replace(/```[\s\S]*?```/g, '').substring(0, 800);
-  const u = new SpeechSynthesisUtterance(clean);
-  u.rate = 1; u.pitch = 1;
-  u.onstart = () => btn.textContent = '⏹';
-  u.onend = u.onerror = () => { btn.textContent = '🔊'; currentUtterance = null; };
-  currentUtterance = u;
+  var clean = text.replace(/<[^>]*>/g, '').substring(0, 800);
+  var u = new SpeechSynthesisUtterance(clean);
+  u.onstart = function() { btn.textContent = 'Stop'; };
+  u.onend = u.onerror = function() { btn.textContent = 'Speak'; curUtter = null; };
+  curUtter = u;
   window.speechSynthesis.speak(u);
 }
 
 function showTyping() {
   hideWelcome();
-  const c = document.getElementById('chat');
-  const d = document.createElement('div');
-  d.className = 'typing-wrap'; d.id = 'typer';
-  const av = document.createElement('div');
-  av.className = 'av ai'; av.textContent = 'QV';
-  const t = document.createElement('div');
-  t.className = 'typing'; t.innerHTML = '<span></span><span></span><span></span>';
-  d.appendChild(av); d.appendChild(t);
-  c.appendChild(d); c.scrollTop = c.scrollHeight;
+  var c = document.getElementById('chat');
+  var d = document.createElement('div');
+  d.className = 'typing-wrap';
+  d.id = 'typer';
+  var av = document.createElement('div');
+  av.className = 'av ai';
+  av.textContent = 'QV';
+  var t = document.createElement('div');
+  t.className = 'typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  d.appendChild(av);
+  d.appendChild(t);
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
 }
 
 function hideTyping() {
-  const t = document.getElementById('typer'); if (t) t.remove();
+  var t = document.getElementById('typer');
+  if (t) t.remove();
 }
 
 async function sendMessage() {
   try {
-  const inp = document.getElementById('inp');
-  const text = inp.value.trim();
-  if (!text) return;
-  inp.value = ''; inp.style.height = 'auto';
-  document.getElementById('sendBtn').disabled = true;
-  addMsg(text, 'user');
-  history.push({ role: 'user', content: text });
-  extractMemory(text, '');
+    var inp = document.getElementById('inp');
+    var text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    inp.style.height = 'auto';
+    document.getElementById('sendBtn').disabled = true;
+    addMsg(text, 'user');
+    chatHistory.push({ role: 'user', content: text });
+    extractMem(text);
 
-  if (/^(create image|image|draw|generate image|make image):/i.test(text)) {
-    const prompt = text.replace(/^[^:]+:/i, '').trim();
+    if (/^(create image|image|draw|generate image|make image):/i.test(text)) {
+      var imgPrompt = text.replace(/^[^:]+:/i, '').trim();
+      showTyping();
+      setTimeout(function() {
+        hideTyping();
+        var url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(imgPrompt + ', high quality, 4k, detailed') + '?width=512&height=512&nologo=true&seed=' + Date.now();
+        addMsg(url, 'ai', true);
+        document.getElementById('sendBtn').disabled = false;
+      }, 1800);
+      return;
+    }
+
     showTyping();
-    setTimeout(() => {
+    try {
+      var reply = await callGroq(text);
       hideTyping();
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', high quality, 4k, detailed, beautiful')}?width=512&height=512&nologo=true&seed=${Date.now()}`;
-      addMsg(url, 'ai', true);
-      document.getElementById('sendBtn').disabled = false;
-    }, 1800);
-    return;
+      addMsg(reply, 'ai');
+      chatHistory.push({ role: 'assistant', content: reply });
+      if (chatHistory.length > 24) chatHistory = chatHistory.slice(-24);
+    } catch(e) {
+      hideTyping();
+      addMsg('Error: ' + e.message + '. Please try again!', 'ai');
+    }
+    document.getElementById('sendBtn').disabled = false;
+  } catch(err) {
+    console.error('QVIO Error:', err);
+    document.getElementById('sendBtn').disabled = false;
   }
-
-  showTyping();
-  try {
-    const reply = await callGroq(text);
-    hideTyping();
-    addMsg(reply, 'ai');
-    history.push({ role: 'assistant', content: reply });
-    if (history.length > 24) history = history.slice(-24);
-  } catch (e) {
-    hideTyping();
-    addMsg('⚠️ Something went wrong: ' + e.message + '. Please try again!', 'ai');
-  }
-  document.getElementById('sendBtn').disabled = false;
-  } catch(err) { console.error('QVIO Error:', err); document.getElementById('sendBtn').disabled = false; }
 }
 
 async function callGroq(msg) {
-  const sysPrompt = prompts[mode] + getMemoryContext();
-  const msgs = [
-    { role: 'system', content: sysPrompt },
-    ...history.slice(-14, -1).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
-    { role: 'user', content: msg }
-  ];
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
-    body: JSON.stringify({ model: MODEL, messages: msgs, temperature: 0.8, max_tokens: 2000 })
+  var sysPrompt = prompts[mode] + getMemCtx();
+  var msgs = [{ role: 'system', content: sysPrompt }];
+  chatHistory.slice(-12, -1).forEach(function(m) {
+    msgs.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content });
   });
-  const data = await res.json();
+  msgs.push({ role: 'user', content: msg });
+
+  var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + GROQ_KEY
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: msgs,
+      temperature: 0.8,
+      max_tokens: 2000
+    })
+  });
+  var data = await res.json();
   if (data.error) throw new Error(data.error.message);
   return data.choices[0].message.content;
 }
 
-function send(text) { document.getElementById('inp').value = text; sendMessage(); }
+function send(text) {
+  document.getElementById('inp').value = text;
+  sendMessage();
+}
 
 function toggleMic() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { addMsg('Voice input requires Chrome browser!', 'ai'); return; }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { addMsg('Voice input requires Chrome!', 'ai'); return; }
   if (isRec) { recog.stop(); return; }
   recog = new SR();
-  recog.continuous = false; recog.interimResults = false; recog.lang = 'en-IN';
-  recog.onstart = () => { isRec = true; document.getElementById('micBtn').classList.add('rec'); document.getElementById('micBtn').textContent = '⏹'; };
-  recog.onresult = (e) => { document.getElementById('inp').value = e.results[0][0].transcript; autoResize(document.getElementById('inp')); };
-  recog.onerror = recog.onend = () => { isRec = false; document.getElementById('micBtn').classList.remove('rec'); document.getElementById('micBtn').textContent = '🎤'; };
+  recog.continuous = false;
+  recog.interimResults = false;
+  recog.lang = 'en-IN';
+  recog.onstart = function() {
+    isRec = true;
+    document.getElementById('micBtn').classList.add('rec');
+    document.getElementById('micBtn').textContent = 'Stop';
+  };
+  recog.onresult = function(e) {
+    document.getElementById('inp').value = e.results[0][0].transcript;
+    autoResize(document.getElementById('inp'));
+  };
+  recog.onerror = recog.onend = function() {
+    isRec = false;
+    document.getElementById('micBtn').classList.remove('rec');
+    document.getElementById('micBtn').textContent = 'Mic';
+  };
   recog.start();
 }
 
-// Load saved theme
-
-
-updateMemoryUI();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+updateMemUI();
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
 </script>
 </body>
 </html>
