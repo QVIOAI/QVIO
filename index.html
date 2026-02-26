@@ -6,6 +6,9 @@
 <title>QVIO — AI for Every Human</title>
 <meta name="description" content="QVIO - World's most multilingual AI. Faster than ChatGPT.">
 <meta name="theme-color" content="#ffffff">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<!-- QVIO v3.0 -->
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -381,7 +384,7 @@ let mode = 'casual';
 let isRec = false;
 let recog = null;
 let history = [];
-let memory = JSON.parse(localStorage.getItem('qvio_memory') || '{}');
+let memory = {};
 // memory = { name: 'Varun', facts: ['from Bangalore', 'studying for boards'] }
 
 const prompts = {
@@ -450,7 +453,6 @@ function addMemFact() {
   if (!val) return;
   if (!memory.facts) memory.facts = [];
   memory.facts.push(val);
-  localStorage.setItem('qvio_memory', JSON.stringify(memory));
   document.getElementById('memInput').value = '';
   renderMemList();
   updateMemoryUI();
@@ -462,7 +464,6 @@ function delMem(key) {
   } else {
     memory.facts.splice(key, 1);
   }
-  localStorage.setItem('qvio_memory', JSON.stringify(memory));
   renderMemList();
   updateMemoryUI();
 }
@@ -472,7 +473,6 @@ function extractMemory(text, response) {
   const nm = text.match(namePat);
   if (nm && !memory.name) {
     memory.name = nm[1];
-    localStorage.setItem('qvio_memory', JSON.stringify(memory));
     updateMemoryUI();
   }
 }
@@ -508,7 +508,7 @@ function toggleTheme() {
   const isDark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
-  localStorage.setItem('qvio_theme', isDark ? 'light' : 'dark');
+
 }
 
 function clearChat() {
@@ -638,6 +638,7 @@ function hideTyping() {
 }
 
 async function sendMessage() {
+  try {
   const inp = document.getElementById('inp');
   const text = inp.value.trim();
   if (!text) return;
@@ -671,6 +672,7 @@ async function sendMessage() {
     addMsg('⚠️ Something went wrong: ' + e.message + '. Please try again!', 'ai');
   }
   document.getElementById('sendBtn').disabled = false;
+  } catch(err) { console.error('QVIO Error:', err); document.getElementById('sendBtn').disabled = false; }
 }
 
 async function callGroq(msg) {
@@ -705,9 +707,7 @@ function toggleMic() {
 }
 
 // Load saved theme
-const savedTheme = localStorage.getItem('qvio_theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
-document.getElementById('themeBtn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
 
 updateMemoryUI();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
