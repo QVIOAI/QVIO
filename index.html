@@ -198,9 +198,9 @@ code{color:var(--accent);font-family:"DM Mono",monospace;font-size:12.5px;}
 <div class="modal" id="supM" style="text-align:center;">
   <h3>❤️ Support QVIO</h3>
   <p>Scan UPI QR to support development</p>
-  <img class="support-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D7019959745%40fampay%26pn%3DQVIO%26cu%3DINR" alt="UPI QR">
-  <div class="upi-id">7019959745@fampay</div>
-  <div style="font-size:12px;color:var(--text3);margin-top:8px;">Any amount - Rs.10, Rs.50, Rs.99 🙏</div>
+  <img class="support-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D7019959745%40fam%26pn%3DQVIO%26cu%3DINR" alt="UPI QR">
+  <div class="upi-id">7019959745@fam</div>
+  <div style="font-size:12px;color:var(--text3);margin-top:8px;">Any amount — Rs.10, Rs.50, Rs.99 🙏</div>
   <button class="close-modal" onclick="closeModal('sup')" style="margin-top:14px;">Close</button>
 </div>
 <header>
@@ -522,7 +522,29 @@ async function sendMessage() {
       if (chatHistory.length > 24) chatHistory = chatHistory.slice(-24);
     } catch(e) {
       hideTyping();
-      addMsg('Error: ' + e.message + '. Please try again!', 'ai');
+      var em = e.message || '';
+      if (em.indexOf('rate') !== -1 || em.indexOf('limit') !== -1 || em.indexOf('429') !== -1) {
+        var waitSec = 30;
+        var secMatch = em.match(/(\d+(?:\.\d+)?)s/);
+        if (secMatch) waitSec = Math.ceil(parseFloat(secMatch[1]));
+        var timerId = 'timer_' + Date.now();
+        addMsg('<span id="' + timerId + '">QVIO is busy — please wait <strong>' + waitSec + 's</strong> before trying again.</span>', 'ai');
+        var countdown = waitSec;
+        var interval = setInterval(function() {
+          countdown--;
+          var el = document.getElementById(timerId);
+          if (countdown <= 0) {
+            clearInterval(interval);
+            if (el) el.innerHTML = 'Ready! You can send your message now.';
+          } else {
+            if (el) el.innerHTML = 'QVIO is busy — please wait <strong>' + countdown + 's</strong> before trying again.';
+          }
+        }, 1000);
+      } else if (em.indexOf('network') !== -1 || em.indexOf('Failed') !== -1) {
+        addMsg('Please check your internet connection and try again.', 'ai');
+      } else {
+        addMsg('Something went wrong. Please try again in a moment.', 'ai');
+      }
     }
     document.getElementById('sendBtn').disabled = false;
   } catch(err) {
