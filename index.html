@@ -307,7 +307,8 @@ code { color: var(--accent); font-family: 'DM Mono', monospace; }
 .lang-panel.show, .lang-overlay.show { display: block; }
 .lang-panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
 .lang-panel p { font-size: 13px; color: var(--text3); margin-bottom: 16px; }
-.lang-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 16px; }
+.lang-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 8px; }
+.lang-panel { max-height: 80vh; overflow-y: auto; }
 .lang-option {
   padding: 10px 8px; background: var(--bg2); border: 1px solid var(--border);
   color: var(--text2); cursor: pointer; text-align: center; font-size: 12px;
@@ -327,7 +328,8 @@ code { color: var(--accent); font-family: 'DM Mono', monospace; }
 <div class="lang-overlay" id="langOverlay" onclick="closeLangPanel()"></div>
 <div class="lang-panel" id="langPanel">
   <h3>Language Learning</h3>
-  <p>Choose a language to start learning</p>
+  <p>Choose from 50 languages — all Indian languages + world languages</p>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🇮🇳 Indian Languages</div>
   <div class="lang-grid">
     <div class="lang-option" onclick="learnLang('Hindi')">🇮🇳 Hindi</div>
     <div class="lang-option" onclick="learnLang('Kannada')">🌟 Kannada</div>
@@ -335,12 +337,53 @@ code { color: var(--accent); font-family: 'DM Mono', monospace; }
     <div class="lang-option" onclick="learnLang('Telugu')">🎭 Telugu</div>
     <div class="lang-option" onclick="learnLang('Bengali')">🐯 Bengali</div>
     <div class="lang-option" onclick="learnLang('Marathi')">🏔️ Marathi</div>
+    <div class="lang-option" onclick="learnLang('Gujarati')">🦁 Gujarati</div>
+    <div class="lang-option" onclick="learnLang('Punjabi')">🌾 Punjabi</div>
+    <div class="lang-option" onclick="learnLang('Malayalam')">🌴 Malayalam</div>
+    <div class="lang-option" onclick="learnLang('Odia')">🎨 Odia</div>
+    <div class="lang-option" onclick="learnLang('Assamese')">🦏 Assamese</div>
+    <div class="lang-option" onclick="learnLang('Urdu')">🌹 Urdu</div>
+    <div class="lang-option" onclick="learnLang('Sanskrit')">📜 Sanskrit</div>
+    <div class="lang-option" onclick="learnLang('Nepali')">🏔️ Nepali</div>
+    <div class="lang-option" onclick="learnLang('Konkani')">🐚 Konkani</div>
+    <div class="lang-option" onclick="learnLang('Maithili')">🎋 Maithili</div>
+    <div class="lang-option" onclick="learnLang('Sindhi')">🌊 Sindhi</div>
+    <div class="lang-option" onclick="learnLang('Dogri')">🦅 Dogri</div>
+    <div class="lang-option" onclick="learnLang('Kashmiri')">❄️ Kashmiri</div>
+    <div class="lang-option" onclick="learnLang('Manipuri')">🎭 Manipuri</div>
+    <div class="lang-option" onclick="learnLang('Bodo')">🌿 Bodo</div>
+    <div class="lang-option" onclick="learnLang('Santali')">🌳 Santali</div>
+  </div>
+  <div style="font-size:11px;color:var(--text3);margin:12px 0 8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">🌍 World Languages</div>
+  <div class="lang-grid">
     <div class="lang-option" onclick="learnLang('Spanish')">🇪🇸 Spanish</div>
     <div class="lang-option" onclick="learnLang('French')">🇫🇷 French</div>
-    <div class="lang-option" onclick="learnLang('Japanese')">🇯🇵 Japanese</div>
-    <div class="lang-option" onclick="learnLang('Arabic')">🌙 Arabic</div>
-    <div class="lang-option" onclick="learnLang('German')">🇩🇪 German</div>
     <div class="lang-option" onclick="learnLang('Mandarin')">🇨🇳 Mandarin</div>
+    <div class="lang-option" onclick="learnLang('Arabic')">🌙 Arabic</div>
+    <div class="lang-option" onclick="learnLang('Portuguese')">🇵🇹 Portuguese</div>
+    <div class="lang-option" onclick="learnLang('Russian')">🇷🇺 Russian</div>
+    <div class="lang-option" onclick="learnLang('Japanese')">🇯🇵 Japanese</div>
+    <div class="lang-option" onclick="learnLang('German')">🇩🇪 German</div>
+    <div class="lang-option" onclick="learnLang('Korean')">🇰🇷 Korean</div>
+    <div class="lang-option" onclick="learnLang('Swahili')">🌍 Swahili</div>
+    <div class="lang-option" onclick="learnLang('Italian')">🇮🇹 Italian</div>
+    <div class="lang-option" onclick="learnLang('Dutch')">🇳🇱 Dutch</div>
+    <div class="lang-option" onclick="learnLang('Turkish')">🇹🇷 Turkish</div>
+    <div class="lang-option" onclick="learnLang('Vietnamese')">🇻🇳 Vietnamese</div>
+    <div class="lang-option" onclick="learnLang('Thai')">🇹🇭 Thai</div>
+    <div class="lang-option" onclick="learnLang('Indonesian')">🇮🇩 Indonesian</div>
+    <div class="lang-option" onclick="learnLang('Malay')">🇲🇾 Malay</div>
+    <div class="lang-option" onclick="learnLang('Polish')">🇵🇱 Polish</div>
+    <div class="lang-option" onclick="learnLang('Ukrainian')">🇺🇦 Ukrainian</div>
+    <div class="lang-option" onclick="learnLang('Persian')">🇮🇷 Persian</div>
+    <div class="lang-option" onclick="learnLang('Hebrew')">🇮🇱 Hebrew</div>
+    <div class="lang-option" onclick="learnLang('Greek')">🇬🇷 Greek</div>
+    <div class="lang-option" onclick="learnLang('Romanian')">🇷🇴 Romanian</div>
+    <div class="lang-option" onclick="learnLang('Hungarian')">🇭🇺 Hungarian</div>
+    <div class="lang-option" onclick="learnLang('Czech')">🇨🇿 Czech</div>
+    <div class="lang-option" onclick="learnLang('Swedish')">🇸🇪 Swedish</div>
+    <div class="lang-option" onclick="learnLang('Norwegian')">🇳🇴 Norwegian</div>
+    <div class="lang-option" onclick="learnLang('Finnish')">🇫🇮 Finnish</div>
   </div>
   <button class="close-panel" onclick="closeLangPanel()">Close</button>
 </div>
@@ -357,6 +400,7 @@ code { color: var(--accent); font-family: 'DM Mono', monospace; }
       <span id="currentModeStatus">Casual</span>
     </div>
     <button class="hbtn" onclick="showLangPanel()">🌐 Languages</button>
+    <button class="hbtn support-btn" onclick="showSupport()">❤️ Support QVIO</button>
     <button class="hbtn" onclick="clearChat()">Clear</button>
   </div>
 </header>
@@ -377,7 +421,7 @@ code { color: var(--accent); font-family: 'DM Mono', monospace; }
   <div class="welcome" id="welcome">
     <div class="welcome-icon">QV</div>
     <h1>Hello, I'm <span>QVIO</span> 👋</h1>
-    <p>Affordable AI for India and the world. Ask me anything in any language — Hindi, Kannada, Tamil, English, or more.</p>
+    <p>Affordable AI for India and the world. Ask me anything in any language — Hindi, Kannada, Tamil, Spanish, Japanese, or 45 more languages!</p>
     <div class="suggestions">
       <div class="suggestion" onclick="sendSuggestion('Explain quantum physics in simple words')">
         <span class="sicon">⚡</span>Explain quantum physics simply
