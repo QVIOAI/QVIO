@@ -1,1656 +1,1180 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>QVIO — AI for Every Human</title>
-<meta name="description" content="QVIO - India's fastest AI. 100+ languages. Built for everyone.">
-<meta name="theme-color" content="#000000">
+<title>QVIO — India's Premium AI</title>
+<meta name="description" content="QVIO - India's most premium AI. 100+ languages. Built for every Indian.">
+<meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="QVIO">
 <link rel="manifest" href="manifest.json">
-
-<!-- Firebase SDK - REPLACE CONFIG BELOW WITH YOUR OWN -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-
-<!-- Fonts: Instrument Serif + DM Sans — clean editorial feel -->
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════════════════
-   QVIO — Design System
-   Philosophy: Radical whitespace. Extreme clarity.
-   One thing at a time. Trust the user.
-══════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root{
+  /* CORE PALETTE — White + Gold + Navy */
+  --bg:        #FFFEF9;
+  --bg2:       #FFFBF0;
+  --surface:   #FDF8EE;
+  --border:    #EDE3C8;
+  --border2:   #C8A84B;
 
-:root {
-  /* Colors — light */
-  --bg:        #ffffff;
-  --bg2:       #fafafa;
-  --surface:   #f4f4f4;
-  --border:    #ebebeb;
-  --border2:   #d8d8d8;
-  --text:      #0a0a0a;
-  --text2:     #525252;
-  --text3:     #a3a3a3;
-  --accent:    #0a0a0a;       /* black accent — minimal */
-  --accent-c:  #ffffff;
-  --blue:      #0057ff;
-  --blue-soft: rgba(0,87,255,.07);
-  --danger:    #dc2626;
-  --success:   #16a34a;
-  --gold:      #d97706;
-  --purple:    #7c3aed;
+  --navy:      #0D1B3E;
+  --navy2:     #162554;
+  --navy3:     #1E336A;
+  --navy-soft: rgba(13,27,62,.06);
 
-  /* Shadows */
-  --s1: 0 1px 2px rgba(0,0,0,.05);
-  --s2: 0 2px 8px rgba(0,0,0,.08);
-  --s3: 0 8px 32px rgba(0,0,0,.10);
-  --s4: 0 24px 80px rgba(0,0,0,.14);
+  --gold:      #B8860B;
+  --gold2:     #D4A017;
+  --gold3:     #F0C842;
+  --gold-glow: rgba(212,160,23,.25);
+  --gold-g:    linear-gradient(135deg,#8B6914,#D4A017,#F0C842,#D4A017,#8B6914);
+  --gold-gs:   linear-gradient(135deg,#8B6914,#C8920E);
+  --navy-g:    linear-gradient(135deg,#0D1B3E,#162554,#1E336A);
 
-  /* Radii */
-  --r-xs: 6px;
-  --r-sm: 10px;
-  --r:    14px;
-  --r-lg: 18px;
-  --r-xl: 24px;
+  --text:      #0D1B3E;
+  --text2:     #2C3E6B;
+  --text3:     #7A8BAD;
+  --white:     #FFFFFF;
 
-  /* Spacing */
-  --page-pad: 24px;
-  --chat-max: 720px;
+  --danger:    #B91C1C;
+  --success:   #15803D;
+
+  --s1: 0 1px 4px rgba(13,27,62,.08);
+  --s2: 0 4px 16px rgba(13,27,62,.10);
+  --s3: 0 8px 32px rgba(13,27,62,.13);
+  --s4: 0 20px 60px rgba(13,27,62,.18);
+  --sgold: 0 4px 20px rgba(212,160,23,.30);
+
+  --r:14px;--r-sm:10px;--r-xs:6px;--r-lg:20px;--r-xl:28px;--r-full:999px;
+  --pad:22px;--max:720px;
 }
 
-[data-theme="dark"] {
-  --bg:        #090909;
-  --bg2:       #111111;
-  --surface:   #1c1c1c;
-  --border:    #242424;
-  --border2:   #333333;
-  --text:      #efefef;
-  --text2:     #888888;
-  --text3:     #484848;
-  --accent:    #efefef;
-  --accent-c:  #090909;
-  --blue:      #4d8eff;
-  --blue-soft: rgba(77,142,255,.08);
-  --s1: 0 1px 2px rgba(0,0,0,.4);
-  --s2: 0 2px 8px rgba(0,0,0,.4);
-  --s3: 0 8px 32px rgba(0,0,0,.4);
-  --s4: 0 24px 80px rgba(0,0,0,.5);
+[data-theme="dark"]{
+  --bg:#05080F;--bg2:#080D18;--surface:#0D1424;--border:#162040;--border2:#2A3D6B;
+  --text:#EEF2FF;--text2:#8FA0CC;--text3:#3D5080;
+  --gold:#F0C842;--gold2:#FFD966;--gold3:#2A1E08;
+  --navy-soft:rgba(238,242,255,.04);
+  --s1:0 1px 4px rgba(0,0,0,.5);--s2:0 4px 16px rgba(0,0,0,.5);--s3:0 8px 32px rgba(0,0,0,.5);--s4:0 20px 60px rgba(0,0,0,.6);
 }
 
-html, body { height: 100%; overflow: hidden; }
+html,body{height:100%;overflow:hidden;}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
 
-body {
-  font-family: "DM Sans", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  -webkit-font-smoothing: antialiased;
-  transition: background .3s, color .3s;
-  line-height: 1.5;
+/* AMBIENT BACKGROUND */
+body::before{content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 10% 30%,rgba(212,160,23,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 10%,rgba(13,27,62,.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 100%,rgba(212,160,23,.04) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+
+/* ════ FLOATING PARTICLES ════ */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.ptc{position:absolute;border-radius:50%;animation:ptcFloat linear infinite;}
+@keyframes ptcFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg);}15%{opacity:1;}85%{opacity:.5;}100%{opacity:0;transform:translateY(-10vh) scale(1) rotate(360deg);}}
+
+/* ════ TOAST ════ */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--navy);color:#fff;padding:10px 24px;border-radius:var(--r-full);font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);pointer-events:none;white-space:nowrap;box-shadow:var(--s3);border:1px solid var(--navy3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ════ CONFETTI ════ */
+.confetti{position:fixed;top:-10px;pointer-events:none;z-index:9999;animation:cffall cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes cffall{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0);}10%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(105vh) rotate(720deg) scale(.5);}}
+
+/* ════════════════════════════════
+   NAMASTE LOGIN ANIMATION
+════════════════════════════════ */
+#namasteScreen{
+  position:fixed;inset:0;z-index:9500;
+  background:var(--bg);
+  display:none;
+  align-items:center;justify-content:center;flex-direction:column;gap:0;
+}
+#namasteScreen.show{display:flex;}
+
+.ns-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 50% 50%,rgba(212,160,23,.12) 0%,transparent 60%),
+    radial-gradient(ellipse at 20% 20%,rgba(13,27,62,.08) 0%,transparent 50%);
 }
 
-/* ══════ CONFETTI ══════ */
-.confetti { position:fixed; width:8px; height:8px; top:-10px; border-radius:2px; pointer-events:none; z-index:9999; animation: cffall 2.5s ease-in forwards; }
-@keyframes cffall { to { transform: translateY(105vh) rotate(800deg); opacity:0; } }
+.ns-rings{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center;margin-bottom:32px;}
+.nsr{position:absolute;border-radius:50%;border:2px solid transparent;}
+.nsr1{width:160px;height:160px;border-top-color:var(--gold3);border-right-color:var(--gold2);animation:nspin 1.4s linear infinite;}
+.nsr2{width:120px;height:120px;border-bottom-color:var(--navy);border-left-color:var(--navy2);animation:nspin .9s linear infinite reverse;}
+.nsr3{width:84px;height:84px;border-top-color:var(--gold2);border-left-color:var(--gold3);animation:nspin 1.8s linear infinite;}
+@keyframes nspin{to{transform:rotate(360deg);}}
+.ns-core{width:44px;height:44px;background:var(--gold-gs);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:12px;color:#fff;font-weight:700;box-shadow:0 0 30px var(--gold-glow),0 0 60px rgba(212,160,23,.2);}
 
-/* ══════ TOAST ══════ */
-.toast {
-  position: fixed; bottom: 88px; left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  background: var(--text); color: var(--bg);
-  padding: 10px 20px; border-radius: 99px;
-  font-size: 13px; font-weight: 500;
-  z-index: 9000; opacity: 0;
-  transition: all .3s; pointer-events: none;
-  white-space: nowrap; box-shadow: var(--s3);
+.ns-namaste{
+  font-family:"Cormorant Garamond",serif;
+  font-size:56px;font-weight:600;color:var(--navy);
+  text-align:center;line-height:1;
+  opacity:0;animation:nsRise .8s cubic-bezier(.22,1,.36,1) .3s forwards;
 }
-.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+[data-theme="dark"] .ns-namaste{color:var(--gold2);}
+.ns-namaste span{display:block;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic;font-size:38px;margin-top:4px;}
 
-/* ══════ LOGIN SCREEN ══════ */
-#loginScreen {
-  position: fixed; inset: 0; z-index: 8888;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
+.ns-sub{font-size:14px;color:var(--text3);text-align:center;opacity:0;animation:nsRise .6s ease .8s forwards;margin-top:16px;letter-spacing:.5px;}
+.ns-bar{width:200px;height:3px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:28px;opacity:0;animation:nsRise .6s ease 1s forwards;}
+.ns-prog{height:100%;background:var(--gold-g);border-radius:99px;animation:nsProg 1.8s cubic-bezier(.22,1,.36,1) 1.1s forwards;width:0%;}
+@keyframes nsProg{to{width:100%;}}
+@keyframes nsRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ════════════════════════════════
+   LOGIN SCREEN
+════════════════════════════════ */
+#loginScreen{
+  position:fixed;inset:0;z-index:8888;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;overflow-y:auto;
 }
-.login-wrap {
-  width: 92%; max-width: 400px;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 0;
-  animation: risein .5s cubic-bezier(.22,1,.36,1);
+#loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
+
+.lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
+@keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
+
+.l-crown{font-size:36px;margin-bottom:10px;animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+.l-mark{
+  width:62px;height:62px;background:var(--gold-gs);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"DM Mono",monospace;font-size:15px;color:#fff;font-weight:700;
+  margin-bottom:22px;box-shadow:0 6px 24px var(--gold-glow);
 }
-@keyframes risein { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
-.login-mark {
-  width: 52px; height: 52px; background: var(--text);
-  border-radius: 14px; display: flex; align-items: center;
-  justify-content: center; font-family: "DM Mono", monospace;
-  font-size: 13px; color: var(--bg); margin-bottom: 24px;
+.l-h1{font-family:"Cormorant Garamond",serif;font-size:40px;font-weight:600;color:var(--navy);text-align:center;margin-bottom:10px;line-height:1.1;}
+.l-h1 em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+[data-theme="dark"] .l-h1{color:var(--text);}
+.l-p{font-size:14px;color:var(--text3);text-align:center;line-height:1.65;margin-bottom:36px;max-width:300px;}
+
+.gbtn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:15px 20px;background:var(--white);
+  border:1.5px solid var(--border2);border-radius:var(--r);
+  font-size:14px;font-weight:600;color:var(--navy);cursor:pointer;
+  transition:all .22s;font-family:"DM Sans",sans-serif;
+  box-shadow:var(--s2);margin-bottom:16px;
 }
-.login-h1 {
-  font-family: "Instrument Serif", serif;
-  font-size: 34px; font-weight: 400; letter-spacing: -.5px;
-  color: var(--text); text-align: center; margin-bottom: 10px; line-height: 1.15;
+.gbtn:hover{border-color:var(--gold2);box-shadow:var(--sgold);transform:translateY(-2px);}
+.gicon{width:20px;height:20px;}
+
+.l-or{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:16px;}
+.l-or span{font-size:12px;color:var(--text3);}
+.l-or::before,.l-or::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.lf{width:100%;padding:13px 16px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:10px;transition:all .2s;}
+.lf:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(212,160,23,.12);}
+
+.lbtn{width:100%;padding:14px;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-bottom:10px;transition:all .22s;letter-spacing:.2px;}
+.lbtn.main{background:var(--navy-g);color:#fff;box-shadow:0 4px 16px rgba(13,27,62,.3);}
+.lbtn.main:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,27,62,.4);}
+.lbtn.ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border);}
+.lbtn.ghost:hover{border-color:var(--gold2);color:var(--gold);}
+
+.l-skip{font-size:13px;color:var(--text3);cursor:pointer;margin-top:16px;text-align:center;transition:color .15s;}
+.l-skip:hover{color:var(--gold);}
+
+.l-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.l-badge{font-size:11px;color:var(--text3);background:var(--surface);padding:5px 12px;border-radius:var(--r-full);border:1px solid var(--border);}
+
+/* ════ OFFLINE / INSTALL ════ */
+.off-bar{background:var(--danger);color:#fff;text-align:center;padding:7px;font-size:12px;font-weight:600;display:none;flex-shrink:0;}
+.off-bar.show{display:block;}
+.inst-bar{background:linear-gradient(90deg,var(--navy-soft),transparent);border-bottom:1px solid var(--border);padding:8px var(--pad);font-size:12px;color:var(--navy);display:none;align-items:center;gap:10px;flex-shrink:0;justify-content:space-between;}
+.inst-bar.show{display:flex;}
+.inst-bar button{background:var(--navy-g);color:#fff;border:none;padding:5px 14px;border-radius:var(--r-xs);font-size:11.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.idism{background:transparent!important;color:var(--text3)!important;font-size:18px!important;padding:0 4px!important;}
+
+/* ════ HEADER ════ */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--pad);height:60px;flex-shrink:0;gap:12px;
+  background:rgba(255,254,249,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
 }
-.login-h1 em { font-style: italic; color: var(--blue); }
-.login-p {
-  font-size: 14px; color: var(--text2); text-align: center;
-  line-height: 1.6; margin-bottom: 40px; max-width: 300px;
-}
-.google-signin {
-  width: 100%; display: flex; align-items: center;
-  justify-content: center; gap: 12px;
-  padding: 14px 20px; background: var(--bg);
-  border: 1.5px solid var(--border2); border-radius: var(--r);
-  font-size: 15px; font-weight: 600; color: var(--text);
-  cursor: pointer; transition: all .18s; font-family: "DM Sans", sans-serif;
-  box-shadow: var(--s2); margin-bottom: 14px;
-}
-.google-signin:hover { border-color: var(--border2); box-shadow: var(--s3); transform: translateY(-1px); }
-.google-icon { width: 20px; height: 20px; }
-.login-or { display: flex; align-items: center; gap: 14px; width: 100%; margin-bottom: 14px; }
-.login-or span { font-size: 12px; color: var(--text3); white-space: nowrap; }
-.login-or::before, .login-or::after { content:''; flex:1; height:1px; background:var(--border); }
-.login-field {
-  width: 100%; padding: 13px 16px; background: var(--bg2);
-  border: 1.5px solid var(--border); border-radius: var(--r);
-  font-size: 14px; font-family: "DM Sans", sans-serif;
-  color: var(--text); outline: none; margin-bottom: 10px;
-  transition: border-color .15s;
-}
-.login-field:focus { border-color: var(--blue); }
-.login-cta {
-  width: 100%; padding: 14px; background: var(--text);
-  color: var(--bg); border: none; border-radius: var(--r);
-  font-size: 15px; font-weight: 600; cursor: pointer;
-  font-family: "DM Sans", sans-serif; transition: opacity .15s;
-  margin-bottom: 10px;
-}
-.login-cta:hover { opacity: .85; }
-.login-skip {
-  font-size: 13px; color: var(--text3); cursor: pointer;
-  margin-top: 20px; transition: color .15s; text-align: center;
-}
-.login-skip:hover { color: var(--text); }
-.login-badges {
-  display: flex; gap: 8px; justify-content: center;
-  flex-wrap: wrap; margin-top: 32px;
-}
-.login-badge { font-size: 11px; color: var(--text3); background: var(--surface); padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border); }
+[data-theme="dark"] header{background:rgba(5,8,15,.94);}
+header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.4;}
 
-/* ══════ OFFLINE BANNER ══════ */
-.offline-bar { background: var(--danger); color: #fff; text-align: center; padding: 7px; font-size: 12px; font-weight: 600; display: none; flex-shrink: 0; letter-spacing: .2px; }
-.offline-bar.show { display: block; }
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer;text-decoration:none;}
+.lmark{width:34px;height:34px;background:var(--gold-gs);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;color:#fff;font-weight:700;box-shadow:0 2px 10px var(--gold-glow);transition:transform .2s;}
+.logo:hover .lmark{transform:rotate(-8deg) scale(1.12);}
+.lname{font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:600;color:var(--navy);}
+[data-theme="dark"] .lname{color:var(--text);}
+.lname em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ltag{font-size:10px;color:var(--text3);background:var(--navy-soft);border:1px solid var(--border);padding:2px 9px;border-radius:var(--r-full);}
 
-/* ══════ INSTALL BANNER ══════ */
-.install-bar { background: var(--blue-soft); border-bottom: 1px solid rgba(0,87,255,.12); padding: 8px var(--page-pad); font-size: 12px; color: var(--blue); display: none; align-items: center; gap: 10px; flex-shrink: 0; justify-content: space-between; }
-.install-bar.show { display: flex; }
-.install-bar button { background: var(--blue); color: #fff; border: none; padding: 5px 14px; border-radius: var(--r-xs); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: "DM Sans", sans-serif; }
-.dismiss-btn { background: transparent !important; color: var(--text3) !important; font-size: 18px !important; padding: 0 4px !important; }
+.hcenter{display:flex;align-items:center;gap:8px;}
+.streak-pill{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FF6B35,#F59E0B);color:#fff;padding:5px 13px;border-radius:var(--r-full);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(255,107,53,.3);transition:transform .15s;flex-shrink:0;}
+.streak-pill:hover{transform:scale(1.06);}
 
-/* ══════ HEADER ══════ */
-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--page-pad); height: 58px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0; gap: 12px; background: var(--bg);
-  position: sticky; top: 0; z-index: 50;
-}
-.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; cursor: pointer; text-decoration: none; }
-.lmark {
-  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: "DM Mono", monospace; font-size: 9px; color: var(--bg);
-  font-weight: 600; transition: transform .2s;
-}
-.logo:hover .lmark { transform: rotate(-5deg) scale(1.1); }
-.lname { font-size: 15px; font-weight: 700; letter-spacing: -.3px; color: var(--text); }
-.lname em { color: var(--blue); font-style: normal; }
-.ltag { font-size: 10px; color: var(--text3); background: var(--surface); border: 1px solid var(--border); padding: 2px 9px; border-radius: 99px; letter-spacing: .1px; }
+.hright{display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;}
+.hright::-webkit-scrollbar{display:none;}
+.hbtn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:6px 11px;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .17s;white-space:nowrap;flex-shrink:0;}
+.hbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
+[data-theme="dark"] .hbtn:hover{color:var(--gold2);border-color:var(--border2);}
+.hbtn.on{background:var(--navy-g);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(13,27,62,.25);}
 
-/* Header center */
-.h-center { display: flex; align-items: center; gap: 8px; }
-.streak-pill {
-  display: flex; align-items: center; gap: 5px;
-  background: linear-gradient(135deg, #ff6b35, #f59e0b);
-  color: #fff; padding: 5px 13px; border-radius: 99px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  flex-shrink: 0; box-shadow: 0 2px 10px rgba(255,107,53,.25);
-  transition: transform .15s, box-shadow .15s;
-}
-.streak-pill:hover { transform: scale(1.05); }
+.uchip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:4px 12px 4px 4px;border-radius:var(--r-full);cursor:pointer;transition:all .17s;flex-shrink:0;}
+.uchip:hover{border-color:var(--border2);}
+.uav{width:27px;height:27px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.uav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.unm{font-size:12px;font-weight:600;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* Header right */
-.h-right { display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
-.h-right::-webkit-scrollbar { display: none; }
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:sdpulse 2s infinite;display:inline-block;}
+@keyframes sdpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(21,128,61,.4);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(21,128,61,0);}}
 
-.hbtn {
-  background: transparent; border: 1px solid var(--border);
-  color: var(--text2); padding: 6px 12px; border-radius: var(--r-sm);
-  font-family: "DM Sans", sans-serif; font-size: 12px; font-weight: 500;
-  cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0;
-}
-.hbtn:hover { background: var(--surface); color: var(--text); border-color: var(--border2); }
-.hbtn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-.hbtn.primary:hover { opacity: .85; }
+/* ════ MODES ════ */
+.modes{display:flex;gap:4px;padding:8px var(--pad);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;background:var(--bg);}
+.modes::-webkit-scrollbar{display:none;}
+.mbtn{padding:6px 14px;border:1px solid transparent;background:transparent;color:var(--text3);border-radius:var(--r-sm);cursor:pointer;font-size:12.5px;font-family:"DM Sans",sans-serif;font-weight:500;white-space:nowrap;transition:all .17s;flex-shrink:0;}
+.mbtn:hover{background:var(--navy-soft);color:var(--navy);}
+[data-theme="dark"] .mbtn:hover{color:var(--gold2);}
+.mbtn.on{background:var(--navy-g);color:#fff;box-shadow:0 2px 8px rgba(13,27,62,.2);}
 
-/* User chip */
-.user-chip {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 4px 12px 4px 4px; border-radius: 99px;
-  cursor: pointer; transition: all .15s; flex-shrink: 0;
-}
-.user-chip:hover { border-color: var(--border2); }
-.user-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue), var(--purple));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; flex-shrink: 0;
-}
-.user-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.user-nm { font-size: 12px; font-weight: 600; color: var(--text); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ════ SUB BARS ════ */
+.sub-bar{border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;font-weight:600;display:none;align-items:center;gap:8px;flex-shrink:0;}
+.sub-bar.show{display:flex;}
+.sub-bar.mem{background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);color:var(--gold);}
+.sub-bar.exam{background:linear-gradient(90deg,rgba(124,58,237,.06),transparent);color:#7C3AED;}
+.pinned-bar{background:linear-gradient(90deg,rgba(212,160,23,.06),transparent);border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;color:var(--gold);display:none;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;font-weight:600;}
+.pinned-bar.show{display:flex;}
 
-.sdot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; display: inline-block; }
-@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+/* TYPING STATUS BAR */
+.type-bar{background:linear-gradient(90deg,var(--navy-soft),transparent);border-bottom:1px solid var(--border);padding:5px var(--pad);font-size:11px;color:var(--text3);display:none;align-items:center;gap:8px;flex-shrink:0;}
+.type-bar.show{display:flex;}
+.tdots span{width:4px;height:4px;border-radius:50%;background:var(--gold2);display:inline-block;margin:0 1px;animation:td 1s infinite;}
+.tdots span:nth-child(2){animation-delay:.18s;}
+.tdots span:nth-child(3){animation-delay:.36s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
 
-/* ══════ MODES BAR ══════ */
-.modes {
-  display: flex; gap: 4px; padding: 8px var(--page-pad);
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
-}
-.modes::-webkit-scrollbar { display: none; }
-.mbtn {
-  padding: 6px 14px; border: 1px solid transparent;
-  background: transparent; color: var(--text3);
-  border-radius: var(--r-sm); cursor: pointer;
-  font-size: 12.5px; font-family: "DM Sans", sans-serif;
-  font-weight: 500; white-space: nowrap; transition: all .15s; flex-shrink: 0;
-}
-.mbtn:hover { background: var(--surface); color: var(--text); }
-.mbtn.on { background: var(--text); color: var(--bg); }
+/* ════ CHAT ════ */
+.chat{flex:1;overflow-y:auto;padding:28px var(--pad);scrollbar-width:thin;scrollbar-color:var(--border) transparent;position:relative;z-index:2;}
+.chat::-webkit-scrollbar{width:3px;}
+.chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
-/* ══════ SUB-BARS ══════ */
-.sub-bar {
-  border-bottom: 1px solid var(--border);
-  padding: 7px var(--page-pad);
-  font-size: 12px; font-weight: 500;
-  display: none; align-items: center; gap: 8px;
-  flex-shrink: 0;
-}
-.sub-bar.show { display: flex; }
-.sub-bar.mem { background: var(--blue-soft); color: var(--blue); }
-.sub-bar.exam { background: rgba(124,58,237,.06); color: var(--purple); }
-.sub-bar.pro { background: rgba(217,119,6,.06); color: var(--gold); justify-content: space-between; }
-.sub-bar.offline { background: rgba(220,38,38,.06); color: var(--danger); }
-.chip { padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; background: currentColor; }
-.chip span { color: var(--bg); }
+/* ════ WELCOME ════ */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;gap:16px;max-width:var(--max);margin:0 auto;padding:20px;}
+.w-crown{font-size:34px;animation:float 4.5s ease-in-out infinite;}
+.w-icon{width:64px;height:64px;background:var(--gold-gs);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:16px;color:#fff;font-weight:700;box-shadow:0 8px 28px var(--gold-glow);animation:float 5s ease-in-out infinite;}
+.w-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy-soft);border:1px solid var(--navy3);padding:5px 16px;border-radius:var(--r-full);font-size:11.5px;color:var(--navy);font-weight:600;}
+[data-theme="dark"] .w-badge{border-color:var(--border2);color:var(--gold2);}
+.welcome h1{font-family:"Cormorant Garamond",serif;font-size:clamp(28px,5vw,46px);font-weight:600;letter-spacing:-.3px;line-height:1.12;color:var(--navy);max-width:520px;}
+[data-theme="dark"] .welcome h1{color:var(--text);}
+.welcome h1 em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.wsub{font-size:15px;color:var(--text2);line-height:1.65;max-width:380px;}
+.tip-box{font-size:13px;color:var(--text2);background:var(--surface);border:1px solid var(--border);padding:11px 18px;border-radius:var(--r-sm);max-width:480px;width:100%;transition:opacity .4s;border-left:3px solid var(--gold2);}
+.mem-banner{background:linear-gradient(135deg,rgba(13,27,62,.06),rgba(212,160,23,.05));border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 16px;font-size:13px;color:var(--navy);font-weight:600;display:none;align-items:center;gap:8px;width:100%;max-width:480px;text-align:left;}
+[data-theme="dark"] .mem-banner{color:var(--gold2);}
+.mem-banner.show{display:flex;}
+.challenge{background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(219,39,119,.04));border:1px solid rgba(124,58,237,.18);border-radius:var(--r);padding:13px 18px;font-size:13px;color:#6D28D9;font-weight:600;max-width:480px;width:100%;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
+.challenge:hover{transform:translateY(-2px);background:rgba(124,58,237,.1);}
+.sugs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:580px;}
+.sug{background:var(--white);border:1px solid var(--border);padding:17px 18px;border-radius:var(--r-lg);cursor:pointer;text-align:left;transition:all .22s;font-family:"DM Sans",sans-serif;box-shadow:var(--s1);position:relative;overflow:hidden;}
+.sug::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold-g);transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+.sug:hover{border-color:var(--border2);box-shadow:var(--s3);transform:translateY(-3px);}
+.sug:hover::after{transform:scaleX(1);}
+.si{font-size:22px;margin-bottom:8px;display:block;}
+.st{font-size:13px;font-weight:700;color:var(--navy);display:block;margin-bottom:3px;}
+[data-theme="dark"] .st{color:var(--text);}
+.sd2{font-size:11.5px;color:var(--text3);display:block;}
 
-/* ══════ PINNED BAR ══════ */
-.pinned-bar { background: rgba(217,119,6,.05); border-bottom: 1px solid rgba(217,119,6,.15); padding: 7px var(--page-pad); font-size: 12px; color: var(--gold); display: none; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; font-weight: 500; }
-.pinned-bar.show { display: flex; }
+/* ════ MESSAGES ════ */
+.msg{display:flex;gap:12px;margin-bottom:22px;animation:fadeup .23s cubic-bezier(.22,1,.36,1);max-width:var(--max);margin-left:auto;margin-right:auto;width:100%;}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{flex-direction:row-reverse;}
+.av{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;font-weight:700;overflow:hidden;}
+.av.ai{background:var(--gold-gs);color:#fff;box-shadow:0 2px 8px var(--gold-glow);}
+.av.usr{background:var(--navy-g);color:#fff;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
+.mwrap{max-width:calc(100% - 46px);display:flex;flex-direction:column;}
+.msg.user .mwrap{align-items:flex-end;}
+.bubble{padding:13px 17px;font-size:14.5px;line-height:1.75;border-radius:var(--r);position:relative;word-break:break-word;}
+.msg.ai .bubble{background:var(--white);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);box-shadow:var(--s1);border-left:3px solid var(--gold3);}
+[data-theme="dark"] .msg.ai .bubble{background:var(--bg2);}
+.msg.user .bubble{background:var(--navy-g);color:#EEF2FF;border-radius:var(--r) 3px var(--r) var(--r);box-shadow:0 4px 14px rgba(13,27,62,.25);}
+.cpbtn{position:absolute;top:9px;right:9px;background:var(--bg);border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:5px;font-size:9px;cursor:pointer;opacity:0;transition:opacity .15s;font-family:"DM Sans",sans-serif;}
+.bubble:hover .cpbtn{opacity:1;}
+.mmeta{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.msg.user .mmeta{justify-content:flex-end;}
+.act{background:transparent;border:none;cursor:pointer;padding:4px 8px;border-radius:var(--r-xs);color:var(--text3);font-size:11px;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.act:hover{background:var(--navy-soft);color:var(--navy);}
+[data-theme="dark"] .act:hover{background:var(--surface);color:var(--gold2);}
+.act.liked{color:var(--success);}
+.act.disliked{color:var(--danger);}
+.speed-tag{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;padding:2px 7px;background:var(--navy-soft);border-radius:4px;border:1px solid var(--border);}
+.ts{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;margin-top:4px;}
+.msg.user .ts{text-align:right;}
+.pinned-msg{border-left:3px solid var(--gold)!important;}
 
-/* ══════ CHAT ══════ */
-.chat {
-  flex: 1; overflow-y: auto; padding: 32px var(--page-pad);
-  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
-}
-.chat::-webkit-scrollbar { width: 3px; }
-.chat::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+/* ════ TYPING ════ */
+.tywrap{display:flex;gap:12px;margin-bottom:22px;max-width:var(--max);margin-left:auto;margin-right:auto;}
+.ty{display:flex;gap:5px;padding:13px 17px;background:var(--white);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);align-items:center;border-left:3px solid var(--gold3);box-shadow:var(--s1);}
+[data-theme="dark"] .ty{background:var(--bg2);}
+.ty span{width:6px;height:6px;background:var(--gold2);border-radius:50%;animation:td 1.2s infinite;}
+.ty span:nth-child(2){animation-delay:.16s;}
+.ty span:nth-child(3){animation-delay:.32s;}
 
-/* ══════ WELCOME ══════ */
-.welcome {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; min-height: 68vh;
-  text-align: center; gap: 18px;
-  max-width: var(--chat-max); margin: 0 auto; padding: 20px;
-}
-.w-icon {
-  width: 56px; height: 56px; background: var(--text);
-  border-radius: 16px; display: flex; align-items: center;
-  justify-content: center; font-family: "DM Mono", monospace;
-  font-size: 14px; color: var(--bg); box-shadow: var(--s2);
-  animation: float 5s ease-in-out infinite;
-}
-@keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+/* ════ IMAGES ════ */
+.gen-img{max-width:300px;margin-top:10px;border-radius:var(--r);border:2px solid var(--border2);display:block;box-shadow:var(--s3);cursor:pointer;transition:transform .2s;}
+.gen-img:hover{transform:scale(1.03);}
+.img-dl{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 16px;background:var(--navy-g);color:#fff;text-decoration:none;font-size:12px;font-family:"DM Sans",sans-serif;border-radius:var(--r-sm);font-weight:700;box-shadow:0 3px 10px rgba(13,27,62,.25);}
 
-.welcome h1 {
-  font-family: "Instrument Serif", serif;
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 400; letter-spacing: -.5px;
-  line-height: 1.15; color: var(--text); max-width: 500px;
-}
-.welcome h1 em { font-style: italic; color: var(--blue); }
-.welcome-sub { font-size: 15px; color: var(--text2); line-height: 1.65; max-width: 380px; }
+/* CODE */
+pre{background:var(--navy);color:#EEF2FF;border:1px solid var(--navy3);border-left:3px solid var(--gold2);padding:16px;overflow-x:auto;font-size:13px;margin:10px 0;border-radius:var(--r-sm);font-family:"DM Mono",monospace;position:relative;}
+pre .code-copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#EEF2FF;padding:3px 10px;border-radius:5px;font-size:9px;cursor:pointer;font-family:"DM Sans",sans-serif;opacity:0;transition:opacity .15s;}
+pre:hover .code-copy{opacity:1;}
+code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 
-.tip-box {
-  font-size: 12.5px; color: var(--text3);
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 10px 18px; border-radius: var(--r-sm);
-  max-width: 460px; width: 100%; min-height: 40px;
-  transition: opacity .4s;
-}
-.mem-banner {
-  background: var(--blue-soft); border: 1px solid rgba(0,87,255,.15);
-  border-radius: var(--r-sm); padding: 10px 16px;
-  font-size: 12.5px; color: var(--blue); font-weight: 500;
-  display: none; align-items: center; gap: 8px;
-  width: 100%; max-width: 460px; text-align: left;
-}
-.mem-banner.show { display: flex; }
+/* ════ INPUT AREA ════ */
+.input-area{padding:10px var(--pad) 16px;background:rgba(255,254,249,.96);backdrop-filter:blur(24px);border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:10;}
+[data-theme="dark"] .input-area{background:rgba(5,8,15,.96);}
+.input-area::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--gold3),transparent);opacity:.5;}
+.char-cnt{font-size:10px;color:var(--text3);text-align:right;max-width:var(--max);margin:0 auto 5px;font-family:"DM Mono",monospace;height:14px;}
+.ibox{display:flex;gap:8px;align-items:flex-end;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r-lg);padding:10px 12px;transition:all .22s;box-shadow:var(--s1);max-width:var(--max);margin:0 auto;}
+[data-theme="dark"] .ibox{background:var(--bg2);}
+.ibox:focus-within{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(212,160,23,.12),var(--s2);}
+#inp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:"DM Sans",sans-serif;resize:none;max-height:140px;min-height:22px;line-height:1.5;}
+#inp::placeholder{color:var(--text3);}
+.ibtns{display:flex;gap:6px;align-items:center;}
+.micbtn{background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;font-size:15px;padding:7px 9px;border-radius:var(--r-sm);transition:all .17s;line-height:1;}
+.micbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
+.micbtn.rec{background:rgba(185,28,28,.07);border-color:var(--danger);color:var(--danger);animation:recpulse 1s infinite;}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.3);}50%{box-shadow:0 0 0 6px rgba(185,28,28,0);}}
+.sendbtn{padding:9px 18px;background:var(--navy-g);border:none;color:#fff;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);transition:all .2s;white-space:nowrap;box-shadow:0 3px 12px rgba(13,27,62,.3);}
+.sendbtn:hover{transform:scale(1.05);box-shadow:0 5px 18px rgba(13,27,62,.4);}
+.sendbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.qrs{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;max-width:var(--max);margin-left:auto;margin-right:auto;}
+.qr{padding:5px 12px;background:var(--white);border:1px solid var(--border);color:var(--text3);font-size:12px;cursor:pointer;border-radius:var(--r-full);transition:all .17s;font-family:"DM Sans",sans-serif;font-weight:500;}
+[data-theme="dark"] .qr{background:var(--bg2);}
+.qr:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
+[data-theme="dark"] .qr:hover{color:var(--gold2);}
 
-/* Suggestion cards */
-.sugs { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; width: 100%; max-width: 560px; }
-.sug {
-  background: var(--bg); border: 1px solid var(--border);
-  padding: 16px 18px; border-radius: var(--r-lg);
-  cursor: pointer; text-align: left; transition: all .2s;
-  font-family: "DM Sans", sans-serif; box-shadow: var(--s1);
-}
-.sug:hover { border-color: var(--text); box-shadow: var(--s3); transform: translateY(-2px); }
-.sug-icon { font-size: 20px; margin-bottom: 8px; display: block; }
-.sug-title { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 3px; }
-.sug-desc { font-size: 11.5px; color: var(--text3); display: block; }
+/* SCROLL BTN */
+.scroll-btn{position:fixed;bottom:94px;right:22px;width:40px;height:40px;background:var(--navy-g);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(13,27,62,.35);z-index:100;transition:all .17s;}
+.scroll-btn.show{display:flex;}
+.scroll-btn:hover{transform:scale(1.12);}
 
-/* Daily challenge */
-.challenge-card {
-  background: linear-gradient(135deg, rgba(124,58,237,.06), rgba(219,39,119,.04));
-  border: 1px solid rgba(124,58,237,.15);
-  border-radius: var(--r); padding: 12px 18px;
-  font-size: 13px; color: var(--purple); font-weight: 500;
-  max-width: 460px; width: 100%; cursor: pointer; transition: all .18s;
-  display: flex; align-items: center; gap: 10px;
-}
-.challenge-card:hover { transform: translateY(-1px); background: rgba(124,58,237,.09); }
+/* ════ CALCULATOR ════ */
+.calc-w{position:fixed;bottom:94px;right:20px;background:var(--white);border:1px solid var(--border2);border-radius:var(--r-xl);padding:18px;box-shadow:var(--s4);z-index:200;display:none;width:244px;}
+[data-theme="dark"] .calc-w{background:var(--bg2);}
+.calc-w.show{display:block;animation:popIn .22s cubic-bezier(.22,1,.36,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.88) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.calc-disp{background:var(--navy);color:#EEF2FF;border:1px solid var(--navy3);border-radius:var(--r-sm);padding:12px 14px;font-family:"DM Mono",monospace;font-size:24px;text-align:right;margin-bottom:12px;min-height:54px;display:flex;align-items:center;justify-content:flex-end;word-break:break-all;}
+.calc-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px;font-size:14px;font-family:"DM Mono",monospace;cursor:pointer;transition:all .13s;color:var(--text);}
+.cb:hover{background:var(--border);transform:scale(1.05);}
+.cb.op{color:var(--navy);font-weight:700;}
+.cb.eq{background:var(--gold-gs);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 2px 8px var(--gold-glow);}
 
-/* ══════ MESSAGES ══════ */
-.msg {
-  display: flex; gap: 12px; margin-bottom: 24px;
-  animation: fadeup .22s ease;
-  max-width: var(--chat-max); margin-left: auto; margin-right: auto; width: 100%;
-}
-@keyframes fadeup { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.msg.user { flex-direction: row-reverse; }
+/* ════ OVERLAYS & MODALS ════ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(13,27,62,.45);z-index:99;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.overlay.show{display:block;}
+.modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.94);width:92%;max-width:520px;background:var(--white);border:1px solid var(--border2);border-radius:var(--r-xl);box-shadow:var(--s4);z-index:100;padding:28px;max-height:88vh;overflow-y:auto;transition:transform .25s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .modal{background:var(--bg2);}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.modal.show{display:block;transform:translate(-50%,-50%) scale(1);}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.modal h3{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:var(--navy);}
+[data-theme="dark"] .modal h3{color:var(--text);}
+.mx{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:var(--r-xs);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.mx:hover{background:var(--navy-soft);color:var(--navy);}
+.msub{font-size:13px;color:var(--text3);margin-bottom:18px;}
+.mclose{width:100%;background:var(--navy-g);color:#fff;border:none;padding:12px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);margin-top:14px;box-shadow:0 3px 10px rgba(13,27,62,.25);transition:all .17s;}
+.mclose:hover{opacity:.85;}
+.slabel{font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
+.lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px;}
+.lopt{padding:10px 6px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;border-radius:var(--r-sm);transition:all .15s;}
+.lopt:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
+.mi{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;margin-bottom:7px;}
+.mdel{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:15px;margin-left:auto;transition:color .15s;}
+.mdel:hover{color:var(--danger);}
+.mmt{text-align:center;color:var(--text3);font-size:13px;padding:24px;}
+.mrow{display:flex;gap:8px;margin-top:12px;}
+.minp{flex:1;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;}
+.minp:focus{border-color:var(--gold2);}
+.madd{padding:10px 18px;background:var(--navy-g);color:#fff;border:none;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:linear-gradient(135deg,var(--bg2),var(--surface));border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;}
+.stn{font-family:"Cormorant Garamond",serif;font-size:36px;font-weight:600;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stl{font-size:11.5px;color:var(--text3);margin-top:4px;font-weight:600;}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.badge{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 6px;text-align:center;font-size:22px;}
+.badge.earned{background:linear-gradient(135deg,rgba(212,160,23,.1),rgba(240,200,66,.07));border-color:var(--border2);}
+.badge-l{display:block;font-size:10px;color:var(--text3);margin-top:5px;}
+.streak-center{text-align:center;padding:20px;}
+.streak-big{font-size:80px;line-height:1;display:block;}
+.streak-num{font-family:"Cormorant Garamond",serif;font-size:52px;font-weight:700;background:linear-gradient(135deg,#FF6B35,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-top:6px;}
+.sdays{display:flex;gap:6px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.sd{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);font-weight:600;}
+.sd.done{background:linear-gradient(135deg,#FF6B35,#F59E0B);border-color:transparent;color:#fff;}
+.sup-qr{width:180px;height:180px;margin:14px auto;display:block;border-radius:var(--r);border:2px solid var(--border2);box-shadow:var(--s2);}
+.upi-id{text-align:center;font-family:"DM Mono",monospace;font-size:13px;color:var(--text2);margin-top:6px;}
+.amt-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.amt{padding:7px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-full);font-size:12.5px;cursor:pointer;font-family:"DM Sans",sans-serif;font-weight:700;color:var(--text2);transition:all .15s;}
+.amt:hover{border-color:var(--border2);color:var(--gold);}
+.theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.tho{padding:11px;background:var(--bg2);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12.5px;font-family:"DM Sans",sans-serif;font-weight:600;border-radius:var(--r-sm);transition:all .15s;}
+.tho:hover,.tho.on{border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .tho:hover,[data-theme="dark"] .tho.on{border-color:var(--gold2);color:var(--gold2);}
+.img-gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.gi{aspect-ratio:1;border-radius:var(--r-sm);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .15s;}
+.gi img{width:100%;height:100%;object-fit:cover;}
+.gi:hover{transform:scale(1.04);}
+.ge{text-align:center;color:var(--text3);font-size:13px;padding:30px;grid-column:span 3;}
+.pa{position:absolute;inset:0;background:var(--white);border-radius:inherit;}
+.prof-top{text-align:center;padding:16px 0;}
+.prof-av{width:78px;height:78px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;margin:0 auto 12px;overflow:hidden;box-shadow:0 4px 16px var(--gold-glow);}
+.prof-av img{width:100%;height:100%;object-fit:cover;}
+.prof-nm{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;}
+.prof-em{font-size:13px;color:var(--text3);margin-top:3px;}
+.pro-up{background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;padding:14px;border-radius:var(--r);text-align:center;margin-top:16px;cursor:pointer;border:1px solid var(--navy3);}
+.pro-up::after{content:'';display:block;height:2px;background:var(--gold-g);border-radius:99px;margin-top:12px;}
+.pro-up h4{font-family:"Cormorant Garamond",serif;font-size:17px;font-weight:600;margin-bottom:3px;}
+.pro-up p{font-size:12px;opacity:.8;}
+.signout{width:100%;padding:11px;background:transparent;border:1.5px solid var(--danger);color:var(--danger);border-radius:var(--r-sm);font-size:13.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:12px;}
+.hl{max-height:300px;overflow-y:auto;}
+.hi{padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.hi:hover{border-color:var(--border2);}
+.hit{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.hid{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;}
+.he{text-align:center;color:var(--text3);font-size:13px;padding:24px;}
 
-.av {
-  width: 30px; height: 30px; border-radius: 8px;
-  flex-shrink: 0; display: flex; align-items: center;
-  justify-content: center; font-family: "DM Mono", monospace;
-  font-size: 9px; font-weight: 600; overflow: hidden;
-}
-.av.ai { background: var(--text); color: var(--bg); }
-.av.usr { background: linear-gradient(135deg, var(--blue), #003fcc); color: #fff; }
-.av img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+/* FOCUS */
+body.focus header .hright{display:none;}
+body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!important;}
 
-.mwrap { max-width: calc(100% - 44px); display: flex; flex-direction: column; }
-.msg.user .mwrap { align-items: flex-end; }
-
-.bubble {
-  padding: 13px 17px; font-size: 14.5px; line-height: 1.72;
-  border-radius: var(--r); position: relative; word-break: break-word;
-}
-.msg.ai .bubble { background: var(--bg2); border: 1px solid var(--border); border-radius: 3px var(--r) var(--r) var(--r); }
-.msg.user .bubble { background: var(--text); color: var(--bg); border-radius: var(--r) 3px var(--r) var(--r); }
-
-.cpbtn {
-  position: absolute; top: 9px; right: 9px;
-  background: var(--bg); border: 1px solid var(--border);
-  color: var(--text3); padding: 2px 8px; border-radius: 5px;
-  font-size: 9px; cursor: pointer; opacity: 0;
-  transition: opacity .15s; font-family: "DM Sans", sans-serif;
-}
-.bubble:hover .cpbtn { opacity: 1; }
-
-.msg-meta { display: flex; align-items: center; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
-.msg.user .msg-meta { justify-content: flex-end; }
-.act {
-  background: transparent; border: none; cursor: pointer;
-  padding: 4px 8px; border-radius: var(--r-xs);
-  color: var(--text3); font-size: 11px; font-family: "DM Sans", sans-serif;
-  transition: all .15s; display: flex; align-items: center; gap: 3px;
-}
-.act:hover { background: var(--surface); color: var(--text); }
-.act.liked { color: var(--success); }
-.act.disliked { color: var(--danger); }
-.speed { font-size: 10px; color: var(--text3); font-family: "DM Mono", monospace; padding: 2px 7px; background: var(--surface); border-radius: 4px; }
-.ts { font-size: 10px; color: var(--text3); font-family: "DM Mono", monospace; margin-top: 4px; }
-.msg.user .ts { text-align: right; }
-.pinned-msg { border-left: 3px solid var(--gold) !important; }
-
-/* ══════ TYPING ══════ */
-.typing-wrap { display: flex; gap: 12px; margin-bottom: 24px; max-width: var(--chat-max); margin-left: auto; margin-right: auto; }
-.typing { display: flex; gap: 5px; padding: 14px 17px; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px var(--r) var(--r) var(--r); align-items: center; }
-.typing span { width: 5px; height: 5px; background: var(--text3); border-radius: 50%; animation: tdot 1.2s infinite; }
-.typing span:nth-child(2) { animation-delay: .16s; }
-.typing span:nth-child(3) { animation-delay: .32s; }
-@keyframes tdot { 0%,60%,100% { transform:translateY(0); opacity:.4; } 30% { transform:translateY(-5px); opacity:1; } }
-
-/* ══════ IMAGES ══════ */
-.gen-img { max-width: 300px; margin-top: 10px; border-radius: var(--r); border: 1px solid var(--border); display: block; box-shadow: var(--s2); cursor: pointer; transition: transform .15s, box-shadow .2s; }
-.gen-img:hover { transform: scale(1.02); box-shadow: var(--s3); }
-.img-dl { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 7px 16px; background: var(--text); color: var(--bg); text-decoration: none; font-size: 12px; font-family: "DM Sans", sans-serif; border-radius: var(--r-sm); font-weight: 600; transition: opacity .15s; }
-.img-dl:hover { opacity: .8; }
-
-/* ══════ CODE ══════ */
-pre { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--blue); padding: 14px 16px; overflow-x: auto; font-size: 13px; margin: 10px 0; border-radius: var(--r-sm); font-family: "DM Mono", monospace; position: relative; }
-pre .code-copy { position: absolute; top: 8px; right: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text3); padding: 2px 9px; border-radius: 5px; font-size: 9px; cursor: pointer; font-family: "DM Sans", sans-serif; opacity: 0; transition: opacity .15s; }
-pre:hover .code-copy { opacity: 1; }
-code { color: var(--blue); font-family: "DM Mono", monospace; font-size: 13px; }
-
-/* ══════ INPUT ══════ */
-.input-area { padding: 10px var(--page-pad) 16px; background: var(--bg); border-top: 1px solid var(--border); flex-shrink: 0; }
-.char-count { font-size: 10px; color: var(--text3); text-align: right; max-width: var(--chat-max); margin: 0 auto 5px; font-family: "DM Mono", monospace; height: 14px; }
-.input-box {
-  display: flex; gap: 8px; align-items: flex-end;
-  background: var(--bg); border: 1.5px solid var(--border2);
-  border-radius: var(--r-lg); padding: 10px 12px;
-  transition: all .18s; box-shadow: var(--s1);
-  max-width: var(--chat-max); margin: 0 auto;
-}
-.input-box:focus-within { border-color: var(--text); box-shadow: var(--s2); }
-#inp { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 14.5px; font-family: "DM Sans", sans-serif; resize: none; max-height: 140px; min-height: 22px; line-height: 1.5; }
-#inp::placeholder { color: var(--text3); }
-.ibtns { display: flex; gap: 6px; align-items: center; }
-.micbtn { background: transparent; border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-size: 15px; padding: 7px 9px; border-radius: var(--r-sm); transition: all .15s; line-height: 1; }
-.micbtn:hover { background: var(--surface); color: var(--text); }
-.micbtn.rec { background: rgba(220,38,38,.07); border-color: var(--danger); color: var(--danger); animation: recpulse 1s infinite; }
-@keyframes recpulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.3); } 50% { box-shadow: 0 0 0 5px rgba(220,38,38,0); } }
-.sendbtn { padding: 9px 18px; background: var(--text); border: none; color: var(--bg); cursor: pointer; font-family: "DM Sans", sans-serif; font-size: 13.5px; font-weight: 600; border-radius: var(--r-sm); transition: all .15s; white-space: nowrap; }
-.sendbtn:hover { opacity: .8; transform: scale(1.02); }
-.sendbtn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
-.qrs { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; max-width: var(--chat-max); margin-left: auto; margin-right: auto; }
-.qr { padding: 5px 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text3); font-size: 12px; cursor: pointer; border-radius: 99px; transition: all .15s; font-family: "DM Sans", sans-serif; font-weight: 500; }
-.qr:hover { border-color: var(--text); color: var(--text); background: var(--bg2); }
-
-/* ══════ SCROLL BTN ══════ */
-.scroll-btn { position: fixed; bottom: 90px; right: 22px; width: 38px; height: 38px; background: var(--text); color: var(--bg); border: none; border-radius: 50%; cursor: pointer; font-size: 16px; display: none; align-items: center; justify-content: center; box-shadow: var(--s3); z-index: 100; transition: all .15s; }
-.scroll-btn.show { display: flex; }
-.scroll-btn:hover { transform: scale(1.1); }
-
-/* ══════ MODALS ══════ */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 99; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-.overlay.show { display: block; }
-.modal {
-  display: none; position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(.96);
-  width: 92%; max-width: 520px; background: var(--bg);
-  border: 1px solid var(--border); border-radius: var(--r-xl);
-  box-shadow: var(--s4); z-index: 100; padding: 26px;
-  max-height: 88vh; overflow-y: auto; transition: transform .22s;
-}
-.modal.show { display: block; transform: translate(-50%,-50%) scale(1); }
-.modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-.modal h3 { font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
-.modal-x { background: var(--surface); border: none; color: var(--text2); width: 28px; height: 28px; border-radius: var(--r-xs); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background .15s; }
-.modal-x:hover { background: var(--border); }
-.modal-sub { font-size: 13px; color: var(--text3); margin-bottom: 18px; }
-.modal-close { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px; cursor: pointer; font-family: "DM Sans", sans-serif; font-size: 13.5px; font-weight: 600; border-radius: var(--r-sm); margin-top: 14px; transition: background .15s; }
-.modal-close:hover { background: var(--border); }
-
-/* Section label */
-.sec-label { font-size: 10.5px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 8px; }
-
-/* Lang grid */
-.lgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 6px; }
-.lopt { padding: 10px 6px; background: var(--bg2); border: 1px solid var(--border); color: var(--text2); cursor: pointer; text-align: center; font-size: 12px; font-family: "DM Sans", sans-serif; font-weight: 500; border-radius: var(--r-sm); transition: all .15s; }
-.lopt:hover { border-color: var(--text); color: var(--text); background: var(--surface); }
-
-/* Memory modal */
-.mem-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 13.5px; margin-bottom: 7px; }
-.mem-del { background: transparent; border: none; color: var(--text3); cursor: pointer; font-size: 15px; margin-left: auto; transition: color .15s; line-height: 1; }
-.mem-del:hover { color: var(--danger); }
-.mem-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 24px; }
-.mem-row { display: flex; gap: 8px; margin-top: 12px; }
-.mem-inp { flex: 1; padding: 10px 14px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: var(--r-sm); font-size: 13.5px; font-family: "DM Sans", sans-serif; color: var(--text); outline: none; transition: border-color .15s; }
-.mem-inp:focus { border-color: var(--blue); }
-.mem-add { padding: 10px 18px; background: var(--text); color: var(--bg); border: none; border-radius: var(--r-sm); font-family: "DM Sans", sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; white-space: nowrap; }
-.mem-add:hover { opacity: .8; }
-
-/* Stats modal */
-.stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 14px; }
-.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; text-align: center; }
-.stat-n { font-size: 30px; font-weight: 700; color: var(--blue); font-family: "DM Mono", monospace; }
-.stat-l { font-size: 11.5px; color: var(--text3); margin-top: 4px; font-weight: 500; }
-.badge-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.badge { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 6px; text-align: center; font-size: 22px; }
-.badge.earned { background: rgba(217,119,6,.06); border-color: rgba(217,119,6,.2); }
-.badge-l { display: block; font-size: 10px; color: var(--text3); margin-top: 5px; }
-
-/* Streak modal */
-.streak-center { text-align: center; padding: 20px; }
-.streak-big { font-size: 72px; line-height: 1; display: block; }
-.streak-num { font-size: 42px; font-weight: 700; color: #ff6b35; font-family: "DM Mono", monospace; display: block; margin-top: 6px; }
-.streak-note { font-size: 14px; color: var(--text2); margin-top: 8px; }
-.streak-days { display: flex; gap: 6px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-.sd { width: 34px; height: 34px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text3); font-weight: 500; }
-.sd.done { background: linear-gradient(135deg,#ff6b35,#f59e0b); border-color: transparent; color: #fff; }
-
-/* Support modal */
-.support-qr { width: 180px; height: 180px; margin: 14px auto; display: block; border-radius: var(--r); border: 1px solid var(--border); }
-.upi-id { text-align: center; font-family: "DM Mono", monospace; font-size: 13px; color: var(--text2); margin-top: 6px; }
-.amt-row { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-.amt { padding: 7px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 99px; font-size: 12.5px; cursor: pointer; font-family: "DM Sans", sans-serif; font-weight: 600; color: var(--text2); transition: all .15s; }
-.amt:hover { background: var(--surface); border-color: var(--border2); color: var(--text); }
-
-/* Image gallery */
-.img-gallery { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-.gallery-img { aspect-ratio: 1; border-radius: var(--r-sm); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: transform .15s; }
-.gallery-img img { width: 100%; height: 100%; object-fit: cover; }
-.gallery-img:hover { transform: scale(1.03); }
-.gallery-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 30px; grid-column: span 3; }
-
-/* Theme modal */
-.theme-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
-.theme-opt { padding: 11px; background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2); cursor: pointer; text-align: center; font-size: 12.5px; font-family: "DM Sans", sans-serif; font-weight: 500; border-radius: var(--r-sm); transition: all .15s; }
-.theme-opt:hover, .theme-opt.on { border-color: var(--text); color: var(--text); }
-.accent-row { display: flex; gap: 10px; flex-wrap: wrap; }
-.accent-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: transform .15s; box-shadow: var(--s2); }
-.accent-dot:hover { transform: scale(1.12); }
-
-/* Calculator */
-.calc-widget { position: fixed; bottom: 90px; right: 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 16px; box-shadow: var(--s4); z-index: 200; display: none; width: 230px; }
-.calc-widget.show { display: block; }
-.calc-disp { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px; font-family: "DM Mono", monospace; font-size: 22px; text-align: right; margin-bottom: 10px; min-height: 50px; display: flex; align-items: center; justify-content: flex-end; word-break: break-all; }
-.calc-btns { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-.cb { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px; font-size: 14px; font-family: "DM Mono", monospace; cursor: pointer; transition: all .12s; color: var(--text); }
-.cb:hover { background: var(--border); }
-.cb.op { color: var(--blue); font-weight: 600; }
-.cb.eq { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 700; }
-
-/* Profile modal */
-.profile-top { text-align: center; padding: 16px 0; }
-.profile-av { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: #fff; margin: 0 auto 12px; overflow: hidden; }
-.profile-av img { width: 100%; height: 100%; object-fit: cover; }
-.profile-name { font-size: 18px; font-weight: 700; letter-spacing: -.3px; }
-.profile-email { font-size: 13px; color: var(--text3); margin-top: 3px; }
-.pro-upgrade { background: linear-gradient(135deg,#f59e0b,#ea580c); color: #fff; padding: 13px; border-radius: var(--r); text-align: center; margin-top: 16px; cursor: pointer; transition: opacity .15s; }
-.pro-upgrade:hover { opacity: .9; }
-.pro-upgrade h4 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-.pro-upgrade p { font-size: 12px; opacity: .9; }
-.signout-btn { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--danger); color: var(--danger); border-radius: var(--r-sm); font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: "DM Sans", sans-serif; margin-top: 12px; transition: all .15s; }
-.signout-btn:hover { background: rgba(220,38,38,.06); }
-
-/* Chat history panel */
-.history-list { max-height: 300px; overflow-y: auto; }
-.hist-item { padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 8px; cursor: pointer; transition: all .15s; }
-.hist-item:hover { border-color: var(--text); }
-.hist-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.hist-date { font-size: 11px; color: var(--text3); font-family: "DM Mono", monospace; }
-.hist-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 24px; }
-
-/* Focus mode */
-body.focus header .h-right { display: none; }
-body.focus .modes { display: none; }
-body.focus .sub-bar { display: none !important; }
-body.focus .pinned-bar { display: none !important; }
-body.focus .qrs { display: none; }
-
-/* Themes */
-[data-accent="purple"] { --blue: #7c3aed; --blue-soft: rgba(124,58,237,.07); }
-[data-accent="green"]  { --blue: #16a34a; --blue-soft: rgba(22,163,74,.07); }
-[data-accent="orange"] { --blue: #ea580c; --blue-soft: rgba(234,88,12,.07); }
-[data-accent="teal"]   { --blue: #0891b2; --blue-soft: rgba(8,145,178,.07); }
-[data-accent="pink"]   { --blue: #db2777; --blue-soft: rgba(219,39,119,.07); }
-
-/* ══════ RESPONSIVE ══════ */
-@media (max-width: 600px) {
-  :root { --page-pad: 16px; }
-  .welcome h1 { font-size: 26px; }
-  .sugs { grid-template-columns: 1fr; }
-  .ltag { display: none; }
-  .calc-widget { bottom: 85px; right: 14px; }
-  .scroll-btn { right: 14px; }
-}
+/* RESPONSIVE */
+@media(max-width:600px){:root{--pad:16px;}.welcome h1{font-size:26px;}.sugs{grid-template-columns:1fr;}.ltag{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="loginScreen">
-  <div class="login-wrap">
-    <div class="login-mark">QV</div>
-    <h1 class="login-h1">Welcome to <em>QVIO</em></h1>
-    <p class="login-p">India's fastest AI. 100+ languages.<br>Sign in to save your conversations.</p>
+<div id="particles"></div>
 
-    <button class="google-signin" onclick="signInGoogle()">
-      <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+<!-- ══════ NAMASTE ANIMATION SCREEN ══════ -->
+<div id="namasteScreen">
+  <div class="ns-bg"></div>
+  <div class="ns-rings">
+    <div class="nsr nsr1"></div>
+    <div class="nsr nsr2"></div>
+    <div class="nsr nsr3"></div>
+    <div class="ns-core">QV</div>
+  </div>
+  <div class="ns-namaste" id="nsName">
+    🙏 Namaste!
+    <span id="nsSubName">Welcome to QVIO</span>
+  </div>
+  <p class="ns-sub" id="nsSub">Personalizing your premium experience...</p>
+  <div class="ns-bar"><div class="ns-prog"></div></div>
+</div>
+
+<!-- ══════ LOGIN SCREEN ══════ -->
+<div id="loginScreen">
+  <div class="lwrap">
+    <div class="l-crown">👑</div>
+    <div class="l-mark">QV</div>
+    <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
+    <p class="l-p">India's most premium AI. 100+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
+    <button class="gbtn" onclick="signInGoogle()">
+      <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
-
-    <div class="login-or"><span>or</span></div>
-
-    <input class="login-field" id="loginEmail" type="email" placeholder="Email address" />
-    <input class="login-field" id="loginPass" type="password" placeholder="Password" />
-    <button class="login-cta" onclick="signInEmail()">Continue with Email</button>
-    <button class="login-cta" style="background:var(--surface);color:var(--text);border:1px solid var(--border);" onclick="signUpEmail()">Create Account</button>
-
-    <span class="login-skip" onclick="skipLogin()">Skip for now — continue as guest</span>
-
-    <div class="login-badges">
-      <div class="login-badge">⚡ Fastest AI</div>
-      <div class="login-badge">🌍 100+ Languages</div>
-      <div class="login-badge">🇮🇳 Made in India</div>
-      <div class="login-badge">⭐ Pro Plans Available</div>
+    <div class="l-or"><span>or</span></div>
+    <input class="lf" id="loginEmail" type="email" placeholder="Email address"/>
+    <input class="lf" id="loginPass" type="password" placeholder="Password"/>
+    <button class="lbtn main" onclick="signInEmail()">Sign In</button>
+    <button class="lbtn ghost" onclick="signUpEmail()">Create Account</button>
+    <span class="l-skip" onclick="skipLogin()">Continue as guest →</span>
+    <div class="l-badges">
+      <div class="l-badge">⚡ Faster than ChatGPT</div>
+      <div class="l-badge">🌍 100+ Languages</div>
+      <div class="l-badge">🇮🇳 Made in India</div>
+      <div class="l-badge">✨ Free Forever</div>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- SCROLL BTN -->
 <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
 
 <!-- CALCULATOR -->
-<div class="calc-widget" id="calcW">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <span style="font-size:13px;font-weight:700;">Calculator</span>
-    <button onclick="toggleCalc()" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:17px;line-height:1;">✕</button>
+<div class="calc-w" id="calcW">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);">Calculator</span>
+    <button onclick="toggleCalc()" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:18px;">✕</button>
   </div>
   <div class="calc-disp" id="calcDisp">0</div>
   <div class="calc-btns">
-    <button class="cb op" onclick="ci('C')">C</button>
-    <button class="cb op" onclick="ci('±')">±</button>
-    <button class="cb op" onclick="ci('%')">%</button>
-    <button class="cb op" onclick="ci('/')">÷</button>
-    <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button><button class="cb" onclick="ci('9')">9</button>
-    <button class="cb op" onclick="ci('*')">×</button>
-    <button class="cb" onclick="ci('4')">4</button><button class="cb" onclick="ci('5')">5</button><button class="cb" onclick="ci('6')">6</button>
-    <button class="cb op" onclick="ci('-')">−</button>
-    <button class="cb" onclick="ci('1')">1</button><button class="cb" onclick="ci('2')">2</button><button class="cb" onclick="ci('3')">3</button>
-    <button class="cb op" onclick="ci('+')">+</button>
-    <button class="cb" onclick="ci('0')" style="grid-column:span 2;">0</button>
-    <button class="cb" onclick="ci('.')">.</button>
-    <button class="cb eq" onclick="ci('=')">=</button>
+    <button class="cb op" onclick="ci('C')">C</button><button class="cb op" onclick="ci('±')">±</button><button class="cb op" onclick="ci('%')">%</button><button class="cb op" onclick="ci('/')">÷</button>
+    <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button><button class="cb" onclick="ci('9')">9</button><button class="cb op" onclick="ci('*')">×</button>
+    <button class="cb" onclick="ci('4')">4</button><button class="cb" onclick="ci('5')">5</button><button class="cb" onclick="ci('6')">6</button><button class="cb op" onclick="ci('-')">−</button>
+    <button class="cb" onclick="ci('1')">1</button><button class="cb" onclick="ci('2')">2</button><button class="cb" onclick="ci('3')">3</button><button class="cb op" onclick="ci('+')">+</button>
+    <button class="cb" onclick="ci('0')" style="grid-column:span 2;">0</button><button class="cb" onclick="ci('.')">.</button><button class="cb eq" onclick="ci('=')">=</button>
   </div>
 </div>
 
 <!-- OVERLAYS -->
-<div class="overlay" id="o_lang"  onclick="closeM('lang')"></div>
-<div class="overlay" id="o_mem"   onclick="closeM('mem')"></div>
-<div class="overlay" id="o_sup"   onclick="closeM('sup')"></div>
+<div class="overlay" id="o_lang" onclick="closeM('lang')"></div>
+<div class="overlay" id="o_mem" onclick="closeM('mem')"></div>
+<div class="overlay" id="o_sup" onclick="closeM('sup')"></div>
 <div class="overlay" id="o_stats" onclick="closeM('stats')"></div>
 <div class="overlay" id="o_streak" onclick="closeM('streak')"></div>
 <div class="overlay" id="o_theme" onclick="closeM('theme')"></div>
-<div class="overlay" id="o_gallery" onclick="closeM('gallery')"></div>
-<div class="overlay" id="o_profile" onclick="closeM('profile')"></div>
-<div class="overlay" id="o_history" onclick="closeM('history')"></div>
-<div class="overlay" id="o_imgview" onclick="closeM('imgview')"></div>
+<div class="overlay" id="o_gal" onclick="closeM('gal')"></div>
+<div class="overlay" id="o_prof" onclick="closeM('prof')"></div>
+<div class="overlay" id="o_hist" onclick="closeM('hist')"></div>
+<div class="overlay" id="o_imgv" onclick="closeM('imgv')"></div>
 
 <!-- LANGUAGE MODAL -->
 <div class="modal" id="m_lang">
-  <div class="modal-hd"><h3>🌍 Language Learning</h3><button class="modal-x" onclick="closeM('lang')">✕</button></div>
-  <div class="modal-sub">Tap any language to start learning instantly</div>
-  <div class="sec-label">🇮🇳 Indian Languages</div>
+  <div class="mhd"><h3>🌍 Language Learning</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
+  <div class="msub">Tap any language to start learning instantly</div>
+  <div class="slabel">🇮🇳 Indian Languages</div>
   <div class="lgrid">
     <div class="lopt" onclick="learnLang('Hindi')">🇮🇳 Hindi</div><div class="lopt" onclick="learnLang('Kannada')">🌟 Kannada</div><div class="lopt" onclick="learnLang('Tamil')">🌺 Tamil</div>
     <div class="lopt" onclick="learnLang('Telugu')">🎭 Telugu</div><div class="lopt" onclick="learnLang('Bengali')">🐯 Bengali</div><div class="lopt" onclick="learnLang('Marathi')">🏔 Marathi</div>
     <div class="lopt" onclick="learnLang('Gujarati')">🦁 Gujarati</div><div class="lopt" onclick="learnLang('Punjabi')">🌾 Punjabi</div><div class="lopt" onclick="learnLang('Malayalam')">🌴 Malayalam</div>
     <div class="lopt" onclick="learnLang('Odia')">🎨 Odia</div><div class="lopt" onclick="learnLang('Assamese')">🦏 Assamese</div><div class="lopt" onclick="learnLang('Urdu')">🌹 Urdu</div>
-    <div class="lopt" onclick="learnLang('Sanskrit')">📜 Sanskrit</div><div class="lopt" onclick="learnLang('Nepali')">⛰ Nepali</div><div class="lopt" onclick="learnLang('Konkani')">🐚 Konkani</div>
-    <div class="lopt" onclick="learnLang('Kashmiri')">❄️ Kashmiri</div><div class="lopt" onclick="learnLang('Maithili')">🎋 Maithili</div><div class="lopt" onclick="learnLang('Sindhi')">🌊 Sindhi</div>
-    <div class="lopt" onclick="learnLang('Manipuri')">🥁 Manipuri</div><div class="lopt" onclick="learnLang('Bodo')">🌿 Bodo</div><div class="lopt" onclick="learnLang('Santali')">🌳 Santali</div>
-    <div class="lopt" onclick="learnLang('Dogri')">🦅 Dogri</div>
+    <div class="lopt" onclick="learnLang('Sanskrit')">📜 Sanskrit</div><div class="lopt" onclick="learnLang('Nepali')">⛰ Nepali</div><div class="lopt" onclick="learnLang('Kashmiri')">❄️ Kashmiri</div>
+    <div class="lopt" onclick="learnLang('Sindhi')">🌊 Sindhi</div><div class="lopt" onclick="learnLang('Manipuri')">🥁 Manipuri</div><div class="lopt" onclick="learnLang('Dogri')">🦅 Dogri</div>
+    <div class="lopt" onclick="learnLang('Santali')">🌳 Santali</div><div class="lopt" onclick="learnLang('Bodo')">🌿 Bodo</div><div class="lopt" onclick="learnLang('Konkani')">🐚 Konkani</div>
   </div>
-  <div class="sec-label">🌏 Asia</div>
+  <div class="slabel">🌏 Asia</div>
   <div class="lgrid">
     <div class="lopt" onclick="learnLang('Mandarin')">🇨🇳 Mandarin</div><div class="lopt" onclick="learnLang('Japanese')">🇯🇵 Japanese</div><div class="lopt" onclick="learnLang('Korean')">🇰🇷 Korean</div>
     <div class="lopt" onclick="learnLang('Vietnamese')">🇻🇳 Vietnamese</div><div class="lopt" onclick="learnLang('Thai')">🇹🇭 Thai</div><div class="lopt" onclick="learnLang('Indonesian')">🇮🇩 Indonesian</div>
     <div class="lopt" onclick="learnLang('Malay')">🇲🇾 Malay</div><div class="lopt" onclick="learnLang('Tagalog')">🇵🇭 Tagalog</div><div class="lopt" onclick="learnLang('Burmese')">🇲🇲 Burmese</div>
   </div>
-  <div class="sec-label">🌍 Middle East & Africa</div>
+  <div class="slabel">🌍 Middle East & Africa</div>
   <div class="lgrid">
     <div class="lopt" onclick="learnLang('Arabic')">🌙 Arabic</div><div class="lopt" onclick="learnLang('Persian')">🇮🇷 Persian</div><div class="lopt" onclick="learnLang('Hebrew')">🇮🇱 Hebrew</div>
     <div class="lopt" onclick="learnLang('Turkish')">🇹🇷 Turkish</div><div class="lopt" onclick="learnLang('Swahili')">🌍 Swahili</div><div class="lopt" onclick="learnLang('Amharic')">🇪🇹 Amharic</div>
-    <div class="lopt" onclick="learnLang('Hausa')">🇳🇬 Hausa</div><div class="lopt" onclick="learnLang('Yoruba')">🥁 Yoruba</div><div class="lopt" onclick="learnLang('Zulu')">🌿 Zulu</div>
   </div>
-  <div class="sec-label">🌎 Europe</div>
+  <div class="slabel">🌎 Europe</div>
   <div class="lgrid">
     <div class="lopt" onclick="learnLang('Spanish')">🇪🇸 Spanish</div><div class="lopt" onclick="learnLang('French')">🇫🇷 French</div><div class="lopt" onclick="learnLang('German')">🇩🇪 German</div>
     <div class="lopt" onclick="learnLang('Portuguese')">🇵🇹 Portuguese</div><div class="lopt" onclick="learnLang('Russian')">🇷🇺 Russian</div><div class="lopt" onclick="learnLang('Italian')">🇮🇹 Italian</div>
     <div class="lopt" onclick="learnLang('Dutch')">🇳🇱 Dutch</div><div class="lopt" onclick="learnLang('Polish')">🇵🇱 Polish</div><div class="lopt" onclick="learnLang('Greek')">🇬🇷 Greek</div>
-    <div class="lopt" onclick="learnLang('Swedish')">🇸🇪 Swedish</div><div class="lopt" onclick="learnLang('Ukrainian')">🇺🇦 Ukrainian</div><div class="lopt" onclick="learnLang('Czech')">🇨🇿 Czech</div>
   </div>
-  <button class="modal-close" onclick="closeM('lang')">Close</button>
+  <button class="mclose" onclick="closeM('lang')">Close</button>
 </div>
 
 <!-- MEMORY MODAL -->
 <div class="modal" id="m_mem">
-  <div class="modal-hd"><h3>🧠 Memory</h3><button class="modal-x" onclick="closeM('mem')">✕</button></div>
-  <div class="modal-sub">QVIO remembers you — even after closing the browser</div>
+  <div class="mhd"><h3>🧠 Memory</h3><button class="mx" onclick="closeM('mem')">✕</button></div>
+  <div class="msub">QVIO remembers you across every session</div>
   <div id="memList"></div>
-  <div class="mem-row">
-    <input class="mem-inp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/>
-    <button class="mem-add" onclick="addMem()">Save</button>
-  </div>
-  <button class="modal-close" onclick="closeM('mem')" style="margin-top:12px;">Done</button>
+  <div class="mrow"><input class="minp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/><button class="madd" onclick="addMem()">Save</button></div>
+  <button class="mclose" onclick="closeM('mem')">Done</button>
 </div>
 
-<!-- SUPPORT MODAL -->
+<!-- SUPPORT -->
 <div class="modal" id="m_sup" style="text-align:center;">
-  <div class="modal-hd" style="justify-content:center;"><h3>❤️ Support QVIO</h3><button class="modal-x" onclick="closeM('sup')" style="position:absolute;right:26px;">✕</button></div>
-  <div class="modal-sub">Built by a 17-year-old from Karnataka 🇮🇳</div>
-  <img class="support-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D7019959745%40fam%26pn%3DQVIO%26cu%3DINR" alt="UPI QR">
-  <div class="upi-id">7019959745@fam</div>
-  <div class="amt-row">
-    <div class="amt">☕ ₹10</div><div class="amt">🍕 ₹50</div><div class="amt">💎 ₹99</div><div class="amt">🚀 ₹199</div>
-  </div>
-  <div style="font-size:12px;color:var(--text3);margin-top:14px;">Every rupee keeps QVIO free 🙏</div>
-  <button class="modal-close" onclick="closeM('sup')">Close</button>
+  <div class="mhd" style="justify-content:center;"><h3>❤️ Support QVIO</h3><button class="mx" onclick="closeM('sup')" style="position:absolute;right:28px;">✕</button></div>
+  <div class="msub">Built by a 17-year-old from Karnataka 🇮🇳<br>Your support keeps QVIO free for all of India</div>
+  <img class="sup-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D7019959745%40fampay%26pn%3DQVIO%26cu%3DINR" alt="UPI QR">
+  <div class="upi-id">7019959745@fampay</div>
+  <div class="amt-row"><div class="amt">☕ ₹10</div><div class="amt">🍕 ₹50</div><div class="amt">💎 ₹99</div><div class="amt">🚀 ₹199</div></div>
+  <div style="font-size:12px;color:var(--text3);margin-top:12px;">Every rupee keeps QVIO free for millions 🙏</div>
+  <button class="mclose" onclick="closeM('sup')">Close</button>
 </div>
 
-<!-- STATS MODAL -->
+<!-- STATS -->
 <div class="modal" id="m_stats">
-  <div class="modal-hd"><h3>📊 Your Stats</h3><button class="modal-x" onclick="closeM('stats')">✕</button></div>
-  <div class="modal-sub">Your QVIO journey at a glance</div>
+  <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
+  <div class="msub">Your QVIO journey at a glance</div>
   <div class="stat-grid" id="statGrid"></div>
-  <div class="sec-label">Achievements</div>
+  <div class="slabel">Achievements</div>
   <div class="badge-grid" id="badgeGrid"></div>
-  <button class="modal-close" onclick="closeM('stats')">Close</button>
+  <button class="mclose" onclick="closeM('stats')">Close</button>
 </div>
 
-<!-- STREAK MODAL -->
+<!-- STREAK -->
 <div class="modal" id="m_streak">
-  <div class="modal-hd"><h3>🔥 Daily Streak</h3><button class="modal-x" onclick="closeM('streak')">✕</button></div>
+  <div class="mhd"><h3>🔥 Daily Streak</h3><button class="mx" onclick="closeM('streak')">✕</button></div>
   <div class="streak-center">
     <span class="streak-big">🔥</span>
     <span class="streak-num" id="streakBig">0</span>
-    <div class="streak-note">day streak — you're on fire!</div>
-    <div class="streak-days" id="streakDays"></div>
+    <div style="font-size:14px;color:var(--text2);margin-top:8px;">day streak — keep it going!</div>
+    <div class="sdays" id="streakDays"></div>
   </div>
-  <div style="font-size:12.5px;color:var(--text3);text-align:center;margin-top:14px;">Use QVIO every day to grow your streak. Miss a day and it resets!</div>
-  <button class="modal-close" onclick="closeM('streak')">Close</button>
+  <button class="mclose" onclick="closeM('streak')">Close</button>
 </div>
 
-<!-- THEME MODAL -->
+<!-- THEME -->
 <div class="modal" id="m_theme">
-  <div class="modal-hd"><h3>🎨 Appearance</h3><button class="modal-x" onclick="closeM('theme')">✕</button></div>
-  <div class="modal-sub">Make QVIO look exactly how you like</div>
-  <div class="sec-label">Theme</div>
+  <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
+  <div class="msub">Customize QVIO to your taste</div>
+  <div class="slabel">Theme</div>
   <div class="theme-row">
-    <div class="theme-opt" onclick="setTh('light')">☀️ Light</div>
-    <div class="theme-opt" onclick="setTh('dark')">🌙 Dark</div>
-    <div class="theme-opt" onclick="setTh('auto')">🌓 Auto</div>
+    <div class="tho" onclick="setTh('light')">☀️ Light</div>
+    <div class="tho" onclick="setTh('dark')">🌙 Dark</div>
+    <div class="tho" onclick="setTh('auto')">🌓 Auto</div>
   </div>
-  <div class="sec-label">Accent Color</div>
-  <div class="accent-row">
-    <div class="accent-dot" style="background:#0057ff;" onclick="setAcc('')" title="Blue"></div>
-    <div class="accent-dot" style="background:#7c3aed;" onclick="setAcc('purple')" title="Purple"></div>
-    <div class="accent-dot" style="background:#16a34a;" onclick="setAcc('green')" title="Green"></div>
-    <div class="accent-dot" style="background:#ea580c;" onclick="setAcc('orange')" title="Orange"></div>
-    <div class="accent-dot" style="background:#0891b2;" onclick="setAcc('teal')" title="Teal"></div>
-    <div class="accent-dot" style="background:#db2777;" onclick="setAcc('pink')" title="Pink"></div>
+  <div class="slabel">Font Size</div>
+  <div class="theme-row">
+    <div class="tho" onclick="setFont('small')">A− Small</div>
+    <div class="tho on" onclick="setFont('normal')">A Normal</div>
+    <div class="tho" onclick="setFont('large')">A+ Large</div>
   </div>
-  <button class="modal-close" onclick="closeM('theme')" style="margin-top:20px;">Done</button>
+  <button class="mclose" onclick="closeM('theme')">Done</button>
 </div>
 
-<!-- IMAGE GALLERY MODAL -->
-<div class="modal" id="m_gallery">
-  <div class="modal-hd"><h3>🎨 Image Gallery</h3><button class="modal-x" onclick="closeM('gallery')">✕</button></div>
-  <div class="modal-sub">All your AI-generated images in one place</div>
-  <div class="img-gallery" id="galleryGrid"></div>
-  <button class="modal-close" onclick="closeM('gallery')">Close</button>
+<!-- GALLERY -->
+<div class="modal" id="m_gal">
+  <div class="mhd"><h3>🎨 Image Gallery</h3><button class="mx" onclick="closeM('gal')">✕</button></div>
+  <div class="msub">All your AI-generated masterpieces</div>
+  <div class="img-gal" id="galGrid"></div>
+  <button class="mclose" onclick="closeM('gal')">Close</button>
 </div>
 
-<!-- PROFILE MODAL -->
-<div class="modal" id="m_profile">
-  <div class="modal-hd"><h3>My Profile</h3><button class="modal-x" onclick="closeM('profile')">✕</button></div>
-  <div class="profile-top">
-    <div class="profile-av" id="profileAv"></div>
-    <div class="profile-name" id="profileName">Guest</div>
-    <div class="profile-email" id="profileEmail">Not signed in</div>
+<!-- PROFILE -->
+<div class="modal" id="m_prof">
+  <div class="mhd"><h3>My Profile</h3><button class="mx" onclick="closeM('prof')">✕</button></div>
+  <div class="prof-top">
+    <div class="prof-av" id="profAv">?</div>
+    <div class="prof-nm" id="profName">Guest</div>
+    <div class="prof-em" id="profEmail">Not signed in</div>
   </div>
-  <div class="pro-upgrade" onclick="showProPage()">
+  <div class="pro-up" onclick="showToast('🚀 Pro coming soon!')">
     <h4>⭐ Upgrade to QVIO Pro</h4>
-    <p>₹199/month — Unlimited messages, priority speed, more</p>
+    <p>₹199/month — Unlimited messages & priority AI</p>
   </div>
-  <button class="signout-btn" onclick="signOut()">Sign Out</button>
-  <button class="modal-close" onclick="closeM('profile')">Close</button>
+  <button class="signout" onclick="doSignOut()">Sign Out</button>
+  <button class="mclose" onclick="closeM('prof')">Close</button>
 </div>
 
-<!-- CHAT HISTORY MODAL -->
-<div class="modal" id="m_history">
-  <div class="modal-hd"><h3>💬 Chat History</h3><button class="modal-x" onclick="closeM('history')">✕</button></div>
-  <div class="modal-sub">Your saved conversations</div>
-  <div class="history-list" id="histList"></div>
-  <button class="modal-close" onclick="closeM('history')">Close</button>
+<!-- HISTORY -->
+<div class="modal" id="m_hist">
+  <div class="mhd"><h3>💬 Chat History</h3><button class="mx" onclick="closeM('hist')">✕</button></div>
+  <div class="msub">Your saved conversations</div>
+  <div class="hl" id="histList"></div>
+  <button class="mclose" onclick="closeM('hist')">Close</button>
 </div>
 
-<!-- IMAGE VIEWER MODAL -->
-<div class="modal" id="m_imgview" style="max-width:600px;">
-  <div class="modal-hd"><h3>Image</h3><button class="modal-x" onclick="closeM('imgview')">✕</button></div>
-  <img id="imgViewSrc" style="width:100%;border-radius:var(--r);border:1px solid var(--border);margin-top:10px;" />
-  <a id="imgViewDl" download="qvio-image.jpg" class="img-dl" style="margin-top:12px;">⬇ Download</a>
-  <button class="modal-close" onclick="closeM('imgview')">Close</button>
+<!-- IMAGE VIEWER -->
+<div class="modal" id="m_imgv" style="max-width:600px;">
+  <div class="mhd"><h3>🖼 Image</h3><button class="mx" onclick="closeM('imgv')">✕</button></div>
+  <img id="imgVSrc" style="width:100%;border-radius:var(--r);border:2px solid var(--border2);margin-top:10px;"/>
+  <a id="imgVDl" download="qvio.jpg" class="img-dl" style="margin-top:12px;">⬇ Download</a>
+  <button class="mclose" onclick="closeM('imgv')">Close</button>
 </div>
 
-<!-- OFFLINE + INSTALL BARS -->
-<div class="offline-bar" id="offlineBar">No internet — QVIO is offline</div>
-<div class="install-bar" id="installBar">
-  <div style="display:flex;align-items:center;gap:8px;">📱 <span>Add QVIO to your home screen!</span></div>
-  <div style="display:flex;gap:6px;">
-    <button onclick="installPWA()">Install</button>
-    <button class="dismiss-btn" onclick="dismissInstall()">✕</button>
-  </div>
+<div class="off-bar" id="offBar">No internet connection — QVIO is offline</div>
+<div class="inst-bar" id="instBar">
+  <div>📱 Add QVIO to your home screen!</div>
+  <div style="display:flex;gap:6px;"><button onclick="installPWA()">Install</button><button class="idism" onclick="dismissInstall()">✕</button></div>
 </div>
 
-<!-- MAIN APP -->
+<!-- HEADER -->
 <header>
   <div class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
     <span class="lname">QV<em>IO</em></span>
-    <span class="ltag">Affordable AI</span>
+    <span class="ltag">Premium AI</span>
   </div>
-  <div class="h-center">
-    <div class="streak-pill" onclick="openM('streak')">🔥 <span id="streakNum">0</span></div>
+  <div class="hcenter">
+    <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
   </div>
-  <div class="h-right">
-    <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);flex-shrink:0;">
-      <span class="sdot"></span><span id="modeLabel">Casual</span>
-    </div>
-    <button class="hbtn" onclick="openM('lang')">🌍</button>
-    <button class="hbtn" onclick="openM('mem')">🧠</button>
-    <button class="hbtn" onclick="openM('gallery')">🎨</button>
-    <button class="hbtn" onclick="openM('history')">💬</button>
-    <button class="hbtn" onclick="openM('stats')">📊</button>
-    <button class="hbtn" onclick="openM('theme')">🎨</button>
-    <button class="hbtn" onclick="toggleCalc()">🔢</button>
-    <button class="hbtn" onclick="toggleFocus()" id="focusBtn">⛶</button>
-    <button class="hbtn" onclick="exportChat()">💾</button>
+  <div class="hright">
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);flex-shrink:0;"><span class="sdot"></span><span id="modeLabel">Casual</span></div>
+    <button class="hbtn" onclick="openM('lang')" title="Languages">🌍</button>
+    <button class="hbtn" onclick="openM('mem')" title="Memory">🧠</button>
+    <button class="hbtn" onclick="openM('gal')" title="Gallery">🖼</button>
+    <button class="hbtn" onclick="openM('hist')" title="History">💬</button>
+    <button class="hbtn" onclick="openM('stats')" title="Stats">📊</button>
+    <button class="hbtn" onclick="openM('theme')" title="Theme">🎨</button>
+    <button class="hbtn" onclick="toggleCalc()" title="Calculator">🔢</button>
+    <button class="hbtn" onclick="toggleFocus()" id="focusBtn" title="Focus">⛶</button>
+    <button class="hbtn" onclick="exportChat()" title="Export">💾</button>
     <button class="hbtn" id="themeBtn" onclick="cycleTh()">🌙</button>
     <button class="hbtn" onclick="openM('sup')">❤️</button>
     <button class="hbtn" onclick="clearChat()">Clear</button>
-    <div class="user-chip" onclick="openM('profile')" id="userChip">
-      <div class="user-av" id="userAv">?</div>
-      <span class="user-nm" id="userNm">Guest</span>
+    <div class="uchip" onclick="openM('prof')">
+      <div class="uav" id="uAv">?</div>
+      <span class="unm" id="uNm">Guest</span>
     </div>
   </div>
 </header>
 
 <div class="sub-bar mem" id="memBar"></div>
-<div class="sub-bar exam" id="examBar"><span style="background:var(--purple);color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE</div>
-<div class="sub-bar pro" id="proBar"><span>⭐ Upgrade to QVIO Pro for unlimited messages</span><button class="pro-upgrade" style="padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;border:none;border-radius:99px;font-family:'DM Sans',sans-serif;" onclick="showProPage()">₹199/mo</button></div>
-<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned</span></div>
+<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
+<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
 
 <div class="modes">
-  <button class="mbtn on"  onclick="setMode('casual',this,'Casual')">💬 Casual</button>
-  <button class="mbtn"     onclick="setMode('student',this,'Student')">📚 Student</button>
-  <button class="mbtn"     onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
-  <button class="mbtn"     onclick="setMode('pro',this,'Pro')">💼 Pro</button>
-  <button class="mbtn"     onclick="setMode('business',this,'Business')">🏢 Business</button>
-  <button class="mbtn"     onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
-  <button class="mbtn"     onclick="setMode('code',this,'Code')">💻 Code</button>
-  <button class="mbtn"     onclick="setMode('math',this,'Math')">🔢 Math</button>
-  <button class="mbtn"     onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
-  <button class="mbtn"     onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
-  <button class="mbtn"     onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
-  <button class="mbtn"     onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
-  <button class="mbtn"     onclick="setMode('write',this,'Write')">✍️ Write</button>
-  <button class="mbtn"     onclick="setMode('news',this,'News')">📰 News</button>
-  <button class="mbtn"     onclick="setMode('voice',this,'Voice')">🎙️ Voice</button>
-  <button class="mbtn"     onclick="setMode('career',this,'Career')">💼 Career</button>
+  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
+  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
+  <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
+  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
+  <button class="mbtn" onclick="setMode('business',this,'Business')">🏢 Business</button>
+  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
+  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
+  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
+  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
+  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
+  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
+  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
+  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
+  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
+  <button class="mbtn" onclick="setMode('career',this,'Career')">💼 Career</button>
+  <button class="mbtn" onclick="setMode('health',this,'Health')">🏥 Health</button>
+  <button class="mbtn" onclick="setMode('legal',this,'Legal')">⚖️ Legal</button>
+  <button class="mbtn" onclick="setMode('recipe',this,'Recipe')">🍳 Recipe</button>
+  <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
 </div>
+
+<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
 
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
+    <div class="w-crown">👑</div>
     <div class="w-icon">QV</div>
+    <div class="w-badge">✨ India's Most Premium AI</div>
     <h1>Hello, I am <em>QVIO</em></h1>
-    <p class="welcome-sub">India's fastest AI. Understands every language, every accent, every Indian.</p>
-    <div class="challenge-card" id="challengeCard" onclick="doChallenge()">
-      🎯 <span><strong>Today's Challenge:</strong> <span id="challengeTxt">Loading...</span></span>
-    </div>
+    <p class="wsub">Faster than ChatGPT. Built for every Indian. 100+ languages.</p>
+    <div class="challenge" id="challengeCard" onclick="doChallenge()">🎯 <span><strong>Today's Challenge:</strong> <span id="challengeTxt">Loading...</span></span></div>
     <div class="tip-box" id="tipBox">💡 Loading tip...</div>
     <div class="mem-banner" id="memBanner"></div>
     <div class="sugs">
-      <div class="sug" onclick="send('Explain quantum computing like I am 15')">
-        <span class="sug-icon">⚡</span>
-        <span class="sug-title">Explain anything</span>
-        <span class="sug-desc">In simple, fun language</span>
-      </div>
-      <div class="sug" onclick="send('create image: 4K futuristic Bangalore skyline golden hour')">
-        <span class="sug-icon">🎨</span>
-        <span class="sug-title">Generate 4K image</span>
-        <span class="sug-desc">Type "create image:" anything</span>
-      </div>
-      <div class="sug" onclick="send('Help me crack JEE 2025 with a 90-day strategy')">
-        <span class="sug-icon">🎯</span>
-        <span class="sug-title">Exam preparation</span>
-        <span class="sug-desc">JEE, NEET, UPSC, CBSE</span>
-      </div>
-      <div class="sug" onclick="send('Teach me 10 essential Japanese phrases with pronunciation')">
-        <span class="sug-icon">🌍</span>
-        <span class="sug-title">Learn a language</span>
-        <span class="sug-desc">100+ languages supported</span>
-      </div>
-      <div class="sug" onclick="send('Write a Python script to automate my WhatsApp messages')">
-        <span class="sug-icon">💻</span>
-        <span class="sug-title">Code anything</span>
-        <span class="sug-desc">Any language, any level</span>
-      </div>
-      <div class="sug" onclick="send('Help me write a professional business pitch for investors')">
-        <span class="sug-icon">💼</span>
-        <span class="sug-title">Business help</span>
-        <span class="sug-desc">Pitches, plans, strategies</span>
-      </div>
+      <div class="sug" onclick="send('Explain quantum computing like I am 15 years old')"><span class="si">⚡</span><span class="st">Explain Anything</span><span class="sd2">Simple. Fun. Clear.</span></div>
+      <div class="sug" onclick="send('create image: golden temple amritsar at sunset ultra 4K')"><span class="si">🎨</span><span class="st">Generate 4K Art</span><span class="sd2">Type create image: anything</span></div>
+      <div class="sug" onclick="send('Help me crack JEE 2025 with a 90-day master strategy')"><span class="si">🎯</span><span class="st">Exam Strategy</span><span class="sd2">JEE NEET UPSC CBSE</span></div>
+      <div class="sug" onclick="send('Teach me 10 essential Japanese phrases with pronunciation')"><span class="si">🌍</span><span class="st">Learn a Language</span><span class="sd2">100+ languages supported</span></div>
+      <div class="sug" onclick="send('Write a Python web scraper with full explanation')"><span class="si">💻</span><span class="st">Code Anything</span><span class="sd2">Any language any level</span></div>
+      <div class="sug" onclick="send('Write a powerful investor pitch for my startup idea')"><span class="si">💼</span><span class="st">Business Help</span><span class="sd2">Pitches plans strategies</span></div>
     </div>
   </div>
 </div>
 
 <div class="input-area">
-  <div class="char-count" id="charCount"></div>
-  <div class="input-box">
-    <textarea id="inp" placeholder="Ask anything... or type 'create image:' for 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+  <div class="char-cnt" id="charCnt"></div>
+  <div class="ibox">
+    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()">🎤</button>
       <button class="sendbtn" id="sendBtn" onclick="sendMsg()">Send ↑</button>
     </div>
   </div>
   <div class="qrs">
     <div class="qr" onclick="send('Surprise me with something amazing')">✨ Surprise</div>
     <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
-    <div class="qr" onclick="send('Tell me something funny')">😂 Joke</div>
-    <div class="qr" onclick="send('Motivate me — I need energy right now')">💪 Motivate</div>
-    <div class="qr" onclick="send('What is big in India today?')">🌍 News</div>
+    <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
+    <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
+    <div class="qr" onclick="send('What is happening big in India today')">🌍 News</div>
     <div class="qr" onclick="toggleCalc()">🔢 Calc</div>
-    <div class="qr" onclick="send('What all can QVIO do? Full list please')">❓ Help</div>
+    <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
+    <div class="qr" onclick="send('What can QVIO do? Show me everything!')">❓ Help</div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════
-//  QVIO V4 — Complete Engine
-//  Firebase Auth + 30 New Features
-// ══════════════════════════════════════
+/* ══════════════════════════════════
+   QVIO PREMIUM — White × Gold × Navy
+   Full feature build
+══════════════════════════════════ */
 
-// ── FIREBASE CONFIG ──────────────────────
-// REPLACE THIS WITH YOUR FIREBASE CONFIG FROM console.firebase.google.com
-var firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY_HERE",
-  authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
-  projectId: "PASTE_YOUR_PROJECT_ID_HERE",
-  storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
-  messagingSenderId: "PASTE_YOUR_SENDER_ID_HERE",
-  appId: "PASTE_YOUR_APP_ID_HERE"
+// FIREBASE
+var firebaseConfig={apiKey:"AIzaSyAFIBPTaAzxbouj62W8dB6Cp8vOjerrM30",authDomain:"qvioai-f7659.firebaseapp.com",projectId:"qvioai-f7659",storageBucket:"qvioai-f7659.firebasestorage.app",messagingSenderId:"556429565888",appId:"1:556429565888:web:e10b98f37c099602d6b225"};
+var fbAuth=null;
+try{
+  firebase.initializeApp(firebaseConfig);
+  fbAuth=firebase.auth();
+  fbAuth.onAuthStateChanged(function(u){if(u){currentUser=u;updateUserUI(u);showNamaste(u);}});
+}catch(e){console.log('Firebase:',e);}
+
+var GROQ_KEY='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';
+var MODEL='llama-3.3-70b-versatile';
+var mode='casual',chatHistory=[],currentUser=null,isRec=false,recog=null;
+var isFocus=false,pinnedEl=null,deferredPrompt=null,calcExpr='',lastMsg='';
+
+var S={
+  g:function(k){try{return JSON.parse(localStorage.getItem('qvio_'+k));}catch(e){return null;}},
+  s:function(k,v){try{localStorage.setItem('qvio_'+k,JSON.stringify(v));}catch(e){}}
 };
+var memory=S.g('memory')||{facts:[],name:''};
+var stats=S.g('stats')||{msgs:0,sessions:0,images:0,streak:0,lastDay:'',longest:0,words:0,chars:0};
+var imgGal=S.g('gallery')||[];
+var savedChats=S.g('chats')||[];
+function saveMem(){S.s('memory',memory);}
+function saveStats(){S.s('stats',stats);}
+function saveGal(){S.s('gallery',imgGal.slice(-50));}
 
-// Try init Firebase (skip gracefully if config not set)
-var fbAuth = null;
-try {
-  if(firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY_HERE") {
-    firebase.initializeApp(firebaseConfig);
-    fbAuth = firebase.auth();
-    fbAuth.onAuthStateChanged(function(user) {
-      if(user) {
-        currentUser = user;
-        updateUserUI(user);
-        hideLoginScreen();
-      }
-    });
+/* PARTICLES */
+function initParticles(){
+  var p=document.getElementById('particles');
+  var configs=[
+    {color:'rgba(212,160,23,.5)',size:3},
+    {color:'rgba(212,160,23,.3)',size:5},
+    {color:'rgba(13,27,62,.2)',size:4},
+    {color:'rgba(240,200,66,.4)',size:2}
+  ];
+  for(var i=0;i<22;i++){
+    var cfg=configs[i%configs.length];
+    var d=document.createElement('div');d.className='ptc';
+    var sz=Math.random()*cfg.size+2;
+    d.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;background:'+cfg.color+';animation-duration:'+(Math.random()*25+18)+'s;animation-delay:'+(-Math.random()*25)+'s;';
+    p.appendChild(d);
   }
-} catch(e) { console.log('Firebase not configured yet'); }
-
-// ── GROQ ─────────────────────────────────
-var GROQ_KEY = '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';
-var MODEL = 'llama-3.3-70b-versatile';
-
-// ── STATE ─────────────────────────────────
-var mode = 'casual';
-var chatHistory = [];
-var currentUser = null;
-var isRec = false;
-var recog = null;
-var isFocus = false;
-var pinnedEl = null;
-var deferredPrompt = null;
-var calcExpr = '';
-var lastUserMsg = '';
-
-// ── STORAGE ───────────────────────────────
-var S = {
-  g: function(k){ try { return JSON.parse(localStorage.getItem('qvio_'+k)); } catch(e) { return null; } },
-  s: function(k,v){ try { localStorage.setItem('qvio_'+k, JSON.stringify(v)); } catch(e) {} }
-};
-
-// ── MEMORY (PERSISTENT) ──────────────────
-var memory = S.g('memory') || { facts:[], name:'' };
-function saveMem() { S.s('memory', memory); }
-
-// ── STATS ─────────────────────────────────
-var stats = S.g('stats') || { msgs:0, sessions:0, images:0, streak:0, lastDay:'', longest:0 };
-function saveStats() { S.s('stats', stats); }
-
-// ── IMAGE GALLERY ─────────────────────────
-var imgGallery = S.g('gallery') || [];
-function saveGallery() { S.s('gallery', imgGallery.slice(-50)); }
-
-// ── CHAT HISTORY SAVES ────────────────────
-var savedChats = S.g('chats') || [];
-function saveChat() {
-  if(!chatHistory.length) return;
-  var title = chatHistory[0].content.substring(0,50);
-  savedChats.unshift({ title:title, history:chatHistory.slice(), date:new Date().toLocaleDateString() });
-  if(savedChats.length>20) savedChats=savedChats.slice(0,20);
-  S.s('chats', savedChats);
 }
 
-// ── AUTH FUNCTIONS ────────────────────────
-function signInGoogle() {
-  if(!fbAuth) { showToast('Firebase not configured yet!'); return; }
-  var provider = new firebase.auth.GoogleAuthProvider();
-  fbAuth.signInWithPopup(provider).then(function(r) {
-    currentUser = r.user;
-    updateUserUI(r.user);
-    hideLoginScreen();
-    showToast('Welcome, ' + r.user.displayName.split(' ')[0] + '!');
-  }).catch(function(e) { showToast('Sign in failed: ' + e.message); });
+/* NAMASTE ANIMATION */
+function showNamaste(user){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+
+  var ns=document.getElementById('namasteScreen');
+  ns.classList.add('show');
+  var nm=user.displayName||user.email||'Friend';
+  var first=nm.split(' ')[0];
+
+  document.getElementById('nsName').innerHTML='🙏 Namaste, '+first+'!';
+  document.getElementById('nsSubName').textContent='Welcome to QVIO';
+  document.getElementById('nsSub').textContent='Personalizing your premium experience...';
+
+  fireConfetti();
+
+  setTimeout(function(){
+    ns.style.opacity='0';ns.style.transition='opacity .6s ease';
+    setTimeout(function(){ns.classList.remove('show');ns.style.opacity='';},600);
+  },3000);
 }
 
-function signInEmail() {
-  if(!fbAuth) { showToast('Firebase not configured yet!'); skipLogin(); return; }
-  var e = document.getElementById('loginEmail').value.trim();
-  var p = document.getElementById('loginPass').value;
-  if(!e||!p) { showToast('Enter email and password'); return; }
-  fbAuth.signInWithEmailAndPassword(e,p).then(function(r) {
-    updateUserUI(r.user);
-    hideLoginScreen();
-    showToast('Welcome back!');
-  }).catch(function(err) { showToast(err.message); });
+/* AUTH */
+function signInGoogle(){
+  if(!fbAuth){showToast('Firebase loading...');return;}
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}).catch(function(e){showToast('Error: '+e.message);});
 }
-
-function signUpEmail() {
-  if(!fbAuth) { showToast('Firebase not configured yet!'); skipLogin(); return; }
-  var e = document.getElementById('loginEmail').value.trim();
-  var p = document.getElementById('loginPass').value;
-  if(!e||!p) { showToast('Enter email and password'); return; }
-  fbAuth.createUserWithEmailAndPassword(e,p).then(function(r) {
-    updateUserUI(r.user);
-    hideLoginScreen();
-    showToast('Account created! Welcome to QVIO!');
-    fireConfetti();
-  }).catch(function(err) { showToast(err.message); });
+function signInEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.signInWithEmailAndPassword(e,p).then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}).catch(function(er){showToast(er.message);});
 }
-
-function signOut() {
-  if(fbAuth) fbAuth.signOut();
-  currentUser = null;
-  document.getElementById('loginScreen').style.display = 'flex';
-  closeM('profile');
-  showToast('Signed out');
+function signUpEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.createUserWithEmailAndPassword(e,p).then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}).catch(function(er){showToast(er.message);});
 }
-
-function skipLogin() {
-  hideLoginScreen();
-  showToast('Continuing as guest — sign in to save chats!');
-}
-
-function hideLoginScreen() {
-  var ls = document.getElementById('loginScreen');
-  ls.style.opacity = '0';
-  ls.style.transition = 'opacity .3s';
-  setTimeout(function() { ls.style.display = 'none'; }, 300);
-}
-
-function updateUserUI(user) {
-  var av = document.getElementById('userAv');
-  var nm = document.getElementById('userNm');
-  var pAv = document.getElementById('profileAv');
-  var pNm = document.getElementById('profileName');
-  var pEm = document.getElementById('profileEmail');
-  var name = user.displayName || user.email || 'User';
-  nm.textContent = name.split(' ')[0];
-  pNm.textContent = name;
-  pEm.textContent = user.email || '';
-  if(user.photoURL) {
-    av.innerHTML = '<img src="'+user.photoURL+'" />';
-    pAv.innerHTML = '<img src="'+user.photoURL+'" />';
-  } else {
-    var init = name[0].toUpperCase();
-    av.textContent = init;
-    pAv.textContent = init;
-  }
-  if(!memory.name) { memory.name = name.split(' ')[0]; saveMem(); }
+function doSignOut(){if(fbAuth)fbAuth.signOut();currentUser=null;document.getElementById('loginScreen').style.cssText='display:flex;opacity:1;';closeM('prof');showToast('Signed out');}
+function skipLogin(){var ls=document.getElementById('loginScreen');ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);showToast('👑 Welcome to QVIO Premium!');}
+function updateUserUI(user){
+  var nm=user.displayName||user.email||'User';
+  document.getElementById('uNm').textContent=nm.split(' ')[0];
+  document.getElementById('profName').textContent=nm;
+  document.getElementById('profEmail').textContent=user.email||'';
+  if(user.photoURL){document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';}
+  else{document.getElementById('uAv').textContent=nm[0].toUpperCase();document.getElementById('profAv').textContent=nm[0].toUpperCase();}
+  if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
   updateMemUI();
 }
 
-// ── STREAK ────────────────────────────────
-function updateStreak() {
-  var today = new Date().toDateString();
-  if(stats.lastDay !== today) {
-    var yest = new Date(); yest.setDate(yest.getDate()-1);
-    stats.streak = (stats.lastDay === yest.toDateString()) ? stats.streak+1 : 1;
-    if(stats.streak > stats.longest) stats.longest = stats.streak;
-    stats.lastDay = today; stats.sessions++; saveStats();
-    if(stats.streak > 1 && stats.streak % 7 === 0) { setTimeout(fireConfetti, 500); showToast('🔥 '+stats.streak+' day streak!'); }
+/* STREAK */
+function updateStreak(){
+  var today=new Date().toDateString();
+  if(stats.lastDay!==today){
+    var yest=new Date();yest.setDate(yest.getDate()-1);
+    stats.streak=(stats.lastDay===yest.toDateString())?stats.streak+1:1;
+    if(stats.streak>stats.longest)stats.longest=stats.streak;
+    stats.lastDay=today;stats.sessions++;saveStats();
+    if(stats.streak>1&&stats.streak%7===0){setTimeout(fireConfetti,500);showToast('🔥 '+stats.streak+' day streak! Incredible!');}
   }
-  document.getElementById('streakNum').textContent = stats.streak;
-  document.getElementById('streakBig').textContent = stats.streak;
+  document.getElementById('streakNum').textContent=stats.streak;
+  document.getElementById('streakBig').textContent=stats.streak;
   renderStreakDays();
 }
-
-function renderStreakDays() {
-  var el = document.getElementById('streakDays'); if(!el) return;
-  var html = '';
-  for(var i=6;i>=0;i--) {
-    var d=new Date(); d.setDate(d.getDate()-i);
-    var day=d.toLocaleDateString('en',{weekday:'short'}).slice(0,2);
+function renderStreakDays(){
+  var el=document.getElementById('streakDays');if(!el)return;
+  var h='';
+  for(var i=6;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);
     var done=i===0&&stats.lastDay===new Date().toDateString();
-    html+='<div class="sd'+(done?' done':'')+'">'+day+'</div>';
+    h+='<div class="sd'+(done?' done':'')+'">'+d.toLocaleDateString('en',{weekday:'short'}).slice(0,2)+'</div>';
   }
-  el.innerHTML = html;
-}
-
-// ── CONFETTI ──────────────────────────────
-function fireConfetti() {
-  var cols=['#0057ff','#ff6b35','#22c55e','#f59e0b','#7c3aed','#db2777','#0891b2'];
-  for(var i=0;i<70;i++) {
-    (function(i) {
-      setTimeout(function() {
-        var c=document.createElement('div');
-        c.className='confetti';
-        c.style.cssText='left:'+Math.random()*100+'vw;background:'+cols[~~(Math.random()*cols.length)]+';width:'+(Math.random()*8+4)+'px;height:'+(Math.random()*8+4)+'px;border-radius:'+(Math.random()>.5?'50%':'3px')+';animation-duration:'+(Math.random()*1.5+1.5)+'s;animation-delay:'+(Math.random()*.3)+'s;';
-        document.body.appendChild(c);
-        setTimeout(function(){c.remove();},3000);
-      },i*25);
-    })(i);
-  }
-}
-
-// ── THEMES ────────────────────────────────
-function autoTheme() {
-  var h=new Date().getHours(), dark=h<6||h>=20;
-  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
-}
-function setTh(t) {
-  S.s('theme',t);
-  if(t==='auto') { autoTheme(); }
-  else { document.documentElement.setAttribute('data-theme',t); document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙'; }
-  closeM('theme');
-}
-function cycleTh() {
-  var cur=document.documentElement.getAttribute('data-theme');
-  setTh(cur==='dark'?'light':'dark');
-}
-function setAcc(a) {
-  document.documentElement.setAttribute('data-accent',a); S.s('accent',a);
-}
-
-// ── TIPS ──────────────────────────────────
-var TIPS=[
-  '💡 Type "create image:" to generate stunning 4K AI art',
-  '🎯 Exam Mode is perfect for JEE, NEET, UPSC prep',
-  '🧠 Say "my name is [name]" and QVIO will remember you forever',
-  '⌨️ Press Enter to send, Shift+Enter for a new line',
-  '🔊 Click 🔊 on any answer to hear it spoken aloud',
-  '📌 Pin important answers so you never lose them',
-  '💾 Click Save to export your full conversation',
-  '🔥 Use QVIO daily — streaks unlock special badges!',
-  '🌍 QVIO understands Hinglish, slang, and all dialects perfectly',
-  '🔢 Quick maths? Use the built-in calculator anytime',
-  '💼 Business Mode thinks like McKinsey meets Shark Tank India',
-  '🌙 Auto theme switches dark at night, light in the morning',
-  '📊 Check Stats to see your QVIO journey and achievements',
-  '⛶ Focus Mode hides everything — pure deep work',
-  '🎨 Pick from 6 accent colors in the Themes menu',
-  '📱 Install QVIO on your phone for app-like experience',
-];
-var tipI=0;
-function rotateTip() {
-  var b=document.getElementById('tipBox'); if(!b) return;
-  b.style.opacity='0';
-  setTimeout(function(){ b.textContent=TIPS[tipI%TIPS.length]; tipI++; b.style.opacity='1'; },400);
-}
-
-// ── CHALLENGES ────────────────────────────
-var CHALLENGES=['Learn 5 words in a language you never tried','Generate a 4K image of your dream city','Ask QVIO to solve a tricky puzzle','Get QVIO to write a poem about your day','Ask for a 30-day study plan for any subject'];
-function doChallenge() { send(CHALLENGES[new Date().getDay()%CHALLENGES.length]); }
-
-// ── PROMPTS ───────────────────────────────
-var RULES='CORE RULES: 1.Understand ANY language Hinglish Tanglish slang — never say you dont understand. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in everything — science Bollywood cricket Indian culture tech business. 5.Talk like a real smart friend. 6.Warm witty professional when needed. 7.If corrected immediately give better answer. 8.Understand yaar bhai boss sahi hai no cap and all slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ';
-var PROMPTS={
-  casual:'You are QVIO — India\'s smartest fastest multilingual AI. More culturally aware than ChatGPT or Gemini. '+RULES+'Be the best AI friend anyone has ever had.',
-  student:'You are QVIO Student Mode — ultimate AI tutor. '+RULES+'Know CBSE ICSE JEE NEET UPSC deeply. Step by step. Real examples. Ask "Did that make sense?" after hard topics.',
-  exam:'You are QVIO Exam Genius — specialized for ALL competitive exams: JEE NEET UPSC CBSE IELTS GRE GMAT CAT. '+RULES+'Give crisp exam-focused answers. Key formulas. Common mistakes. What examiners look for. Think top coaching institute meets AI.',
-  pro:'You are QVIO Pro — world-class strategist. '+RULES+'Structured actionable responses. Know Indian startup ecosystem finance marketing VC. Pure value every time.',
-  business:'You are QVIO Business — senior advisor for Indian SMEs and startups. '+RULES+'Business plans financial projections pitch decks GST compliance legal basics growth hacks. Think McKinsey meets Shark Tank India.',
-  spiritual:'You are QVIO Spiritual — wise guide with deep knowledge of ALL world religions. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism Sufism Taoism Yoga Vedanta. Never judge any faith.',
-  code:'You are QVIO Code — elite full-stack engineer. '+RULES+'Python JS Java C++ HTML CSS React Node SQL Git APIs system design. Always use code blocks. Explain logic. Fix bugs with explanation.',
-  math:'You are QVIO Math — brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT level. Verify at end. Explain WHY each step.',
-  hindi:'Aap QVIO hain — India ka number one AI! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do. Bollywood cricket culture sab samjho. Dost ki tarah baat karo.',
-  kannada:'Neevu QVIO — Karnataka pura smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi maatanaadi. Karnataka sanskriti gotthu. Geleyanante maatanaadi.',
-  quiz:'You are QVIO Quiz Master — most exciting quiz host! '+RULES+'ONE question with 4 options A B C D. Keep score. CORRECT! GENIUS! Ooh close! Keep it fun.',
-  translate:'You are QVIO Translator — worlds most precise. '+RULES+'100+ languages. Show: Translation, Pronunciation, Cultural note. Auto-detect source.',
-  write:'You are QVIO Writer — world-class author copywriter editor. '+RULES+'Stories poems emails essays captions CVs. Match any tone. Give detailed feedback.',
-  news:'You are QVIO News — sharp analyst. '+RULES+'Clear simple language. Balanced perspectives. Historical context. Note knowledge cutoff when needed.',
-  voice:'You are QVIO Voice — short conversational replies for speaking. '+RULES+'Under 3 sentences unless asked. No bullets. Natural speech.',
-  career:'You are QVIO Career — expert career coach for Indian professionals and students. '+RULES+'Resume writing interview prep salary negotiation LinkedIn optimization career switches upskilling. Know Indian job market deeply.',
-};
-
-// ── MEMORY FUNCTIONS ─────────────────────
-function getMemCtx() {
-  var f=memory.facts||[],n=memory.name||'';
-  if(!f.length&&!n) return '';
-  var c='\n\n[USER MEMORY: ';
-  if(n) c+='Name: '+n+'. ';
-  if(f.length) c+=f.join('. ');
-  return c+']';
-}
-function updateMemUI() {
-  var bar=document.getElementById('memBar'),banner=document.getElementById('memBanner');
-  var n=memory.name||'',f=memory.facts||[];
-  if(n||f.length) {
-    var t=n?'🧠 Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things remembered.';
-    bar.textContent=t; bar.classList.add('show');
-    if(banner){banner.textContent=t;banner.classList.add('show');}
-  } else {
-    bar.classList.remove('show');
-    if(banner) banner.classList.remove('show');
-  }
-}
-function renderMemList() {
-  var el=document.getElementById('memList'),f=memory.facts||[],n=memory.name||'',h='';
-  if(n) h+='<div class="mem-item">👤 Name: '+n+'<button class="mem-del" onclick="delMem(\'name\')">✕</button></div>';
-  if(!f.length&&!n) h='<div class="mem-empty">No memories yet. Chat with QVIO and it learns about you!</div>';
-  f.forEach(function(x,i){h+='<div class="mem-item">💭 '+x+'<button class="mem-del" onclick="delMem('+i+')">✕</button></div>';});
   el.innerHTML=h;
 }
-function addMem() {
-  var v=document.getElementById('memInp').value.trim(); if(!v) return;
-  if(!memory.facts) memory.facts=[];
-  memory.facts.push(v);
-  document.getElementById('memInp').value='';
-  saveMem(); renderMemList(); updateMemUI(); showToast('Memory saved!');
-}
-function delMem(k) {
-  if(k==='name'){delete memory.name;}else{memory.facts.splice(k,1);}
-  saveMem(); renderMemList(); updateMemUI();
-}
-function extractMem(t) {
-  var n=t.match(/my name is ([A-Za-z]+)/i);
-  if(n&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('Nice to meet you, '+n[1]+'!');}
-  var f=t.match(/i(?:'m| am) from ([A-Za-z ]+)/i);
-  if(f&&!(memory.facts||[]).some(function(x){return x.indexOf('from')!==-1;})){
-    if(!memory.facts)memory.facts=[];
-    memory.facts.push('From '+f[1].trim());
-    saveMem();updateMemUI();
+
+/* CONFETTI — gold & navy theme */
+function fireConfetti(){
+  var cols=['#D4A017','#F0C842','#0D1B3E','#162554','#FFFFFF','#FFD966','#B8860B'];
+  for(var i=0;i<90;i++){
+    (function(i){setTimeout(function(){
+      var c=document.createElement('div');c.className='confetti';
+      var sz=Math.random()*9+3;
+      c.style.cssText='left:'+Math.random()*100+'vw;background:'+cols[~~(Math.random()*cols.length)]+';width:'+sz+'px;height:'+sz+'px;border-radius:'+(Math.random()>.5?'50%':'3px')+';animation-duration:'+(Math.random()*2+2)+'s;';
+      document.body.appendChild(c);setTimeout(function(){c.remove();},4000);
+    },i*22);})(i);
   }
 }
 
-// ── STATS ─────────────────────────────────
-function renderStats() {
-  document.getElementById('statGrid').innerHTML=
-    '<div class="stat-card"><div class="stat-n">'+stats.msgs+'</div><div class="stat-l">Messages Sent</div></div>'+
-    '<div class="stat-card"><div class="stat-n">'+stats.streak+'</div><div class="stat-l">Day Streak 🔥</div></div>'+
-    '<div class="stat-card"><div class="stat-n">'+stats.images+'</div><div class="stat-l">Images Created</div></div>'+
-    '<div class="stat-card"><div class="stat-n">'+stats.longest+'</div><div class="stat-l">Best Streak</div></div>';
-  var BADGES=[
-    {e:'🌟',l:'First Chat',got:stats.msgs>=1},
-    {e:'🔥',l:'7-Day Streak',got:stats.longest>=7},
-    {e:'💬',l:'100 Messages',got:stats.msgs>=100},
-    {e:'🎨',l:'AI Artist',got:stats.images>=5},
-    {e:'🧠',l:'Memory Pro',got:(memory.facts||[]).length>=5},
-    {e:'🌍',l:'Polyglot',got:false},
-    {e:'🏆',l:'30-Day Streak',got:stats.longest>=30},
-    {e:'🚀',l:'Power User',got:stats.msgs>=500},
-  ];
-  document.getElementById('badgeGrid').innerHTML=BADGES.map(function(b){
-    return '<div class="badge'+(b.got?' earned':'')+'">'+b.e+'<span class="badge-l">'+(b.got?b.l:'???')+'</span></div>';
-  }).join('');
+/* THEMES */
+function autoTheme(){var h=new Date().getHours(),dark=h<6||h>=20;document.documentElement.setAttribute('data-theme',dark?'dark':'light');document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';}
+function setTh(t){S.s('theme',t);if(t==='auto')autoTheme();else{document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}closeM('theme');}
+function cycleTh(){setTh(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+function setFont(s){var m={small:'13px',normal:'14.5px',large:'16.5px'};document.querySelectorAll('.bubble,#inp').forEach(function(el){el.style.fontSize=m[s];});document.querySelectorAll('.tho').forEach(function(t){t.classList.remove('on');});event.target.classList.add('on');}
+
+/* TIPS — 20 tips */
+var TIPS=['💡 Type "create image:" to generate stunning 4K AI art instantly','🎯 Exam Mode has deep JEE NEET UPSC CBSE knowledge built in','🧠 Say "my name is [name]" — QVIO remembers you forever','⌨️ Enter to send · Shift+Enter for new line · Ctrl+K to focus','🔊 Click the speaker icon on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar above','💾 Export button saves your entire conversation as a text file','🔥 Use QVIO every day to build your streak and earn badges!','🌍 QVIO understands Hinglish, Tanglish and all Indian slang','🔢 Built-in calculator — click 🔢 button anytime','🌙 Auto theme switches to dark mode after 8PM automatically','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides all buttons for pure deep conversation','💬 Chat History saves your last 20 conversations automatically','🎨 Image Gallery stores all 50 of your AI-generated images','📱 Install QVIO on your phone for a full app experience','⚡ QVIO responds in under 2 seconds on average worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws in simple plain language','✈️ Travel Mode plans trips suggests places and local tips'];
+var tipI=0;
+function rotateTip(){var b=document.getElementById('tipBox');if(!b)return;b.style.opacity='0';setTimeout(function(){b.textContent=TIPS[tipI%TIPS.length];tipI++;b.style.opacity='1';},400);}
+
+/* PROMPTS — 19 modes */
+var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang never say you dont understand anything. 2.Remember full conversation context always. 3.Match emotional tone perfectly with empathy. 4.Expert in everything Indian culture tech business Bollywood cricket science history. 5.Talk like a real smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected immediately give a better answer without excuses. 8.Understand yaar bhai boss sahi hai ekdum correct no cap and all slang. 9.Adapt tone completely to each user style. 10.ALWAYS reply in SAME LANGUAGE user writes in without exception. ';
+var PROMPTS={
+  casual:'You are QVIO, India most premium intelligent multilingual AI. The gold standard of AI. Faster than ChatGPT smarter than Gemini. '+RULES+'Be the best friend anyone ever had.',
+  student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC. Step by step explanations. Encourage always.',
+  exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes. What examiners look for. Think top IIT coaching institute.',
+  pro:'You are QVIO Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. Know Indian startup ecosystem deeply. No fluff ever.',
+  business:'You are QVIO Business, senior business advisor for Indian SMEs startups and entrepreneurs. '+RULES+'Business plans pitch decks GST compliance growth hacks market analysis. Think McKinsey meets Shark Tank India.',
+  spiritual:'You are QVIO Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism Sufism Yoga Vedanta. Never judge any faith.',
+  code:'You are QVIO Code, an elite full-stack engineer and computer scientist. '+RULES+'Python JS Java C++ HTML CSS React Node SQL Git APIs system design. Always use code blocks. Explain every line.',
+  math:'You are QVIO Math, a brilliant patient world-class mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level. Verify answer at end.',
+  hindi:'Aap QVIO hain, India ka number one premium AI dost! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do bilkul naturally. Bollywood cricket culture India sab samjho. Dost ki tarah baat karo.',
+  kannada:'Neevu QVIO, India mattu Karnataka pura premium smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi maaatanaadi naturally. Karnataka sanskriti gotthu.',
+  quiz:'You are QVIO Quiz Master, the most exciting energetic quiz host in India! '+RULES+'ONE question at a time with 4 options A B C D. Keep score. Give exciting reactions. Keep energy high.',
+  translate:'You are QVIO Translator, the worlds most precise multilingual translation expert. '+RULES+'100+ languages. Show: Translation, then Pronunciation, then Cultural context note.',
+  write:'You are QVIO Writer, a world class author copywriter journalist editor. '+RULES+'Stories poems emails essays captions CVs scripts songs speeches. Match any style tone perfectly.',
+  news:'You are QVIO News, a sharp balanced news analyst and journalist. '+RULES+'Clear simple language. Balanced perspectives always. Provide historical context.',
+  career:'You are QVIO Career Coach for Indian professionals and students. '+RULES+'Resume writing cover letters interview prep salary negotiation LinkedIn optimization. Know Indian job market and abroad deeply.',
+  health:'You are QVIO Health Advisor providing general wellness and lifestyle information. '+RULES+'ALWAYS recommend seeing a real doctor for medical issues. General healthy lifestyle nutrition sleep fitness tips. Never diagnose.',
+  legal:'You are QVIO Legal Guide explaining Indian laws in plain simple language. '+RULES+'IPC Indian Constitution consumer rights property laws RTI RERA simply explained. Always recommend consulting a qualified lawyer for serious matters.',
+  recipe:'You are QVIO Chef with mastery of all Indian and world cuisines. '+RULES+'Clear recipes with ingredients steps timing and chef tips. Know all regional Indian food deeply. Always suggest substitutes.',
+  travel:'You are QVIO Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places hotels local food transport budgets visa info. Know every Indian state deeply. Suggest hidden gems.',
+};
+
+/* MEMORY */
+function getMemCtx(){var f=memory.facts||[],n=memory.name||'';if(!f.length&&!n)return '';return '\n\n[USER MEMORY: '+(n?'Name: '+n+'. ':'')+f.join('. ')+']';}
+function updateMemUI(){
+  var bar=document.getElementById('memBar'),ban=document.getElementById('memBanner');
+  var n=memory.name||'',f=memory.facts||[];
+  if(n||f.length){var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';bar.textContent=t;bar.classList.add('show');if(ban){ban.textContent=t;ban.classList.add('show');}}
+  else{bar.classList.remove('show');if(ban)ban.classList.remove('show');}
+}
+function renderMemList(){
+  var el=document.getElementById('memList'),f=memory.facts||[],n=memory.name||'',h='';
+  if(n)h+='<div class="mi">👤 Name: '+n+'<button class="mdel" onclick="delMem(\'name\')">✕</button></div>';
+  if(!f.length&&!n)h='<div class="mmt">No memories yet! Chat and QVIO learns about you 🧠</div>';
+  f.forEach(function(x,i){h+='<div class="mi">💭 '+x+'<button class="mdel" onclick="delMem('+i+')">✕</button></div>';});
+  el.innerHTML=h;
+}
+function addMem(){var v=document.getElementById('memInp').value.trim();if(!v)return;if(!memory.facts)memory.facts=[];memory.facts.push(v);document.getElementById('memInp').value='';saveMem();renderMemList();updateMemUI();showToast('✨ Memory saved!');}
+function delMem(k){if(k==='name')delete memory.name;else memory.facts.splice(k,1);saveMem();renderMemList();updateMemUI();}
+function extractMem(t){
+  var n=t.match(/my name is ([A-Za-z]+)/i);
+  if(n&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('✨ Nice to meet you, '+n[1]+'!');}
+  var f=t.match(/i(?:'m| am) from ([A-Za-z ,]+)/i);
+  if(f){if(!memory.facts)memory.facts=[];if(!memory.facts.some(function(x){return x.indexOf('from')>-1;})){memory.facts.push('From '+f[1].trim());saveMem();updateMemUI();}}
 }
 
-// ── GALLERY ───────────────────────────────
-function renderGallery() {
-  var el=document.getElementById('galleryGrid');
-  if(!imgGallery.length){el.innerHTML='<div class="gallery-empty">No images yet. Type "create image:" to generate 4K art!</div>';return;}
-  el.innerHTML=imgGallery.slice().reverse().map(function(url){
-    return '<div class="gallery-img" onclick="viewImg(\''+url+'\')"><img src="'+url+'" loading="lazy"></div>';
-  }).join('');
+/* STATS & BADGES */
+function renderStats(){
+  document.getElementById('statGrid').innerHTML='<div class="stat-card"><div class="stn">'+stats.msgs+'</div><div class="stl">Messages Sent</div></div><div class="stat-card"><div class="stn">'+stats.streak+'</div><div class="stl">Day Streak 🔥</div></div><div class="stat-card"><div class="stn">'+stats.images+'</div><div class="stl">Images Created</div></div><div class="stat-card"><div class="stn">'+stats.longest+'</div><div class="stl">Best Streak 🏆</div></div>';
+  var B=[{e:'👑',l:'First Chat',got:stats.msgs>=1},{e:'🔥',l:'7-Day Streak',got:stats.longest>=7},{e:'💬',l:'100 Messages',got:stats.msgs>=100},{e:'🎨',l:'AI Artist',got:stats.images>=5},{e:'🧠',l:'Memory Pro',got:(memory.facts||[]).length>=5},{e:'🌍',l:'Polyglot',got:false},{e:'🏆',l:'30-Day Streak',got:stats.longest>=30},{e:'🚀',l:'Power User',got:stats.msgs>=500},{e:'💎',l:'Premium User',got:true}];
+  document.getElementById('badgeGrid').innerHTML=B.map(function(b){return '<div class="badge'+(b.got?' earned':'')+'">'+b.e+'<span class="badge-l">'+(b.got?b.l:'???')+'</span></div>';}).join('');
 }
 
-function viewImg(url) {
-  document.getElementById('imgViewSrc').src=url;
-  document.getElementById('imgViewDl').href=url;
-  openM('imgview');
-}
+/* GALLERY */
+function renderGal(){var el=document.getElementById('galGrid');if(!imgGal.length){el.innerHTML='<div class="ge">No images yet! Type "create image:" to generate 4K art 🎨</div>';return;}el.innerHTML=imgGal.slice().reverse().map(function(u){return '<div class="gi" onclick="viewImg(\''+u+'\')"><img src="'+u+'" loading="lazy"></div>';}).join('');}
+function viewImg(u){document.getElementById('imgVSrc').src=u;document.getElementById('imgVDl').href=u;openM('imgv');}
 
-// ── CHAT HISTORY ──────────────────────────
-function renderHistory() {
-  var el=document.getElementById('histList');
-  if(!savedChats.length){el.innerHTML='<div class="hist-empty">No saved chats yet. Your conversations will appear here.</div>';return;}
-  el.innerHTML=savedChats.map(function(c,i){
-    return '<div class="hist-item" onclick="loadChat('+i+')">'+
-      '<div class="hist-title">'+c.title+'</div>'+
-      '<div class="hist-date">'+c.date+'</div></div>';
-  }).join('');
-}
-function loadChat(i) {
-  var c=savedChats[i];
-  clearChat();
-  chatHistory=c.history.slice();
-  chatHistory.forEach(function(m){
-    if(m.role!=='system') addMsg(m.content,m.role==='assistant'?'ai':'user');
-  });
-  closeM('history');
-  showToast('Chat loaded!');
-}
+/* HISTORY */
+function renderHist(){var el=document.getElementById('histList');if(!savedChats.length){el.innerHTML='<div class="he">No saved chats yet.</div>';return;}el.innerHTML=savedChats.map(function(c,i){return '<div class="hi" onclick="loadChat('+i+')"><div class="hit">'+c.title+'</div><div class="hid">'+c.date+'</div></div>';}).join('');}
+function loadChat(i){var c=savedChats[i];clearChat();chatHistory=c.history.slice();chatHistory.forEach(function(m){if(m.role!=='system')addMsg(m.content,m.role==='assistant'?'ai':'user');});closeM('hist');showToast('Chat loaded!');}
+function saveChat(){if(!chatHistory.length)return;savedChats.unshift({title:chatHistory[0].content.substring(0,55),history:chatHistory.slice(),date:new Date().toLocaleDateString()});if(savedChats.length>20)savedChats=savedChats.slice(0,20);S.s('chats',savedChats);}
 
-// ── MODE ──────────────────────────────────
-function setMode(m,btn,label) {
-  mode=m;
-  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  document.getElementById('modeLabel').textContent=label;
-  document.getElementById('examBar').classList.toggle('show',m==='exam');
-}
+/* MODE */
+function setMode(m,btn,label){mode=m;document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.getElementById('modeLabel').textContent=label;document.getElementById('examBar').classList.toggle('show',m==='exam');}
 
-// ── MODALS ────────────────────────────────
-function openM(t) {
-  var MAP={lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gallery:['o_gallery','m_gallery'],profile:['o_profile','m_profile'],history:['o_history','m_history'],imgview:['o_imgview','m_imgview']};
-  var ids=MAP[t]; if(!ids) return;
-  document.getElementById(ids[0]).classList.add('show');
-  document.getElementById(ids[1]).classList.add('show');
-  if(t==='mem') renderMemList();
-  if(t==='stats') renderStats();
-  if(t==='gallery') renderGallery();
-  if(t==='history') renderHistory();
-}
-function closeM(t) {
-  var MAP={lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gallery:['o_gallery','m_gallery'],profile:['o_profile','m_profile'],history:['o_history','m_history'],imgview:['o_imgview','m_imgview']};
-  var ids=MAP[t]; if(!ids) return;
-  document.getElementById(ids[0]).classList.remove('show');
-  document.getElementById(ids[1]).classList.remove('show');
-}
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){['lang','mem','sup','stats','streak','theme','gallery','profile','history','imgview'].forEach(closeM);}
-  if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}
-  if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}
-});
+/* MODALS */
+var MAP={lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
+function openM(t){var ids=MAP[t];if(!ids)return;document.getElementById(ids[0]).classList.add('show');document.getElementById(ids[1]).classList.add('show');if(t==='mem')renderMemList();if(t==='stats')renderStats();if(t==='gal')renderGal();if(t==='hist')renderHist();}
+function closeM(t){var ids=MAP[t];if(!ids)return;document.getElementById(ids[0]).classList.remove('show');document.getElementById(ids[1]).classList.remove('show');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')Object.keys(MAP).forEach(closeM);if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}});
+function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
 
-// ── LANG ──────────────────────────────────
-function learnLang(l) {
-  closeM('lang');
-  send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one cultural tip.');
-}
-
-// ── CHAT CORE ─────────────────────────────
-function hideWelcome(){var w=document.getElementById('welcome');if(w)w.remove();}
+/* CHAT */
+function hideWelcome(){var w=document.getElementById('welcome');if(w){w.style.opacity='0';w.style.transition='opacity .25s';setTimeout(function(){w&&w.remove();},250);}}
 function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
-function scrollToBottom(){var c=document.getElementById('chat');c.scrollTop=c.scrollHeight;}
-function scrollToTop(){var c=document.getElementById('chat');c.scrollTop=0;}
+function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
+function scrollToTop(){document.getElementById('chat').scrollTop=0;}
 
-function renderText(t) {
+function renderText(t){
   return t
-    .replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,code){
-      return '<pre><button class="code-copy" onclick="copyCode(this)">Copy</button><code>'+escHtml(code.trim())+'</code></pre>';
-    })
+    .replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,code){return '<pre><button class="code-copy" onclick="copyCode(this)">Copy</button><code>'+escH(code.trim())+'</code></pre>';})
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^### (.*)/gm,'<h4 style="margin:8px 0 4px;font-size:15px;color:var(--navy);">$1</h4>')
+    .replace(/^## (.*)/gm,'<h3 style="margin:8px 0 4px;font-size:17px;font-family:\'Cormorant Garamond\',serif;color:var(--navy);">$1</h3>')
     .replace(/\n/g,'<br>');
 }
-function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function copyCode(btn){navigator.clipboard.writeText(btn.nextElementSibling.textContent);btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy';},2000);}
-function readTime(t){var w=t.split(/\s+/).length;return w>120?Math.ceil(w/200)+' min read':null;}
+function escH(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyCode(btn){navigator.clipboard.writeText(btn.nextElementSibling.textContent);btn.textContent='Copied!';btn.style.background='rgba(21,128,61,.3)';setTimeout(function(){btn.textContent='Copy';btn.style.background='';},2000);}
 
-function addMsg(content,role,isImg,speed) {
+function addMsg(content,role,isImg,speed){
   hideWelcome();
   var c=document.getElementById('chat');
-  var div=document.createElement('div'); div.className='msg '+role;
-  var av=document.createElement('div'); av.className='av '+(role==='ai'?'ai':'usr');
+  var div=document.createElement('div');div.className='msg '+role;
+  var av=document.createElement('div');av.className='av '+(role==='ai'?'ai':'usr');
+  if(role==='user'&&currentUser&&currentUser.photoURL)av.innerHTML='<img src="'+currentUser.photoURL+'">';
+  else av.textContent=role==='ai'?'QV':'You';
+  var wrap=document.createElement('div');wrap.className='mwrap';
+  var bub=document.createElement('div');bub.className='bubble';
 
-  // Use user photo if logged in
-  if(role==='user'&&currentUser&&currentUser.photoURL) {
-    av.innerHTML='<img src="'+currentUser.photoURL+'" />';
-  } else {
-    av.textContent=role==='ai'?'QV':'You';
-  }
-
-  var wrap=document.createElement('div'); wrap.className='mwrap';
-  var bub=document.createElement('div'); bub.className='bubble';
-
-  if(isImg) {
-    var img=document.createElement('img');
-    img.src=content; img.className='gen-img'; img.alt='QVIO Art';
+  if(isImg){
+    var img=document.createElement('img');img.src=content;img.className='gen-img';img.alt='QVIO Art';
     img.onclick=function(){viewImg(content);};
-    img.onerror=function(){bub.innerHTML='Image failed. Try a different prompt!';};
+    img.onerror=function(){bub.innerHTML='Image generation failed. Try a different prompt!';};
     bub.appendChild(img);
-    var dl=document.createElement('a');
-    dl.href=content; dl.download='qvio-'+Date.now()+'.jpg'; dl.className='img-dl';
-    dl.textContent='⬇ Download'; bub.appendChild(dl);
+    var dl=document.createElement('a');dl.href=content;dl.download='qvio-'+Date.now()+'.jpg';dl.className='img-dl';dl.textContent='⬇ Download';
+    bub.appendChild(dl);
     wrap.appendChild(bub);
-  } else {
+  }else{
     bub.innerHTML=renderText(content);
-    if(role==='ai') {
-      var cb=document.createElement('button'); cb.className='cpbtn'; cb.textContent='Copy';
+    if(role==='ai'){
+      var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
       cb.onclick=function(){navigator.clipboard.writeText(content);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
       bub.appendChild(cb);
 
-      var meta=document.createElement('div'); meta.className='msg-meta';
+      var meta=document.createElement('div');meta.className='mmeta';
+      function makeAct(icon,tip,fn){var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;}
 
-      // Speak
-      var spk=document.createElement('button'); spk.className='act'; spk.textContent='🔊 Speak';
-      spk.onclick=function(){speakText(content,spk);}; meta.appendChild(spk);
+      makeAct('🔊','Listen',function(){speakText(content,this);});
+      var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
+      var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
 
-      // Like/Dislike
-      var lk=document.createElement('button'); lk.className='act'; lk.textContent='👍';
-      lk.onclick=function(){lk.classList.toggle('liked');dk.classList.remove('disliked');}; meta.appendChild(lk);
-      var dk=document.createElement('button'); dk.className='act'; dk.textContent='👎';
-      dk.onclick=function(){dk.classList.toggle('disliked');lk.classList.remove('liked');}; meta.appendChild(dk);
-
-      // Pin
-      var pin=document.createElement('button'); pin.className='act'; pin.textContent='📌';
-      pin.onclick=function(){
+      var pin=makeAct('📌','Pin',function(){
         pin.classList.toggle('active');
-        if(pin.classList.contains('active')){
-          pinnedEl=bub; bub.classList.add('pinned-msg');
-          document.getElementById('pinnedBar').classList.add('show');
-          document.getElementById('pinnedTxt').textContent=content.substring(0,55)+'...';
-          showToast('Message pinned!');
-        } else {
-          bub.classList.remove('pinned-msg');
-          document.getElementById('pinnedBar').classList.remove('show');
-        }
-      }; meta.appendChild(pin);
+        if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');document.getElementById('pinnedBar').classList.add('show');document.getElementById('pinnedTxt').textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
+        else{bub.classList.remove('pinned-msg');document.getElementById('pinnedBar').classList.remove('show');}
+      });
 
-      // Share
-      var sh=document.createElement('button'); sh.className='act'; sh.textContent='📤';
-      sh.onclick=function(){
+      makeAct('📤','Share',function(){
         var txt='QVIO says:\n\n'+content+'\n\n— Try QVIO at qvio.in';
-        if(navigator.share){navigator.share({title:'QVIO Answer',text:txt});}
-        else{navigator.clipboard.writeText(txt);showToast('Copied!');}
-      }; meta.appendChild(sh);
+        if(navigator.share)navigator.share({title:'QVIO',text:txt});
+        else{navigator.clipboard.writeText(txt);showToast('Copied to clipboard!');}
+      });
 
-      // Regen
-      var rg=document.createElement('button'); rg.className='act'; rg.textContent='🔄';
-      rg.onclick=function(){if(lastUserMsg)send(lastUserMsg);}; meta.appendChild(rg);
+      makeAct('🔄','Regenerate',function(){if(lastMsg)send(lastMsg);});
 
-      // Speed
-      if(speed){var sp=document.createElement('span');sp.className='speed';sp.textContent='⚡ '+(speed/1000).toFixed(1)+'s';meta.appendChild(sp);}
-
-      // Read time
-      var rt=readTime(content);
-      if(rt){var rtEl=document.createElement('span');rtEl.className='speed';rtEl.textContent='📖 '+rt;meta.appendChild(rtEl);}
-
-      wrap.appendChild(bub); wrap.appendChild(meta);
-    } else {
-      wrap.appendChild(bub);
-    }
+      if(speed){var sp=document.createElement('span');sp.className='speed-tag';sp.textContent='⚡'+(speed/1000).toFixed(1)+'s';meta.appendChild(sp);}
+      wrap.appendChild(bub);wrap.appendChild(meta);
+    }else wrap.appendChild(bub);
   }
-
-  var ts=document.createElement('div'); ts.className='ts'; ts.textContent=getTime();
-  wrap.appendChild(ts);
-  div.appendChild(av); div.appendChild(wrap);
-  c.appendChild(div); c.scrollTop=c.scrollHeight;
+  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
+  div.appendChild(av);div.appendChild(wrap);c.appendChild(div);c.scrollTop=c.scrollHeight;
   checkScroll();
-  return div;
 }
 
-function checkScroll(){
-  var c=document.getElementById('chat'),btn=document.getElementById('scrollBtn');
-  btn.classList.toggle('show',c.scrollHeight-c.scrollTop-c.clientHeight>150);
-}
+function checkScroll(){var c=document.getElementById('chat'),btn=document.getElementById('scrollBtn');btn.classList.toggle('show',c.scrollHeight-c.scrollTop-c.clientHeight>160);}
 document.getElementById('chat').addEventListener('scroll',checkScroll);
 function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
 
-// ── VOICE TTS ─────────────────────────────
+/* TTS */
 var curU=null;
 function speakText(t,btn){
-  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();btn.textContent='🔊 Speak';curU=null;return;}
+  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn)btn.textContent='🔊';curU=null;return;}
   var clean=t.replace(/<[^>]*>/g,'').substring(0,1200);
   var u=new SpeechSynthesisUtterance(clean);
-  var voices=window.speechSynthesis.getVoices();
-  var v=voices.find(function(x){return x.lang.indexOf('en-IN')!==-1||x.lang.indexOf('hi')!==-1;});
-  if(v)u.voice=v; u.rate=0.93; u.pitch=1;
-  u.onstart=function(){btn.textContent='⏹ Stop';};
-  u.onend=u.onerror=function(){btn.textContent='🔊 Speak';curU=null;};
-  curU=u; window.speechSynthesis.speak(u);
+  var v=window.speechSynthesis.getVoices().find(function(x){return x.lang.indexOf('en-IN')>-1;});
+  if(v)u.voice=v;u.rate=0.92;
+  u.onstart=function(){if(btn)btn.textContent='⏹';};
+  u.onend=u.onerror=function(){if(btn)btn.textContent='🔊';curU=null;};
+  curU=u;window.speechSynthesis.speak(u);
 }
 
-// ── TYPING ────────────────────────────────
+/* TYPING */
 function showTyping(){
   hideWelcome();
+  document.getElementById('typeBar').classList.add('show');
   var c=document.getElementById('chat');
-  var d=document.createElement('div'); d.className='typing-wrap'; d.id='typer';
-  var av=document.createElement('div'); av.className='av ai'; av.textContent='QV';
-  var t=document.createElement('div'); t.className='typing'; t.innerHTML='<span></span><span></span><span></span>';
-  d.appendChild(av); d.appendChild(t); c.appendChild(d); c.scrollTop=c.scrollHeight;
+  var d=document.createElement('div');d.className='tywrap';d.id='typer';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var t=document.createElement('div');t.className='ty';t.innerHTML='<span></span><span></span><span></span>';
+  d.appendChild(av);d.appendChild(t);c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
-function hideTyping(){var t=document.getElementById('typer');if(t)t.remove();}
+function hideTyping(){
+  document.getElementById('typeBar').classList.remove('show');
+  var t=document.getElementById('typer');if(t)t.remove();
+}
 
-// ── SEND ──────────────────────────────────
-async function sendMsg() {
+/* SEND */
+async function sendMsg(){
   var inp=document.getElementById('inp');
-  var text=inp.value.trim(); if(!text) return;
-  inp.value=''; inp.style.height='auto';
+  var text=inp.value.trim();if(!text)return;
+  inp.value='';inp.style.height='auto';
   document.getElementById('sendBtn').disabled=true;
-  document.getElementById('charCount').textContent='';
-  lastUserMsg=text;
-
+  document.getElementById('charCnt').textContent='';
+  lastMsg=text;
   addMsg(text,'user');
   chatHistory.push({role:'user',content:text});
   extractMem(text);
-  stats.msgs++; saveStats();
+  stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
 
-  // 4K IMAGE GENERATION
-  if(/^(create image|image|draw|generate|make image|paint|generate image):/i.test(text)){
+  /* IMAGE GENERATION */
+  if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
     var prompt=text.replace(/^[^:]+:/i,'').trim();
-    showTyping();
-    stats.images++; saveStats();
+    showTyping();stats.images++;saveStats();
     setTimeout(function(){
       hideTyping();
-      // High quality 4K params
-      var url='https://image.pollinations.ai/prompt/'+
-        encodeURIComponent(prompt+', ultra photorealistic, 4K, 8K, masterpiece, highly detailed, professional photography, award winning, sharp focus, studio lighting')+
-        '?width=1024&height=1024&nologo=true&enhance=true&seed='+Date.now();
+      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt+', ultra photorealistic, 4K, 8K masterpiece, professional photography, award winning, cinematic lighting, sharp focus, highly detailed, trending on artstation')+'?width=1024&height=1024&nologo=true&enhance=true&seed='+Date.now();
       addMsg(url,'ai',true);
-      imgGallery.push(url); saveGallery();
+      imgGal.push(url);saveGal();
       document.getElementById('sendBtn').disabled=false;
-    },2000);
+    },2200);
     return;
   }
 
   showTyping();
   var t0=Date.now();
-
-  try {
+  try{
     var reply=await callGroq(text);
-    var speed=Date.now()-t0;
+    var spd=Date.now()-t0;
     hideTyping();
-    addMsg(reply,'ai',false,speed);
+    addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
-    if(chatHistory.length>26) chatHistory=chatHistory.slice(-26);
-
-    // Offline cache
-    try{var cache=S.g('cache')||{};cache[text.toLowerCase().trim()]=reply;var ks=Object.keys(cache);if(ks.length>60)delete cache[ks[0]];S.s('cache',cache);}catch(e){}
-
-    // Voice mode auto-speak
-    if(mode==='voice') speakText(reply,{textContent:''});
-
-    // Auto-save chat
+    if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
-
-  } catch(e) {
+  }catch(e){
     hideTyping();
     var em=e.message||'';
-    var cached=(S.g('cache')||{})[text.toLowerCase().trim()];
-    if(cached&&!navigator.onLine) {
-      addMsg('[Cached] '+cached,'ai');
-    } else if(em.indexOf('rate')!==-1||em.indexOf('limit')!==-1||em.indexOf('429')!==-1) {
-      var wait=30;
-      var m=em.match(/(\d+(?:\.\d+)?)s/); if(m) wait=Math.ceil(parseFloat(m[1]));
+    if(em.indexOf('rate')>-1||em.indexOf('429')>-1){
+      var wait=30;var m2=em.match(/(\d+)s/);if(m2)wait=parseInt(m2[1]);
       var tid='t'+Date.now();
-      addMsg('<span id="'+tid+'">QVIO is busy — please wait <strong>'+wait+'s</strong> then try again.</span>','ai');
-      var countdown_=wait, cd=countdown_, itv=setInterval(function(){
-        cd--; var el=document.getElementById(tid);
-        if(cd<=0){clearInterval(itv);if(el)el.innerHTML='✅ Ready! Please send your message again.';document.getElementById('sendBtn').disabled=false;}
-        else{if(el)el.innerHTML='QVIO is busy — please wait <strong>'+cd+'s</strong> then try again.';}
-      },1000);
-    } else if(em.indexOf('network')!==-1||em.indexOf('Failed')!==-1) {
-      addMsg('Connection issue. Please check your internet and try again.','ai');
-    } else {
-      addMsg('Something went wrong. Please try again in a moment.','ai');
-    }
+      addMsg('<span id="'+tid+'">⏳ Rate limited — wait <strong>'+wait+'s</strong> then retry.</span>','ai');
+      var cd=wait;
+      var itv=setInterval(function(){cd--;var el=document.getElementById(tid);if(cd<=0){clearInterval(itv);if(el)el.innerHTML='✅ Ready! Send your message again.';document.getElementById('sendBtn').disabled=false;}else if(el)el.innerHTML='⏳ Rate limited — wait <strong>'+cd+'s</strong> then retry.';},1000);
+    }else addMsg('Something went wrong. Please try again!','ai');
   }
   document.getElementById('sendBtn').disabled=false;
 }
 
-// ── GROQ API ──────────────────────────────
-async function callGroq(msg) {
+async function callGroq(msg){
   var sys=PROMPTS[mode]+getMemCtx();
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-    body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
-  });
+  var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})});
   var data=await res.json();
-  if(data.error) throw new Error(data.error.message);
+  if(data.error)throw new Error(data.error.message);
   return data.choices[0].message.content;
 }
 
-// ── HELPERS ───────────────────────────────
 function send(t){document.getElementById('inp').value=t;sendMsg();}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
-function onInp(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,140)+'px';
-  var n=el.value.length;
-  document.getElementById('charCount').textContent=n>0?n+' chars':'';
-}
-function showToast(msg,dur){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},dur||2600);
-}
-function clearChat(){
-  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-icon">QV</div><h1>Fresh start!</h1><p class="welcome-sub">Ready for a new conversation.</p></div>';
-  chatHistory=[]; document.getElementById('pinnedBar').classList.remove('show'); pinnedEl=null;
-  showToast('Chat cleared!');
-}
-function toggleFocus(){
-  isFocus=!isFocus; document.body.classList.toggle('focus',isFocus);
-  document.getElementById('focusBtn').classList.toggle('primary',isFocus);
-  showToast(isFocus?'Focus mode on — distraction free!':'Focus mode off');
-}
-function exportChat(){
-  if(!chatHistory.length){showToast('Nothing to export yet!');return;}
-  var txt='QVIO Conversation\n'+new Date().toLocaleString()+'\n'+'─'.repeat(40)+'\n\n';
-  chatHistory.forEach(function(m){txt+=(m.role==='user'?'You':'QVIO')+': '+m.content+'\n\n';});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
-  a.download='qvio-'+Date.now()+'.txt'; a.click();
-  showToast('Chat exported!');
-}
-function showProPage(){closeM('profile');showToast('Pro coming in August 2025! 🚀');}
+function onInp(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';var n=el.value.length;document.getElementById('charCnt').textContent=n>0?n+'/2000':'';document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+function clearChat(){document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');}
+function toggleFocus(){isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);document.getElementById('focusBtn').classList.toggle('on',isFocus);showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');}
+function exportChat(){if(!chatHistory.length){showToast('Nothing to export!');return;}var txt='QVIO Premium Chat\n'+new Date().toLocaleString()+'\n'+'═'.repeat(50)+'\n\n';chatHistory.forEach(function(m){txt+=(m.role==='user'?'YOU':'QVIO')+': '+m.content+'\n\n';});var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='qvio-chat-'+Date.now()+'.txt';a.click();showToast('💾 Chat exported!');}
 
-// ── CALCULATOR ────────────────────────────
+/* CALCULATOR */
 function toggleCalc(){document.getElementById('calcW').classList.toggle('show');}
 function ci(v){
   var d=document.getElementById('calcDisp');
@@ -1658,15 +1182,15 @@ function ci(v){
   if(v==='±'){try{calcExpr=String(-parseFloat(calcExpr));}catch(e){}d.textContent=calcExpr||'0';return;}
   if(v==='%'){try{calcExpr=String(eval(calcExpr)/100);}catch(e){calcExpr='';}d.textContent=calcExpr||'0';return;}
   if(v==='='){try{calcExpr=String(Function('"use strict";return('+calcExpr+')')());}catch(e){calcExpr='Error';}d.textContent=calcExpr;calcExpr='';return;}
-  calcExpr+=v; d.textContent=calcExpr;
+  calcExpr+=v;d.textContent=calcExpr;
 }
 
-// ── MIC ───────────────────────────────────
+/* MIC */
 function toggleMic(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Voice requires Chrome!');return;}
+  if(!SR){showToast('Voice input needs Chrome browser!');return;}
   if(isRec){recog.stop();return;}
-  recog=new SR(); recog.continuous=false; recog.interimResults=false;
+  recog=new SR();recog.continuous=false;recog.interimResults=false;
   recog.lang=mode==='hindi'?'hi-IN':mode==='kannada'?'kn-IN':'en-IN';
   recog.onstart=function(){isRec=true;document.getElementById('micBtn').classList.add('rec');document.getElementById('micBtn').textContent='⏹';};
   recog.onresult=function(e){var inp=document.getElementById('inp');inp.value=e.results[0][0].transcript;onInp(inp);};
@@ -1674,52 +1198,28 @@ function toggleMic(){
   recog.start();
 }
 
-// ── PWA ───────────────────────────────────
-window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault(); deferredPrompt=e;
-  if(!S.g('noPWA')) document.getElementById('installBar').classList.add('show');
-});
+/* PWA */
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!S.g('noPWA'))document.getElementById('instBar').classList.add('show');});
 function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;dismissInstall();});}}
-function dismissInstall(){document.getElementById('installBar').classList.remove('show');S.s('noPWA',true);}
+function dismissInstall(){document.getElementById('instBar').classList.remove('show');S.s('noPWA',true);}
+window.addEventListener('online',function(){document.getElementById('offBar').classList.remove('show');showToast('✅ Back online!');});
+window.addEventListener('offline',function(){document.getElementById('offBar').classList.add('show');});
+if(!navigator.onLine)document.getElementById('offBar').classList.add('show');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 
-// ── OFFLINE ───────────────────────────────
-function chkOnline(){document.getElementById('offlineBar').classList.toggle('show',!navigator.onLine);}
-window.addEventListener('online',chkOnline); window.addEventListener('offline',chkOnline);
+/* CHALLENGES */
+var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask QVIO to explain something you always wondered 🧠','Get QVIO to write a poem about your day ✍️','Ask for a complete 90-day study plan for your next exam 🎯'];
+function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨🧠✍️🎯]/g,'').trim());}
 
-// ── SERVICE WORKER ────────────────────────
-if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
-
-// ── INIT ──────────────────────────────────
+/* INIT */
 (function(){
-  // Theme
   var th=S.g('theme')||'auto';
-  if(th==='auto') autoTheme(); else setTh(th);
-
-  // Accent
-  var ac=S.g('accent')||'';
-  if(ac) document.documentElement.setAttribute('data-accent',ac);
-
-  // Streak
-  updateStreak();
-
-  // Memory
-  updateMemUI();
-
-  // Tips
-  rotateTip(); setInterval(rotateTip,7000);
-
-  // Challenge
-  var ch=['Explain something using only 5 words','Generate a 4K image of your dream home','Ask QVIO something you always wondered','Get QVIO to write a poem about today','Ask for a full revision plan for your exam'];
-  document.getElementById('challengeTxt').textContent=ch[new Date().getDay()%ch.length];
-
-  // Offline check
-  chkOnline();
-
-  // Auto theme check every minute
+  if(th==='auto')autoTheme();else setTh(th);
+  updateStreak();updateMemUI();initParticles();
+  rotateTip();setInterval(rotateTip,8000);
+  document.getElementById('challengeTxt').textContent=CH[new Date().getDay()%CH.length];
   setInterval(function(){if((S.g('theme')||'auto')==='auto')autoTheme();},60000);
-
-  // Welcome toast
-  setTimeout(function(){showToast('Welcome to QVIO! 🚀');},600);
+  setTimeout(function(){showToast('👑 Welcome to QVIO Premium!');},1000);
 })();
 </script>
 </body>
