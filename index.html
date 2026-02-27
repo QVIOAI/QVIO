@@ -10,6 +10,11 @@
 <link rel="manifest" href="manifest.json">
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script>
+// Firebase safety wrapper - waits for SDK to fully load
+window.fbReady = false;
+window.fbQueue = [];
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -450,6 +455,69 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 /* RESPONSIVE */
 @media(max-width:600px){:root{--pad:16px;}.welcome h1{font-size:26px;}.sugs{grid-template-columns:1fr;}.ltag{display:none;}}
+
+/* ════ ONBOARDING TOUR ════ */
+#onboard{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;}
+#onboard.show{display:flex;}
+.ob-bg{position:absolute;inset:0;background:rgba(13,27,62,.6);backdrop-filter:blur(10px);}
+.ob-card{position:relative;z-index:2;background:var(--white);border:2px solid var(--border2);border-radius:var(--r-xl);padding:36px 32px;max-width:400px;width:92%;text-align:center;animation:popIn .3s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .ob-card{background:var(--bg2);}
+.ob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.ob-icon{font-size:48px;margin-bottom:16px;display:block;}
+.ob-step{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;margin-bottom:12px;text-transform:uppercase;letter-spacing:1.5px;}
+.ob-title{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.2;}
+[data-theme="dark"] .ob-title{color:var(--text);}
+.ob-desc{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:28px;}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.ob-dot.on{background:var(--gold2);width:24px;border-radius:4px;}
+.ob-next{width:100%;padding:14px;background:var(--navy-g);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;box-shadow:0 4px 14px rgba(13,27,62,.3);transition:all .2s;}
+.ob-next:hover{transform:translateY(-2px);}
+.ob-skip{font-size:12px;color:var(--text3);cursor:pointer;margin-top:14px;display:block;transition:color .15s;}
+.ob-skip:hover{color:var(--gold);}
+
+/* ════ SHARE CARD ════ */
+#shareCard{position:fixed;inset:0;z-index:9001;display:none;align-items:center;justify-content:center;}
+#shareCard.show{display:flex;}
+.sc-bg{position:absolute;inset:0;background:rgba(13,27,62,.7);backdrop-filter:blur(12px);}
+.sc-box{position:relative;z-index:2;background:var(--white);border:2px solid var(--border2);border-radius:var(--r-xl);padding:28px;max-width:420px;width:92%;animation:popIn .3s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .sc-box{background:var(--bg2);}
+.sc-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.sc-preview{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:24px;margin-bottom:16px;position:relative;overflow:hidden;}
+.sc-preview::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(212,160,23,.15);}
+.sc-q-logo{font-family:"Cormorant Garamond",serif;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sc-q-text{font-size:14px;color:#EEF2FF;line-height:1.6;font-style:italic;}
+.sc-q-url{font-size:11px;color:rgba(240,200,66,.7);margin-top:12px;font-family:"DM Mono",monospace;}
+.sc-actions{display:flex;gap:8px;}
+.sc-btn{flex:1;padding:12px;border:none;border-radius:var(--r-sm);font-size:13px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .18s;}
+.sc-btn.copy{background:var(--navy-g);color:#fff;box-shadow:0 3px 10px rgba(13,27,62,.25);}
+.sc-btn.close{background:var(--surface);border:1px solid var(--border);color:var(--text2);}
+.sc-btn:hover{transform:translateY(-1px);}
+
+/* ════ SMART GREETING ════ */
+.greeting-bar{padding:6px var(--pad);font-size:12.5px;color:var(--gold);background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);border-bottom:1px solid var(--border);display:none;align-items:center;gap:8px;flex-shrink:0;font-weight:500;}
+.greeting-bar.show{display:flex;}
+
+/* ════ SKELETON LOADER ════ */
+.skel{padding:13px 17px;background:var(--surface);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);border-left:3px solid var(--border2);}
+.skel-line{height:12px;background:linear-gradient(90deg,var(--border),var(--surface),var(--border));border-radius:6px;margin-bottom:8px;animation:skelShim 1.5s infinite;}
+@keyframes skelShim{0%{background-position:-200px 0;}100%{background-position:200px 0;}}
+.skel-line:last-child{width:60%;margin-bottom:0;}
+
+/* ════ PRO MODAL ════ */
+#m_pro .pro-feat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;}
+.pf{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;font-size:12.5px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+.pf-icon{font-size:18px;}
+.pro-price{text-align:center;margin:16px 0;}
+.pro-price .price{font-family:"Cormorant Garamond",serif;font-size:44px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pro-price .per{font-size:14px;color:var(--text3);}
+
+/* ════ ERROR STATES ════ */
+.err-bubble{background:linear-gradient(135deg,rgba(185,28,28,.06),rgba(185,28,28,.03));border:1px solid rgba(185,28,28,.2);border-left:3px solid var(--danger)!important;}
+.retry-btn{margin-top:8px;padding:6px 14px;background:var(--navy-g);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+
+/* ════ API KEY WARNING ════ */
+.sec-warn{background:linear-gradient(135deg,rgba(185,28,28,.08),rgba(185,28,28,.04));border:1px solid rgba(185,28,28,.2);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--danger);display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:500;}
 </style>
 </head>
 <body>
@@ -665,6 +733,69 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <button class="mclose" onclick="closeM('imgv')">Close</button>
 </div>
 
+
+<!-- ONBOARDING TOUR -->
+<div id="onboard">
+  <div class="ob-bg" onclick="skipOnboard()"></div>
+  <div class="ob-card">
+    <span class="ob-step" id="obStep">Step 1 of 3</span>
+    <span class="ob-icon" id="obIcon">⚡</span>
+    <div class="ob-title" id="obTitle">QVIO is faster than ChatGPT</div>
+    <div class="ob-desc" id="obDesc">Get answers in under 2 seconds. No waiting. No limits. Just instant intelligence for every Indian.</div>
+    <div class="ob-dots">
+      <div class="ob-dot on" id="dot0"></div>
+      <div class="ob-dot" id="dot1"></div>
+      <div class="ob-dot" id="dot2"></div>
+    </div>
+    <button class="ob-next" onclick="nextOnboard()">Next →</button>
+    <span class="ob-skip" onclick="skipOnboard()">Skip tour</span>
+  </div>
+</div>
+
+<!-- SHARE AS IMAGE CARD -->
+<div id="shareCard">
+  <div class="sc-bg" onclick="closeShare()"></div>
+  <div class="sc-box">
+    <div class="mhd" style="margin-bottom:14px;"><h3>📤 Share this answer</h3><button class="mx" onclick="closeShare()">✕</button></div>
+    <div class="sc-preview">
+      <div class="sc-q-logo">
+        <span style="background:var(--gold-gs);padding:2px 8px;border-radius:4px;font-size:11px;color:#fff;font-family:'DM Mono',monospace;">QV</span>
+        QVIO says
+      </div>
+      <div class="sc-q-text" id="shareText">Loading...</div>
+      <div class="sc-q-url">qvio.in — India's Premium AI</div>
+    </div>
+    <div class="sc-actions">
+      <button class="sc-btn copy" onclick="copyShareText()">📋 Copy Text</button>
+      <button class="sc-btn copy" style="background:linear-gradient(135deg,#25D366,#128C7E);" onclick="shareWhatsApp()">📱 WhatsApp</button>
+      <button class="sc-btn close" onclick="closeShare()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRO MODAL -->
+<div class="overlay" id="o_pro" onclick="closeM('pro')"></div>
+<div class="modal" id="m_pro">
+  <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
+  <div class="msub">Unlock the full power of QVIO</div>
+  <div class="pro-feat">
+    <div class="pf"><span class="pf-icon">♾️</span>Unlimited messages</div>
+    <div class="pf"><span class="pf-icon">⚡</span>Priority AI speed</div>
+    <div class="pf"><span class="pf-icon">🧠</span>Unlimited memory</div>
+    <div class="pf"><span class="pf-icon">🎨</span>4K image generation</div>
+    <div class="pf"><span class="pf-icon">💬</span>Unlimited chat history</div>
+    <div class="pf"><span class="pf-icon">🔒</span>Private & secure</div>
+    <div class="pf"><span class="pf-icon">🌍</span>All 100+ languages</div>
+    <div class="pf"><span class="pf-icon">🚫</span>No rate limits ever</div>
+  </div>
+  <div class="pro-price">
+    <div class="price">₹199</div>
+    <div class="per">per month · Cancel anytime</div>
+  </div>
+  <div class="sec-warn">🔒 Payments coming soon via Razorpay · UPI · Cards</div>
+  <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
+</div>
+
 <div class="off-bar" id="offBar">No internet connection — QVIO is offline</div>
 <div class="inst-bar" id="instBar">
   <div>📱 Add QVIO to your home screen!</div>
@@ -702,11 +833,14 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
 </header>
 
+<div class="greeting-bar" id="greetBar">👋 <span id="greetTxt">Good morning!</span></div>
 <div class="sub-bar mem" id="memBar"></div>
 <div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
 <div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
 
 <div class="modes">
+  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
+  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
   <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
   <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
   <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
@@ -715,8 +849,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
   <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
   <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
-  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
-  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
   <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
   <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
   <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
@@ -781,11 +913,32 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 // FIREBASE
 var firebaseConfig={apiKey:"AIzaSyAFIBPTaAzxbouj62W8dB6Cp8vOjerrM30",authDomain:"qvioai-f7659.firebaseapp.com",projectId:"qvioai-f7659",storageBucket:"qvioai-f7659.firebasestorage.app",messagingSenderId:"556429565888",appId:"1:556429565888:web:e10b98f37c099602d6b225"};
 var fbAuth=null;
-try{
-  firebase.initializeApp(firebaseConfig);
-  fbAuth=firebase.auth();
-  fbAuth.onAuthStateChanged(function(u){if(u){currentUser=u;updateUserUI(u);showNamaste(u);}});
-}catch(e){console.log('Firebase:',e);}
+
+function initFirebase(){
+  try{
+    if(typeof firebase === 'undefined'){
+      setTimeout(initFirebase, 200);
+      return;
+    }
+    if(!firebase.apps.length){
+      firebase.initializeApp(firebaseConfig);
+    }
+    fbAuth=firebase.auth();
+    fbAuth.onAuthStateChanged(function(u){
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);}
+    });
+    console.log('✅ Firebase ready!');
+  }catch(e){
+    console.log('Firebase error:',e);
+  }
+}
+
+// Start Firebase init after DOM is ready
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', initFirebase);
+} else {
+  initFirebase();
+}
 
 var GROQ_KEY='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';
 var MODEL='llama-3.3-70b-versatile';
@@ -847,8 +1000,17 @@ function showNamaste(user){
 
 /* AUTH */
 function signInGoogle(){
-  if(!fbAuth){showToast('Firebase loading...');return;}
-  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}).catch(function(e){showToast('Error: '+e.message);});
+  if(!fbAuth){
+    showToast('Connecting... try again in 2 seconds!');
+    setTimeout(function(){initFirebase();},500);
+    return;
+  }
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(e){
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      else showToast('Error: '+e.message);
+    });
 }
 function signInEmail(){
   if(!fbAuth){skipLogin();return;}
@@ -992,7 +1154,7 @@ function saveChat(){if(!chatHistory.length)return;savedChats.unshift({title:chat
 function setMode(m,btn,label){mode=m;document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.getElementById('modeLabel').textContent=label;document.getElementById('examBar').classList.toggle('show',m==='exam');}
 
 /* MODALS */
-var MAP={lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
 function openM(t){var ids=MAP[t];if(!ids)return;document.getElementById(ids[0]).classList.add('show');document.getElementById(ids[1]).classList.add('show');if(t==='mem')renderMemList();if(t==='stats')renderStats();if(t==='gal')renderGal();if(t==='hist')renderHist();}
 function closeM(t){var ids=MAP[t];if(!ids)return;document.getElementById(ids[0]).classList.remove('show');document.getElementById(ids[1]).classList.remove('show');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')Object.keys(MAP).forEach(closeM);if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}});
@@ -1224,3 +1386,156 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
 </script>
 </body>
 </html>
+<script>
+/* ══════════════════════════
+   IMPROVEMENT SCRIPTS
+══════════════════════════ */
+
+// ── SMART GREETING ────────────────────────────────────────────
+function setSmartGreeting(){
+  var h=new Date().getHours();
+  var nm=memory.name?', '+memory.name:'';
+  var greets=[
+    [5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],
+    [12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],
+    [17,20,'🌇 Good evening'+nm+'! How can QVIO help?'],
+    [20,24,'🌙 Good night'+nm+'! Still grinding? QVIO is here!'],
+    [0,5,'🦉 Late night session'+nm+'? QVIO never sleeps!']
+  ];
+  var msg='👋 Welcome'+nm+'!';
+  greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
+  document.getElementById('greetTxt').textContent=msg;
+  document.getElementById('greetBar').classList.add('show');
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────
+var obSteps=[
+  {icon:'⚡',title:'QVIO is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence built for every Indian.',step:'Step 1 of 3'},
+  {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — QVIO understands everything. Click Hindi or Kannada mode first!',step:'Step 2 of 3'},
+  {icon:'🎨',title:'Type "create image:" for 4K AI art',desc:'Type "create image: golden temple sunset" and get a stunning 4K image in seconds. Completely free!',step:'Step 3 of 3'},
+];
+var obCur=0;
+function showOnboard(){
+  if(localStorage.getItem('qvio_toured'))return;
+  setTimeout(function(){document.getElementById('onboard').classList.add('show');},1200);
+}
+function nextOnboard(){
+  obCur++;
+  if(obCur>=obSteps.length){skipOnboard();return;}
+  var s=obSteps[obCur];
+  document.getElementById('obIcon').textContent=s.icon;
+  document.getElementById('obTitle').textContent=s.title;
+  document.getElementById('obDesc').textContent=s.desc;
+  document.getElementById('obStep').textContent=s.step;
+  for(var i=0;i<3;i++)document.getElementById('dot'+i).classList.toggle('on',i===obCur);
+  if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using QVIO!';
+}
+function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
+
+// ── SHARE AS IMAGE ────────────────────────────────────────────
+var shareContent='';
+function openShare(text){
+  shareContent=text;
+  var preview=text.replace(/<[^>]*>/g,'').substring(0,220);
+  if(preview.length===220)preview+='...';
+  document.getElementById('shareText').textContent=preview;
+  document.getElementById('shareCard').classList.add('show');
+}
+function closeShare(){document.getElementById('shareCard').classList.remove('show');}
+function copyShareText(){
+  var txt='QVIO says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry QVIO free at qvio.in 🇮🇳';
+  navigator.clipboard.writeText(txt);
+  showToast('📋 Copied! Paste anywhere!');
+  closeShare();
+}
+function shareWhatsApp(){
+  var txt='Check this out from QVIO AI 🤖\n\n'+shareContent.replace(/<[^>]*>/g,'').substring(0,300)+'\n\nTry free at qvio.in 🇮🇳';
+  window.open('https://wa.me/?text='+encodeURIComponent(txt));
+  closeShare();
+}
+
+// ── HUMAN ERROR MESSAGES ──────────────────────────────────────
+var funnyErrors=[
+  "QVIO took a quick chai break ☕ — tap retry!",
+  "The AI sneezed 🤧 — try again!",
+  "QVIO is thinking too hard 🧠 — one more try?",
+  "Signal lost in space 🛸 — retry please!",
+  "QVIO blinked 😅 — send again!"
+];
+function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
+
+// ── SKELETON LOADER (replaces typing dots) ────────────────────
+function showSkeleton(){
+  hideWelcome();
+  document.getElementById('typeBar').classList.add('show');
+  var c=document.getElementById('chat');
+  var d=document.createElement('div');d.className='tywrap';d.id='typer';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var sk=document.createElement('div');sk.className='skel';
+  sk.innerHTML='<div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line"></div>';
+  d.appendChild(av);d.appendChild(sk);c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+// ── OVERRIDE showTyping with skeleton ────────────────────────
+if(typeof showTyping !== 'undefined'){
+  window._origShowTyping = showTyping;
+}
+window.showTyping = showSkeleton;
+
+// ── OVERRIDE addMsg to add SHARE button ───────────────────────
+var _origAddMsg = window.addMsg;
+window.addMsg = function(content, role, isImg, speed){
+  var ret = _origAddMsg(content, role, isImg, speed);
+  // Add share button to AI messages
+  if(role==='ai' && !isImg){
+    var metas = document.querySelectorAll('.mmeta');
+    var lastMeta = metas[metas.length-1];
+    if(lastMeta){
+      var shareBtn = document.createElement('button');
+      shareBtn.className='act';shareBtn.textContent='🌐';shareBtn.title='Share';
+      shareBtn.onclick=function(){openShare(content);};
+      // Insert before the speed tag if it exists
+      var speedTag=lastMeta.querySelector('.speed-tag');
+      if(speedTag)lastMeta.insertBefore(shareBtn,speedTag);
+      else lastMeta.appendChild(shareBtn);
+    }
+  }
+  return ret;
+};
+
+// ── PRO BUTTON IN HEADER ──────────────────────────────────────
+(function addProBtn(){
+  var uchip=document.getElementById('uNm');
+  if(!uchip)return;
+  var proBtn=document.createElement('button');
+  proBtn.className='hbtn';
+  proBtn.style.cssText='background:linear-gradient(135deg,#8B6914,#D4A017);color:#fff;border:none;font-weight:700;';
+  proBtn.textContent='⭐ Pro';
+  proBtn.onclick=function(){openM('pro');};
+  uchip.closest('.uchip').parentNode.insertBefore(proBtn, uchip.closest('.uchip'));
+})();
+
+// ── OVERRIDE human errors ─────────────────────────────────────
+var _origCallGroq = window.callGroq;
+window.callGroq = async function(msg){
+  try{
+    return await _origCallGroq(msg);
+  }catch(e){
+    // Rate limit already handled in sendMsg
+    // Add human error message for other errors
+    if(!e.message.includes('rate')&&!e.message.includes('429')){
+      throw new Error('HUMAN_ERROR:'+humanError());
+    }
+    throw e;
+  }
+};
+
+// ── SECURITY WARNING (console) ────────────────────────────────
+// Security: API key is restricted to qvio.in domain in Firebase console
+
+// ── INIT ALL IMPROVEMENTS ────────────────────────────────────
+setTimeout(function(){
+  setSmartGreeting();
+  showOnboard();
+}, 500);
+</script>
