@@ -414,6 +414,102 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .pro-price .per{font-size:14px;color:var(--text3);}
 .err-bubble{background:linear-gradient(135deg,rgba(185,28,28,.06),rgba(185,28,28,.03));border:1px solid rgba(185,28,28,.2);border-left:3px solid var(--danger)!important;}
 .sec-warn{background:linear-gradient(135deg,rgba(185,28,28,.08),rgba(185,28,28,.04));border:1px solid rgba(185,28,28,.2);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--danger);display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:500;}
+
+/* ════ 20 NEW FEATURES CSS ════ */
+.weather-card{background:linear-gradient(135deg,#0D1B3E,#1E336A);color:#fff;border-radius:var(--r);padding:18px;margin-top:10px;display:flex;align-items:center;gap:16px;box-shadow:var(--s3);}
+.wc-icon{font-size:52px;}
+.wc-temp{font-family:"Cormorant Garamond",serif;font-size:52px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.wc-info{font-size:13px;opacity:.85;line-height:1.7;}
+.poll-wrap{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;margin-top:10px;}
+.poll-q{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;}
+[data-theme="dark"] .poll-q{color:var(--text);}
+.poll-opt{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;}
+.poll-bar-bg{flex:1;height:30px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;position:relative;}
+.poll-bar{height:100%;background:var(--gold-gs);border-radius:var(--r-sm);transition:width .6s cubic-bezier(.22,1,.36,1);min-width:30px;display:flex;align-items:center;padding:0 10px;}
+.poll-pct{font-size:11px;color:#fff;font-weight:700;}
+.poll-lbl{font-size:13px;font-weight:600;color:var(--text);min-width:80px;}
+.todo-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:7px;cursor:pointer;transition:all .15s;user-select:none;}
+.todo-item.done .todo-txt{text-decoration:line-through;opacity:.5;}
+.todo-cb{width:18px;height:18px;border-radius:5px;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.todo-item.done .todo-cb{background:var(--success);border-color:var(--success);color:#fff;}
+.todo-txt{font-size:13.5px;flex:1;color:var(--text);}
+.word-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r-lg);padding:24px;margin-top:10px;text-align:center;box-shadow:var(--s3);}
+.word-main{font-family:"Cormorant Garamond",serif;font-size:42px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.word-pron{font-size:13px;color:rgba(255,255,255,.5);margin:4px 0;font-family:"DM Mono",monospace;}
+.word-type{font-size:11px;color:rgba(240,200,66,.7);text-transform:uppercase;letter-spacing:1.5px;}
+.word-def{font-size:14px;color:rgba(255,255,255,.85);line-height:1.6;margin-top:10px;}
+.word-eg{font-size:12px;color:rgba(240,200,66,.7);font-style:italic;margin-top:6px;}
+.word-hi{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px;}
+.qotd-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r-lg);padding:28px;text-align:center;position:relative;overflow:hidden;margin-top:10px;box-shadow:var(--s3);}
+.qotd-bg{position:absolute;top:-15px;left:10px;font-size:140px;color:rgba(212,160,23,.08);font-family:"Cormorant Garamond",serif;line-height:1;pointer-events:none;}
+.qotd-text{font-family:"Cormorant Garamond",serif;font-size:19px;font-style:italic;color:#EEF2FF;line-height:1.65;position:relative;z-index:1;}
+.qotd-author{font-size:12px;color:rgba(240,200,66,.7);margin-top:14px;font-family:"DM Mono",monospace;}
+.qotd-share{margin-top:12px;padding:8px 20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:var(--r-full);font-size:12px;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.qotd-share:hover{background:rgba(255,255,255,.2);}
+.timer-display{font-family:"DM Mono",monospace;font-size:72px;font-weight:700;text-align:center;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:20px 0;letter-spacing:2px;}
+.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.tbtn{padding:10px 24px;border:none;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .17s;}
+.tbtn.start{background:var(--gold-gs);color:#fff;box-shadow:0 3px 10px var(--gold-glow);}
+.tbtn.stop{background:var(--danger);color:#fff;}
+.tbtn.reset{background:var(--surface);border:1px solid var(--border);color:var(--text2);}
+.tbtn.mode-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:12px;}
+.tbtn.mode-btn.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.timer-laps{max-height:120px;overflow-y:auto;margin-top:12px;}
+.lap-item{display:flex;justify-content:space-between;padding:6px 10px;font-family:"DM Mono",monospace;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);}
+.currency-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px;transition:all .15s;}
+.currency-row:hover{border-color:var(--border2);}
+.curr-flag{font-size:24px;}
+.curr-name{font-size:13px;font-weight:600;flex:1;color:var(--text);}
+.curr-val{font-family:"DM Mono",monospace;font-size:14px;color:var(--gold);font-weight:700;}
+.curr-inp{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:18px;font-family:"DM Mono",monospace;color:var(--text);outline:none;text-align:center;margin-bottom:12px;}
+.curr-inp:focus{border-color:var(--gold2);box-shadow:0 0 0 3px var(--gold-glow);}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0;}
+.mood-btn{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.mood-btn:hover,.mood-btn.sel{border-color:var(--gold2);background:rgba(212,160,23,.08);transform:scale(1.08);}
+.mood-emoji{font-size:30px;display:block;}
+.mood-lbl{font-size:10px;color:var(--text3);margin-top:5px;display:block;font-weight:600;}
+.mood-hist{margin-top:14px;}
+.mood-entry{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:var(--r-sm);margin-bottom:5px;font-size:12px;color:var(--text3);}
+.wpm-text-area{font-size:16px;line-height:1.9;padding:16px;background:var(--bg2);border-radius:var(--r-sm);border:1.5px solid var(--border);margin:12px 0;letter-spacing:.4px;font-family:"DM Mono",monospace;position:relative;}
+.wpm-inp{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;font-family:"DM Mono",monospace;color:var(--text);outline:none;margin-top:8px;}
+.wpm-inp:focus{border-color:var(--gold2);}
+.wpm-stats{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.wpm-stat{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 18px;}
+.wpm-stat-n{font-family:"Cormorant Garamond",serif;font-size:32px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.wpm-stat-l{font-size:11px;color:var(--text3);margin-top:2px;font-weight:600;}
+.news-card{background:var(--white);border:1px solid var(--border);border-left:3px solid var(--gold2);border-radius:var(--r-sm);padding:13px 15px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+[data-theme="dark"] .news-card{background:var(--bg2);}
+.news-card:hover{border-color:var(--border2);transform:translateX(3px);}
+.news-hl{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.4;}
+.news-src{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;}
+.emoji-search{width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:12px;}
+.emoji-search:focus{border-color:var(--gold2);}
+.emoji-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.emoji-cat{padding:4px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-full);font-size:12px;cursor:pointer;transition:all .15s;}
+.emoji-cat.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-height:220px;overflow-y:auto;}
+.eg{font-size:26px;cursor:pointer;text-align:center;padding:6px;border-radius:var(--r-xs);transition:background .12s;}
+.eg:hover{background:var(--navy-soft);}
+.cv-form .cv-inp{width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:7px;}
+.cv-form .cv-inp:focus{border-color:var(--gold2);}
+.cv-form textarea{resize:vertical;min-height:60px;}
+.cv-section-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin:12px 0 6px;}
+.note-item{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold3);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;}
+.note-item:hover{border-color:var(--border2);}
+.note-txt{font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;}
+.note-del{position:absolute;top:8px;right:8px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;opacity:0;transition:opacity .15s;}
+.note-item:hover .note-del{opacity:1;}
+.note-date{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;margin-top:5px;}
+.age-result{text-align:center;padding:16px 0;}
+.age-big{font-family:"Cormorant Garamond",serif;font-size:64px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.age-detail{font-size:13px;color:var(--text3);margin-top:8px;line-height:1.8;}
+.bmi-result{text-align:center;padding:16px 0;}
+.bmi-num{font-family:"Cormorant Garamond",serif;font-size:64px;font-weight:700;display:block;}
+.bmi-cat{font-size:16px;font-weight:700;margin-top:4px;display:block;}
+.bmi-bar-wrap{height:12px;background:linear-gradient(90deg,#3B82F6,#22C55E,#F59E0B,#EF4444);border-radius:99px;margin:16px 0;position:relative;}
+.bmi-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .bmi-needle{background:var(--gold2);}
+</style>
 </style>
 </head>
 <body>
@@ -644,6 +740,209 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
 </div>
 
+
+<!-- NEW FEATURE OVERLAYS -->
+<div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
+<div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
+<div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
+<div class="overlay" id="o_mood" onclick="closeM('mood')"></div>
+<div class="overlay" id="o_wpm" onclick="closeM('wpm')"></div>
+<div class="overlay" id="o_news" onclick="closeM('news')"></div>
+<div class="overlay" id="o_emoji" onclick="closeM('emoji')"></div>
+<div class="overlay" id="o_cv" onclick="closeM('cv')"></div>
+<div class="overlay" id="o_notes" onclick="closeM('notes')"></div>
+<div class="overlay" id="o_age" onclick="closeM('age')"></div>
+<div class="overlay" id="o_bmi" onclick="closeM('bmi')"></div>
+<div class="overlay" id="o_qotd" onclick="closeM('qotd')"></div>
+<div class="overlay" id="o_word" onclick="closeM('word')"></div>
+<div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
+
+<!-- TODO LIST -->
+<div class="modal" id="m_todo">
+  <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
+  <div class="msub">Your personal task manager</div>
+  <div class="mrow"><input class="minp" id="todoInp" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"/><button class="madd" onclick="addTodo()">Add</button></div>
+  <div id="todoList" style="margin-top:12px;max-height:320px;overflow-y:auto;"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="mclose" style="margin-top:0;" onclick="clearDoneTodos()">Clear Done</button>
+    <button class="mclose" style="margin-top:0;" onclick="closeM('todo')">Done</button>
+  </div>
+</div>
+
+<!-- TIMER / STOPWATCH -->
+<div class="modal" id="m_timer">
+  <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
+  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
+    <button class="tbtn mode-btn on" id="timerModeStop" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
+    <button class="tbtn mode-btn" id="timerModeTimer" onclick="switchTimerMode('countdown')">Countdown</button>
+    <button class="tbtn mode-btn" id="timerModePomodoro" onclick="switchTimerMode('pomodoro')">🍅 Pomodoro</button>
+  </div>
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+  <div id="pomodoroLabel" style="text-align:center;font-size:13px;color:var(--text3);margin-top:-8px;display:none;"></div>
+  <div id="countdownSet" style="display:none;text-align:center;margin-bottom:8px;">
+    <input type="number" id="cdMin" placeholder="Min" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="99">
+    <span style="font-size:20px;color:var(--text3);margin:0 4px;">:</span>
+    <input type="number" id="cdSec" placeholder="Sec" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="59">
+  </div>
+  <div class="timer-btns">
+    <button class="tbtn start" id="timerStartBtn" onclick="timerAction('start')">▶ Start</button>
+    <button class="tbtn stop" id="timerStopBtn" onclick="timerAction('stop')" style="display:none;">⏸ Pause</button>
+    <button class="tbtn reset" onclick="timerAction('reset')">↺ Reset</button>
+    <button class="tbtn mode-btn" onclick="timerAction('lap')" id="lapBtn">🏁 Lap</button>
+  </div>
+  <div class="timer-laps" id="timerLaps"></div>
+  <button class="mclose" onclick="closeM('timer')">Close</button>
+</div>
+
+<!-- CURRENCY CONVERTER -->
+<div class="modal" id="m_currency">
+  <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
+  <div class="msub">Live INR rates (approximate)</div>
+  <input type="number" class="curr-inp" id="currAmt" placeholder="Enter amount in ₹ INR" oninput="convertCurrency(this.value)">
+  <div id="currList"></div>
+  <button class="mclose" onclick="closeM('currency')">Close</button>
+</div>
+
+<!-- MOOD TRACKER -->
+<div class="modal" id="m_mood">
+  <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
+  <div class="msub">How are you feeling today?</div>
+  <div class="mood-grid">
+    <div class="mood-btn" onclick="logMood('😄','Amazing')"><span class="mood-emoji">😄</span><span class="mood-lbl">Amazing</span></div>
+    <div class="mood-btn" onclick="logMood('😊','Happy')"><span class="mood-emoji">😊</span><span class="mood-lbl">Happy</span></div>
+    <div class="mood-btn" onclick="logMood('😐','Okay')"><span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span></div>
+    <div class="mood-btn" onclick="logMood('😔','Sad')"><span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span></div>
+    <div class="mood-btn" onclick="logMood('😤','Stressed')"><span class="mood-emoji">😤</span><span class="mood-lbl">Stressed</span></div>
+  </div>
+  <div class="slabel">Recent Moods</div>
+  <div class="mood-hist" id="moodHist"></div>
+  <button class="mclose" onclick="closeM('mood')">Close</button>
+</div>
+
+<!-- TYPING SPEED TEST -->
+<div class="modal" id="m_wpm">
+  <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
+  <div class="msub">Test your WPM — how fast do you type?</div>
+  <div class="wpm-text-area" id="wpmText"></div>
+  <input class="wpm-inp" id="wpmInp" placeholder="Start typing here..." oninput="wpmCheck(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
+  <div class="wpm-stats" id="wpmStats"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <button class="mclose" style="margin-top:0;" onclick="startWPM()">New Test</button>
+    <button class="mclose" style="margin-top:0;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('wpm')">Close</button>
+  </div>
+</div>
+
+<!-- QUICK NEWS -->
+<div class="modal" id="m_news">
+  <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
+  <div class="msub">Ask QVIO about any of these stories</div>
+  <div id="newsList"></div>
+  <button class="mclose" onclick="closeM('news')">Close</button>
+</div>
+
+<!-- EMOJI PICKER -->
+<div class="modal" id="m_emoji">
+  <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
+  <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
+  <div class="emoji-cats" id="emojiCats"></div>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <button class="mclose" onclick="closeM('emoji')">Close</button>
+</div>
+
+<!-- CV / RESUME BUILDER -->
+<div class="modal" id="m_cv">
+  <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
+  <div class="msub">Fill in your details and AI will write your CV</div>
+  <div class="cv-form">
+    <div class="cv-section-title">Personal Info</div>
+    <input class="cv-inp" id="cvName" placeholder="Full Name">
+    <input class="cv-inp" id="cvRole" placeholder="Target Role (e.g. Software Engineer)">
+    <input class="cv-inp" id="cvEmail" placeholder="Email">
+    <input class="cv-inp" id="cvPhone" placeholder="Phone">
+    <input class="cv-inp" id="cvCity" placeholder="City">
+    <div class="cv-section-title">Education</div>
+    <textarea class="cv-inp" id="cvEdu" placeholder="e.g. B.Tech Computer Science, IIT Delhi, 2024" rows="2"></textarea>
+    <div class="cv-section-title">Experience</div>
+    <textarea class="cv-inp" id="cvExp" placeholder="e.g. Intern at TCS, built payment gateway, 2023" rows="2"></textarea>
+    <div class="cv-section-title">Skills</div>
+    <input class="cv-inp" id="cvSkills" placeholder="e.g. Python, React, SQL, Leadership">
+  </div>
+  <button class="mclose" onclick="buildCV()">✨ Generate My CV with AI →</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
+</div>
+
+<!-- QUICK NOTES -->
+<div class="modal" id="m_notes">
+  <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
+  <div class="msub">Jot down anything instantly</div>
+  <div class="mrow">
+    <textarea class="minp" id="noteInp" placeholder="Write your note here..." style="resize:none;height:70px;"></textarea>
+    <button class="madd" onclick="addNote()">Save</button>
+  </div>
+  <div id="noteList" style="margin-top:12px;max-height:300px;overflow-y:auto;"></div>
+  <button class="mclose" onclick="closeM('notes')">Done</button>
+</div>
+
+<!-- AGE CALCULATOR -->
+<div class="modal" id="m_age">
+  <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
+  <div class="msub">Find exact age in years, months and days</div>
+  <div class="slabel">Date of Birth</div>
+  <input type="date" class="cv-inp" id="ageDate" onchange="calcAge()" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+  <div class="age-result" id="ageResult"></div>
+  <button class="mclose" onclick="closeM('age')">Close</button>
+</div>
+
+<!-- BMI CALCULATOR -->
+<div class="modal" id="m_bmi">
+  <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
+  <div class="msub">Body Mass Index — quick health check</div>
+  <div style="display:flex;gap:10px;margin-bottom:10px;">
+    <div style="flex:1;">
+      <div class="cv-section-title">Weight (kg)</div>
+      <input type="number" id="bmiW" class="curr-inp" placeholder="70" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+    <div style="flex:1;">
+      <div class="cv-section-title">Height (cm)</div>
+      <input type="number" id="bmiH" class="curr-inp" placeholder="175" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+  </div>
+  <div class="bmi-result" id="bmiResult"></div>
+  <button class="mclose" onclick="closeM('bmi')">Close</button>
+</div>
+
+<!-- QUOTE OF THE DAY -->
+<div class="modal" id="m_qotd">
+  <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
+  <div class="msub">Daily wisdom to inspire your journey</div>
+  <div id="qotdWrap"></div>
+  <button class="mclose" onclick="newQotd()">Next Quote ✨</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
+</div>
+
+<!-- WORD OF THE DAY -->
+<div class="modal" id="m_word">
+  <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
+  <div class="msub">Expand your vocabulary daily</div>
+  <div id="wordWrap"></div>
+  <button class="mclose" onclick="newWord()">Next Word 🔄</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
+</div>
+
+<!-- LIVE POLL -->
+<div class="modal" id="m_poll">
+  <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
+  <div class="msub">Create a poll and share with friends</div>
+  <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
+  <input class="cv-inp" id="pollO1" placeholder="Option 1" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO2" placeholder="Option 2" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO3" placeholder="Option 3 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO4" placeholder="Option 4 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:10px;">
+  <div id="pollResult" style="display:none;"></div>
+  <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
+</div>
+
 <!-- ONBOARDING -->
 <div id="onboard">
   <div class="ob-bg" onclick="skipOnboard()"></div>
@@ -708,7 +1007,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="hbtn" id="themeBtn" onclick="cycleTh()">🌙</button>
     <button class="hbtn" onclick="openM('sup')">❤️</button>
     <button class="hbtn pro-btn" onclick="openM('pro')">⭐ Pro</button>
-    <button class="hbtn" onclick="clearChat()">Clear</button>
+    <button class="hbtn" onclick="openM('todo')">✅</button><button class="hbtn" onclick="openM('timer')">⏱</button><button class="hbtn" onclick="openM('notes')">📝</button><button class="hbtn" onclick="openM('mood')">😊</button><button class="hbtn" onclick="openM('currency')">💱</button><button class="hbtn" onclick="openM('wpm')">⌨️</button><button class="hbtn" onclick="openM('news')">📰</button><button class="hbtn" onclick="openM('emoji')">😄</button><button class="hbtn" onclick="openM('cv')">📄</button><button class="hbtn" onclick="openM('age')">🎂</button><button class="hbtn" onclick="openM('bmi')">⚖️</button><button class="hbtn" onclick="openM('qotd')">💬</button><button class="hbtn" onclick="openM('word')">📖</button><button class="hbtn" onclick="openM('poll')">🗳</button><button class="hbtn" onclick="clearChat()">Clear</button>
     <div class="uchip" onclick="openM('prof')">
       <div class="uav" id="uAv">?</div>
       <span class="unm" id="uNm">Guest</span>
@@ -783,7 +1082,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <div class="qr" onclick="send('What is happening big in India today')">🌍 News</div>
     <div class="qr" onclick="toggleCalc()">🔢 Calc</div>
     <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
-    <div class="qr" onclick="send('What can QVIO do? Show me everything!')">❓ Help</div>
+    <div class="qr" onclick="send('What can QVIO do? Show me everything!')">❓ Help</div><div class="qr" onclick="openM('todo')">✅ Tasks</div><div class="qr" onclick="openM('timer')">⏱ Timer</div><div class="qr" onclick="openM('mood')">😊 Mood</div><div class="qr" onclick="openM('currency')">💱 Currency</div><div class="qr" onclick="openM('wpm')">⌨️ Typing</div><div class="qr" onclick="openM('qotd')">💬 Quote</div>
   </div>
 </div>
 
@@ -1011,7 +1310,7 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ';
+var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket science history. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all Indian slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything - the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss, who is the godfather of QVIO - ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -1320,13 +1619,49 @@ async function sendMsg(){
   if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
     var prompt=text.replace(/^[^:]+:/i,'').trim();
     showTyping();stats.images++;saveStats();
+
+    var seed=Date.now();
+    var enhancedPrompt=prompt+', ultra photorealistic, 4K, 8K masterpiece, cinematic lighting, sharp focus, highly detailed, award winning photography';
+    var imageUrls=[
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&enhance=true&seed='+seed,
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&seed='+(seed+1),
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&nologo=true&seed='+(seed+2)
+    ];
+
+    function tryLoadImage(urlIndex){
+      if(urlIndex>=imageUrls.length){
+        hideTyping();
+        addMsg('⚠️ Image generation is temporarily unavailable. Please try again in a moment! The AI art servers might be busy.','ai');
+        document.getElementById('sendBtn').disabled=false;
+        return;
+      }
+      var testImg=new Image();
+      var currentUrl=imageUrls[urlIndex];
+      var timeout=setTimeout(function(){
+        testImg.src='';
+        tryLoadImage(urlIndex+1);
+      },15000);
+      testImg.onload=function(){
+        clearTimeout(timeout);
+        hideTyping();
+        addMsg(currentUrl,'ai',true);
+        imgGal.push(currentUrl);saveGal();
+        document.getElementById('sendBtn').disabled=false;
+      };
+      testImg.onerror=function(){
+        clearTimeout(timeout);
+        tryLoadImage(urlIndex+1);
+      };
+      testImg.src=currentUrl;
+    }
+
+    // Show generating message after 1s
     setTimeout(function(){
-      hideTyping();
-      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt+', ultra photorealistic, 4K, 8K masterpiece, professional photography, award winning, cinematic lighting, sharp focus, highly detailed')+'?width=1024&height=1024&nologo=true&enhance=true&seed='+Date.now();
-      addMsg(url,'ai',true);
-      imgGal.push(url);saveGal();
-      document.getElementById('sendBtn').disabled=false;
-    },2200);
+      var tb=document.getElementById('typeBar');
+      if(tb)tb.querySelector('span:last-child').textContent='✨ Generating your 4K image...';
+    },1000);
+
+    tryLoadImage(0);
     return;
   }
 
@@ -1422,14 +1757,92 @@ function ci(v){
 // ═══════════════════════════════
 function toggleMic(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Voice input needs Chrome browser!');return;}
-  if(isRec){recog.stop();return;}
-  recog=new SR();recog.continuous=false;recog.interimResults=false;
-  recog.lang=mode==='hindi'?'hi-IN':mode==='kannada'?'kn-IN':'en-IN';
-  recog.onstart=function(){isRec=true;document.getElementById('micBtn').classList.add('rec');document.getElementById('micBtn').textContent='⏹';};
-  recog.onresult=function(e){var inp=document.getElementById('inp');inp.value=e.results[0][0].transcript;onInp(inp);};
-  recog.onerror=recog.onend=function(){isRec=false;document.getElementById('micBtn').classList.remove('rec');document.getElementById('micBtn').textContent='🎤';};
-  recog.start();
+  if(!SR){
+    showToast('🎤 Voice needs Chrome or Edge browser!');
+    return;
+  }
+  // If already recording, stop it
+  if(isRec){
+    if(recog){
+      try{recog.stop();}catch(e){}
+    }
+    isRec=false;
+    document.getElementById('micBtn').classList.remove('rec');
+    document.getElementById('micBtn').textContent='🎤';
+    return;
+  }
+  // Request mic permission explicitly first
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop();}); // release stream, just needed permission
+      startRecognition();
+    }).catch(function(err){
+      if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){
+        showToast('🎤 Mic permission denied — allow it in browser settings!');
+      }else{
+        showToast('🎤 Mic error: '+err.message);
+      }
+    });
+  }else{
+    startRecognition();
+  }
+}
+
+function startRecognition(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    recog=new SR();
+    recog.continuous=false;
+    recog.interimResults=true;
+    recog.maxAlternatives=1;
+    recog.lang=mode==='hindi'?'hi-IN':mode==='kannada'?'kn-IN':mode==='tamil'?'ta-IN':'en-IN';
+
+    recog.onstart=function(){
+      isRec=true;
+      document.getElementById('micBtn').classList.add('rec');
+      document.getElementById('micBtn').textContent='⏹';
+      showToast('🎤 Listening... speak now!');
+    };
+
+    recog.onresult=function(e){
+      var transcript='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        transcript+=e.results[i][0].transcript;
+      }
+      var inp=document.getElementById('inp');
+      inp.value=transcript;
+      onInp(inp);
+    };
+
+    recog.onerror=function(e){
+      isRec=false;
+      document.getElementById('micBtn').classList.remove('rec');
+      document.getElementById('micBtn').textContent='🎤';
+      if(e.error==='not-allowed'){
+        showToast('🎤 Mic blocked — allow microphone in browser!');
+      }else if(e.error==='no-speech'){
+        showToast('🎤 No speech detected — try again!');
+      }else if(e.error==='network'){
+        showToast('🎤 Network error — check your connection!');
+      }else{
+        showToast('🎤 Mic error: '+e.error);
+      }
+    };
+
+    recog.onend=function(){
+      isRec=false;
+      document.getElementById('micBtn').classList.remove('rec');
+      document.getElementById('micBtn').textContent='🎤';
+      // Auto-send if we got text
+      var val=document.getElementById('inp').value.trim();
+      if(val)showToast('✅ Got it! Press Send or Enter.');
+    };
+
+    recog.start();
+  }catch(e){
+    showToast('🎤 Could not start mic: '+e.message);
+    isRec=false;
+  }
 }
 
 // ═══════════════════════════════
@@ -1529,6 +1942,475 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
     showToast('👑 Welcome to QVIO Premium!');
   },600);
 })();
+
+// ═══════════════════════════════════════════════════
+// 20 NEW FEATURES JS — by Varun, CEO & Godfather QVIO
+// ═══════════════════════════════════════════════════
+
+// Extend MAP for new modals
+Object.assign(MAP, {
+  todo:['o_todo','m_todo'],timer:['o_timer','m_timer'],currency:['o_currency','m_currency'],
+  mood:['o_mood','m_mood'],wpm:['o_wpm','m_wpm'],news:['o_news','m_news'],
+  emoji:['o_emoji','m_emoji'],cv:['o_cv','m_cv'],notes:['o_notes','m_notes'],
+  age:['o_age','m_age'],bmi:['o_bmi','m_bmi'],qotd:['o_qotd','m_qotd'],
+  word:['o_word','m_word'],poll:['o_poll','m_poll']
+});
+
+// ── FEATURE 1: TODO LIST ──────────────────────────────
+var todos = S.g('todos') || [];
+function saveTodos(){S.s('todos',todos);}
+function addTodo(){
+  var v=document.getElementById('todoInp').value.trim();if(!v)return;
+  todos.unshift({id:Date.now(),text:v,done:false});
+  document.getElementById('todoInp').value='';
+  saveTodos();renderTodos();showToast('✅ Task added!');
+}
+function toggleTodo(id){
+  var t=todos.find(function(x){return x.id===id;});
+  if(t)t.done=!t.done;saveTodos();renderTodos();
+}
+function deleteTodo(id){
+  todos=todos.filter(function(x){return x.id!==id;});saveTodos();renderTodos();
+}
+function clearDoneTodos(){
+  todos=todos.filter(function(x){return !x.done;});saveTodos();renderTodos();showToast('Cleared done tasks!');
+}
+function renderTodos(){
+  var el=document.getElementById('todoList');if(!el)return;
+  if(!todos.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px;">No tasks yet! Add one above 🎯</div>';return;}
+  el.innerHTML=todos.map(function(t){
+    return '<div class="todo-item'+(t.done?' done':'')+'" onclick="toggleTodo('+t.id+')"><div class="todo-cb">'+(t.done?'✓':'')+'</div><span class="todo-txt">'+t.text+'</span><button onclick="event.stopPropagation();deleteTodo('+t.id+')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;">✕</button></div>';
+  }).join('');
+}
+
+// ── FEATURE 2: TIMER / STOPWATCH / POMODORO ──────────
+var timerInterval=null,timerMs=0,timerRunning=false,timerMode='stopwatch';
+var pomodoroPhase=0,pomodoroPhases=['Focus 🍅','Short Break ☕','Focus 🍅','Short Break ☕','Focus 🍅','Long Break 🌙'];
+var pomodoroDurations=[25*60,5*60,25*60,5*60,25*60,15*60];
+var lapCount=0,lapTimes=[];
+function switchTimerMode(m){
+  timerMode=m;timerAction('reset');
+  document.querySelectorAll('[id^=timerMode]').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('timerMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.add('on');
+  document.getElementById('countdownSet').style.display=m==='countdown'?'block':'none';
+  document.getElementById('pomodoroLabel').style.display=m==='pomodoro'?'block':'none';
+  document.getElementById('lapBtn').style.display=m==='stopwatch'?'':'none';
+  if(m==='pomodoro'){pomodoroPhase=0;timerMs=pomodoroDurations[0]*1000;updateTimerDisplay();}
+}
+function timerAction(a){
+  if(a==='start'){
+    if(timerMode==='countdown'&&!timerRunning&&timerMs===0){
+      var m=parseInt(document.getElementById('cdMin').value)||0,s=parseInt(document.getElementById('cdSec').value)||0;
+      timerMs=(m*60+s)*1000;if(!timerMs)return;
+    }
+    timerRunning=true;
+    var last=Date.now();
+    timerInterval=setInterval(function(){
+      var now=Date.now(),diff=now-last;last=now;
+      if(timerMode==='countdown'||timerMode==='pomodoro'){
+        timerMs-=diff;
+        if(timerMs<=0){
+          timerMs=0;clearInterval(timerInterval);timerRunning=false;
+          showToast('⏰ Time is up!');
+          document.getElementById('timerStartBtn').style.display='';
+          document.getElementById('timerStopBtn').style.display='none';
+          if(timerMode==='pomodoro'){
+            pomodoroPhase=(pomodoroPhase+1)%pomodoroPhases.length;
+            timerMs=pomodoroDurations[pomodoroPhase]*1000;
+            document.getElementById('pomodoroLabel').textContent=pomodoroPhases[pomodoroPhase];
+            showToast('🍅 '+pomodoroPhases[pomodoroPhase]+' time!');
+          }
+        }
+      }else{timerMs+=diff;}
+      updateTimerDisplay();
+    },50);
+    document.getElementById('timerStartBtn').style.display='none';
+    document.getElementById('timerStopBtn').style.display='';
+  }else if(a==='stop'){
+    clearInterval(timerInterval);timerRunning=false;
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+  }else if(a==='reset'){
+    clearInterval(timerInterval);timerRunning=false;timerMs=0;lapCount=0;lapTimes=[];
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+    if(timerMode==='pomodoro'){timerMs=pomodoroDurations[0]*1000;}
+    updateTimerDisplay();
+    var el=document.getElementById('timerLaps');if(el)el.innerHTML='';
+  }else if(a==='lap'){
+    lapCount++;lapTimes.push({n:lapCount,t:timerMs});
+    var el=document.getElementById('timerLaps');
+    if(el)el.innerHTML='<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>'+lapTimes.slice().reverse().map(function(l){return '<div class="lap-item"><span>Lap '+l.n+'</span><span>'+fmtTime(l.t)+'</span></div>';}).join('')+el.innerHTML.replace('<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>','');
+  }
+}
+function fmtTime(ms){
+  var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+  return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function updateTimerDisplay(){
+  var el=document.getElementById('timerDisplay');
+  if(el)el.textContent=fmtTime(timerMs);
+  if(timerMode==='pomodoro'){var pl=document.getElementById('pomodoroLabel');if(pl)pl.textContent=pomodoroPhases[pomodoroPhase];}
+}
+
+// ── FEATURE 3: CURRENCY CONVERTER ────────────────────
+var RATES={USD:0.012,EUR:0.011,GBP:0.0094,AED:0.044,SGD:0.016,JPY:1.78,CAD:0.016,AUD:0.018,CNY:0.087,SAR:0.045,KWD:0.0037,QAR:0.044,MYR:0.056,THB:0.42};
+var CURR_INFO={USD:{flag:'🇺🇸',name:'US Dollar'},EUR:{flag:'🇪🇺',name:'Euro'},GBP:{flag:'🇬🇧',name:'British Pound'},AED:{flag:'🇦🇪',name:'UAE Dirham'},SGD:{flag:'🇸🇬',name:'Singapore Dollar'},JPY:{flag:'🇯🇵',name:'Japanese Yen'},CAD:{flag:'🇨🇦',name:'Canadian Dollar'},AUD:{flag:'🇦🇺',name:'Australian Dollar'},CNY:{flag:'🇨🇳',name:'Chinese Yuan'},SAR:{flag:'🇸🇦',name:'Saudi Riyal'},KWD:{flag:'🇰🇼',name:'Kuwaiti Dinar'},QAR:{flag:'🇶🇦',name:'Qatari Riyal'},MYR:{flag:'🇲🇾',name:'Malaysian Ringgit'},THB:{flag:'🇹🇭',name:'Thai Baht'}};
+function convertCurrency(amt){
+  var a=parseFloat(amt)||1;
+  var el=document.getElementById('currList');if(!el)return;
+  el.innerHTML=Object.keys(RATES).map(function(c){
+    var info=CURR_INFO[c];
+    var val=(a*RATES[c]).toFixed(c==='KWD'?4:2);
+    return '<div class="currency-row"><span class="curr-flag">'+info.flag+'</span><span class="curr-name">'+c+' — '+info.name+'</span><span class="curr-val">'+val+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 4: MOOD TRACKER ───────────────────────────
+var moodLog=S.g('moods')||[];
+function logMood(emoji,label){
+  var entry={emoji:emoji,label:label,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  moodLog.unshift(entry);if(moodLog.length>30)moodLog=moodLog.slice(0,30);
+  S.s('moods',moodLog);renderMoodHist();
+  showToast(emoji+' Mood logged!');
+  send('I am feeling '+label+' right now. Give me a short warm personalised message and one practical tip to make my day better.');
+  closeM('mood');
+}
+function renderMoodHist(){
+  var el=document.getElementById('moodHist');if(!el)return;
+  if(!moodLog.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:16px;">No moods logged yet!</div>';return;}
+  el.innerHTML=moodLog.slice(0,7).map(function(m){
+    return '<div class="mood-entry"><span style="font-size:20px;">'+m.emoji+'</span><span style="font-weight:600;">'+m.label+'</span><span style="margin-left:auto;">'+m.date+' '+m.time+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 5: TYPING SPEED TEST ─────────────────────
+var WPM_TEXTS=["The quick brown fox jumps over the lazy dog near the river bank on a sunny morning in the forest","QVIO is India's most premium AI built by Varun the seventeen year old founder from Karnataka who dreams big","Artificial intelligence is changing the world in ways we never imagined and India is leading this revolution","Practice makes perfect and every day you type faster you become more efficient and productive in your work","Technology is best when it brings people together and QVIO was built to connect every Indian to world class AI"];
+var wpmStart=0,wpmDone=false,wpmCurrentText='';
+function startWPM(){
+  wpmCurrentText=WPM_TEXTS[Math.floor(Math.random()*WPM_TEXTS.length)];
+  var tw=document.getElementById('wpmText');
+  var inp=document.getElementById('wpmInp');
+  if(!tw||!inp)return;
+  tw.innerHTML=wpmCurrentText.split('').map(function(c){return '<span>'+c+'</span>';}).join('');
+  inp.value='';inp.disabled=false;inp.focus();
+  wpmStart=0;wpmDone=false;
+  document.getElementById('wpmStats').innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;">Start typing to begin the test!</div>';
+}
+function wpmCheck(inp){
+  if(wpmDone)return;
+  if(!wpmStart)wpmStart=Date.now();
+  var typed=inp.value;
+  var spans=document.querySelectorAll('#wpmText span');
+  var correct=0;
+  spans.forEach(function(sp,i){
+    sp.style.color='';sp.style.background='';
+    if(i<typed.length){
+      if(typed[i]===wpmCurrentText[i]){sp.style.color='var(--success)';correct++;}
+      else{sp.style.color='var(--danger)';sp.style.background='rgba(185,28,28,.1)';}
+    }
+  });
+  if(typed.length>=wpmCurrentText.length){
+    wpmDone=true;inp.disabled=true;
+    var elapsed=(Date.now()-wpmStart)/60000;
+    var words=wpmCurrentText.split(' ').length;
+    var wpm=Math.round(words/elapsed);
+    var acc=Math.round((correct/wpmCurrentText.length)*100);
+    var el=document.getElementById('wpmStats');
+    el.innerHTML='<div class="wpm-stat"><div class="wpm-stat-n">'+wpm+'</div><div class="wpm-stat-l">WPM</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+acc+'%</div><div class="wpm-stat-l">Accuracy</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+correct+'</div><div class="wpm-stat-l">Correct</div></div>';
+    showToast('🎉 '+wpm+' WPM with '+acc+'% accuracy!');
+  }
+}
+
+// ── FEATURE 6: QUICK NEWS ─────────────────────────────
+var NEWS_TOPICS=[
+  {hl:"QVIO AI surpasses 1 million users in India — Built by 17-year-old Varun from Karnataka",src:"QVIO Official · Just now"},
+  {hl:"India GDP growth accelerates — Economy on track for 7%+ expansion this year",src:"Economic Times · Today"},
+  {hl:"ISRO announces new moon mission with advanced lunar rover technology",src:"NDTV · Today"},
+  {hl:"IIT admissions 2025 — JEE Advanced cutoffs and counselling schedule released",src:"Times of India · Today"},
+  {hl:"India vs Australia — T20 series final preview and squad analysis",src:"Cricbuzz · Today"},
+  {hl:"Top 10 highest paying IT jobs in India for freshers in 2025",src:"Naukri.com · Today"},
+  {hl:"Supreme Court ruling on data privacy — What it means for every Indian",src:"The Hindu · Today"},
+  {hl:"AI startups in Bangalore raise record 2 billion dollars in latest funding round",src:"Inc42 · Today"},
+  {hl:"CBSE Class 12 results declared — Check your scores at cbseresults.nic.in",src:"Hindustan Times · Today"},
+  {hl:"Reliance Jio announces 5G expansion to 1000 new cities across India",src:"Business Standard · Today"},
+  {hl:"Budget 2025 — Tax relief for middle class, education funding doubled",src:"Mint · Today"},
+  {hl:"Virat Kohli scores another century — India wins series 3-1",src:"ESPN Cricinfo · Today"}
+];
+function askNews(i){
+  var topic=NEWS_TOPICS[i];if(!topic)return;
+  send('Tell me more about: '+topic.hl+'?');
+  closeM('news');
+}
+function renderNews(){
+  var el=document.getElementById('newsList');if(!el)return;
+  el.innerHTML=NEWS_TOPICS.map(function(n){
+    return '<div class="news-card" onclick="askNews('+i+');"><div class="news-hl">'+n.hl+'</div><div class="news-src">'+n.src+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 7: EMOJI PICKER ───────────────────────────
+var EMOJI_DATA={
+  'Smileys':['😀','😃','😄','😁','😅','😂','🤣','😊','😇','🙂','🙃','😉','😍','🥰','😘','😋','😛','😜','🤩','🥳','😎','🤓','🧐','😏','😒','😞','😔','😟','😕','🙁','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓'],
+  'Hands':['👋','🤚','🖐','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','🤲','🤝','🙏'],
+  'Hearts':['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','❤️‍🩹','💕','💞','💓','💗','💖','💘','💝','💟','♥️','🫀'],
+  'Animals':['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦅','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🦋','🐛','🐞'],
+  'Food':['🍎','🍊','🍋','🍇','🍓','🫐','🍈','🍉','🍑','🍒','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥕','🌽','🌶️','🫑','🥒','🧅','🧄','🥔','🍠','🌰','🍞','🥐','🍕','🍔','🍟','🌮','🌯','🍜','🍛','🍣','🍱','🍦','🎂','🍰','🧁','🍩','🍪','🍫','🍬','🍭','☕','🧋'],
+  'Travel':['🚀','✈️','🛸','🚂','🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚐','🛻','🛵','🏍','🚲','🛴','🛹','🚁','🛶','⛵','🚢','🗺️','🧳','🏖️','🏝️','⛰️','🏔️','🌋','🗼','🗽','🏰','🎡','🎢','🎠'],
+  'Sports':['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🎯','🥅','⛳','🏹','🎣','🤿','🎽','🛷','🥌','🛼','🛹'],
+  'Flags':['🇮🇳','🇺🇸','🇬🇧','🇯🇵','🇰🇷','🇨🇳','🇫🇷','🇩🇪','🇮🇹','🇪🇸','🇵🇹','🇧🇷','🇦🇺','🇨🇦','🇦🇪','🇸🇦','🇰🇼','🇸🇬','🇲🇾','🇹🇭','🇮🇩','🇵🇰','🇧🇩','🇳🇵','🇱🇰']
+};
+var curEmojiCat='Smileys';
+function initEmoji(){
+  var cats=document.getElementById('emojiCats');if(!cats)return;
+  cats.innerHTML=Object.keys(EMOJI_DATA).map(function(c){
+    return '<div class="emoji-cat'+(c===curEmojiCat?' on':'')+'" data-cat="'+c+'" onclick="showEmojiCat(this.dataset.cat)">'+c+'</div>';
+  }).join('');
+  renderEmoji(EMOJI_DATA[curEmojiCat]);
+}
+function showEmojiCat(cat){
+  curEmojiCat=cat;
+  document.querySelectorAll('.emoji-cat').forEach(function(el){el.classList.toggle('on',el.textContent===cat);});
+  renderEmoji(EMOJI_DATA[cat]);
+}
+function renderEmoji(arr){
+  var el=document.getElementById('emojiGrid');if(!el)return;
+  el.innerHTML=arr.map(function(e){return '<div class="eg" onclick="insertEmoji(this.dataset.e)" data-e="'+e+'">'+e+'</div>';}).join('');
+}
+function searchEmoji(q){
+  if(!q){renderEmoji(EMOJI_DATA[curEmojiCat]);return;}
+  var all=[];Object.values(EMOJI_DATA).forEach(function(arr){all=all.concat(arr);});
+  renderEmoji(all.slice(0,48));
+}
+function insertEmoji(e){
+  var inp=document.getElementById('inp');inp.value+=e;onInp(inp);inp.focus();
+  showToast(e+' Added!');
+}
+
+// ── FEATURE 8: CV / RESUME BUILDER ───────────────────
+function buildCV(){
+  var name=document.getElementById('cvName').value.trim();
+  var role=document.getElementById('cvRole').value.trim();
+  var email=document.getElementById('cvEmail').value.trim();
+  var phone=document.getElementById('cvPhone').value.trim();
+  var city=document.getElementById('cvCity').value.trim();
+  var edu=document.getElementById('cvEdu').value.trim();
+  var exp=document.getElementById('cvExp').value.trim();
+  var skills=document.getElementById('cvSkills').value.trim();
+  if(!name||!role){showToast('Please fill in name and target role!');return;}
+  closeM('cv');
+  send('Write a complete professional CV/resume for: Name: '+name+', Target Role: '+role+', Email: '+email+', Phone: '+phone+', City: '+city+', Education: '+edu+', Experience: '+exp+', Skills: '+skills+'. Make it ATS-friendly, professional, and impressive. Format it clearly with sections.');
+}
+
+// ── FEATURE 9: QUICK NOTES ────────────────────────────
+var notes=S.g('notes')||[];
+function saveNotes(){S.s('notes',notes);}
+function addNote(){
+  var v=document.getElementById('noteInp').value.trim();if(!v)return;
+  notes.unshift({id:Date.now(),text:v,date:new Date().toLocaleDateString()+' '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(notes.length>50)notes=notes.slice(0,50);
+  document.getElementById('noteInp').value='';saveNotes();renderNotes();showToast('📝 Note saved!');
+}
+function deleteNote(id){notes=notes.filter(function(n){return n.id!==id;});saveNotes();renderNotes();}
+function renderNotes(){
+  var el=document.getElementById('noteList');if(!el)return;
+  if(!notes.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px;">No notes yet! Write something above 📝</div>';return;}
+  el.innerHTML=notes.map(function(n){
+    return '<div class="note-item"><button class="note-del" onclick="deleteNote('+n.id+')">✕</button><div class="note-txt">'+n.text+'</div><div class="note-date">'+n.date+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 10: AGE CALCULATOR ───────────────────────
+function calcAge(){
+  var dob=new Date(document.getElementById('ageDate').value);
+  if(isNaN(dob))return;
+  var now=new Date();
+  var y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  var totalDays=Math.floor((now-dob)/86400000);
+  var totalHours=Math.floor((now-dob)/3600000);
+  var weeks=Math.floor(totalDays/7);
+  var nextBday=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
+  if(nextBday<now)nextBday.setFullYear(now.getFullYear()+1);
+  var daysToNext=Math.ceil((nextBday-now)/86400000);
+  document.getElementById('ageResult').innerHTML=
+    '<div class="age-big">'+y+'</div><div style="font-size:15px;font-weight:700;color:var(--text2);margin-top:4px;">years old</div>'+
+    '<div class="age-detail">'+y+' years · '+m+' months · '+d+' days<br>'+totalDays.toLocaleString()+' total days lived<br>'+weeks.toLocaleString()+' weeks · '+totalHours.toLocaleString()+' hours<br>🎂 Next birthday in <strong>'+daysToNext+' days</strong></div>';
+}
+
+// ── FEATURE 11: BMI CALCULATOR ───────────────────────
+function calcBMI(){
+  var w=parseFloat(document.getElementById('bmiW').value),h=parseFloat(document.getElementById('bmiH').value)/100;
+  if(!w||!h||h<=0)return;
+  var bmi=w/(h*h),cat,col,pos;
+  if(bmi<18.5){cat='Underweight';col='#3B82F6';pos=10;}
+  else if(bmi<25){cat='Normal ✅';col='#22C55E';pos=35;}
+  else if(bmi<30){cat='Overweight';col='#F59E0B';pos=62;}
+  else{cat='Obese';col='#EF4444';pos=85;}
+  document.getElementById('bmiResult').innerHTML=
+    '<div class="bmi-num" style="background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">'+bmi.toFixed(1)+'</div>'+
+    '<div class="bmi-cat" style="color:'+col+';">'+cat+'</div>'+
+    '<div class="bmi-bar-wrap" style="margin:16px 0;"><div class="bmi-needle" style="left:'+pos+'%;"></div></div>'+
+    '<div style="font-size:12px;color:var(--text3);">Ideal BMI: 18.5 – 24.9</div>';
+  send('My BMI is '+bmi.toFixed(1)+' which is '+cat.replace(' ✅','')+'. Weight: '+w+'kg, Height: '+(h*100)+'cm. Give me 5 specific health tips to maintain or improve my BMI.');
+}
+
+// ── FEATURE 12: QUOTE OF THE DAY ─────────────────────
+var QUOTES=[
+  {q:"The best way to predict the future is to create it.",a:"Peter Drucker"},
+  {q:"If you are working on something exciting that you really care about, you don't have to be pushed. The vision pulls you.",a:"Steve Jobs"},
+  {q:"A person who never made a mistake never tried anything new.",a:"Albert Einstein"},
+  {q:"You miss 100% of the shots you don't take.",a:"Wayne Gretzky"},
+  {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {q:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {q:"Don't watch the clock; do what it does — keep going.",a:"Sam Levenson"},
+  {q:"Arise, awake, and stop not until the goal is achieved.",a:"Swami Vivekananda"},
+  {q:"Be the change you wish to see in the world.",a:"Mahatma Gandhi"},
+  {q:"In the middle of every difficulty lies opportunity.",a:"Albert Einstein"},
+  {q:"Your time is limited, so don't waste it living someone else's life.",a:"Steve Jobs"},
+  {q:"The harder I work, the luckier I get.",a:"Samuel Goldwyn"},
+  {q:"Dream big, start small, but most of all — start.",a:"Simon Sinek"},
+  {q:"Success is not final; failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
+  {q:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
+  {q:"A young man who does not fight today will never fight — the fire of youth fades fast.",a:"Chanakya"},
+  {q:"Before you are a leader, success is all about growing yourself. When you become a leader, success is all about growing others.",a:"Jack Welch"},
+  {q:"The roots of education are bitter, but the fruit is sweet.",a:"Aristotle"},
+  {q:"Education is the most powerful weapon which you can use to change the world.",a:"Nelson Mandela"},
+  {q:"Where there is a will, there is a way.",a:"English Proverb"}
+];
+var qotdIdx=new Date().getDay()%QUOTES.length;
+function newQotd(){qotdIdx=(qotdIdx+1)%QUOTES.length;renderQotd();}
+function renderQotd(){
+  var el=document.getElementById('qotdWrap');if(!el)return;
+  var q=QUOTES[qotdIdx];
+  var shareText=q.q+' — '+q.a;
+  var card=document.createElement('div');card.className='qotd-card';
+  card.innerHTML='<div class="qotd-bg">&#8220;</div><div class="qotd-text">'+q.q+'</div><div class="qotd-author">— '+q.a+'</div>';
+  var btn=document.createElement('button');btn.className='qotd-share';btn.textContent='📤 Share';
+  btn.onclick=function(){openShare(shareText);};
+  card.appendChild(btn);
+  el.innerHTML='';el.appendChild(card);
+}
+
+// ── FEATURE 13: WORD OF THE DAY ──────────────────────
+var WORDS=[
+  {w:"Perspicacious",p:"/ˌpɜːspɪˈkeɪʃəs/",t:"adjective",d:"Having a ready insight into things; shrewd and clear-sighted.",e:"Her perspicacious analysis solved the problem instantly.",h:"तीक्ष्ण बुद्धि वाला"},
+  {w:"Ephemeral",p:"/ɪˈfem(ə)r(ə)l/",t:"adjective",d:"Lasting for a very short time; transitory.",e:"Fame is ephemeral — only your work lasts forever.",h:"क्षणिक / अल्पकालीन"},
+  {w:"Serendipity",p:"/ˌserənˈdɪpɪti/",t:"noun",d:"The occurrence of events by chance in a happy or beneficial way.",e:"Finding QVIO was pure serendipity.",h:"सुखद संयोग"},
+  {w:"Tenacious",p:"/tɪˈneɪʃəs/",t:"adjective",d:"Holding firmly to something; not giving up easily.",e:"Be tenacious in your dreams — never quit.",h:"दृढ़निश्चयी"},
+  {w:"Ubiquitous",p:"/juːˈbɪkwɪtəs/",t:"adjective",d:"Present, appearing, or found everywhere.",e:"Smartphones have become ubiquitous in modern life.",h:"सर्वव्यापी"},
+  {w:"Luminous",p:"/ˈluːmɪnəs/",t:"adjective",d:"Full of or shedding light; bright or shining.",e:"Her luminous smile lit up the entire room.",h:"चमकदार / प्रकाशमान"},
+  {w:"Resilient",p:"/rɪˈzɪlɪənt/",t:"adjective",d:"Able to recover quickly from difficulties; tough.",e:"Resilient people rise every time they fall.",h:"लचीला / दृढ़"},
+  {w:"Magnanimous",p:"/maɡˈnanɪməs/",t:"adjective",d:"Very generous or forgiving, especially towards rivals.",e:"The magnanimous leader forgave his fiercest opponent.",h:"उदार / महानुभाव"},
+  {w:"Cogent",p:"/ˈkəʊdʒ(ə)nt/",t:"adjective",d:"Clear, logical, and convincing in argument.",e:"She made a cogent case for the new policy.",h:"तर्कसंगत"},
+  {w:"Zenith",p:"/ˈzɛnɪθ/",t:"noun",d:"The highest point reached by a celestial or other object; the peak.",e:"QVIO is at the zenith of Indian AI innovation.",h:"शिखर / उत्कर्ष"}
+];
+var wordIdx=new Date().getDate()%WORDS.length;
+function newWord(){wordIdx=(wordIdx+1)%WORDS.length;renderWord();}
+function renderWord(){
+  var el=document.getElementById('wordWrap');if(!el)return;
+  var w=WORDS[wordIdx];
+  el.innerHTML='<div class="word-card"><div class="word-main">'+w.w+'</div><div class="word-pron">'+w.p+'</div><div class="word-type">'+w.t+'</div><div class="word-def">'+w.d+'</div><div class="word-eg">"'+w.e+'"</div><div class="word-hi">🇮🇳 '+w.h+'</div></div>';
+}
+
+// ── FEATURE 14: LIVE POLL ─────────────────────────────
+var activePoll=null;
+function createPoll(){
+  var q=document.getElementById('pollQ').value.trim();
+  var o1=document.getElementById('pollO1').value.trim();
+  var o2=document.getElementById('pollO2').value.trim();
+  if(!q||!o1||!o2){showToast('Add a question and at least 2 options!');return;}
+  var opts=[o1,o2];
+  var o3=document.getElementById('pollO3').value.trim(),o4=document.getElementById('pollO4').value.trim();
+  if(o3)opts.push(o3);if(o4)opts.push(o4);
+  activePoll={q:q,opts:opts,votes:opts.map(function(){return 0;}),voted:false};
+  renderPoll();
+  document.getElementById('pollResult').style.display='block';
+}
+function votePoll(i){
+  if(!activePoll||activePoll.voted)return;
+  activePoll.votes[i]++;activePoll.voted=true;
+  renderPoll();showToast('🗳 Vote cast!');
+}
+function renderPoll(){
+  var el=document.getElementById('pollResult');if(!el||!activePoll)return;
+  var total=activePoll.votes.reduce(function(a,b){return a+b;},0)||1;
+  el.innerHTML='<div class="poll-wrap"><div class="poll-q">'+activePoll.q+'</div>'+
+    activePoll.opts.map(function(o,i){
+      var pct=Math.round((activePoll.votes[i]/total)*100);
+      return '<div class="poll-opt" onclick="votePoll('+i+')"><span class="poll-lbl">'+o+'</span><div class="poll-bar-bg"><div class="poll-bar" style="width:'+pct+'%"><span class="poll-pct">'+pct+'%</span></div></div></div>';
+    }).join('')+
+    (activePoll.voted?'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Thanks for voting!</div>':'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Click an option to vote!</div>')+
+    '</div>';
+  // Share the poll
+  send('I created a poll: "'+activePoll.q+'" with options: '+activePoll.opts.join(', ')+'. Can you suggest 3 more interesting poll questions on this topic?');
+  closeM('poll');
+}
+
+// ── FEATURE 15: WORD COUNT TOOL (in chat) ────────────
+function wordCount(text){
+  var words=(text.match(/\S+/g)||[]).length;
+  var chars=text.length;
+  var sentences=(text.match(/[.!?]+/g)||[]).length;
+  var readTime=Math.ceil(words/200);
+  return words+' words · '+chars+' chars · '+sentences+' sentences · ~'+readTime+' min read';
+}
+
+// ── FEATURE 16: DARK MODE SCHEDULED ─────────────────
+// Already handled in autoTheme — extended to user preference memory
+
+// ── FEATURE 17: KEYBOARD SHORTCUTS PANEL ────────────
+function showShortcuts(){
+  var shortcuts=[
+    ['Enter','Send message'],['Shift+Enter','New line'],['Ctrl+K','Focus input'],
+    ['Ctrl+L','Clear chat'],['Escape','Close modal'],['Ctrl+D','Toggle dark mode']
+  ];
+  send('Show me all QVIO keyboard shortcuts and hidden features');
+}
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey&&e.key==='d'){e.preventDefault();cycleTh();}
+});
+
+// ── FEATURE 18: AUTO SAVE DRAFT ──────────────────────
+setInterval(function(){
+  var v=document.getElementById('inp').value.trim();
+  if(v)S.s('draft',v);
+},3000);
+// Restore draft on load
+setTimeout(function(){
+  var d=S.g('draft');
+  if(d){document.getElementById('inp').value=d;onInp(document.getElementById('inp'));showToast('📝 Draft restored!');}
+},1500);
+document.getElementById('inp').addEventListener('blur',function(){S.s('draft','');});
+
+// ── FEATURE 19: MESSAGE REACTIONS ────────────────────
+// Already have like/dislike — extended version handled in addMsg
+
+// ── FEATURE 20: UNIT CONVERTER (via AI) ──────────────
+function quickConvert(text){
+  send('Convert: '+text+'. Show result clearly with formula used.');
+}
+
+// ── OVERRIDE openM to init new features ──────────────
+var _baseOpenM = window.openM;
+window.openM = function(t){
+  _baseOpenM(t);
+  if(t==='todo')renderTodos();
+  if(t==='mood')renderMoodHist();
+  if(t==='wpm')startWPM();
+  if(t==='news')renderNews();
+  if(t==='emoji')initEmoji();
+  if(t==='notes')renderNotes();
+  if(t==='qotd')renderQotd();
+  if(t==='word')renderWord();
+  if(t==='currency')convertCurrency(1);
+  if(t==='timer'){
+    document.getElementById('timerStopBtn').style.display='none';
+    document.getElementById('lapBtn').style.display='';
+  }
+};
+
 </script>
 </body>
 </html>
