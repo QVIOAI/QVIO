@@ -111,42 +111,85 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .inst-bar button{background:var(--navy-g);color:#fff;border:none;padding:5px 14px;border-radius:var(--r-xs);font-size:11.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
 .idism{background:transparent!important;color:var(--text3)!important;font-size:18px!important;padding:0 4px!important;}
 
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);height:60px;flex-shrink:0;gap:12px;background:rgba(255,254,249,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
-[data-theme="dark"] header{background:rgba(5,8,15,.94);}
-header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.4;}
-.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer;text-decoration:none;}
-.lmark{width:34px;height:34px;background:var(--gold-gs);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;color:#fff;font-weight:700;box-shadow:0 2px 10px var(--gold-glow);transition:transform .2s;}
-.logo:hover .lmark{transform:rotate(-8deg) scale(1.12);}
-.lname{font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:600;color:var(--navy);}
+/* ─── HEADER (clean 3-zone) ─── */
+header{
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;padding:0 var(--pad);height:56px;
+  flex-shrink:0;gap:10px;
+  background:rgba(255,254,249,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
+}
+[data-theme="dark"] header{background:rgba(5,8,15,.96);}
+header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.35;}
+.logo{display:flex;align-items:center;gap:9px;cursor:pointer;text-decoration:none;flex-shrink:0;}
+.lmark{width:32px;height:32px;background:var(--gold-gs);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:9px;color:#fff;font-weight:700;box-shadow:0 2px 8px var(--gold-glow);transition:transform .2s;}
+.logo:hover .lmark{transform:rotate(-8deg) scale(1.1);}
+.lname{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;color:var(--navy);}
 [data-theme="dark"] .lname{color:var(--text);}
 .lname em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.ltag{font-size:10px;color:var(--text3);background:var(--navy-soft);border:1px solid var(--border);padding:2px 9px;border-radius:var(--r-full);}
-.hcenter{display:flex;align-items:center;gap:8px;}
-.streak-pill{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FF6B35,#F59E0B);color:#fff;padding:5px 13px;border-radius:var(--r-full);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(255,107,53,.3);transition:transform .15s;flex-shrink:0;}
-.streak-pill:hover{transform:scale(1.06);}
-.hright{display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;}
-.hright::-webkit-scrollbar{display:none;}
-.hbtn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:6px 11px;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .17s;white-space:nowrap;flex-shrink:0;}
-.hbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
-[data-theme="dark"] .hbtn:hover{color:var(--gold2);border-color:var(--border2);}
-.hbtn.on{background:var(--navy-g);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(13,27,62,.25);}
-.hbtn.pro-btn{background:var(--gold-gs);color:#fff;border:none;font-weight:700;}
-.uchip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:4px 12px 4px 4px;border-radius:var(--r-full);cursor:pointer;transition:all .17s;flex-shrink:0;}
-.uchip:hover{border-color:var(--border2);}
-.uav{width:27px;height:27px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
-.uav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.unm{font-size:12px;font-weight:600;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sdot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:sdpulse 2s infinite;display:inline-block;}
+.ltag{font-size:9px;color:var(--text3);background:var(--navy-soft);border:1px solid var(--border);padding:2px 8px;border-radius:var(--r-full);display:none;}
+@media(min-width:440px){.ltag{display:inline-block;}}
+/* Mode pill (center) */
+.h-mode-wrap{display:flex;justify-content:center;}
+.h-mode-pill{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);padding:7px 16px;border-radius:var(--r-full);cursor:pointer;transition:all .2s;font-size:12.5px;font-weight:600;color:var(--text2);white-space:nowrap;max-width:170px;overflow:hidden;}
+.h-mode-pill:hover{border-color:var(--border2);color:var(--navy);}
+[data-theme="dark"] .h-mode-pill:hover{color:var(--gold2);}
+.h-mode-pill .sdot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:sdpulse 2s infinite;flex-shrink:0;}
 @keyframes sdpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(21,128,61,.4);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(21,128,61,0);}}
+.h-mode-pill span.mlabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Right actions */
+.h-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.streak-pill{display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#FF6B35,#F59E0B);color:#fff;padding:5px 11px;border-radius:var(--r-full);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(255,107,53,.3);transition:transform .15s;flex-shrink:0;}
+.streak-pill:hover{transform:scale(1.05);}
+.hico{width:36px;height:36px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .17s;flex-shrink:0;}
+.hico:hover{background:var(--navy-soft);border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .hico:hover{color:var(--gold2);border-color:var(--border2);}
+.hico.active{background:var(--navy-g);border-color:transparent;color:#fff;}
+.pro-hbtn{padding:0 12px;height:36px;border-radius:10px;background:var(--gold-gs);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:opacity .15s;flex-shrink:0;}
+.pro-hbtn:hover{opacity:.88;}
+.uchip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);padding:4px 10px 4px 4px;border-radius:var(--r-full);cursor:pointer;transition:all .17s;flex-shrink:0;}
+.uchip:hover{border-color:var(--border2);}
+.uav{width:26px;height:26px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.uav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.unm{font-size:12px;font-weight:600;color:var(--text);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none;}
+@media(min-width:500px){.unm{display:block;}}
+/* Tools panel */
+.tools-panel{position:fixed;top:64px;right:10px;width:296px;background:var(--white);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--s4);z-index:200;padding:16px;display:none;animation:tpIn .2s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .tools-panel{background:var(--bg2);}
+.tools-panel.show{display:block;}
+.tools-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:20px 20px 0 0;}
+@keyframes tpIn{from{opacity:0;transform:scale(.92) translateY(-8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.tp-sect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:0 0 8px;}
+.tp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px;}
+.tp-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+.tp-btn:hover{background:var(--navy-soft);border-color:var(--navy3);}
+[data-theme="dark"] .tp-btn:hover{border-color:var(--border2);}
+.tp-ico{font-size:19px;line-height:1;}
+.tp-lbl{font-size:9px;color:var(--text3);font-weight:600;}
+.tp-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.tp-act{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--text2);}
+.tp-act:hover{background:var(--navy-soft);border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .tp-act:hover{border-color:var(--border2);color:var(--gold2);}
+.tp-overlay{position:fixed;inset:0;z-index:199;display:none;}
+.tp-overlay.show{display:block;}
+/* Modes drawer */
+.modes-drawer{position:fixed;top:64px;left:50%;transform:translateX(-50%);width:min(500px,95vw);background:var(--white);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--s4);z-index:200;padding:18px;display:none;animation:tpIn .2s cubic-bezier(.22,1,.36,1);max-height:80vh;overflow-y:auto;}
+[data-theme="dark"] .modes-drawer{background:var(--bg2);}
+.modes-drawer.show{display:block;}
+.modes-drawer::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:20px 20px 0 0;}
+.md-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;}
+.md-pills{display:flex;flex-wrap:wrap;gap:7px;}
+.md-pill{padding:7px 15px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap;transition:all .17s;font-family:"DM Sans",sans-serif;}
+.md-pill:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
+[data-theme="dark"] .md-pill:hover{color:var(--gold2);}
+.md-pill.on{background:var(--navy-g);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(13,27,62,.2);}
+.md-overlay{position:fixed;inset:0;z-index:199;display:none;}
+.md-overlay.show{display:block;}
 
-/* MODES */
-.modes{display:flex;gap:4px;padding:8px var(--pad);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;background:var(--bg);}
-.modes::-webkit-scrollbar{display:none;}
+/* MODES BAR - hidden, kept for JS compatibility */
+.modes{display:none;}
 .mbtn{padding:6px 14px;border:1px solid transparent;background:transparent;color:var(--text3);border-radius:var(--r-sm);cursor:pointer;font-size:12.5px;font-family:"DM Sans",sans-serif;font-weight:500;white-space:nowrap;transition:all .17s;flex-shrink:0;}
-.mbtn:hover{background:var(--navy-soft);color:var(--navy);}
-[data-theme="dark"] .mbtn:hover{color:var(--gold2);}
-.mbtn.on{background:var(--navy-g);color:#fff;box-shadow:0 2px 8px rgba(13,27,62,.2);}
+.mbtn.on{background:var(--navy-g);color:#fff;}
 
 /* SUB BARS */
 .sub-bar{border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;font-weight:600;display:none;align-items:center;gap:8px;flex-shrink:0;}
@@ -509,7 +552,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .bmi-bar-wrap{height:12px;background:linear-gradient(90deg,#3B82F6,#22C55E,#F59E0B,#EF4444);border-radius:99px;margin:16px 0;position:relative;}
 .bmi-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s cubic-bezier(.22,1,.36,1);}
 [data-theme="dark"] .bmi-needle{background:var(--gold2);}
-</style>
 </style>
 </head>
 <body>
@@ -983,31 +1025,89 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div style="display:flex;gap:6px;"><button onclick="installPWA()">Install</button><button class="idism" onclick="dismissInstall()">✕</button></div>
 </div>
 
+<!-- TOOLS PANEL OVERLAY -->
+<div class="tp-overlay" id="tpOverlay" onclick="closeToolsPanel()"></div>
+<!-- TOOLS PANEL -->
+<div class="tools-panel" id="toolsPanel">
+  <div class="tp-sect">⚡ Quick Tools</div>
+  <div class="tp-grid">
+    <div class="tp-btn" onclick="openM('todo');closeToolsPanel()"><span class="tp-ico">✅</span><span class="tp-lbl">Tasks</span></div>
+    <div class="tp-btn" onclick="openM('timer');closeToolsPanel()"><span class="tp-ico">⏱</span><span class="tp-lbl">Timer</span></div>
+    <div class="tp-btn" onclick="openM('notes');closeToolsPanel()"><span class="tp-ico">📝</span><span class="tp-lbl">Notes</span></div>
+    <div class="tp-btn" onclick="openM('mood');closeToolsPanel()"><span class="tp-ico">😊</span><span class="tp-lbl">Mood</span></div>
+    <div class="tp-btn" onclick="openM('currency');closeToolsPanel()"><span class="tp-ico">💱</span><span class="tp-lbl">Currency</span></div>
+    <div class="tp-btn" onclick="openM('wpm');closeToolsPanel()"><span class="tp-ico">⌨️</span><span class="tp-lbl">Typing</span></div>
+    <div class="tp-btn" onclick="openM('news');closeToolsPanel()"><span class="tp-ico">📰</span><span class="tp-lbl">News</span></div>
+    <div class="tp-btn" onclick="openM('emoji');closeToolsPanel()"><span class="tp-ico">😄</span><span class="tp-lbl">Emoji</span></div>
+    <div class="tp-btn" onclick="openM('cv');closeToolsPanel()"><span class="tp-ico">📄</span><span class="tp-lbl">CV</span></div>
+    <div class="tp-btn" onclick="openM('age');closeToolsPanel()"><span class="tp-ico">🎂</span><span class="tp-lbl">Age</span></div>
+    <div class="tp-btn" onclick="openM('bmi');closeToolsPanel()"><span class="tp-ico">⚖️</span><span class="tp-lbl">BMI</span></div>
+    <div class="tp-btn" onclick="openM('qotd');closeToolsPanel()"><span class="tp-ico">💬</span><span class="tp-lbl">Quote</span></div>
+    <div class="tp-btn" onclick="openM('word');closeToolsPanel()"><span class="tp-ico">📖</span><span class="tp-lbl">Word</span></div>
+    <div class="tp-btn" onclick="openM('poll');closeToolsPanel()"><span class="tp-ico">🗳</span><span class="tp-lbl">Poll</span></div>
+    <div class="tp-btn" onclick="toggleCalc();closeToolsPanel()"><span class="tp-ico">🔢</span><span class="tp-lbl">Calc</span></div>
+    <div class="tp-btn" onclick="openM('lang');closeToolsPanel()"><span class="tp-ico">🌍</span><span class="tp-lbl">Learn</span></div>
+  </div>
+  <div class="tp-sect" style="margin-top:6px;">⚙️ Settings</div>
+  <div class="tp-row">
+    <div class="tp-act" onclick="openM('gal');closeToolsPanel()">🖼 Gallery</div>
+    <div class="tp-act" onclick="openM('hist');closeToolsPanel()">💬 History</div>
+    <div class="tp-act" onclick="openM('stats');closeToolsPanel()">📊 Stats</div>
+    <div class="tp-act" onclick="openM('mem');closeToolsPanel()">🧠 Memory</div>
+    <div class="tp-act" onclick="openM('theme');closeToolsPanel()">🎨 Theme</div>
+    <div class="tp-act" onclick="exportChat();closeToolsPanel()">💾 Export</div>
+    <div class="tp-act" onclick="toggleFocus();closeToolsPanel()">⛶ Focus</div>
+    <div class="tp-act" onclick="clearChat();closeToolsPanel()">🗑 Clear</div>
+  </div>
+</div>
+<!-- MODES DRAWER OVERLAY -->
+<div class="md-overlay" id="mdOverlay" onclick="closeModesDrawer()"></div>
+<!-- MODES DRAWER -->
+<div class="modes-drawer" id="modesDrawer">
+  <div class="md-title">Choose AI Mode</div>
+  <div class="md-pills">
+    <button class="md-pill" onclick="setModeD('hindi','🇮🇳 Hindi')">🇮🇳 Hindi</button>
+    <button class="md-pill" onclick="setModeD('kannada','🌟 Kannada')">🌟 Kannada</button>
+    <button class="md-pill on" onclick="setModeD('casual','💬 Casual')">💬 Casual</button>
+    <button class="md-pill" onclick="setModeD('student','📚 Student')">📚 Student</button>
+    <button class="md-pill" onclick="setModeD('exam','🎯 Exam')">🎯 Exam</button>
+    <button class="md-pill" onclick="setModeD('pro','💼 Pro')">💼 Pro</button>
+    <button class="md-pill" onclick="setModeD('business','🏢 Business')">🏢 Business</button>
+    <button class="md-pill" onclick="setModeD('spiritual','🙏 Spiritual')">🙏 Spiritual</button>
+    <button class="md-pill" onclick="setModeD('code','💻 Code')">💻 Code</button>
+    <button class="md-pill" onclick="setModeD('math','🔢 Math')">🔢 Math</button>
+    <button class="md-pill" onclick="setModeD('quiz','🧠 Quiz')">🧠 Quiz</button>
+    <button class="md-pill" onclick="setModeD('translate','🔄 Translate')">🔄 Translate</button>
+    <button class="md-pill" onclick="setModeD('write','✍️ Write')">✍️ Write</button>
+    <button class="md-pill" onclick="setModeD('news','📰 News')">📰 News</button>
+    <button class="md-pill" onclick="setModeD('career','💼 Career')">💼 Career</button>
+    <button class="md-pill" onclick="setModeD('health','🏥 Health')">🏥 Health</button>
+    <button class="md-pill" onclick="setModeD('legal','⚖️ Legal')">⚖️ Legal</button>
+    <button class="md-pill" onclick="setModeD('recipe','🍳 Recipe')">🍳 Recipe</button>
+    <button class="md-pill" onclick="setModeD('travel','✈️ Travel')">✈️ Travel</button>
+    <button class="md-pill" onclick="setModeD('tamil','🌺 Tamil')">🌺 Tamil</button>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header>
-  <div class="logo" onclick="scrollToTop()">
+  <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
     <span class="lname">QV<em>IO</em></span>
     <span class="ltag">Premium AI</span>
+  </a>
+  <div class="h-mode-wrap">
+    <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
+      <span class="sdot"></span>
+      <span class="mlabel" id="modeLabel">💬 Casual</span>
+      <span style="color:var(--text3);font-size:10px;margin-left:2px;">▾</span>
+    </div>
   </div>
-  <div class="hcenter">
+  <div class="h-actions">
     <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
-  </div>
-  <div class="hright">
-    <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);flex-shrink:0;"><span class="sdot"></span><span id="modeLabel">Casual</span></div>
-    <button class="hbtn" onclick="openM('lang')">🌍</button>
-    <button class="hbtn" onclick="openM('mem')">🧠</button>
-    <button class="hbtn" onclick="openM('gal')">🖼</button>
-    <button class="hbtn" onclick="openM('hist')">💬</button>
-    <button class="hbtn" onclick="openM('stats')">📊</button>
-    <button class="hbtn" onclick="openM('theme')">🎨</button>
-    <button class="hbtn" onclick="toggleCalc()">🔢</button>
-    <button class="hbtn" onclick="toggleFocus()" id="focusBtn">⛶</button>
-    <button class="hbtn" onclick="exportChat()">💾</button>
-    <button class="hbtn" id="themeBtn" onclick="cycleTh()">🌙</button>
-    <button class="hbtn" onclick="openM('sup')">❤️</button>
-    <button class="hbtn pro-btn" onclick="openM('pro')">⭐ Pro</button>
-    <button class="hbtn" onclick="openM('todo')">✅</button><button class="hbtn" onclick="openM('timer')">⏱</button><button class="hbtn" onclick="openM('notes')">📝</button><button class="hbtn" onclick="openM('mood')">😊</button><button class="hbtn" onclick="openM('currency')">💱</button><button class="hbtn" onclick="openM('wpm')">⌨️</button><button class="hbtn" onclick="openM('news')">📰</button><button class="hbtn" onclick="openM('emoji')">😄</button><button class="hbtn" onclick="openM('cv')">📄</button><button class="hbtn" onclick="openM('age')">🎂</button><button class="hbtn" onclick="openM('bmi')">⚖️</button><button class="hbtn" onclick="openM('qotd')">💬</button><button class="hbtn" onclick="openM('word')">📖</button><button class="hbtn" onclick="openM('poll')">🗳</button><button class="hbtn" onclick="clearChat()">Clear</button>
+    <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
+    <button class="hico" onclick="toggleToolsPanel()" id="toolsBtn" title="Tools">⚡</button>
+    <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
     <div class="uchip" onclick="openM('prof')">
       <div class="uav" id="uAv">?</div>
       <span class="unm" id="uNm">Guest</span>
@@ -1079,10 +1179,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
     <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
     <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
-    <div class="qr" onclick="send('What is happening big in India today')">🌍 News</div>
-    <div class="qr" onclick="toggleCalc()">🔢 Calc</div>
     <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
-    <div class="qr" onclick="send('What can QVIO do? Show me everything!')">❓ Help</div><div class="qr" onclick="openM('todo')">✅ Tasks</div><div class="qr" onclick="openM('timer')">⏱ Timer</div><div class="qr" onclick="openM('mood')">😊 Mood</div><div class="qr" onclick="openM('currency')">💱 Currency</div><div class="qr" onclick="openM('wpm')">⌨️ Typing</div><div class="qr" onclick="openM('qotd')">💬 Quote</div>
+    <div class="qr" onclick="openM('todo')">✅ Tasks</div>
+    <div class="qr" onclick="openM('timer')">⏱ Timer</div>
+    <div class="qr" onclick="openM('mood')">😊 Mood</div>
   </div>
 </div>
 
@@ -1113,7 +1213,11 @@ function initFirebase(){
       if(u){currentUser=u;updateUserUI(u);showNamaste(u);}
     });
     console.log('✅ Firebase ready!');
-  }catch(e){console.warn('Firebase error:',e);}
+  }catch(e){
+    console.warn('Firebase init error:',e);
+    // Still allow guest usage even if Firebase fails
+    fbAuth=null;
+  }
 }
 // Init immediately — Firebase SDK already loaded in <head>
 initFirebase();
@@ -2411,6 +2515,78 @@ window.openM = function(t){
   }
 };
 
+
+
+// ═══════════════════════════════════════════════════
+// CLEAN UI — Tools Panel + Modes Drawer
+// ═══════════════════════════════════════════════════
+function toggleToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p.classList.contains('show')){closeToolsPanel();}
+  else{p.classList.add('show');o.classList.add('show');b.classList.add('active');}
+}
+function closeToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p)p.classList.remove('show');
+  if(o)o.classList.remove('show');
+  if(b)b.classList.remove('active');
+}
+function toggleModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d.classList.contains('show')){closeModesDrawer();}
+  else{d.classList.add('show');o.classList.add('show');}
+}
+function closeModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d)d.classList.remove('show');
+  if(o)o.classList.remove('show');
+}
+function setModeD(m,label){
+  mode=m;
+  // Update pill
+  var lbl=document.getElementById('modeLabel');
+  if(lbl)lbl.textContent=label;
+  // Update drawer pills
+  document.querySelectorAll('.md-pill').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'"+m+"'")>-1);
+  });
+  // Sync old hidden mbtn for JS compatibility
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
+  var mbtns=document.querySelectorAll('.mbtn');
+  mbtns.forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+m+"'")>-1)b.classList.add('on');});
+  // Exam bar
+  var eb=document.getElementById('examBar');
+  if(eb)eb.style.display=m==='exam'?'flex':'none';
+  if(typeof S!=='undefined')S.s('mode',m);
+  closeModesDrawer();
+  showToast(label.replace(/^[^\w]*/,'')+' mode ✓');
+}
+// Restore saved mode on load
+(function(){
+  try{
+    var saved=typeof S!=='undefined'?S.g('mode'):null;
+    if(saved){
+      var pills=document.querySelectorAll('.md-pill');
+      for(var i=0;i<pills.length;i++){
+        var oc=pills[i].getAttribute('onclick')||'';
+        if(oc.indexOf("'"+saved+"'")>-1){
+          setModeD(saved,pills[i].textContent.trim());
+          break;
+        }
+      }
+    }
+  }catch(e){}
+})();
+// Close panels on Escape
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeToolsPanel();closeModesDrawer();}
+});
 </script>
 </body>
 </html>
