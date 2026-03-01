@@ -552,6 +552,35 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .bmi-bar-wrap{height:12px;background:linear-gradient(90deg,#3B82F6,#22C55E,#F59E0B,#EF4444);border-radius:99px;margin:16px 0;position:relative;}
 .bmi-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s cubic-bezier(.22,1,.36,1);}
 [data-theme="dark"] .bmi-needle{background:var(--gold2);}
+
+/* ─── QVIO LENS ─── */
+.lens-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+.ltab{padding:6px 13px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;transition:all .15s;font-family:"DM Sans",sans-serif;}
+.ltab:hover{background:var(--navy-soft);border-color:var(--navy3);}
+.ltab.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.lens-drop{border:2px dashed var(--border2);border-radius:var(--r-lg);min-height:140px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:all .2s;background:var(--surface);}
+.lens-drop:hover,.lens-drop.drag{border-color:var(--gold2);background:rgba(212,160,23,.04);}
+.lens-drop-inner{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px;}
+.lens-drop-ico{font-size:36px;}
+.lens-drop-txt{font-size:14px;font-weight:600;color:var(--text2);}
+.lens-drop-sub{font-size:11px;color:var(--text3);}
+.lens-preview{width:100%;max-height:280px;object-fit:contain;border-radius:var(--r-sm);}
+.lens-cam-btn{flex:1;padding:9px;border-radius:var(--r-sm);background:var(--navy-soft);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:13px;font-weight:600;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.lens-cam-btn:hover{background:var(--navy-g);color:#fff;border-color:transparent;}
+.lens-result{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);padding:18px;font-size:14px;line-height:1.7;color:var(--text);margin-top:14px;position:relative;}
+.lens-result::before{content:'🔍 QVIO Lens';position:absolute;top:-10px;left:16px;background:var(--gold-gs);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:var(--r-full);letter-spacing:.5px;}
+.lens-loading{display:flex;align-items:center;gap:10px;padding:20px;justify-content:center;color:var(--text3);font-size:14px;}
+.lens-scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);animation:lenscan 1.8s ease-in-out infinite;top:0;}
+@keyframes lenscan{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
+.lens-tag{display:inline-flex;align-items:center;gap:4px;background:var(--navy-soft);border:1px solid var(--border);border-radius:var(--r-full);padding:3px 10px;font-size:11.5px;font-weight:600;color:var(--navy);margin:2px;}
+[data-theme="dark"] .lens-tag{color:var(--gold2);}
+.lens-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;}
+.lens-act{padding:7px 14px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;}
+.lens-act:hover{background:var(--navy-g);color:#fff;border-color:transparent;}
+
+/* ─── VOICE BUTTON STATES ─── */
+.mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
+@keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 </style>
 </head>
 <body>
@@ -1170,8 +1199,9 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="ibox">
     <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()">🎤</button>
-      <button class="sendbtn" id="sendBtn" onclick="sendMsg()">Send ↑</button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
+      <button class="sendbtn" id="sendBtn" onclick="sendMsg()">↑</button>
     </div>
   </div>
   <div class="qrs">
@@ -1184,6 +1214,61 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <div class="qr" onclick="openM('timer')">⏱ Timer</div>
     <div class="qr" onclick="openM('mood')">😊 Mood</div>
   </div>
+</div>
+
+<!-- QVIO LENS -->
+<div class="overlay" id="o_lens" onclick="closeLens()"></div>
+<div class="modal" id="m_lens" style="max-width:560px;">
+  <div class="mhd">
+    <h3>🔍 QVIO Lens</h3>
+    <button class="mx" onclick="closeLens()">✕</button>
+  </div>
+  <div class="msub">Scan anything — text, objects, math, plants, food, QR codes and more</div>
+
+  <!-- Mode tabs -->
+  <div class="lens-tabs">
+    <button class="ltab on" onclick="setLensMode('identify',this)">🔍 Identify</button>
+    <button class="ltab" onclick="setLensMode('text',this)">📝 Read Text</button>
+    <button class="ltab" onclick="setLensMode('translate',this)">🌍 Translate</button>
+    <button class="ltab" onclick="setLensMode('math',this)">🔢 Solve Math</button>
+    <button class="ltab" onclick="setLensMode('food',this)">🍛 Food/Plant</button>
+    <button class="ltab" onclick="setLensMode('qr',this)">📷 QR / URL</button>
+  </div>
+
+  <!-- Upload zone -->
+  <div class="lens-drop" id="lensDrop" onclick="document.getElementById('lensFile').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="lensDropFile(event)">
+    <div class="lens-drop-inner" id="lensDropInner">
+      <span class="lens-drop-ico">📸</span>
+      <span class="lens-drop-txt">Tap to upload photo or drag & drop</span>
+      <span class="lens-drop-sub">JPG · PNG · WEBP · up to 10 MB</span>
+    </div>
+    <img id="lensPreview" class="lens-preview" style="display:none;" alt="preview"/>
+  </div>
+  <input type="file" id="lensFile" accept="image/*" style="display:none;" onchange="lensLoadFile(this)">
+
+  <!-- Camera capture -->
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="lens-cam-btn" onclick="startLensCamera()" id="lensCamBtn">📷 Use Camera</button>
+    <button class="lens-cam-btn" id="lensSnapBtn" onclick="snapLens()" style="display:none;background:var(--danger);">⚡ Snap!</button>
+  </div>
+  <video id="lensVideo" style="display:none;width:100%;border-radius:var(--r-sm);margin-top:8px;border:1.5px solid var(--border2);" playsinline autoplay muted></video>
+  <canvas id="lensCanvas" style="display:none;"></canvas>
+
+  <!-- Analyse button -->
+  <button class="mclose" id="lensAnalyseBtn" onclick="analyseLens()" style="margin-top:14px;" disabled>🔍 Analyse with QVIO</button>
+
+  <!-- Result -->
+  <div id="lensResult" class="lens-result" style="display:none;"></div>
+
+  <!-- Ask follow-up -->
+  <div id="lensAskWrap" style="display:none;margin-top:10px;">
+    <div class="mrow">
+      <input class="minp" id="lensAskInp" placeholder="Ask something about this image..."/>
+      <button class="madd" onclick="lensAskMore()">Ask</button>
+    </div>
+  </div>
+
+  <button class="mclose" style="margin-top:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeLens()">Close</button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -1668,18 +1753,127 @@ document.getElementById('chat').addEventListener('scroll',checkScroll);
 function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
 
 // ═══════════════════════════════
-// TTS
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════
+// MOTHER-TONGUE VOICE ENGINE — Perfect accent per language
+// ═══════════════════════════════════════════════════
 var curU=null;
+var voicesLoaded=false;
+var cachedVoices=[];
+
+// Wait for voices to load (Chrome needs this)
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=function(){
+    cachedVoices=window.speechSynthesis.getVoices();
+    voicesLoaded=true;
+  };
+}
+
+// Language config: lang code → preferred BCP-47 tags (in priority order) + rate + pitch
+var VOICE_MAP={
+  // Indian languages — native accents first, then en-IN fallback
+  hindi:    {langs:['hi-IN','hi'],         rate:0.88, pitch:1.0,  name:'Hindi'},
+  kannada:  {langs:['kn-IN','kn'],         rate:0.86, pitch:1.0,  name:'Kannada'},
+  tamil:    {langs:['ta-IN','ta'],         rate:0.86, pitch:1.0,  name:'Tamil'},
+  telugu:   {langs:['te-IN','te'],         rate:0.86, pitch:1.0,  name:'Telugu'},
+  bengali:  {langs:['bn-IN','bn-BD','bn'], rate:0.87, pitch:1.0,  name:'Bengali'},
+  marathi:  {langs:['mr-IN','mr'],         rate:0.87, pitch:1.0,  name:'Marathi'},
+  gujarati: {langs:['gu-IN','gu'],         rate:0.86, pitch:1.0,  name:'Gujarati'},
+  punjabi:  {langs:['pa-IN','pa-PK','pa'], rate:0.87, pitch:1.0,  name:'Punjabi'},
+  malayalam:{langs:['ml-IN','ml'],         rate:0.84, pitch:0.98, name:'Malayalam'},
+  odia:     {langs:['or-IN','or'],         rate:0.86, pitch:1.0,  name:'Odia'},
+  urdu:     {langs:['ur-PK','ur-IN','ur'], rate:0.86, pitch:1.0,  name:'Urdu'},
+  // Indian English — en-IN preferred, precise accent
+  casual:   {langs:['en-IN','en-GB','en'], rate:0.90, pitch:1.0,  name:'English (India)'},
+  student:  {langs:['en-IN','en-GB','en'], rate:0.88, pitch:1.0,  name:'English (India)'},
+  exam:     {langs:['en-IN','en-GB','en'], rate:0.87, pitch:0.98, name:'English (India)'},
+  pro:      {langs:['en-IN','en-GB','en'], rate:0.88, pitch:0.98, name:'English (India)'},
+  business: {langs:['en-IN','en-GB','en'], rate:0.88, pitch:0.97, name:'English (India)'},
+  code:     {langs:['en-IN','en-GB','en'], rate:0.85, pitch:0.97, name:'English (India)'},
+  math:     {langs:['en-IN','en-GB','en'], rate:0.83, pitch:0.97, name:'English (India)'},
+  spiritual:{langs:['en-IN','hi-IN','en'], rate:0.82, pitch:0.96, name:'Spiritual'},
+  health:   {langs:['en-IN','en-GB','en'], rate:0.86, pitch:0.99, name:'English (India)'},
+  // International
+  japanese: {langs:['ja-JP','ja'],         rate:0.85, pitch:1.0,  name:'Japanese'},
+  korean:   {langs:['ko-KR','ko'],         rate:0.87, pitch:1.0,  name:'Korean'},
+  chinese:  {langs:['zh-CN','zh-TW','zh'], rate:0.85, pitch:1.0,  name:'Mandarin'},
+  arabic:   {langs:['ar-SA','ar-EG','ar'], rate:0.84, pitch:0.98, name:'Arabic'},
+  french:   {langs:['fr-FR','fr-CA','fr'], rate:0.88, pitch:1.0,  name:'French'},
+  german:   {langs:['de-DE','de'],         rate:0.87, pitch:0.98, name:'German'},
+  spanish:  {langs:['es-ES','es-MX','es'], rate:0.90, pitch:1.0,  name:'Spanish'},
+  portuguese:{langs:['pt-BR','pt-PT','pt'],rate:0.89, pitch:1.0,  name:'Portuguese'},
+  russian:  {langs:['ru-RU','ru'],         rate:0.86, pitch:0.98, name:'Russian'},
+};
+
+// Detect which language the text is in by checking current mode + text content
+function detectSpeakLang(text){
+  // Check mode first
+  var cfg=VOICE_MAP[mode];
+  if(cfg)return cfg;
+  // Detect from script/characters in text
+  if(/[\u0900-\u097F]/.test(text)) return VOICE_MAP.hindi;    // Devanagari
+  if(/[\u0C80-\u0CFF]/.test(text)) return VOICE_MAP.kannada;  // Kannada script
+  if(/[\u0B80-\u0BFF]/.test(text)) return VOICE_MAP.tamil;    // Tamil script
+  if(/[\u0C00-\u0C7F]/.test(text)) return VOICE_MAP.telugu;   // Telugu script
+  if(/[\u0980-\u09FF]/.test(text)) return VOICE_MAP.bengali;  // Bengali script
+  if(/[\u0600-\u06FF]/.test(text)) return VOICE_MAP.urdu;     // Arabic/Urdu script
+  if(/[\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/.test(text)) return VOICE_MAP.japanese;
+  if(/[\uAC00-\uD7AF]/.test(text)) return VOICE_MAP.korean;
+  if(/[\u0400-\u04FF]/.test(text)) return VOICE_MAP.russian;
+  if(/[\u0600-\u06FF]/.test(text)) return VOICE_MAP.arabic;
+  return VOICE_MAP.casual; // default en-IN
+}
+
+// Find the best matching voice from available voices
+function findBestVoice(langCfg){
+  var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
+  if(!voices.length)return null;
+  // Try each preferred lang in order
+  for(var i=0;i<langCfg.langs.length;i++){
+    var tag=langCfg.langs[i];
+    // Exact match first
+    var v=voices.find(function(x){return x.lang===tag;});
+    if(v)return v;
+    // Prefix match (e.g. 'hi' matches 'hi-IN')
+    var prefix=tag.split('-')[0];
+    v=voices.find(function(x){return x.lang.startsWith(prefix+'-')||x.lang===prefix;});
+    if(v)return v;
+  }
+  // Last resort: any voice
+  return voices[0]||null;
+}
+
 function speakText(t,btn){
-  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn)btn.textContent='🔊';curU=null;return;}
-  var clean=t.replace(/<[^>]*>/g,'').substring(0,1200);
+  // Stop if already speaking
+  if(curU&&window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();
+    if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    curU=null;
+    return;
+  }
+  // Clean text: strip HTML, limit length
+  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'');
+  // Smart chunking — split into sentences for natural flow, max 1500 chars
+  clean=clean.substring(0,2000);
   var u=new SpeechSynthesisUtterance(clean);
-  var v=window.speechSynthesis.getVoices().find(function(x){return x.lang.indexOf('en-IN')>-1;});
-  if(v)u.voice=v;u.rate=0.92;
-  u.onstart=function(){if(btn)btn.textContent='⏹';};
-  u.onend=u.onerror=function(){if(btn)btn.textContent='🔊';curU=null;};
-  curU=u;window.speechSynthesis.speak(u);
+  // Detect language and get voice config
+  var cfg=detectSpeakLang(clean);
+  var voice=findBestVoice(cfg);
+  if(voice)u.voice=voice;
+  u.lang=cfg.langs[0];
+  u.rate=cfg.rate;
+  u.pitch=cfg.pitch;
+  u.volume=1.0;
+  // Show which voice is being used
+  var vname=voice?voice.name:cfg.name;
+  showToast('🔊 Speaking in '+cfg.name+(voice?' — '+vname.substring(0,20):'')+'...');
+  // Button state
+  if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
+  u.onend=u.onerror=function(){
+    if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    curU=null;
+  };
+  curU=u;
+  window.speechSynthesis.speak(u);
 }
 
 // ═══════════════════════════════
@@ -2587,6 +2781,224 @@ function setModeD(m,label){
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeToolsPanel();closeModesDrawer();}
 });
+// ═══════════════════════════════════════════════════
+// QVIO LENS — Better than Google Lens
+// ═══════════════════════════════════════════════════
+// Register lens in MAP
+if(typeof MAP!=='undefined')MAP.lens=['o_lens','m_lens'];
+
+var lensMode='identify';
+var lensImageB64=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
+
+var LENS_PROMPTS={
+  identify:"You are QVIO Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
+  text:"You are QVIO Lens OCR. Extract ALL text visible in this image:\n- Preserve the exact text, formatting and layout as closely as possible\n- Identify what type of document this is (receipt, book, sign, form, label, etc.)\n- Note language(s) used\n- Flag any unclear or partial text with [unclear]\nThen summarise what the text is about in 2 sentences.",
+  translate:"You are QVIO Lens Translator. In this image:\n1. Extract all visible text\n2. Detect the language\n3. Translate everything to English AND Hindi\n4. Add pronunciation guide for Indian users\n5. Explain any cultural context if relevant\nFormat: Original → English → Hindi",
+  math:"You are QVIO Lens Math Solver. In this image:\n1. Identify all mathematical expressions, equations or problems\n2. Write them out in plain text\n3. Solve EACH step by step with full working\n4. Show the final answer clearly\n5. Explain the concept being tested\n6. Note which class/exam level this is (Class 8-12, JEE, NEET, etc.)",
+  food:"You are QVIO Lens Food & Nature expert. Analyse this image:\nIf FOOD: Name the dish, cuisine, estimated calories, main ingredients, how it's made, allergens, regional origin, nutrition highlights\nIf PLANT/FLOWER: Species name, common name in India, whether edible/medicinal, care tips, interesting facts\nIf ANIMAL: Species, habitat, diet, whether endangered, interesting behaviour\nBe comprehensive and accurate.",
+  qr:"You are QVIO Lens QR & Document Scanner. In this image:\n1. If there is a QR code — describe what type it is and decode its content if visible\n2. If it's a barcode — identify the product type\n3. If it's a document/form — extract key fields and data\n4. If it's a business card — extract all contact info\n5. Flag any suspicious URLs or scam indicators\n6. Suggest what action the user should take"
+};
+
+function setLensMode(m,btn){
+  lensMode=m;
+  document.querySelectorAll('.ltab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+function openLens(){
+  // Register if not already
+  if(typeof MAP!=='undefined'&&!MAP.lens)MAP.lens=['o_lens','m_lens'];
+  document.getElementById('o_lens').classList.add('show');
+  document.getElementById('m_lens').classList.add('show');
+}
+
+function closeLens(){
+  document.getElementById('o_lens').classList.remove('show');
+  document.getElementById('m_lens').classList.remove('show');
+  stopLensCamera();
+  // Reset
+  lensImageB64=null;
+  var prev=document.getElementById('lensPreview');
+  prev.style.display='none';prev.src='';
+  document.getElementById('lensDropInner').style.display='flex';
+  document.getElementById('lensResult').style.display='none';
+  document.getElementById('lensAskWrap').style.display='none';
+  document.getElementById('lensAnalyseBtn').disabled=true;
+  document.getElementById('lensFile').value='';
+}
+
+function lensLoadFile(inp){
+  var file=inp.files[0];
+  if(!file)return;
+  lensMimeType=file.type||'image/jpeg';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    lensImageB64=e.target.result.split(',')[1];
+    var prev=document.getElementById('lensPreview');
+    prev.src=e.target.result;
+    prev.style.display='block';
+    document.getElementById('lensDropInner').style.display='none';
+    document.getElementById('lensAnalyseBtn').disabled=false;
+    document.getElementById('lensResult').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function lensDropFile(ev){
+  ev.preventDefault();
+  document.getElementById('lensDrop').classList.remove('drag');
+  var file=ev.dataTransfer.files[0];
+  if(!file||!file.type.startsWith('image/'))return showToast('Please drop an image file!');
+  var dt=new DataTransfer();dt.items.add(file);
+  var inp=document.getElementById('lensFile');inp.files=dt.files;
+  lensLoadFile(inp);
+}
+
+function startLensCamera(){
+  var camBtn=document.getElementById('lensCamBtn');
+  var snapBtn=document.getElementById('lensSnapBtn');
+  var video=document.getElementById('lensVideo');
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+    .then(function(stream){
+      lensStream=stream;
+      video.srcObject=stream;
+      video.style.display='block';
+      camBtn.style.display='none';
+      snapBtn.style.display='flex';
+      showToast('📷 Camera ready — point and snap!');
+    })
+    .catch(function(){showToast('📷 Camera permission denied — upload a photo instead');});
+}
+
+function snapLens(){
+  var video=document.getElementById('lensVideo');
+  var canvas=document.getElementById('lensCanvas');
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  var dataUrl=canvas.toDataURL('image/jpeg',0.9);
+  lensImageB64=dataUrl.split(',')[1];
+  lensMimeType='image/jpeg';
+  var prev=document.getElementById('lensPreview');
+  prev.src=dataUrl;prev.style.display='block';
+  document.getElementById('lensDropInner').style.display='none';
+  stopLensCamera();
+  document.getElementById('lensCamBtn').style.display='flex';
+  document.getElementById('lensSnapBtn').style.display='none';
+  document.getElementById('lensAnalyseBtn').disabled=false;
+  showToast('📸 Photo captured!');
+}
+
+function stopLensCamera(){
+  if(lensStream){lensStream.getTracks().forEach(function(t){t.stop();});lensStream=null;}
+  document.getElementById('lensVideo').style.display='none';
+  document.getElementById('lensVideo').srcObject=null;
+}
+
+async function analyseLens(){
+  if(!lensImageB64){showToast('Please upload or capture an image first!');return;}
+  var resEl=document.getElementById('lensResult');
+  var askWrap=document.getElementById('lensAskWrap');
+  resEl.style.display='block';
+  resEl.innerHTML='<div class="lens-loading"><div class="lens-scan-line"></div>🔍 Analysing with QVIO AI...<span class="tdots"><span></span><span></span><span></span></span></div>';
+  document.getElementById('lensAnalyseBtn').disabled=true;
+
+  var prompt=LENS_PROMPTS[lensMode]||LENS_PROMPTS.identify;
+  try{
+    var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({
+        model:'llama-3.2-11b-vision-preview',
+        max_tokens:1200,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:'data:'+lensMimeType+';base64,'+lensImageB64}},
+            {type:'text',text:prompt}
+          ]
+        }]
+      })
+    });
+    var data=await res.json();
+    if(data.choices&&data.choices[0]){
+      var reply=data.choices[0].message.content;
+      // Format the result nicely
+      var formatted=reply
+        .replace(/\n\n/g,'<br><br>')
+        .replace(/\n/g,'<br>')
+        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+        .replace(/^(\d+\.\s)/gm,'<br><strong>$1</strong>');
+      resEl.innerHTML='<div style="position:relative;">'+formatted+'</div>'
+        +'<div class="lens-actions">'
+        +'<div class="lens-act" onclick="sendLensToChat()">💬 Chat about this</div>'
+        +'<div class="lens-act" onclick="speakLensResult()">🔊 Listen</div>'
+        +'<div class="lens-act" onclick="copyLensResult()">📋 Copy</div>'
+        +'</div>';
+      askWrap.style.display='block';
+      // Store result for follow-ups
+      window._lensLastResult=reply;
+    }else{
+      resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
+    }
+  }catch(e){
+    // Vision model not available on all Groq tiers — fallback to text description
+    resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
+  }
+  document.getElementById('lensAnalyseBtn').disabled=false;
+}
+
+async function lensAskMore(){
+  var inp=document.getElementById('lensAskInp');
+  var q=inp.value.trim();if(!q)return;
+  if(!lensImageB64){showToast('No image loaded');return;}
+  inp.value='';
+  var resEl=document.getElementById('lensResult');
+  var prev=resEl.innerHTML;
+  resEl.innerHTML+='<hr style="margin:12px 0;border:none;border-top:1px solid var(--border);"><div class="lens-loading">🔍 Thinking...<span class="tdots"><span></span><span></span><span></span></span></div>';
+  try{
+    var context=window._lensLastResult?'Previous analysis:\n'+window._lensLastResult+'\n\nUser question: '+q:'User question about image: '+q;
+    var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({
+        model:'llama-3.2-11b-vision-preview',
+        max_tokens:600,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:'data:'+lensMimeType+';base64,'+lensImageB64}},
+            {type:'text',text:context}
+          ]
+        }]
+      })
+    });
+    var data=await res.json();
+    var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Could not get answer.';
+    resEl.innerHTML=prev+'<hr style="margin:12px 0;border:none;border-top:1px solid var(--border);">'
+      +'<strong style="color:var(--text3);font-size:12px;">You asked:</strong> <em>'+q+'</em><br><br>'
+      +reply.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    window._lensLastResult=reply;
+  }catch(e){
+    resEl.innerHTML=prev+'<div style="color:var(--danger)">⚠️ Error</div>';
+  }
+}
+
+function sendLensToChat(){
+  if(!window._lensLastResult)return;
+  closeLens();
+  addMsg('[QVIO Lens Result]\n\n'+window._lensLastResult,'ai');
+  showToast('✅ Lens result added to chat!');
+}
+function speakLensResult(){
+  speakText(window._lensLastResult||'No result yet',null);
+}
+function copyLensResult(){
+  if(navigator.clipboard&&window._lensLastResult){
+    navigator.clipboard.writeText(window._lensLastResult).then(function(){showToast('📋 Copied!');});
+  }
+}
 </script>
 </body>
 </html>
