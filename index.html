@@ -162,8 +162,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   50%{box-shadow:0 0 0 6px rgba(212,160,23,.2),0 0 40px rgba(212,160,23,1),0 0 80px rgba(212,160,23,.7),0 0 140px rgba(212,160,23,.4);}
 }
 
+/* Text wrap — sits below canvas hands */
+.ns-text-wrap{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:260px;
+}
 /* Hand gesture */
-.ns-hands-wrap{
+.ns-hands-wrap{display:none;}
+.ns-hands-svg{display:none;}
   position:relative;z-index:2;
   width:220px;height:240px;
   display:flex;align-items:center;justify-content:center;
@@ -865,7 +872,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 <div id="particles"></div>
 
-<!-- NAMASTE SCREEN — CINEMATIC HAND GESTURE -->
+<!-- NAMASTE SCREEN — CINEMATIC -->
 <div id="namasteScreen">
   <canvas id="ns-canvas"></canvas>
   <div class="ns-scanline"></div>
@@ -874,92 +881,14 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="ns-bracket ns-br-tr"></div>
   <div class="ns-bracket ns-br-bl"></div>
   <div class="ns-bracket ns-br-br"></div>
-
-  <!-- SVG hand gesture centrepiece -->
-  <div class="ns-hands-wrap" id="nsHandsWrap">
-    <svg class="ns-hands-svg" id="nsHandsSvg" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="hg1" cx="50%" cy="60%" r="55%">
-          <stop offset="0%" stop-color="#F5C842"/>
-          <stop offset="100%" stop-color="#B8860B"/>
-        </radialGradient>
-        <radialGradient id="hg2" cx="50%" cy="40%" r="55%">
-          <stop offset="0%" stop-color="#F5C842"/>
-          <stop offset="100%" stop-color="#B8860B"/>
-        </radialGradient>
-        <filter id="hglow">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="hglow2">
-          <feGaussianBlur stdDeviation="6" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-
-      <!-- Aura glow behind hands -->
-      <ellipse id="nsAura" cx="100" cy="140" rx="60" ry="50" fill="rgba(212,160,23,0.12)" opacity="0"/>
-
-      <!-- LEFT HAND (comes from left) -->
-      <g id="nsLeftHand" transform="translate(-120,0)">
-        <!-- Palm left -->
-        <path d="M55 170 Q45 155 48 138 Q50 125 58 118 L72 112 Q78 110 82 115 L85 145 Q85 158 80 170 Z" fill="url(#hg1)" filter="url(#hglow)"/>
-        <!-- Fingers left - pinky -->
-        <path d="M58 118 Q56 105 60 95 Q63 88 68 90 Q73 92 72 102 L72 112Z" fill="url(#hg1)"/>
-        <!-- Ring -->
-        <path d="M68 114 Q66 98 70 86 Q73 78 79 80 Q84 82 83 93 L82 114Z" fill="url(#hg1)"/>
-        <!-- Middle -->
-        <path d="M78 115 Q77 97 81 84 Q84 75 91 77 Q97 79 95 91 L93 116Z" fill="url(#hg1)"/>
-        <!-- Index -->
-        <path d="M88 118 Q88 101 92 89 Q95 81 101 83 Q107 85 104 97 L102 119Z" fill="url(#hg1)"/>
-        <!-- Thumb left -->
-        <path d="M82 145 Q72 140 68 130 Q66 122 70 118 Q75 114 82 120 L85 145Z" fill="url(#hg2)"/>
-        <!-- Wrist band -->
-        <rect x="52" y="168" width="34" height="8" rx="3" fill="rgba(180,120,0,0.4)"/>
-      </g>
-
-      <!-- RIGHT HAND (comes from right) -->
-      <g id="nsRightHand" transform="translate(120,0)">
-        <!-- Palm right (mirror) -->
-        <path d="M145 170 Q155 155 152 138 Q150 125 142 118 L128 112 Q122 110 118 115 L115 145 Q115 158 120 170 Z" fill="url(#hg1)" filter="url(#hglow)"/>
-        <!-- Fingers right - pinky -->
-        <path d="M142 118 Q144 105 140 95 Q137 88 132 90 Q127 92 128 102 L128 112Z" fill="url(#hg1)"/>
-        <!-- Ring -->
-        <path d="M132 114 Q134 98 130 86 Q127 78 121 80 Q116 82 117 93 L118 114Z" fill="url(#hg1)"/>
-        <!-- Middle -->
-        <path d="M122 115 Q123 97 119 84 Q116 75 109 77 Q103 79 105 91 L107 116Z" fill="url(#hg1)"/>
-        <!-- Index -->
-        <path d="M112 118 Q112 101 108 89 Q105 81 99 83 Q93 85 96 97 L98 119Z" fill="url(#hg1)"/>
-        <!-- Thumb right -->
-        <path d="M118 145 Q128 140 132 130 Q134 122 130 118 Q125 114 118 120 L115 145Z" fill="url(#hg2)"/>
-        <!-- Wrist band -->
-        <rect x="114" y="168" width="34" height="8" rx="3" fill="rgba(180,120,0,0.4)"/>
-      </g>
-
-      <!-- Sparkle particles (hidden, shown via JS) -->
-      <g id="nsSparkles" opacity="0">
-        <circle cx="100" cy="80" r="3" fill="#F5C842"/>
-        <circle cx="70" cy="95" r="2" fill="#fff"/>
-        <circle cx="130" cy="95" r="2" fill="#fff"/>
-        <circle cx="60" cy="115" r="1.5" fill="#F5C842"/>
-        <circle cx="140" cy="115" r="1.5" fill="#F5C842"/>
-        <circle cx="100" cy="60" r="2" fill="#F5C842"/>
-        <circle cx="80" cy="70" r="1.5" fill="#fff"/>
-        <circle cx="120" cy="70" r="1.5" fill="#fff"/>
-        <line x1="100" y1="55" x2="100" y2="45" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="78" y1="65" x2="70" y2="57" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="122" y1="65" x2="130" y2="57" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
-      </g>
-    </svg>
+  <div class="ns-text-wrap">
+    <div class="ns-greeting" id="nsGreeting"></div>
+    <div class="ns-username" id="nsUsername"></div>
+    <div class="ns-divider"></div>
+    <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
+    <div class="ns-progress-wrap"><div class="ns-progress-fill" id="nsProgFill"></div></div>
+    <div class="ns-percent" id="nsPercent">0%</div>
   </div>
-
-  <!-- Text content -->
-  <div class="ns-greeting" id="nsGreeting"></div>
-  <div class="ns-username" id="nsUsername"></div>
-  <div class="ns-divider"></div>
-  <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
-  <div class="ns-progress-wrap"><div class="ns-progress-fill" id="nsProgFill"></div></div>
-  <div class="ns-percent" id="nsPercent">0%</div>
   <div class="ns-flash"></div>
 </div>
 
@@ -1863,12 +1792,297 @@ function showNamaste(user){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
   setTimeout(function(){ls.style.display='none';},400);
-
   var ns=document.getElementById('namasteScreen');
   ns.classList.add('show');
-
   var nm=user.displayName||user.email||'Friend';
   var first=nm.split(' ')[0].toUpperCase();
+
+  var canvas=document.getElementById('ns-canvas');
+  if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  var W=canvas.width,H=canvas.height,CX=W/2,CY=H/2;
+
+  // ── State ──
+  var startT=Date.now();
+  var animId=null;
+  var bursts=[];
+  var stars=[];
+  for(var i=0;i<160;i++){
+    stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,ph:Math.random()*Math.PI*2});
+  }
+
+  // ── Draw a single realistic hand (fingers together, prayer position) ──
+  // handX = centre x of palm, handY = wrist top, dir = 1 (right hand) or -1 (left hand)
+  function drawHand(ctx, handX, handY, scale, alpha, tilt){
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.translate(handX, handY);
+    ctx.rotate(tilt);
+    ctx.scale(scale, scale);
+
+    var s=scale;
+
+    // Skin gradient
+    var palmGrad=ctx.createLinearGradient(-22,-80,22,20);
+    palmGrad.addColorStop(0,'#F5C842');
+    palmGrad.addColorStop(0.5,'#E8A800');
+    palmGrad.addColorStop(1,'#B8860B');
+
+    var shadowGrad=ctx.createLinearGradient(-22,-80,22,20);
+    shadowGrad.addColorStop(0,'rgba(0,0,0,0)');
+    shadowGrad.addColorStop(1,'rgba(0,0,0,0.25)');
+
+    // --- PALM ---
+    ctx.beginPath();
+    ctx.moveTo(-20, 20);
+    ctx.bezierCurveTo(-22, 0, -22, -20, -18, -40);
+    ctx.bezierCurveTo(-15, -55, 15, -55, 18, -40);
+    ctx.bezierCurveTo(22, -20, 22, 0, 20, 20);
+    ctx.bezierCurveTo(15, 30, -15, 30, -20, 20);
+    ctx.fillStyle=palmGrad;
+    ctx.fill();
+
+    // Finger definitions: [offsetX from centre, length, width]
+    var fingers=[
+      [-14, 52, 9],  // pinky
+      [-6,  62, 10], // ring
+      [3,   66, 10], // middle
+      [12,  60, 10], // index
+    ];
+
+    fingers.forEach(function(f){
+      var fx=f[0], flen=f[1], fw=f[2];
+      // Each finger
+      ctx.beginPath();
+      ctx.moveTo(fx-fw/2, -38);
+      ctx.bezierCurveTo(fx-fw/2-2, -38-flen*.3, fx-fw/2-1, -38-flen*.7, fx, -38-flen);
+      ctx.bezierCurveTo(fx+fw/2+1, -38-flen*.7, fx+fw/2+2, -38-flen*.3, fx+fw/2, -38);
+      ctx.fillStyle=palmGrad;
+      ctx.fill();
+      // Knuckle line
+      ctx.beginPath();
+      ctx.arc(fx, -38-flen*.15, fw/2-1, Math.PI, 0);
+      ctx.strokeStyle='rgba(0,0,0,0.12)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+      // Fingertip roundness
+      ctx.beginPath();
+      ctx.arc(fx, -38-flen+4, fw/2-0.5, Math.PI, 0);
+      ctx.fillStyle='rgba(180,120,0,0.3)';
+      ctx.fill();
+    });
+
+    // Thumb
+    ctx.beginPath();
+    ctx.moveTo(20, -10);
+    ctx.bezierCurveTo(32, -20, 38, -35, 32, -48);
+    ctx.bezierCurveTo(28, -54, 22, -52, 20, -44);
+    ctx.bezierCurveTo(18, -36, 22, -22, 20, -10);
+    ctx.fillStyle=palmGrad;
+    ctx.fill();
+
+    // Palm lines (subtle)
+    ctx.beginPath();
+    ctx.moveTo(-18, -10);ctx.quadraticCurveTo(0,-5,18,-8);
+    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-16, 5);ctx.quadraticCurveTo(0,8,16,4);
+    ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;ctx.stroke();
+
+    // Wrist sleeve
+    ctx.beginPath();
+    ctx.rect(-22,20,44,18);
+    ctx.fillStyle='rgba(139,90,0,0.35)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-22,20);ctx.lineTo(22,20);
+    ctx.strokeStyle='rgba(212,160,23,0.5)';ctx.lineWidth=1.5;ctx.stroke();
+
+    // Glow around hand
+    var glowGrad=ctx.createRadialGradient(0,-20,5,0,-20,55);
+    glowGrad.addColorStop(0,'rgba(212,160,23,0)');
+    glowGrad.addColorStop(0.6,'rgba(212,160,23,0)');
+    glowGrad.addColorStop(1,'rgba(212,160,23,0.18)');
+    ctx.beginPath();
+    ctx.ellipse(0,-15,38,60,0,0,Math.PI*2);
+    ctx.fillStyle=glowGrad;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ── Main render loop ──
+  function render(){
+    var el=(Date.now()-startT)/1000;
+    ctx.clearRect(0,0,W,H);
+
+    // Background
+    var bg=ctx.createRadialGradient(CX,CY,0,CX,CY,Math.max(W,H)*.8);
+    bg.addColorStop(0,'rgba(5,8,20,1)');
+    bg.addColorStop(1,'rgba(0,0,0,1)');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    // Centre glow pulse
+    var pulse=.5+.5*Math.sin(el*2.2);
+    var cg=ctx.createRadialGradient(CX,CY*.45,0,CX,CY*.45,280+pulse*30);
+    cg.addColorStop(0,'rgba(212,160,23,'+(0.08+pulse*.05)+')');
+    cg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
+
+    // Stars
+    for(var s=0;s<stars.length;s++){
+      var st=stars[s];st.ph+=0.016;
+      ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+(0.2+0.5*Math.sin(st.ph))+')';ctx.fill();
+    }
+
+    // Concentric rings behind hands
+    for(var r=1;r<=3;r++){
+      var rad=40+r*38+Math.sin(el*1.4+r)*6;
+      ctx.beginPath();ctx.arc(CX,CY*.44,rad,0,Math.PI*2);
+      ctx.strokeStyle='rgba(212,160,23,'+(0.04+0.02*Math.sin(el*2+r))+')';
+      ctx.lineWidth=1;ctx.stroke();
+    }
+
+    // ── HAND ANIMATION ──
+    // Phase 0→0.8s: hands slide in from sides
+    // Phase 0.8s+: hands joined, gentle bow bob
+    var joinTime=0.8;
+    var handY=CY*0.44;  // vertical centre for hands
+    var handScale=Math.min(W,H)/520;
+
+    if(el<joinTime){
+      // Approach — ease out cubic
+      var p=el/joinTime;
+      var ease=1-Math.pow(1-p,3);
+      var offset=(1-ease)*200;
+      // Left hand comes from left, tilted slightly
+      drawHand(ctx, CX-offset, handY, handScale, Math.min(p*2,1), -0.08);
+      // Right hand from right, mirrored tilt
+      ctx.save();ctx.scale(-1,1);
+      drawHand(ctx, -(CX+offset), handY, handScale, Math.min(p*2,1), -0.08);
+      ctx.restore();
+    } else {
+      // Joined — gentle bob
+      var bob=Math.sin((el-joinTime)*3)*4;
+      var tilt=-0.05+Math.sin((el-joinTime)*3)*0.03;
+
+      // Fire burst on first join
+      if(bursts.length===0){
+        for(var b=0;b<90;b++){
+          var ang=Math.random()*Math.PI*2;
+          var spd=Math.random()*5+1.5;
+          bursts.push({x:CX,y:handY+bob,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
+            r:Math.random()*3+.5,a:1,h:Math.random()*30+30});
+        }
+        // Trigger text reveal
+        revealText(first);
+      }
+
+      // Aura glow behind joined hands
+      var auraG=ctx.createRadialGradient(CX,handY+bob,5,CX,handY+bob,90);
+      auraG.addColorStop(0,'rgba(212,160,23,'+(0.18+pulse*.08)+')');
+      auraG.addColorStop(1,'rgba(212,160,23,0)');
+      ctx.beginPath();ctx.ellipse(CX,handY+bob,80,70,0,0,Math.PI*2);
+      ctx.fillStyle=auraG;ctx.fill();
+
+      // Left hand
+      drawHand(ctx, CX, handY+bob, handScale, 1, tilt);
+      // Right hand mirrored
+      ctx.save();ctx.scale(-1,1);
+      drawHand(ctx, -CX, handY+bob, handScale, 1, tilt);
+      ctx.restore();
+
+      // Sparkle rays
+      var rayCount=8;
+      for(var ri=0;ri<rayCount;ri++){
+        var ra=((ri/rayCount)*Math.PI*2)+el*.5;
+        var rlen=50+20*Math.sin(el*2+ri);
+        var rx1=CX+Math.cos(ra)*25,ry1=handY+Math.sin(ra)*20+bob;
+        var rx2=CX+Math.cos(ra)*rlen,ry2=handY+Math.sin(ra)*(rlen*.7)+bob;
+        ctx.beginPath();ctx.moveTo(rx1,ry1);ctx.lineTo(rx2,ry2);
+        ctx.strokeStyle='rgba(212,160,23,'+(0.3+0.2*Math.sin(el*3+ri))+')';
+        ctx.lineWidth=1;ctx.stroke();
+      }
+    }
+
+    // Burst particles
+    for(var bi=0;bi<bursts.length;bi++){
+      var bp=bursts[bi];bp.x+=bp.vx;bp.y+=bp.vy;bp.a-=0.013;bp.vx*=.96;bp.vy*=.96;
+      if(bp.a>0){
+        ctx.beginPath();ctx.arc(bp.x,bp.y,bp.r,0,Math.PI*2);
+        ctx.fillStyle='hsla('+bp.h+',90%,65%,'+bp.a+')';ctx.fill();
+      }
+    }
+
+    animId=requestAnimationFrame(render);
+  }
+  render();
+
+  var textRevealed=false;
+  function revealText(name){
+    if(textRevealed)return;
+    textRevealed=true;
+    // Letter by letter NAMASTE
+    var greetEl=document.getElementById('nsGreeting');
+    if(greetEl){
+      greetEl.innerHTML='';
+      var deva=document.createElement('div');
+      deva.style.cssText='font-family:"Cormorant Garamond",serif;font-size:clamp(18px,3.5vw,28px);background:linear-gradient(135deg,#D4A017,#F5C842);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:5px;opacity:0;animation:nsSlideUp .5s ease forwards;margin-bottom:6px;';
+      deva.textContent='नमस्ते';
+      greetEl.appendChild(deva);
+      var eng=document.createElement('div');
+      eng.style.cssText='display:flex;justify-content:center;gap:3px;';
+      'NAMASTE'.split('').forEach(function(ch,i){
+        var s=document.createElement('span');
+        s.className='ns-char';
+        s.textContent=ch;
+        s.style.animationDelay=(.1+i*.07)+'s';
+        if(i===0||i===6){
+          s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
+          s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
+        }
+        eng.appendChild(s);
+      });
+      greetEl.appendChild(eng);
+    }
+    var unEl=document.getElementById('nsUsername');
+    if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
+    // Progress counter
+    var pctEl=document.getElementById('nsPercent');
+    var pct=0;
+    var pTimer=setInterval(function(){
+      pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
+      if(pctEl)pctEl.textContent=pct+'%';
+      if(pct>=100)clearInterval(pTimer);
+    },32);
+    // Status
+    var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
+    var mi=0,stEl=document.getElementById('nsStatusTxt');
+    var sTimer=setInterval(function(){
+      mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
+      if(mi>=msgs.length-1)clearInterval(sTimer);
+    },600);
+    fireConfetti();
+    // Dismiss after 4.5s
+    setTimeout(function(){
+      if(animId)cancelAnimationFrame(animId);
+      ns.classList.add('exiting');
+      setTimeout(function(){
+        ns.style.opacity='0';ns.style.transition='opacity .5s';
+        setTimeout(function(){
+          ns.classList.remove('show','exiting');ns.style.opacity='';
+          textRevealed=false;
+          if(pctEl)pctEl.textContent='0%';
+          if(greetEl)greetEl.innerHTML='';
+          if(unEl)unEl.innerHTML='';
+        },500);
+      },300);
+    },4500);
+  }
+}
 
   // ── Canvas particle starfield ──
   var canvas=document.getElementById('ns-canvas');
@@ -1934,121 +2148,7 @@ function showNamaste(user){
     },700);
   }
 
-  // ── Hand animation: slide in from sides ──
-  var lh=document.getElementById('nsLeftHand');
-  var rh=document.getElementById('nsRightHand');
-  var aura=document.getElementById('nsAura');
-  var sparkles=document.getElementById('nsSparkles');
-  var handsWrap=document.getElementById('nsHandsWrap');
 
-  if(lh&&rh){
-    // Start: both hands offset far left/right (via SVG transform)
-    lh.setAttribute('transform','translate(-120,0)');
-    rh.setAttribute('transform','translate(120,0)');
-
-    // Phase 1 (0→0.7s): hands slide to centre
-    var startTime=Date.now();
-    var phase='approach';
-    function animHands(){
-      var el=Date.now()-startTime;
-      if(phase==='approach'){
-        // ease-out cubic
-        var p=Math.min(el/700,1);
-        var ease=1-Math.pow(1-p,3);
-        var lx=-120+(120*ease);
-        var rx=120-(120*ease);
-        lh.setAttribute('transform','translate('+lx+',0)');
-        rh.setAttribute('transform','translate('+rx+',0)');
-        if(p<1){requestAnimationFrame(animHands);return;}
-        // Joined! show aura + sparkles
-        phase='joined';
-        if(aura)aura.setAttribute('opacity','0.18');
-        if(sparkles){
-          sparkles.setAttribute('opacity','1');
-          sparkles.style.animation='nsSparkPop .6s ease forwards';
-        }
-        // Bow once
-        if(handsWrap)handsWrap.style.animation='nsBow .9s cubic-bezier(.22,1,.36,1) forwards';
-        // Aura pulse loop
-        var auraStart=Date.now();
-        var auraTimer=setInterval(function(){
-          if(!aura)return;
-          var t=(Date.now()-auraStart)/1000;
-          var s=1+.15*Math.sin(t*2.5);
-          aura.setAttribute('transform','scale('+s+') translate('+(100*(1-s)/s)+','+(140*(1-s)/s)+')');
-        },16);
-        // Letter reveal after bow (0.5s)
-        setTimeout(function(){revealText(first,auraTimer);},500);
-      }
-    }
-    requestAnimationFrame(animHands);
-  } else {
-    // fallback if SVG unavailable
-    revealText(first,null);
-  }
-
-  function revealText(name,auraTimer){
-    // ── "नमस्ते" in Devanagari + "NAMASTE" letter by letter ──
-    var devaEl=document.getElementById('nsGreeting');
-    if(devaEl){
-      devaEl.innerHTML='';
-      // First show Devanagari script briefly
-      var deva=document.createElement('div');
-      deva.style.cssText='font-family:"Cormorant Garamond",serif;font-size:clamp(20px,4vw,32px);background:linear-gradient(135deg,#D4A017,#F5C842);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:6px;opacity:0;animation:nsSlideUp .5s ease forwards;margin-bottom:4px;';
-      deva.textContent='नमस्ते';
-      devaEl.appendChild(deva);
-      // Then big English letters
-      var eng=document.createElement('div');
-      eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
-      'NAMASTE'.split('').forEach(function(ch,i){
-        var s=document.createElement('span');
-        s.className='ns-char';
-        s.textContent=ch;
-        s.style.animationDelay=(.15+i*.07)+'s';
-        if(i===0||i===6){
-          s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
-          s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
-        }
-        eng.appendChild(s);
-      });
-      devaEl.appendChild(eng);
-    }
-    // Username
-    var unEl=document.getElementById('nsUsername');
-    if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
-    // Progress counter
-    var pctEl=document.getElementById('nsPercent');
-    var pct=0;
-    var pTimer=setInterval(function(){
-      pct=Math.min(100,pct+Math.floor(Math.random()*8)+3);
-      if(pctEl)pctEl.textContent=pct+'%';
-      if(pct>=100)clearInterval(pTimer);
-    },35);
-    // Status messages
-    var msgs=['Authenticating...','Loading your memory...','Calibrating AI...','All systems ready ✓'];
-    var mi=0;
-    var stEl=document.getElementById('nsStatusTxt');
-    var sTimer=setInterval(function(){
-      mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
-      if(mi>=msgs.length-1)clearInterval(sTimer);
-    },550);
-    // Confetti
-    fireConfetti();
-    // Dismiss after 4.5s
-    setTimeout(function(){
-      if(auraTimer)clearInterval(auraTimer);
-      if(animId)cancelAnimationFrame(animId);
-      ns.classList.add('exiting');
-      setTimeout(function(){
-        ns.style.opacity='0';ns.style.transition='opacity .5s ease';
-        setTimeout(function(){
-          ns.classList.remove('show','exiting');ns.style.opacity='';
-          if(pctEl)pctEl.textContent='0%';
-        },500);
-      },300);
-    },4500);
-  }
-}
 
 // ═══════════════════════════════
 // AUTH
