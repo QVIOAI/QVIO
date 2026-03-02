@@ -55,7 +55,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* NAMASTE */
 /* ═══════════════════════════════════════════════
-   NAMASTE SCREEN — FUTURISTIC CINEMATIC
+   NAMASTE SCREEN — 3D CINEMATIC
 ═══════════════════════════════════════════════ */
 #namasteScreen{
   position:fixed;inset:0;z-index:9500;
@@ -64,275 +64,109 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   overflow:hidden;
 }
 #namasteScreen.show{display:flex;}
-
-/* Animated deep space background */
-#ns-canvas{position:absolute;inset:0;width:100%;height:100%;}
-
-/* Gold scan line that sweeps across */
+#ns-three{position:absolute;inset:0;width:100%;height:100%;}
 .ns-scanline{
   position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent 0%,rgba(212,160,23,0) 20%,rgba(212,160,23,.9) 50%,rgba(212,160,23,0) 80%,transparent 100%);
-  animation:nsScan 2.4s ease-in-out .2s forwards;
-  opacity:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(212,160,23,.9) 50%,transparent 100%);
+  animation:nsScan 2.4s ease-in-out .2s forwards;opacity:0;pointer-events:none;z-index:3;
 }
-@keyframes nsScan{
-  0%{top:0%;opacity:0;}
-  5%{opacity:1;}
-  95%{opacity:1;}
-  100%{top:100%;opacity:0;}
-}
-
-/* Hexagon grid overlay */
+@keyframes nsScan{0%{top:0%;opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{top:100%;opacity:0;}}
 .ns-hex-grid{
-  position:absolute;inset:0;
+  position:absolute;inset:0;pointer-events:none;z-index:1;
   background-image:
-    repeating-linear-gradient(60deg,rgba(212,160,23,.04) 0px,rgba(212,160,23,.04) 1px,transparent 1px,transparent 30px),
-    repeating-linear-gradient(-60deg,rgba(212,160,23,.04) 0px,rgba(212,160,23,.04) 1px,transparent 1px,transparent 30px);
-  animation:nsGridFade 4s ease forwards;
-  opacity:0;
+    repeating-linear-gradient(60deg,rgba(212,160,23,.035) 0px,rgba(212,160,23,.035) 1px,transparent 1px,transparent 28px),
+    repeating-linear-gradient(-60deg,rgba(212,160,23,.035) 0px,rgba(212,160,23,.035) 1px,transparent 1px,transparent 28px);
+  animation:nsGridFade 5s ease forwards;opacity:0;
 }
-@keyframes nsGridFade{0%{opacity:0;}30%{opacity:1;}80%{opacity:1;}100%{opacity:0;}}
-
-/* Central orb */
-.ns-orb-wrap{
-  position:relative;width:180px;height:180px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:40px;
-  animation:nsOrbIn .6s cubic-bezier(.22,1,.36,1) .1s both;
-}
-@keyframes nsOrbIn{from{transform:scale(0) rotate(-180deg);opacity:0;}to{transform:scale(1) rotate(0deg);opacity:1;}}
-
-/* Outer glow rings — 4 concentric */
-.ns-ring{position:absolute;border-radius:50%;border:1px solid transparent;}
-.ns-ring-1{
-  width:180px;height:180px;
-  border-color:rgba(212,160,23,.6);
-  box-shadow:0 0 30px rgba(212,160,23,.3),inset 0 0 30px rgba(212,160,23,.05);
-  animation:nsRotate 3s linear infinite;
-}
-.ns-ring-2{
-  width:148px;height:148px;
-  border-color:rgba(212,160,23,.35);
-  border-top-color:rgba(212,160,23,.9);
-  border-right-color:rgba(212,160,23,.9);
-  box-shadow:0 0 20px rgba(212,160,23,.2);
-  animation:nsRotate 1.8s linear infinite reverse;
-}
-.ns-ring-3{
-  width:116px;height:116px;
-  border-color:rgba(13,27,62,.8);
-  border-bottom-color:rgba(100,149,237,.7);
-  border-left-color:rgba(100,149,237,.7);
-  box-shadow:0 0 15px rgba(100,149,237,.2);
-  animation:nsRotate 2.4s linear infinite;
-}
-.ns-ring-4{
-  width:86px;height:86px;
-  border-color:rgba(212,160,23,.2);
-  border-top-color:rgba(255,255,255,.6);
-  animation:nsRotate 1.2s linear infinite reverse;
-}
-@keyframes nsRotate{to{transform:rotate(360deg);}}
-
-/* Tick marks on outer ring */
-.ns-ticks{position:absolute;width:180px;height:180px;animation:nsRotate 8s linear infinite;}
-.ns-tick{
-  position:absolute;left:50%;top:2px;
-  width:2px;height:8px;background:rgba(212,160,23,.8);
-  transform-origin:1px 88px;border-radius:1px;
-}
-
-/* Core orb */
-.ns-core-new{
-  width:56px;height:56px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.4),rgba(212,160,23,1) 40%,rgba(180,120,0,1));
-  box-shadow:
-    0 0 0 3px rgba(212,160,23,.3),
-    0 0 20px rgba(212,160,23,.8),
-    0 0 50px rgba(212,160,23,.5),
-    0 0 100px rgba(212,160,23,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-family:"DM Mono",monospace;font-size:11px;color:#fff;font-weight:700;
-  letter-spacing:1px;
-  animation:nsCoreGlow 2s ease-in-out infinite;
-  position:relative;z-index:2;
-}
-@keyframes nsCoreGlow{
-  0%,100%{box-shadow:0 0 0 3px rgba(212,160,23,.3),0 0 20px rgba(212,160,23,.8),0 0 50px rgba(212,160,23,.5),0 0 100px rgba(212,160,23,.3);}
-  50%{box-shadow:0 0 0 6px rgba(212,160,23,.2),0 0 40px rgba(212,160,23,1),0 0 80px rgba(212,160,23,.7),0 0 140px rgba(212,160,23,.4);}
-}
-
-/* Text wrap — sits below canvas hands */
-.ns-text-wrap{
-  position:relative;z-index:2;
-  display:flex;flex-direction:column;align-items:center;
-  margin-top:260px;
-}
-/* Hand gesture */
-.ns-hands-wrap{display:none;}
-.ns-hands-svg{display:none;}
-  position:relative;z-index:2;
-  width:220px;height:240px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:24px;
-}
-.ns-hands-svg{
-  width:200px;height:220px;
-  filter:drop-shadow(0 0 18px rgba(212,160,23,.7)) drop-shadow(0 0 40px rgba(212,160,23,.3));
-  overflow:visible;
-}
-/* Bow animation — hands bob slightly once joined */
-@keyframes nsBow{
-  0%{transform:translateY(0) rotate(0deg);}
-  30%{transform:translateY(8px) rotate(3deg);}
-  60%{transform:translateY(4px) rotate(1.5deg);}
-  100%{transform:translateY(0) rotate(0deg);}
-}
-/* Aura pulse */
-@keyframes nsAuraPulse{
-  0%,100%{rx:60;ry:50;opacity:.12;}
-  50%{rx:72;ry:60;opacity:.22;}
-}
-/* Sparkle pop */
-@keyframes nsSparkPop{
-  0%{opacity:0;transform:scale(0);}
-  40%{opacity:1;transform:scale(1.3);}
-  100%{opacity:0;transform:scale(1);}
-}
-  position:absolute;width:180px;height:180px;
-  animation:nsRotate 1.6s linear infinite;
-}
-.ns-orbit-dot::after{
-  content:'';position:absolute;top:6px;left:50%;
-  width:8px;height:8px;border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 10px #fff,0 0 20px rgba(212,160,23,.8);
-  transform:translateX(-50%);
-}
-
-/* Futuristic corner brackets */
-.ns-bracket{position:absolute;width:24px;height:24px;}
+@keyframes nsGridFade{0%{opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{opacity:0;}}
+.ns-bracket{position:absolute;width:28px;height:28px;z-index:4;}
 .ns-bracket::before,.ns-bracket::after{content:'';position:absolute;background:rgba(212,160,23,.8);}
 .ns-bracket::before{width:2px;height:100%;}
 .ns-bracket::after{width:100%;height:2px;}
-.ns-br-tl{top:8px;left:8px;}
-.ns-br-tr{top:8px;right:8px;transform:scaleX(-1);}
-.ns-br-bl{bottom:8px;left:8px;transform:scaleY(-1);}
-.ns-br-br{bottom:8px;right:8px;transform:scale(-1);}
-
-/* Namaste text — letter by letter */
+.ns-br-tl{top:10px;left:10px;}
+.ns-br-tr{top:10px;right:10px;transform:scaleX(-1);}
+.ns-br-bl{bottom:10px;left:10px;transform:scaleY(-1);}
+.ns-br-br{bottom:10px;right:10px;transform:scale(-1);}
+.ns-text-wrap{
+  position:relative;z-index:5;
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:56vh;
+}
 .ns-greeting{
   font-family:"Cormorant Garamond",serif;
-  font-size:clamp(36px,8vw,72px);
+  font-size:clamp(34px,7vw,68px);
   font-weight:600;color:#fff;
-  text-align:center;line-height:1;
-  letter-spacing:4px;
-  position:relative;z-index:2;
-  text-shadow:0 0 40px rgba(212,160,23,.5);
+  text-align:center;line-height:1;letter-spacing:5px;
+  text-shadow:0 0 40px rgba(212,160,23,.6);
 }
 .ns-greeting .ns-char{
-  display:inline-block;
-  opacity:0;
-  animation:nsCharIn .4s cubic-bezier(.22,1,.36,1) both;
+  display:inline-block;opacity:0;
+  animation:nsCharIn .45s cubic-bezier(.22,1,.36,1) both;
+}
+.ns-deva{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(16px,3vw,26px);
+  background:linear-gradient(135deg,#D4A017,#F5C842);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:6px;opacity:0;
+  animation:nsSlideUp .6s ease forwards;
+  margin-bottom:5px;display:block;text-align:center;
 }
 @keyframes nsCharIn{
-  from{opacity:0;transform:translateY(-30px) rotateX(-90deg);filter:blur(8px);}
+  from{opacity:0;transform:translateY(-28px) rotateX(-90deg);filter:blur(6px);}
   to{opacity:1;transform:translateY(0) rotateX(0deg);filter:blur(0);}
 }
-
-/* Username line */
 .ns-username{
-  font-family:"DM Sans",sans-serif;
-  font-size:clamp(14px,3vw,20px);
-  font-weight:300;
-  color:rgba(255,255,255,.7);
-  letter-spacing:8px;
-  text-transform:uppercase;
-  text-align:center;
-  margin-top:10px;
-  opacity:0;
-  animation:nsSlideUp .6s ease 1.4s both;
-  position:relative;z-index:2;
+  font-family:"DM Sans",sans-serif;font-size:clamp(12px,2.5vw,18px);
+  font-weight:300;color:rgba(255,255,255,.65);
+  letter-spacing:8px;text-transform:uppercase;text-align:center;
+  margin-top:8px;opacity:0;animation:nsSlideUp .6s ease 1.5s both;
 }
 .ns-username strong{
-  background:linear-gradient(135deg,#D4A017,#F5C842,#D4A017);
+  background:linear-gradient(135deg,#D4A017,#F5C842);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  font-weight:700;letter-spacing:4px;
+  font-weight:700;letter-spacing:3px;
 }
-
-/* Gold divider line */
 .ns-divider{
   width:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(212,160,23,.8),transparent);
-  margin:18px auto;
-  animation:nsDivider .8s ease 1.8s both;
-  position:relative;z-index:2;
+  margin:16px auto;animation:nsDivider .8s ease 1.9s both;
 }
-@keyframes nsDivider{from{width:0;}to{width:260px;}}
-
-/* Status line */
+@keyframes nsDivider{from{width:0;}to{width:240px;}}
 .ns-status{
-  font-family:"DM Mono",monospace;
-  font-size:11px;color:rgba(212,160,23,.7);
-  letter-spacing:2px;text-transform:uppercase;
-  text-align:center;
-  opacity:0;
-  animation:nsSlideUp .5s ease 2.2s both;
-  position:relative;z-index:2;
+  font-family:"DM Mono",monospace;font-size:11px;
+  color:rgba(212,160,23,.7);letter-spacing:2px;text-transform:uppercase;
+  text-align:center;opacity:0;animation:nsSlideUp .5s ease 2.2s both;
 }
 .ns-status-dot{
   display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:#22C55E;margin-right:8px;
-  box-shadow:0 0 8px #22C55E;
-  animation:nsDotBlink .8s ease-in-out 2.5s infinite;
+  background:#22C55E;margin-right:8px;box-shadow:0 0 8px #22C55E;
+  animation:nsDotBlink .9s ease-in-out 2.5s infinite;
 }
-@keyframes nsDotBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
-
-/* Progress bar */
+@keyframes nsDotBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
 .ns-progress-wrap{
-  width:280px;height:2px;
-  background:rgba(255,255,255,.08);
-  border-radius:99px;overflow:hidden;
-  margin-top:32px;
-  opacity:0;
-  animation:nsSlideUp .5s ease 2.4s both;
-  position:relative;z-index:2;
+  width:260px;height:2px;background:rgba(255,255,255,.07);
+  border-radius:99px;overflow:hidden;margin-top:28px;
+  opacity:0;animation:nsSlideUp .5s ease 2.4s both;
 }
 .ns-progress-fill{
   height:100%;width:0%;
-  background:linear-gradient(90deg,rgba(212,160,23,.4),rgba(212,160,23,1),rgba(255,255,255,.8));
+  background:linear-gradient(90deg,rgba(212,160,23,.4),rgba(212,160,23,1),#fff);
   border-radius:99px;
   animation:nsProgFill 1.4s cubic-bezier(.22,1,.36,1) 2.6s forwards;
   box-shadow:0 0 8px rgba(212,160,23,.6);
 }
 @keyframes nsProgFill{to{width:100%;}}
-
-/* Percentage counter */
 .ns-percent{
   font-family:"DM Mono",monospace;font-size:10px;
   color:rgba(212,160,23,.5);letter-spacing:2px;
-  margin-top:8px;text-align:center;
-  opacity:0;
-  animation:nsSlideUp .4s ease 2.6s both;
-  position:relative;z-index:2;
+  margin-top:7px;text-align:center;
+  opacity:0;animation:nsSlideUp .4s ease 2.6s both;
 }
-
-/* Exit flash */
-.ns-flash{
-  position:absolute;inset:0;
-  background:#fff;
-  opacity:0;pointer-events:none;
-  z-index:10;
-}
-#namasteScreen.exiting .ns-flash{
-  animation:nsFlash .4s ease forwards;
-}
-@keyframes nsFlash{0%{opacity:0;}30%{opacity:.5;}100%{opacity:0;}}
-
-@keyframes nsSlideUp{
-  from{opacity:0;transform:translateY(16px);}
-  to{opacity:1;transform:translateY(0);}
-}
+.ns-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:10;}
+#namasteScreen.exiting .ns-flash{animation:nsFlash .4s ease forwards;}
+@keyframes nsFlash{0%{opacity:0;}30%{opacity:.6;}100%{opacity:0;}}
+@keyframes nsSlideUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
@@ -872,9 +706,9 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 <div id="particles"></div>
 
-<!-- NAMASTE SCREEN — CINEMATIC -->
+<!-- NAMASTE SCREEN — 3D -->
 <div id="namasteScreen">
-  <canvas id="ns-canvas"></canvas>
+  <div id="ns-three"></div>
   <div class="ns-scanline"></div>
   <div class="ns-hex-grid"></div>
   <div class="ns-bracket ns-br-tl"></div>
@@ -886,7 +720,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <div class="ns-username" id="nsUsername"></div>
     <div class="ns-divider"></div>
     <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
-    <div class="ns-progress-wrap"><div class="ns-progress-fill" id="nsProgFill"></div></div>
+    <div class="ns-progress-wrap"><div class="ns-progress-fill"></div></div>
     <div class="ns-percent" id="nsPercent">0%</div>
   </div>
   <div class="ns-flash"></div>
@@ -1797,358 +1631,430 @@ function showNamaste(user){
   var nm=user.displayName||user.email||'Friend';
   var first=nm.split(' ')[0].toUpperCase();
 
-  var canvas=document.getElementById('ns-canvas');
-  if(!canvas||!canvas.getContext)return;
-  var ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-  var W=canvas.width,H=canvas.height,CX=W/2,CY=H/2;
+  var container=document.getElementById('ns-three');
+  container.innerHTML='';
 
-  // ── State ──
-  var startT=Date.now();
-  var animId=null;
-  var bursts=[];
-  var stars=[];
-  for(var i=0;i<160;i++){
-    stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,ph:Math.random()*Math.PI*2});
-  }
-
-  // ── Draw a single realistic hand (fingers together, prayer position) ──
-  // handX = centre x of palm, handY = wrist top, dir = 1 (right hand) or -1 (left hand)
-  function drawHand(ctx, handX, handY, scale, alpha, tilt){
-    ctx.save();
-    ctx.globalAlpha=alpha;
-    ctx.translate(handX, handY);
-    ctx.rotate(tilt);
-    ctx.scale(scale, scale);
-
-    var s=scale;
-
-    // Skin gradient
-    var palmGrad=ctx.createLinearGradient(-22,-80,22,20);
-    palmGrad.addColorStop(0,'#F5C842');
-    palmGrad.addColorStop(0.5,'#E8A800');
-    palmGrad.addColorStop(1,'#B8860B');
-
-    var shadowGrad=ctx.createLinearGradient(-22,-80,22,20);
-    shadowGrad.addColorStop(0,'rgba(0,0,0,0)');
-    shadowGrad.addColorStop(1,'rgba(0,0,0,0.25)');
-
-    // --- PALM ---
-    ctx.beginPath();
-    ctx.moveTo(-20, 20);
-    ctx.bezierCurveTo(-22, 0, -22, -20, -18, -40);
-    ctx.bezierCurveTo(-15, -55, 15, -55, 18, -40);
-    ctx.bezierCurveTo(22, -20, 22, 0, 20, 20);
-    ctx.bezierCurveTo(15, 30, -15, 30, -20, 20);
-    ctx.fillStyle=palmGrad;
-    ctx.fill();
-
-    // Finger definitions: [offsetX from centre, length, width]
-    var fingers=[
-      [-14, 52, 9],  // pinky
-      [-6,  62, 10], // ring
-      [3,   66, 10], // middle
-      [12,  60, 10], // index
-    ];
-
-    fingers.forEach(function(f){
-      var fx=f[0], flen=f[1], fw=f[2];
-      // Each finger
-      ctx.beginPath();
-      ctx.moveTo(fx-fw/2, -38);
-      ctx.bezierCurveTo(fx-fw/2-2, -38-flen*.3, fx-fw/2-1, -38-flen*.7, fx, -38-flen);
-      ctx.bezierCurveTo(fx+fw/2+1, -38-flen*.7, fx+fw/2+2, -38-flen*.3, fx+fw/2, -38);
-      ctx.fillStyle=palmGrad;
-      ctx.fill();
-      // Knuckle line
-      ctx.beginPath();
-      ctx.arc(fx, -38-flen*.15, fw/2-1, Math.PI, 0);
-      ctx.strokeStyle='rgba(0,0,0,0.12)';
-      ctx.lineWidth=1;
-      ctx.stroke();
-      // Fingertip roundness
-      ctx.beginPath();
-      ctx.arc(fx, -38-flen+4, fw/2-0.5, Math.PI, 0);
-      ctx.fillStyle='rgba(180,120,0,0.3)';
-      ctx.fill();
-    });
-
-    // Thumb
-    ctx.beginPath();
-    ctx.moveTo(20, -10);
-    ctx.bezierCurveTo(32, -20, 38, -35, 32, -48);
-    ctx.bezierCurveTo(28, -54, 22, -52, 20, -44);
-    ctx.bezierCurveTo(18, -36, 22, -22, 20, -10);
-    ctx.fillStyle=palmGrad;
-    ctx.fill();
-
-    // Palm lines (subtle)
-    ctx.beginPath();
-    ctx.moveTo(-18, -10);ctx.quadraticCurveTo(0,-5,18,-8);
-    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.lineWidth=1.5;ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-16, 5);ctx.quadraticCurveTo(0,8,16,4);
-    ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;ctx.stroke();
-
-    // Wrist sleeve
-    ctx.beginPath();
-    ctx.rect(-22,20,44,18);
-    ctx.fillStyle='rgba(139,90,0,0.35)';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-22,20);ctx.lineTo(22,20);
-    ctx.strokeStyle='rgba(212,160,23,0.5)';ctx.lineWidth=1.5;ctx.stroke();
-
-    // Glow around hand
-    var glowGrad=ctx.createRadialGradient(0,-20,5,0,-20,55);
-    glowGrad.addColorStop(0,'rgba(212,160,23,0)');
-    glowGrad.addColorStop(0.6,'rgba(212,160,23,0)');
-    glowGrad.addColorStop(1,'rgba(212,160,23,0.18)');
-    ctx.beginPath();
-    ctx.ellipse(0,-15,38,60,0,0,Math.PI*2);
-    ctx.fillStyle=glowGrad;
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  // ── Main render loop ──
-  function render(){
-    var el=(Date.now()-startT)/1000;
-    ctx.clearRect(0,0,W,H);
-
-    // Background
-    var bg=ctx.createRadialGradient(CX,CY,0,CX,CY,Math.max(W,H)*.8);
-    bg.addColorStop(0,'rgba(5,8,20,1)');
-    bg.addColorStop(1,'rgba(0,0,0,1)');
-    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-
-    // Centre glow pulse
-    var pulse=.5+.5*Math.sin(el*2.2);
-    var cg=ctx.createRadialGradient(CX,CY*.45,0,CX,CY*.45,280+pulse*30);
-    cg.addColorStop(0,'rgba(212,160,23,'+(0.08+pulse*.05)+')');
-    cg.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
-
-    // Stars
-    for(var s=0;s<stars.length;s++){
-      var st=stars[s];st.ph+=0.016;
-      ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,255,255,'+(0.2+0.5*Math.sin(st.ph))+')';ctx.fill();
-    }
-
-    // Concentric rings behind hands
-    for(var r=1;r<=3;r++){
-      var rad=40+r*38+Math.sin(el*1.4+r)*6;
-      ctx.beginPath();ctx.arc(CX,CY*.44,rad,0,Math.PI*2);
-      ctx.strokeStyle='rgba(212,160,23,'+(0.04+0.02*Math.sin(el*2+r))+')';
-      ctx.lineWidth=1;ctx.stroke();
-    }
-
-    // ── HAND ANIMATION ──
-    // Phase 0→0.8s: hands slide in from sides
-    // Phase 0.8s+: hands joined, gentle bow bob
-    var joinTime=0.8;
-    var handY=CY*0.44;  // vertical centre for hands
-    var handScale=Math.min(W,H)/520;
-
-    if(el<joinTime){
-      // Approach — ease out cubic
-      var p=el/joinTime;
-      var ease=1-Math.pow(1-p,3);
-      var offset=(1-ease)*200;
-      // Left hand comes from left, tilted slightly
-      drawHand(ctx, CX-offset, handY, handScale, Math.min(p*2,1), -0.08);
-      // Right hand from right, mirrored tilt
-      ctx.save();ctx.scale(-1,1);
-      drawHand(ctx, -(CX+offset), handY, handScale, Math.min(p*2,1), -0.08);
-      ctx.restore();
-    } else {
-      // Joined — gentle bob
-      var bob=Math.sin((el-joinTime)*3)*4;
-      var tilt=-0.05+Math.sin((el-joinTime)*3)*0.03;
-
-      // Fire burst on first join
-      if(bursts.length===0){
-        for(var b=0;b<90;b++){
-          var ang=Math.random()*Math.PI*2;
-          var spd=Math.random()*5+1.5;
-          bursts.push({x:CX,y:handY+bob,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
-            r:Math.random()*3+.5,a:1,h:Math.random()*30+30});
-        }
-        // Trigger text reveal
-        revealText(first);
-      }
-
-      // Aura glow behind joined hands
-      var auraG=ctx.createRadialGradient(CX,handY+bob,5,CX,handY+bob,90);
-      auraG.addColorStop(0,'rgba(212,160,23,'+(0.18+pulse*.08)+')');
-      auraG.addColorStop(1,'rgba(212,160,23,0)');
-      ctx.beginPath();ctx.ellipse(CX,handY+bob,80,70,0,0,Math.PI*2);
-      ctx.fillStyle=auraG;ctx.fill();
-
-      // Left hand
-      drawHand(ctx, CX, handY+bob, handScale, 1, tilt);
-      // Right hand mirrored
-      ctx.save();ctx.scale(-1,1);
-      drawHand(ctx, -CX, handY+bob, handScale, 1, tilt);
-      ctx.restore();
-
-      // Sparkle rays
-      var rayCount=8;
-      for(var ri=0;ri<rayCount;ri++){
-        var ra=((ri/rayCount)*Math.PI*2)+el*.5;
-        var rlen=50+20*Math.sin(el*2+ri);
-        var rx1=CX+Math.cos(ra)*25,ry1=handY+Math.sin(ra)*20+bob;
-        var rx2=CX+Math.cos(ra)*rlen,ry2=handY+Math.sin(ra)*(rlen*.7)+bob;
-        ctx.beginPath();ctx.moveTo(rx1,ry1);ctx.lineTo(rx2,ry2);
-        ctx.strokeStyle='rgba(212,160,23,'+(0.3+0.2*Math.sin(el*3+ri))+')';
-        ctx.lineWidth=1;ctx.stroke();
-      }
-    }
-
-    // Burst particles
-    for(var bi=0;bi<bursts.length;bi++){
-      var bp=bursts[bi];bp.x+=bp.vx;bp.y+=bp.vy;bp.a-=0.013;bp.vx*=.96;bp.vy*=.96;
-      if(bp.a>0){
-        ctx.beginPath();ctx.arc(bp.x,bp.y,bp.r,0,Math.PI*2);
-        ctx.fillStyle='hsla('+bp.h+',90%,65%,'+bp.a+')';ctx.fill();
-      }
-    }
-
-    animId=requestAnimationFrame(render);
-  }
-  render();
-
-  var textRevealed=false;
-  function revealText(name){
-    if(textRevealed)return;
-    textRevealed=true;
-    // Letter by letter NAMASTE
-    var greetEl=document.getElementById('nsGreeting');
-    if(greetEl){
-      greetEl.innerHTML='';
-      var deva=document.createElement('div');
-      deva.style.cssText='font-family:"Cormorant Garamond",serif;font-size:clamp(18px,3.5vw,28px);background:linear-gradient(135deg,#D4A017,#F5C842);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:5px;opacity:0;animation:nsSlideUp .5s ease forwards;margin-bottom:6px;';
-      deva.textContent='नमस्ते';
-      greetEl.appendChild(deva);
-      var eng=document.createElement('div');
-      eng.style.cssText='display:flex;justify-content:center;gap:3px;';
-      'NAMASTE'.split('').forEach(function(ch,i){
-        var s=document.createElement('span');
-        s.className='ns-char';
-        s.textContent=ch;
-        s.style.animationDelay=(.1+i*.07)+'s';
-        if(i===0||i===6){
-          s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
-          s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
-        }
-        eng.appendChild(s);
-      });
-      greetEl.appendChild(eng);
-    }
-    var unEl=document.getElementById('nsUsername');
-    if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
-    // Progress counter
-    var pctEl=document.getElementById('nsPercent');
-    var pct=0;
-    var pTimer=setInterval(function(){
-      pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
-      if(pctEl)pctEl.textContent=pct+'%';
-      if(pct>=100)clearInterval(pTimer);
-    },32);
-    // Status
-    var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
-    var mi=0,stEl=document.getElementById('nsStatusTxt');
-    var sTimer=setInterval(function(){
-      mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
-      if(mi>=msgs.length-1)clearInterval(sTimer);
-    },600);
-    fireConfetti();
-    // Dismiss after 4.5s
-    setTimeout(function(){
-      if(animId)cancelAnimationFrame(animId);
-      ns.classList.add('exiting');
-      setTimeout(function(){
-        ns.style.opacity='0';ns.style.transition='opacity .5s';
-        setTimeout(function(){
-          ns.classList.remove('show','exiting');ns.style.opacity='';
-          textRevealed=false;
-          if(pctEl)pctEl.textContent='0%';
-          if(greetEl)greetEl.innerHTML='';
-          if(unEl)unEl.innerHTML='';
-        },500);
-      },300);
-    },4500);
-  }
+  // ── Load Three.js then run ──
+  var script=document.createElement('script');
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  script.onload=function(){ buildNamaste3D(container, ns, first); };
+  script.onerror=function(){ buildNamasteFallback(container, ns, first); };
+  document.head.appendChild(script);
 }
 
-  // ── Canvas particle starfield ──
-  var canvas=document.getElementById('ns-canvas');
-  var animId=null;
-  if(canvas&&canvas.getContext){
-    var ctx=canvas.getContext('2d');
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-    var W=canvas.width,H=canvas.height,CX=W/2,CY=H/2;
-    var stars=[];
-    for(var i=0;i<140;i++){
-      stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.2,ph:Math.random()*Math.PI*2,sp:Math.random()*.5+.1});
-    }
-    // Gold burst particles from centre on join
-    var bursts=[];
-    var burstFired=false;
-    var t0=Date.now();
-    function drawNS(){
-      var el=(Date.now()-t0)/1000;
-      ctx.clearRect(0,0,W,H);
-      // bg
-      var bg=ctx.createRadialGradient(CX,CY,0,CX,CY,Math.max(W,H)*.75);
-      bg.addColorStop(0,'rgba(6,10,24,1)');bg.addColorStop(1,'rgba(0,0,0,1)');
-      ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-      // centre glow
-      var pulse=.5+.5*Math.sin(el*2.2);
-      var g=ctx.createRadialGradient(CX,CY,0,CX,CY,220+pulse*30);
-      g.addColorStop(0,'rgba(212,160,23,'+(0.10+pulse*.07)+')');
-      g.addColorStop(.5,'rgba(13,27,62,.05)');g.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-      // stars
-      for(var s=0;s<stars.length;s++){
-        var st=stars[s];st.ph+=0.018;
-        ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
-        ctx.fillStyle='rgba(255,255,255,'+(0.3+0.5*Math.sin(st.ph))+')';ctx.fill();
-      }
-      // burst particles
-      for(var b=0;b<bursts.length;b++){
-        var p=bursts[b];p.x+=p.vx;p.y+=p.vy;p.a-=.014;p.vx*=.97;p.vy*=.97;
-        if(p.a>0){
-          ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-          ctx.fillStyle='hsla('+p.h+',90%,65%,'+p.a+')';ctx.fill();
-        }
-      }
-      // concentric rings
-      for(var ri=1;ri<=4;ri++){
-        var rad=60+ri*45+Math.sin(el*1.4+ri)*8;
-        var a=0.06+0.03*Math.sin(el*2+ri);
-        ctx.beginPath();ctx.arc(CX,CY,rad,0,Math.PI*2);
-        ctx.strokeStyle='rgba(212,160,23,'+a+')';ctx.lineWidth=1;ctx.stroke();
-      }
-      animId=requestAnimationFrame(drawNS);
-    }
-    drawNS();
-    // fire burst at 0.7s when hands meet
-    setTimeout(function(){
-      if(burstFired)return;burstFired=true;
-      for(var i=0;i<80;i++){
-        var a=Math.random()*Math.PI*2,sp=Math.random()*4+1.5;
-        bursts.push({x:CX,y:CY*.52+H*.38,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
-          r:Math.random()*2.5+.5,a:1,h:Math.random()*30+30});
-      }
-    },700);
+function buildNamaste3D(container, ns, firstName){
+  var W=window.innerWidth, H=window.innerHeight;
+
+  // ── Renderer ──
+  var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setSize(W,H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.2;
+  container.appendChild(renderer.domElement);
+
+  // ── Scene & Camera ──
+  var scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x000000,0.008);
+  var camera=new THREE.PerspectiveCamera(55,W/H,0.1,1000);
+  camera.position.set(0,0,8);
+
+  // ── Lights ──
+  var ambient=new THREE.AmbientLight(0x111122,0.8);
+  scene.add(ambient);
+
+  var keyLight=new THREE.DirectionalLight(0xfff0cc,2.5);
+  keyLight.position.set(3,6,5);
+  keyLight.castShadow=true;
+  scene.add(keyLight);
+
+  var fillLight=new THREE.DirectionalLight(0xd4a017,1.2);
+  fillLight.position.set(-4,2,3);
+  scene.add(fillLight);
+
+  var rimLight=new THREE.DirectionalLight(0x6495ed,0.8);
+  rimLight.position.set(0,-3,-6);
+  scene.add(rimLight);
+
+  var goldPoint=new THREE.PointLight(0xd4a017,0,8);
+  goldPoint.position.set(0,0,3);
+  scene.add(goldPoint);
+
+  // ── Starfield ──
+  var starGeo=new THREE.BufferGeometry();
+  var starCount=2000;
+  var starPos=new Float32Array(starCount*3);
+  for(var i=0;i<starCount*3;i++) starPos[i]=(Math.random()-0.5)*200;
+  starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+  var starMat=new THREE.PointsMaterial({color:0xffffff,size:0.12,transparent:true,opacity:0.7});
+  scene.add(new THREE.Points(starGeo,starMat));
+
+  // ── Skin material ──
+  var skinMat=new THREE.MeshStandardMaterial({
+    color:0xD4860A,
+    roughness:0.55,
+    metalness:0.05,
+    emissive:0x3a2000,
+    emissiveIntensity:0.15,
+  });
+
+  // ── Build a realistic hand using finger segments ──
+  function makeFingerSegment(len,topR,botR){
+    var geo=new THREE.CylinderGeometry(topR,botR,len,10,1);
+    return new THREE.Mesh(geo,skinMat);
   }
 
+  function buildHand(side){
+    // side: 1 = right hand, -1 = left hand
+    var hand=new THREE.Group();
 
+    // Palm — flattened box
+    var palmGeo=new THREE.BoxGeometry(1.4,0.22,1.8);
+    // Round it slightly by scaling vertices
+    var palmMesh=new THREE.Mesh(palmGeo,skinMat);
+    palmMesh.castShadow=true;
+    hand.add(palmMesh);
+
+    // Thumb
+    var thumbGroup=new THREE.Group();
+    var th1=makeFingerSegment(0.55,0.14,0.16);
+    th1.position.y=0.27;
+    var th2=makeFingerSegment(0.42,0.11,0.13);
+    th2.position.y=0.27+0.48;
+    var thTip=new THREE.Mesh(new THREE.SphereGeometry(0.11,8,6),skinMat);
+    thTip.position.y=0.27+0.48+0.22;
+    thumbGroup.add(th1,th2,thTip);
+    thumbGroup.position.set(side*0.78,0.05,0.55);
+    thumbGroup.rotation.set(0.3,side*0.4,side*0.5);
+    hand.add(thumbGroup);
+
+    // 4 fingers
+    var fingerDefs=[
+      {x:-0.48,len:[0.72,0.52,0.38],r:[0.13,0.11,0.09],name:'pinky'},
+      {x:-0.16,len:[0.88,0.62,0.44],r:[0.145,0.12,0.10],name:'ring'},
+      {x: 0.16,len:[0.96,0.68,0.48],r:[0.15,0.125,0.105],name:'middle'},
+      {x: 0.48,len:[0.84,0.60,0.42],r:[0.14,0.115,0.096],name:'index'},
+    ];
+
+    var fingerGroups=[];
+    fingerDefs.forEach(function(fd){
+      var fg=new THREE.Group();
+      var y=0;
+      // 3 phalanges per finger
+      fd.len.forEach(function(l,pi){
+        var seg=makeFingerSegment(l, fd.r[pi]*0.85, fd.r[pi]);
+        seg.position.y=y+l/2;
+        seg.castShadow=true;
+        fg.add(seg);
+        // Knuckle sphere
+        var knuck=new THREE.Mesh(new THREE.SphereGeometry(fd.r[pi],8,6),skinMat);
+        knuck.position.y=y;
+        fg.add(knuck);
+        y+=l;
+      });
+      // Fingertip cap
+      var tip=new THREE.Mesh(new THREE.SphereGeometry(fd.r[2]*0.9,8,6),skinMat);
+      tip.position.y=y;
+      fg.add(tip);
+
+      fg.position.set(fd.x,0.11,-0.9);
+      fg.rotation.x=-0.15; // slight forward tilt
+      fingerGroups.push(fg);
+      hand.add(fg);
+    });
+
+    // Wrist cylinder
+    var wristGeo=new THREE.CylinderGeometry(0.62,0.72,0.6,12);
+    var wristMesh=new THREE.Mesh(wristGeo,new THREE.MeshStandardMaterial({
+      color:0x8B5E0A,roughness:0.7,metalness:0.0,
+      emissive:0x1a0f00,emissiveIntensity:0.2
+    }));
+    wristMesh.position.set(0,-0.35,0.35);
+    wristMesh.rotation.x=0.3;
+    hand.add(wristMesh);
+
+    // Gold bangle
+    var bangleGeo=new THREE.TorusGeometry(0.68,0.055,10,32);
+    var bangleMat=new THREE.MeshStandardMaterial({
+      color:0xD4A017,metalness:0.95,roughness:0.1,
+      emissive:0xD4A017,emissiveIntensity:0.3
+    });
+    var bangle=new THREE.Mesh(bangleGeo,bangleMat);
+    bangle.position.set(0,-0.38,0.35);
+    bangle.rotation.x=1.2;
+    hand.add(bangle);
+
+    return {group:hand, fingers:fingerGroups};
+  }
+
+  var leftHandData=buildHand(-1);
+  var rightHandData=buildHand(1);
+  var leftHand=leftHandData.group;
+  var rightHand=rightHandData.group;
+
+  // Orient hands for namaste — fingers pointing UP
+  // Left hand: palms face right, fingers up
+  leftHand.rotation.set(-Math.PI/2, 0, 0.12);
+  rightHand.rotation.set(-Math.PI/2, 0, -0.12);
+
+  // Start positions — far apart
+  leftHand.position.set(-5,0,0);
+  rightHand.position.set(5,0,0);
+
+  scene.add(leftHand);
+  scene.add(rightHand);
+
+  // ── Particle system for burst ──
+  var partGeo=new THREE.BufferGeometry();
+  var partCount=200;
+  var pPos=new Float32Array(partCount*3);
+  var pVel=[];
+  for(var i=0;i<partCount;i++){
+    pPos[i*3]=0;pPos[i*3+1]=0;pPos[i*3+2]=0;
+    var ang=Math.random()*Math.PI*2;
+    var elev=(Math.random()-0.5)*Math.PI;
+    var spd=Math.random()*4+1;
+    pVel.push({
+      x:Math.cos(ang)*Math.cos(elev)*spd,
+      y:Math.sin(elev)*spd*0.6+1,
+      z:Math.sin(ang)*Math.cos(elev)*spd*0.5,
+      life:1
+    });
+  }
+  partGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+  var partMat=new THREE.PointsMaterial({
+    color:0xF5C842,size:0.12,transparent:true,opacity:0,
+    blending:THREE.AdditiveBlending,depthWrite:false
+  });
+  var particles=new THREE.Points(partGeo,partMat);
+  scene.add(particles);
+
+  // ── Gold ring halo ──
+  var haloGeo=new THREE.TorusGeometry(2.2,0.015,8,80);
+  var haloMat=new THREE.MeshBasicMaterial({
+    color:0xD4A017,transparent:true,opacity:0,
+    blending:THREE.AdditiveBlending
+  });
+  var halo=new THREE.Mesh(haloGeo,haloMat);
+  halo.rotation.x=Math.PI/2;
+  scene.add(halo);
+
+  var halo2=new THREE.Mesh(
+    new THREE.TorusGeometry(1.6,0.01,8,80),
+    new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,blending:THREE.AdditiveBlending})
+  );
+  halo2.rotation.x=Math.PI/2;
+  scene.add(halo2);
+
+  // ── Animation state ──
+  var clock=new THREE.Clock();
+  var phase='approach';  // approach → joined → held
+  var joinTime=null;
+  var textDone=false;
+  var burstDone=false;
+  var animId=null;
+  var totalTime=0;
+
+  function animate(){
+    animId=requestAnimationFrame(animate);
+    var dt=clock.getDelta();
+    totalTime+=dt;
+
+    // Camera subtle drift
+    camera.position.x=Math.sin(totalTime*0.3)*0.3;
+    camera.position.y=Math.cos(totalTime*0.2)*0.15+0.2;
+    camera.lookAt(0,0.3,0);
+
+    // Star slow rotation
+    starGeo.rotationY=(totalTime*0.01)||0;
+
+    if(phase==='approach'){
+      // Ease hands toward centre over 1.2s
+      var spd=dt*3.5;
+      var lx=leftHand.position.x, rx=rightHand.position.x;
+      leftHand.position.x += (-0.05 - lx)*spd;
+      rightHand.position.x += (0.05 - rx)*spd;
+
+      // Progress indicator
+      var dist=rightHand.position.x-leftHand.position.x;
+
+      if(dist<0.2){
+        phase='joined';
+        joinTime=totalTime;
+        leftHand.position.x=-0.05;
+        rightHand.position.x=0.05;
+      }
+    }
+
+    if(phase==='joined'||phase==='held'){
+      var jt=totalTime-(joinTime||totalTime);
+
+      // Burst particles on join
+      if(!burstDone){
+        burstDone=true;
+        partMat.opacity=1;
+        goldPoint.intensity=8;
+        haloMat.opacity=0.8;
+        halo2.material.opacity=0.5;
+      }
+
+      // Animate burst particles
+      var positions=partGeo.attributes.position.array;
+      for(var pi=0;pi<partCount;pi++){
+        var pv=pVel[pi];
+        if(pv.life>0){
+          pv.life-=dt*0.55;
+          positions[pi*3]+=pv.x*dt;
+          positions[pi*3+1]+=pv.y*dt;
+          positions[pi*3+2]+=pv.z*dt;
+          pv.y-=dt*2; // gravity
+        }
+      }
+      partGeo.attributes.position.needsUpdate=true;
+      partMat.opacity=Math.max(0,pVel[0].life);
+
+      // Halo expand and fade
+      halo.scale.set(1+jt*0.8,1+jt*0.8,1);
+      haloMat.opacity=Math.max(0,0.7-jt*0.5);
+      halo2.scale.set(1+jt*1.2,1+jt*1.2,1);
+      halo2.material.opacity=Math.max(0,0.4-jt*0.35);
+
+      // Gold light pulse
+      goldPoint.intensity=Math.max(0,8-jt*3)+2*Math.sin(totalTime*3);
+
+      // Gentle bow — hands tilt forward slightly
+      var bowAngle=-Math.PI/2 + Math.min(jt*0.6, 0.25);
+      leftHand.rotation.x=bowAngle;
+      rightHand.rotation.x=bowAngle;
+
+      // Subtle sway
+      var sway=Math.sin(totalTime*1.8)*0.025;
+      leftHand.rotation.z=0.12+sway;
+      rightHand.rotation.z=-0.12-sway;
+
+      // Finger subtle wiggle after join
+      if(jt>0.3){
+        leftHandData.fingers.forEach(function(fg,fi){
+          fg.rotation.x=-0.15+Math.sin(totalTime*2+fi*0.4)*0.03;
+        });
+        rightHandData.fingers.forEach(function(fg,fi){
+          fg.rotation.x=-0.15+Math.sin(totalTime*2+fi*0.4)*0.03;
+        });
+      }
+
+      if(jt>0.4&&!textDone){
+        textDone=true;
+        revealNamasteText(firstName);
+      }
+
+      phase='held';
+    }
+
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  // ── Dismiss ──
+  setTimeout(function(){
+    cancelAnimationFrame(animId);
+    renderer.dispose();
+    ns.classList.add('exiting');
+    setTimeout(function(){
+      ns.style.opacity='0';ns.style.transition='opacity .5s';
+      setTimeout(function(){
+        ns.classList.remove('show','exiting');
+        ns.style.opacity='';
+        container.innerHTML='';
+        // Clean up script tag
+        var s=document.querySelector('script[src*="three.min.js"]');
+        if(s)s.remove();
+        var g=document.getElementById('nsGreeting');
+        var u=document.getElementById('nsUsername');
+        if(g)g.innerHTML='';if(u)u.innerHTML='';
+      },500);
+    },300);
+  },5500);
+}
+
+function revealNamasteText(name){
+  var greetEl=document.getElementById('nsGreeting');
+  if(greetEl){
+    greetEl.innerHTML='';
+    var deva=document.createElement('div');
+    deva.className='ns-deva';
+    deva.textContent='नमस्ते';
+    greetEl.appendChild(deva);
+    var eng=document.createElement('div');
+    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
+    'NAMASTE'.split('').forEach(function(ch,i){
+      var s=document.createElement('span');
+      s.className='ns-char';
+      s.textContent=ch;
+      s.style.animationDelay=(.08+i*.07)+'s';
+      if(i===0||i===6){
+        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
+        s.style.webkitBackgroundClip='text';
+        s.style.webkitTextFillColor='transparent';
+        s.style.backgroundClip='text';
+      }
+      eng.appendChild(s);
+    });
+    greetEl.appendChild(eng);
+  }
+  var unEl=document.getElementById('nsUsername');
+  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
+  var pctEl=document.getElementById('nsPercent');
+  var pct=0;
+  var pTimer=setInterval(function(){
+    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
+    if(pctEl)pctEl.textContent=pct+'%';
+    if(pct>=100)clearInterval(pTimer);
+  },32);
+  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready \u2713'];
+  var mi=0,stEl=document.getElementById('nsStatusTxt');
+  var sTimer=setInterval(function(){
+    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
+    if(mi>=msgs.length-1)clearInterval(sTimer);
+  },600);
+  fireConfetti();
+}
+
+// 2D canvas fallback if Three.js fails to load
+function buildNamasteFallback(container, ns, firstName){
+  var canvas=document.createElement('canvas');
+  canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  container.appendChild(canvas);
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height,CX=W/2,CY=H/2;
+  var t0=Date.now(),animId=null;
+  var stars=[];
+  for(var i=0;i<160;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,ph:Math.random()*Math.PI*2});
+  function frame(){
+    var el=(Date.now()-t0)/1000;
+    ctx.clearRect(0,0,W,H);
+    var bg=ctx.createRadialGradient(CX,CY*.4,0,CX,CY*.4,Math.max(W,H)*.8);
+    bg.addColorStop(0,'rgba(5,8,20,1)');bg.addColorStop(1,'rgba(0,0,0,1)');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    var pulse=.5+.5*Math.sin(el*2.2);
+    var cg=ctx.createRadialGradient(CX,CY*.4,0,CX,CY*.4,260);
+    cg.addColorStop(0,'rgba(212,160,23,'+(0.1+pulse*.06)+')');cg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
+    stars.forEach(function(s){s.ph+=.018;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+(0.2+0.5*Math.sin(s.ph))+')';ctx.fill();});
+    animId=requestAnimationFrame(frame);
+  }
+  frame();
+  setTimeout(function(){
+    revealNamasteText(firstName);
+    setTimeout(function(){
+      cancelAnimationFrame(animId);
+      ns.classList.add('exiting');
+      setTimeout(function(){ns.style.opacity='0';ns.style.transition='opacity .5s';setTimeout(function(){ns.classList.remove('show','exiting');ns.style.opacity='';container.innerHTML='';},500);},300);
+    },4500);
+  },400);
+}
 
 // ═══════════════════════════════
 // AUTH
