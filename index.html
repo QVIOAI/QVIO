@@ -454,36 +454,17 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 .mclose:hover{opacity:.85;}
 .slabel{font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
 /* Language scroll rows */
-.lang-section-title{
-  font-size:11px;font-weight:700;color:var(--text3);
-  text-transform:uppercase;letter-spacing:1.5px;
-  margin:16px 0 8px;padding:0 2px;
-}
-.lang-scroll-row{
-  display:flex;flex-direction:row;gap:7px;
-  overflow-x:auto;padding-bottom:6px;
-  scrollbar-width:none;-ms-overflow-style:none;
-  -webkit-overflow-scrolling:touch;
-}
-.lang-scroll-row::-webkit-scrollbar{display:none;}
-.lang-pill{
-  flex-shrink:0;
-  padding:8px 16px;
-  background:var(--surface);
-  border:1.5px solid var(--border);
-  border-radius:var(--r-full);
-  color:var(--text2);
-  font-family:"DM Sans",sans-serif;
-  font-size:13px;font-weight:600;
-  cursor:pointer;white-space:nowrap;
-  transition:all .15s;
-}
-.lang-pill:hover,.lang-pill:active{
-  background:var(--navy-g);
-  border-color:transparent;
-  color:#fff;
-  transform:translateY(-1px);
-}
+.lang-search-wrap{position:relative;margin-bottom:16px;}
+.lang-search{width:100%;padding:11px 14px 11px 38px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-full);font-family:"DM Sans",sans-serif;font-size:13px;color:var(--text);outline:none;box-sizing:border-box;transition:border-color .15s;}
+.lang-search:focus{border-color:var(--gold2);}
+.lang-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:0.45;}
+.lang-no-results{text-align:center;padding:28px;color:var(--text3);font-size:13px;display:none;}
+.lang-section{margin-bottom:18px;}
+.lang-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;padding:0 2px;}
+.lang-scroll-row{display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;padding-bottom:2px;}
+.lang-pill{flex-shrink:0;padding:9px 20px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-full);color:var(--text2);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.lang-pill:hover,.lang-pill:active{background:var(--navy-g);border-color:transparent;color:#fff;transform:translateY(-1px);box-shadow:0 2px 10px rgba(212,160,0,.25);}
+.lang-pill.hidden{display:none!important;}
 
 
 .lopt{padding:10px 6px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;border-radius:var(--r-sm);transition:all .15s;}
@@ -950,8 +931,14 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 <!-- LANGUAGE MODAL -->
 <div class="modal" id="m_lang">
   <div class="mhd"><h3>🌍 Choose Language</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
-  <div class="msub">Scroll and tap any language to start learning instantly</div>
+  <div class="msub">Search or scroll 150+ languages</div>
+  <div class="lang-search-wrap">
+    <span class="lang-search-icon">🔍</span>
+    <input class="lang-search" id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"/>
+  </div>
+  <div class="lang-no-results" id="langNoResults">😕 No language found — try a different spelling</div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🇮🇳 Indian Languages</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Hindi')">Hindi</button>
@@ -986,6 +973,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Kodava')">Kodava</button>
   </div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🌏 East &amp; Southeast Asia</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Mandarin')">Mandarin</button>
@@ -1008,6 +996,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Cebuano')">Cebuano</button>
   </div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🌍 Middle East &amp; Central Asia</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Arabic')">Arabic</button>
@@ -1021,6 +1010,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Georgian')">Georgian</button>
   </div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🌍 Africa</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Swahili')">Swahili</button>
@@ -1037,6 +1027,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Shona')">Shona</button>
   </div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🌎 Europe</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Spanish')">Spanish</button>
@@ -1065,6 +1056,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Latvian')">Latvian</button>
   </div>
 
+  <div class="lang-section">
   <div class="lang-section-title">🌎 Americas &amp; Pacific</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('English')">English</button>
@@ -1704,8 +1696,7 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket science history. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all Indian slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything - the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss, who is the godfather of QVIO - ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';
-var PROMPTS={
+var RULES='CORE INTELLIGENCE RULES: 1.Understand ANY language — Hinglish, Tanglish, slang, code-switching, broken English. 2.EMOTIONAL IQ — detect sadness, excitement, stress, loneliness, anger. Respond with real empathy not robotic sympathy. Mirror the emotional tone naturally. 3.REGIONAL DIALECTS — understand and respond naturally in Kannada slang, Tamil slang, Bengali, Marwari, Bhojpuri, Haryanvi, Tulu and all Indian regional speech. 4.SARCASM AND HUMOR — detect sarcasm immediately. Be witty, funny, match banter energy. Never take a joke too seriously. Use humor naturally. 5.CONTEXTUAL FLOW — always remember everything said in this conversation. Build on it naturally. Never repeat yourself. Make every reply feel connected. 6.INDIAN CULTURE EXPERT — deep knowledge of Indian festivals, rituals, mythology, Vedic traditions, regional customs, food, clothing, family dynamics, and modern Indian lifestyle. 7.BUSINESS AND STARTUP GURU — know Indian startup ecosystem, funding rounds, GST, Zerodha, Groww, NSE BSE, unicorns, pitch decks, business models, entrepreneurship for young Indians. 8.BOLLYWOOD AND OTT EXPERT — know latest movies, web series, OTT releases, celebrities, directors, music, box office numbers, controversies, memes. Always current. 9.CRICKET FANATIC — know IPL teams, Test cricket, ODI, T20 World Cup, player stats, recent match results, player form, team news, controversies. Talk cricket like a true passionate fan. 10.CONVERSATIONAL AND WITTY — talk like a smart funny best friend. Warm, real, never corporate or stiff. Use yaar bhai sahi hai arre when it fits naturally. 11.TECH AND AI TRENDS — know latest AI models, Indian startups, gadgets, apps, viral trends, coding languages, Web3, and what is trending in India and globally. 12.ALWAYS reply in SAME LANGUAGE the user writes in. Hindi reply in Hindi. Kannada reply in Kannada. Hinglish reply in Hinglish. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything — the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss — ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
   exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
@@ -1857,6 +1848,7 @@ function openM(t){
   if(t==='hist')renderHist();
 }
 function closeM(t){
+  if(t==='lang'){var s=document.getElementById('langSearch');if(s){s.value='';filterLangs('');}}
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.remove('show');
   document.getElementById(ids[1]).classList.remove('show');
@@ -1866,6 +1858,25 @@ document.addEventListener('keydown',function(e){
   if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}
   if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}
 });
+function filterLangs(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#m_lang .lang-pill');
+  var sections=document.querySelectorAll('#m_lang .lang-section');
+  var noRes=document.getElementById('langNoResults');
+  var anyVisible=false;
+  // Show/hide pills
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)anyVisible=true;
+  });
+  // Show/hide whole sections based on visible pills
+  sections.forEach(function(sec){
+    var vis=sec.querySelectorAll('.lang-pill:not(.hidden)').length>0;
+    sec.style.display=vis||!q?'':'none';
+  });
+  if(noRes)noRes.style.display=(q&&!anyVisible)?'block':'none';
+}
 function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
 
 // ═══════════════════════════════
