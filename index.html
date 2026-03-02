@@ -1197,6 +1197,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="h-actions">
     <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
     <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
+    <button class="hico" id="focusBtn" onclick="toggleFocus()" title="Focus" style="display:none;">⛶</button>
     <button class="hico" onclick="toggleToolsPanel()" id="toolsBtn" title="Tools">⚡</button>
     <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
     <div class="uchip" onclick="openM('prof')">
@@ -1624,8 +1625,8 @@ function updateStreak(){
     stats.lastDay=today;stats.sessions++;saveStats();
     if(stats.streak>1&&stats.streak%7===0){setTimeout(fireConfetti,500);showToast('🔥 '+stats.streak+' day streak!');}
   }
-  document.getElementById('streakNum').textContent=stats.streak;
-  document.getElementById('streakBig').textContent=stats.streak;
+  var sn=document.getElementById('streakNum');if(sn)sn.textContent=stats.streak;
+  var sb=document.getElementById('streakBig');if(sb)sb.textContent=stats.streak;
   renderStreakDays();
 }
 function renderStreakDays(){
@@ -1726,10 +1727,10 @@ function updateMemUI(){
   var n=memory.name||'',f=memory.facts||[];
   if(n||f.length){
     var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';
-    bar.textContent=t;bar.classList.add('show');
+    if(bar){bar.textContent=t;bar.classList.add('show');}
     if(ban){ban.textContent=t;ban.classList.add('show');}
   }else{
-    bar.classList.remove('show');
+    if(bar)bar.classList.remove('show');
     if(ban)ban.classList.remove('show');
   }
 }
@@ -1940,7 +1941,7 @@ function checkScroll(){
   var c=document.getElementById('chat'),btn=document.getElementById('scrollBtn');
   btn.classList.toggle('show',c.scrollHeight-c.scrollTop-c.clientHeight>160);
 }
-document.getElementById('chat').addEventListener('scroll',checkScroll);
+var _chatEl=document.getElementById('chat');if(_chatEl)_chatEl.addEventListener('scroll',checkScroll);
 function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
 
 // ═══════════════════════════════
@@ -2329,6 +2330,7 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
 // ═══════════════════════════════
 // INIT — runs everything on load
 // ═══════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
 (function init(){
   // Apply saved theme immediately
   var th=S.g('theme')||'auto';
@@ -2338,7 +2340,7 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
   updateMemUI();
   initParticles();
   rotateTip();setInterval(rotateTip,8000);
-  document.getElementById('challengeTxt').textContent=CH[new Date().getDay()%CH.length];
+  var _ct=document.getElementById('challengeTxt');if(_ct)_ct.textContent=CH[new Date().getDay()%CH.length];
   setInterval(function(){if((S.g('theme')||'auto')==='auto')autoTheme();},60000);
   // Delayed inits
   setTimeout(function(){
@@ -2347,9 +2349,7 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
     showToast('👑 Welcome to QVIO Premium!');
   },600);
 })();
-
-// ═══════════════════════════════════════════════════
-// 20 NEW FEATURES JS — by Varun, CEO & Godfather QVIO
+}); // DOMContentLoaded
 // ═══════════════════════════════════════════════════
 
 // Extend MAP for new modals
@@ -2787,7 +2787,7 @@ setTimeout(function(){
   var d=S.g('draft');
   if(d){document.getElementById('inp').value=d;onInp(document.getElementById('inp'));showToast('📝 Draft restored!');}
 },1500);
-document.getElementById('inp').addEventListener('blur',function(){S.s('draft','');});
+var _inpEl=document.getElementById('inp');if(_inpEl)_inpEl.addEventListener('blur',function(){S.s('draft','');});
 
 // ── FEATURE 19: MESSAGE REACTIONS ────────────────────
 // Already have like/dislike — extended version handled in addMsg
@@ -3171,5 +3171,319 @@ setTimeout(function(){
   });
 },3000);
 </script>
+
+<div class="modal" id="m_mem">
+  <div class="mhd"><h3>🧠 Memory</h3><button class="mx" onclick="closeM('mem')">✕</button></div>
+  <div class="msub">QVIO remembers you across every session</div>
+  <div id="memList"></div>
+  <div class="mrow"><input class="minp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/><button class="madd" onclick="addMem()">Save</button></div>
+  <button class="mclose" onclick="closeM('mem')">Done</button>
+</div>
+
+<!-- SUPPORT -->
+
+<!-- MODALS FROM V4 -->
+<div class="modal" id="m_stats">
+  <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
+  <div class="msub">Your QVIO journey at a glance</div>
+  <div class="stat-grid" id="statGrid"></div>
+  <div class="slabel">Achievements</div>
+  <div class="badge-grid" id="badgeGrid"></div>
+  <button class="mclose" onclick="closeM('stats')">Close</button>
+</div>
+
+<!-- STREAK -->
+<div class="modal" id="m_streak">
+  <div class="mhd"><h3>🔥 Daily Streak</h3><button class="mx" onclick="closeM('streak')">✕</button></div>
+  <div class="streak-center">
+    <span class="streak-big">🔥</span>
+    <span class="streak-num" id="streakBig">0</span>
+    <div style="font-size:14px;color:var(--text2);margin-top:8px;">day streak — keep it going!</div>
+    <div class="sdays" id="streakDays"></div>
+  </div>
+  <button class="mclose" onclick="closeM('streak')">Close</button>
+</div>
+
+<!-- THEME -->
+<div class="modal" id="m_theme">
+  <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
+  <div class="msub">Customize QVIO to your taste</div>
+  <div class="slabel">Theme</div>
+  <div class="theme-row">
+    <div class="tho" onclick="setTh('light')">☀️ Light</div>
+    <div class="tho" onclick="setTh('dark')">🌙 Dark</div>
+    <div class="tho" onclick="setTh('auto')">🌓 Auto</div>
+  </div>
+  <div class="slabel">Font Size</div>
+  <div class="theme-row">
+    <div class="tho" onclick="setFont('small')">A− Small</div>
+    <div class="tho on" onclick="setFont('normal')">A Normal</div>
+    <div class="tho" onclick="setFont('large')">A+ Large</div>
+  </div>
+  <button class="mclose" onclick="closeM('theme')">Done</button>
+</div>
+
+<!-- GALLERY -->
+<div class="modal" id="m_gal">
+  <div class="mhd"><h3>🎨 Image Gallery</h3><button class="mx" onclick="closeM('gal')">✕</button></div>
+  <div class="msub">All your AI-generated masterpieces</div>
+  <div class="img-gal" id="galGrid"></div>
+  <button class="mclose" onclick="closeM('gal')">Close</button>
+</div>
+
+<!-- PROFILE -->
+<div class="modal" id="m_prof">
+  <div class="mhd"><h3>My Profile</h3><button class="mx" onclick="closeM('prof')">✕</button></div>
+  <div class="prof-top">
+    <div class="prof-av" id="profAv">?</div>
+    <div class="prof-nm" id="profName">Guest</div>
+    <div class="prof-em" id="profEmail">Not signed in</div>
+  </div>
+  <div class="pro-up" onclick="openM('pro')">
+    <h4>⭐ Upgrade to QVIO Pro</h4>
+    <p>₹199/month — Unlimited messages & priority AI</p>
+  </div>
+  <button class="signout" onclick="doSignOut()">Sign Out</button>
+  <button class="mclose" onclick="closeM('prof')">Close</button>
+</div>
+
+<!-- HISTORY -->
+<div class="modal" id="m_hist">
+  <div class="mhd"><h3>💬 Chat History</h3><button class="mx" onclick="closeM('hist')">✕</button></div>
+  <div class="msub">Your saved conversations</div>
+  <div class="hl" id="histList"></div>
+  <button class="mclose" onclick="closeM('hist')">Close</button>
+</div>
+
+<!-- IMAGE VIEWER -->
+<div class="modal" id="m_imgv" style="max-width:600px;">
+  <div class="mhd"><h3>🖼 Image</h3><button class="mx" onclick="closeM('imgv')">✕</button></div>
+  <img id="imgVSrc" style="width:100%;border-radius:var(--r);border:2px solid var(--border2);margin-top:10px;"/>
+  <a id="imgVDl" download="qvio.jpg" class="img-dl" style="margin-top:12px;">⬇ Download</a>
+  <button class="mclose" onclick="closeM('imgv')">Close</button>
+</div>
+
+<!-- PRO MODAL -->
+<div class="modal" id="m_pro">
+  <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
+  <div class="msub">Unlock the full power of QVIO</div>
+  <div class="pro-feat">
+    <div class="pf"><span class="pf-icon">♾️</span>Unlimited messages</div>
+    <div class="pf"><span class="pf-icon">⚡</span>Priority AI speed</div>
+    <div class="pf"><span class="pf-icon">🧠</span>Unlimited memory</div>
+    <div class="pf"><span class="pf-icon">🎨</span>4K image generation</div>
+    <div class="pf"><span class="pf-icon">💬</span>Unlimited chat history</div>
+    <div class="pf"><span class="pf-icon">🔒</span>Private & secure</div>
+    <div class="pf"><span class="pf-icon">🌍</span>All 100+ languages</div>
+    <div class="pf"><span class="pf-icon">🚫</span>No rate limits ever</div>
+  </div>
+  <div class="pro-price"><div class="price">₹199</div><div class="per">per month · Cancel anytime</div></div>
+  <div class="sec-warn">🔒 Payments coming soon via Razorpay · UPI · Cards</div>
+  <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
+</div>
+
+
+<!-- NEW FEATURE OVERLAYS -->
+<div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
+<div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
+<div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
+<div class="overlay" id="o_mood" onclick="closeM('mood')"></div>
+<div class="overlay" id="o_wpm" onclick="closeM('wpm')"></div>
+<div class="overlay" id="o_news" onclick="closeM('news')"></div>
+<div class="overlay" id="o_emoji" onclick="closeM('emoji')"></div>
+<div class="overlay" id="o_cv" onclick="closeM('cv')"></div>
+<div class="overlay" id="o_notes" onclick="closeM('notes')"></div>
+<div class="overlay" id="o_age" onclick="closeM('age')"></div>
+<div class="overlay" id="o_bmi" onclick="closeM('bmi')"></div>
+<div class="overlay" id="o_qotd" onclick="closeM('qotd')"></div>
+<div class="overlay" id="o_word" onclick="closeM('word')"></div>
+<div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
+
+<!-- TODO LIST -->
+<div class="modal" id="m_todo">
+  <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
+  <div class="msub">Your personal task manager</div>
+  <div class="mrow"><input class="minp" id="todoInp" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"/><button class="madd" onclick="addTodo()">Add</button></div>
+  <div id="todoList" style="margin-top:12px;max-height:320px;overflow-y:auto;"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="mclose" style="margin-top:0;" onclick="clearDoneTodos()">Clear Done</button>
+    <button class="mclose" style="margin-top:0;" onclick="closeM('todo')">Done</button>
+  </div>
+</div>
+
+<!-- TIMER / STOPWATCH -->
+<div class="modal" id="m_timer">
+  <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
+  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
+    <button class="tbtn mode-btn on" id="timerModeStop" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
+    <button class="tbtn mode-btn" id="timerModeTimer" onclick="switchTimerMode('countdown')">Countdown</button>
+    <button class="tbtn mode-btn" id="timerModePomodoro" onclick="switchTimerMode('pomodoro')">🍅 Pomodoro</button>
+  </div>
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+  <div id="pomodoroLabel" style="text-align:center;font-size:13px;color:var(--text3);margin-top:-8px;display:none;"></div>
+  <div id="countdownSet" style="display:none;text-align:center;margin-bottom:8px;">
+    <input type="number" id="cdMin" placeholder="Min" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="99">
+    <span style="font-size:20px;color:var(--text3);margin:0 4px;">:</span>
+    <input type="number" id="cdSec" placeholder="Sec" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="59">
+  </div>
+  <div class="timer-btns">
+    <button class="tbtn start" id="timerStartBtn" onclick="timerAction('start')">▶ Start</button>
+    <button class="tbtn stop" id="timerStopBtn" onclick="timerAction('stop')" style="display:none;">⏸ Pause</button>
+    <button class="tbtn reset" onclick="timerAction('reset')">↺ Reset</button>
+    <button class="tbtn mode-btn" onclick="timerAction('lap')" id="lapBtn">🏁 Lap</button>
+  </div>
+  <div class="timer-laps" id="timerLaps"></div>
+  <button class="mclose" onclick="closeM('timer')">Close</button>
+</div>
+
+<!-- CURRENCY CONVERTER -->
+<div class="modal" id="m_currency">
+  <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
+  <div class="msub">Live INR rates (approximate)</div>
+  <input type="number" class="curr-inp" id="currAmt" placeholder="Enter amount in ₹ INR" oninput="convertCurrency(this.value)">
+  <div id="currList"></div>
+  <button class="mclose" onclick="closeM('currency')">Close</button>
+</div>
+
+<!-- MOOD TRACKER -->
+<div class="modal" id="m_mood">
+  <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
+  <div class="msub">How are you feeling today?</div>
+  <div class="mood-grid">
+    <div class="mood-btn" onclick="logMood('😄','Amazing')"><span class="mood-emoji">😄</span><span class="mood-lbl">Amazing</span></div>
+    <div class="mood-btn" onclick="logMood('😊','Happy')"><span class="mood-emoji">😊</span><span class="mood-lbl">Happy</span></div>
+    <div class="mood-btn" onclick="logMood('😐','Okay')"><span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span></div>
+    <div class="mood-btn" onclick="logMood('😔','Sad')"><span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span></div>
+    <div class="mood-btn" onclick="logMood('😤','Stressed')"><span class="mood-emoji">😤</span><span class="mood-lbl">Stressed</span></div>
+  </div>
+  <div class="slabel">Recent Moods</div>
+  <div class="mood-hist" id="moodHist"></div>
+  <button class="mclose" onclick="closeM('mood')">Close</button>
+</div>
+
+<!-- TYPING SPEED TEST -->
+<div class="modal" id="m_wpm">
+  <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
+  <div class="msub">Test your WPM — how fast do you type?</div>
+  <div class="wpm-text-area" id="wpmText"></div>
+  <input class="wpm-inp" id="wpmInp" placeholder="Start typing here..." oninput="wpmCheck(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
+  <div class="wpm-stats" id="wpmStats"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <button class="mclose" style="margin-top:0;" onclick="startWPM()">New Test</button>
+    <button class="mclose" style="margin-top:0;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('wpm')">Close</button>
+  </div>
+</div>
+
+<!-- QUICK NEWS -->
+<div class="modal" id="m_news">
+  <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
+  <div class="msub">Ask QVIO about any of these stories</div>
+  <div id="newsList"></div>
+  <button class="mclose" onclick="closeM('news')">Close</button>
+</div>
+
+<!-- EMOJI PICKER -->
+<div class="modal" id="m_emoji">
+  <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
+  <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
+  <div class="emoji-cats" id="emojiCats"></div>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <button class="mclose" onclick="closeM('emoji')">Close</button>
+</div>
+
+<!-- CV / RESUME BUILDER -->
+<div class="modal" id="m_cv">
+  <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
+  <div class="msub">Fill in your details and AI will write your CV</div>
+  <div class="cv-form">
+    <div class="cv-section-title">Personal Info</div>
+    <input class="cv-inp" id="cvName" placeholder="Full Name">
+    <input class="cv-inp" id="cvRole" placeholder="Target Role (e.g. Software Engineer)">
+    <input class="cv-inp" id="cvEmail" placeholder="Email">
+    <input class="cv-inp" id="cvPhone" placeholder="Phone">
+    <input class="cv-inp" id="cvCity" placeholder="City">
+    <div class="cv-section-title">Education</div>
+    <textarea class="cv-inp" id="cvEdu" placeholder="e.g. B.Tech Computer Science, IIT Delhi, 2024" rows="2"></textarea>
+    <div class="cv-section-title">Experience</div>
+    <textarea class="cv-inp" id="cvExp" placeholder="e.g. Intern at TCS, built payment gateway, 2023" rows="2"></textarea>
+    <div class="cv-section-title">Skills</div>
+    <input class="cv-inp" id="cvSkills" placeholder="e.g. Python, React, SQL, Leadership">
+  </div>
+  <button class="mclose" onclick="buildCV()">✨ Generate My CV with AI →</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
+</div>
+
+<!-- QUICK NOTES -->
+<div class="modal" id="m_notes">
+  <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
+  <div class="msub">Jot down anything instantly</div>
+  <div class="mrow">
+    <textarea class="minp" id="noteInp" placeholder="Write your note here..." style="resize:none;height:70px;"></textarea>
+    <button class="madd" onclick="addNote()">Save</button>
+  </div>
+  <div id="noteList" style="margin-top:12px;max-height:300px;overflow-y:auto;"></div>
+  <button class="mclose" onclick="closeM('notes')">Done</button>
+</div>
+
+<!-- AGE CALCULATOR -->
+<div class="modal" id="m_age">
+  <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
+  <div class="msub">Find exact age in years, months and days</div>
+  <div class="slabel">Date of Birth</div>
+  <input type="date" class="cv-inp" id="ageDate" onchange="calcAge()" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+  <div class="age-result" id="ageResult"></div>
+  <button class="mclose" onclick="closeM('age')">Close</button>
+</div>
+
+<!-- BMI CALCULATOR -->
+<div class="modal" id="m_bmi">
+  <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
+  <div class="msub">Body Mass Index — quick health check</div>
+  <div style="display:flex;gap:10px;margin-bottom:10px;">
+    <div style="flex:1;">
+      <div class="cv-section-title">Weight (kg)</div>
+      <input type="number" id="bmiW" class="curr-inp" placeholder="70" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+    <div style="flex:1;">
+      <div class="cv-section-title">Height (cm)</div>
+      <input type="number" id="bmiH" class="curr-inp" placeholder="175" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+  </div>
+  <div class="bmi-result" id="bmiResult"></div>
+  <button class="mclose" onclick="closeM('bmi')">Close</button>
+</div>
+
+<!-- QUOTE OF THE DAY -->
+<div class="modal" id="m_qotd">
+  <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
+  <div class="msub">Daily wisdom to inspire your journey</div>
+  <div id="qotdWrap"></div>
+  <button class="mclose" onclick="newQotd()">Next Quote ✨</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
+</div>
+
+<!-- WORD OF THE DAY -->
+<div class="modal" id="m_word">
+  <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
+  <div class="msub">Expand your vocabulary daily</div>
+  <div id="wordWrap"></div>
+  <button class="mclose" onclick="newWord()">Next Word 🔄</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
+</div>
+
+<!-- LIVE POLL -->
+<div class="modal" id="m_poll">
+  <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
+  <div class="msub">Create a poll and share with friends</div>
+  <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
+  <input class="cv-inp" id="pollO1" placeholder="Option 1" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO2" placeholder="Option 2" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO3" placeholder="Option 3 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO4" placeholder="Option 4 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:10px;">
+  <div id="pollResult" style="display:none;"></div>
+  <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
+</div>
+
 </body>
 </html>
