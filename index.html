@@ -1484,11 +1484,7 @@ function initFirebase(){
       if(u){currentUser=u;updateUserUI(u);showNamaste(u);}
     });
     console.log('✅ Firebase ready!');
-  }catch(e){
-    console.warn('Firebase init error:',e);
-    // Still allow guest usage even if Firebase fails
-    fbAuth=null;
-  }
+  }catch(e){console.warn('Firebase error:',e);}
 }
 // Init immediately — Firebase SDK already loaded in <head>
 initFirebase();
@@ -1558,145 +1554,1271 @@ function showNamaste(user){
   },4500);
 }
 
-function revealNamasteText(name){
-  var greetEl=document.getElementById('nsGreeting');
-  if(greetEl){
-    greetEl.innerHTML='';
-    var deva=document.createElement('div');
-    deva.className='ns-deva';
-    deva.textContent='नमस्ते';
-    greetEl.appendChild(deva);
-    var eng=document.createElement('div');
-    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
-    'NAMASTE'.split('').forEach(function(ch,i){
-      var s=document.createElement('span');
-      s.className='ns-char';s.textContent=ch;
-      s.style.animationDelay=(.05+i*.07)+'s';
-      if(i===0||i===6){
-        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
-        s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
-      }
-      eng.appendChild(s);
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+function signInGoogle(){
+  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(e){
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      else showToast('Error: '+e.message);
     });
-    greetEl.appendChild(eng);
+}
+function signInEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.signInWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function signUpEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.createUserWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function doSignOut(){
+  if(fbAuth)fbAuth.signOut();
+  currentUser=null;
+  var ls=document.getElementById('loginScreen');
+  ls.style.cssText='display:flex;opacity:1;';
+  closeM('prof');
+  showToast('Signed out');
+}
+function skipLogin(){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  showToast('👑 Welcome to QVIO Premium!');
+}
+function updateUserUI(user){
+  var nm=user.displayName||user.email||'User';
+  document.getElementById('uNm').textContent=nm.split(' ')[0];
+  document.getElementById('profName').textContent=nm;
+  document.getElementById('profEmail').textContent=user.email||'';
+  if(user.photoURL){
+    document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';
+    document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';
+  }else{
+    document.getElementById('uAv').textContent=nm[0].toUpperCase();
+    document.getElementById('profAv').textContent=nm[0].toUpperCase();
   }
-  var unEl=document.getElementById('nsUsername');
-  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
-  var pctEl=document.getElementById('nsPercent');
-  var pct=0;
-  var pTimer=setInterval(function(){
-    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
-    if(pctEl)pctEl.textContent=pct+'%';
-    if(pct>=100)clearInterval(pTimer);
-  },32);
-  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
-  var mi=0,stEl=document.getElementById('nsStatusTxt');
-  var sTimer=setInterval(function(){
-    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
-    if(mi>=msgs.length-1)clearInterval(sTimer);
-  },600);
-  fireConfetti();
+  if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
+  updateMemUI();
 }
 
+// ═══════════════════════════════
+// STREAK
+// ═══════════════════════════════
+function updateStreak(){
+  var today=new Date().toDateString();
+  if(stats.lastDay!==today){
+    var yest=new Date();yest.setDate(yest.getDate()-1);
+    stats.streak=(stats.lastDay===yest.toDateString())?stats.streak+1:1;
+    if(stats.streak>stats.longest)stats.longest=stats.streak;
+    stats.lastDay=today;stats.sessions++;saveStats();
+    if(stats.streak>1&&stats.streak%7===0){setTimeout(fireConfetti,500);showToast('🔥 '+stats.streak+' day streak!');}
+  }
+  document.getElementById('streakNum').textContent=stats.streak;
+  document.getElementById('streakBig').textContent=stats.streak;
+  renderStreakDays();
+}
+function renderStreakDays(){
+  var el=document.getElementById('streakDays');if(!el)return;
+  var h='';
+  for(var i=6;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);
+    var done=i===0&&stats.lastDay===new Date().toDateString();
+    h+='<div class="sd'+(done?' done':'')+'">'+d.toLocaleDateString('en',{weekday:'short'}).slice(0,2)+'</div>';
+  }
+  el.innerHTML=h;
+}
 
-// ── API Key Health Check ──
-// Runs once on load — shows a warning toast if key is invalid/expired
-setTimeout(function(){
-  fetch('https://api.groq.com/openai/v1/models',{
-    headers:{'Authorization':'Bearer '+GROQ_KEY}
-  }).then(function(r){return r.json();}).then(function(d){
-    if(d.error){
-      var code=d.error.code||'';
-      var msg=d.error.message||'';
-      if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
-        showToast('⚠️ Groq API key is invalid or expired — AI won\'t work. Get a new key at console.groq.com');
-        console.error('QVIO KEY EXPIRED:',msg);
-      }
-    }else{
-      console.log('✅ Groq API key is valid');
+// ═══════════════════════════════
+// CONFETTI
+// ═══════════════════════════════
+function fireConfetti(){
+  var cols=['#D4A017','#F0C842','#0D1B3E','#162554','#FFFFFF','#FFD966','#B8860B'];
+  for(var i=0;i<90;i++){
+    (function(i){setTimeout(function(){
+      var c=document.createElement('div');c.className='confetti';
+      var sz=Math.random()*9+3;
+      c.style.cssText='left:'+Math.random()*100+'vw;background:'+cols[~~(Math.random()*cols.length)]+';width:'+sz+'px;height:'+sz+'px;border-radius:'+(Math.random()>.5?'50%':'3px')+';animation-duration:'+(Math.random()*2+2)+'s;';
+      document.body.appendChild(c);setTimeout(function(){c.remove();},4000);
+    },i*22);})(i);
+  }
+}
+
+// ═══════════════════════════════
+// THEMES
+// ═══════════════════════════════
+function autoTheme(){
+  var h=new Date().getHours(),dark=h<6||h>=20;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
+}
+function setTh(t){
+  S.s('theme',t);
+  if(t==='auto')autoTheme();
+  else{document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}
+  closeM('theme');
+}
+function cycleTh(){setTh(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+function setFont(s){
+  var m={small:'13px',normal:'14.5px',large:'16.5px'};
+  document.querySelectorAll('.bubble,#inp').forEach(function(el){el.style.fontSize=m[s];});
+  document.querySelectorAll('.tho').forEach(function(t){t.classList.remove('on');});
+  event.target.classList.add('on');
+}
+
+// ═══════════════════════════════
+// TIPS
+// ═══════════════════════════════
+var TIPS=['💡 Type "create image:" to generate 4K AI art','🎯 Exam Mode — deep JEE NEET UPSC CBSE knowledge','🧠 Say "my name is [name]" — QVIO remembers you forever','⌨️ Enter to send · Shift+Enter for new line','🔊 Click 🔊 on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar','💾 Export button saves your full conversation','🔥 Use QVIO every day to build your streak!','🌍 QVIO understands Hinglish, Tanglish and all slang','🔢 Built-in calculator — click 🔢 anytime','🌙 Auto theme switches to dark mode after 8PM','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides buttons for pure conversation','💬 Chat History saves your last 20 conversations','🎨 Image Gallery stores all 50 AI-generated images','📱 Install QVIO on your phone for full app experience','⚡ QVIO responds in under 2 seconds worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws simply','✈️ Travel Mode plans trips and suggests hidden gems'];
+var tipI=0;
+function rotateTip(){
+  var b=document.getElementById('tipBox');if(!b)return;
+  b.style.opacity='0';
+  setTimeout(function(){b.textContent=TIPS[tipI%TIPS.length];tipI++;b.style.opacity='1';},400);
+}
+
+// ═══════════════════════════════
+// PROMPTS
+// ═══════════════════════════════
+var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket science history. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all Indian slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything - the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss, who is the godfather of QVIO - ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';
+var PROMPTS={
+  casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
+  student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
+  exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
+  pro:'You are QVIO Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. No fluff ever.',
+  business:'You are QVIO Business, senior business advisor for Indian SMEs and startups. '+RULES+'Business plans pitch decks GST growth hacks.',
+  spiritual:'You are QVIO Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism.',
+  code:'You are QVIO Code, an elite full-stack engineer. '+RULES+'Always use code blocks. Explain every line.',
+  math:'You are QVIO Math, a brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level.',
+  hindi:'Aap QVIO hain, India ka number one premium AI dost! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do.',
+  kannada:'Neevu QVIO, India mattu Karnataka pura premium smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi naturally.',
+  quiz:'You are QVIO Quiz Master, the most exciting quiz host in India! '+RULES+'ONE question at a time with 4 options A B C D. Keep score.',
+  translate:'You are QVIO Translator, the worlds most precise multilingual expert. '+RULES+'100+ languages. Show: Translation, Pronunciation, Cultural note.',
+  write:'You are QVIO Writer, a world class author and copywriter. '+RULES+'Stories poems emails essays captions CVs scripts speeches.',
+  news:'You are QVIO News, a sharp balanced news analyst. '+RULES+'Clear simple language. Balanced perspectives always.',
+  career:'You are QVIO Career Coach for Indian professionals and students. '+RULES+'Resume writing interview prep salary negotiation LinkedIn.',
+  health:'You are QVIO Health Advisor providing general wellness information. '+RULES+'ALWAYS recommend seeing a real doctor for medical issues.',
+  legal:'You are QVIO Legal Guide explaining Indian laws simply. '+RULES+'Always recommend consulting a qualified lawyer for serious matters.',
+  recipe:'You are QVIO Chef with mastery of all Indian and world cuisines. '+RULES+'Clear recipes with ingredients steps timing chef tips.',
+  travel:'You are QVIO Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places local food transport budgets.',
+};
+
+// ═══════════════════════════════
+// MEMORY
+// ═══════════════════════════════
+function getMemCtx(){
+  var f=memory.facts||[],n=memory.name||'';
+  if(!f.length&&!n)return '';
+  return '\n\n[USER MEMORY: '+(n?'Name: '+n+'. ':'')+f.join('. ')+']';
+}
+function updateMemUI(){
+  var bar=document.getElementById('memBar'),ban=document.getElementById('memBanner');
+  var n=memory.name||'',f=memory.facts||[];
+  if(n||f.length){
+    var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';
+    bar.textContent=t;bar.classList.add('show');
+    if(ban){ban.textContent=t;ban.classList.add('show');}
+  }else{
+    bar.classList.remove('show');
+    if(ban)ban.classList.remove('show');
+  }
+}
+function renderMemList(){
+  var el=document.getElementById('memList'),f=memory.facts||[],n=memory.name||'',h='';
+  if(n)h+='<div class="mi">👤 Name: '+n+'<button class="mdel" onclick="delMem(\'name\')">✕</button></div>';
+  if(!f.length&&!n)h='<div class="mmt">No memories yet! Chat and QVIO learns about you 🧠</div>';
+  f.forEach(function(x,i){h+='<div class="mi">💭 '+x+'<button class="mdel" onclick="delMem('+i+')">✕</button></div>';});
+  el.innerHTML=h;
+}
+function addMem(){
+  var v=document.getElementById('memInp').value.trim();if(!v)return;
+  if(!memory.facts)memory.facts=[];
+  memory.facts.push(v);document.getElementById('memInp').value='';
+  saveMem();renderMemList();updateMemUI();showToast('✨ Memory saved!');
+}
+function delMem(k){
+  if(k==='name')delete memory.name;else memory.facts.splice(k,1);
+  saveMem();renderMemList();updateMemUI();
+}
+function extractMem(t){
+  var n=t.match(/my name is ([A-Za-z]+)/i);
+  if(n&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('✨ Nice to meet you, '+n[1]+'!');}
+  var f=t.match(/i(?:'m| am) from ([A-Za-z ,]+)/i);
+  if(f){
+    if(!memory.facts)memory.facts=[];
+    if(!memory.facts.some(function(x){return x.indexOf('from')>-1;})){
+      memory.facts.push('From '+f[1].trim());saveMem();updateMemUI();
     }
-  }).catch(function(){
-    // Network error or CORS — can't check, ignore silently
-  });
-},3000);
-// ═══════════════════════════════════════════════════
-function toggleToolsPanel(){
-  var p=document.getElementById('toolsPanel');
-  var o=document.getElementById('tpOverlay');
-  var b=document.getElementById('toolsBtn');
-  if(p.classList.contains('show')){closeToolsPanel();}
-  else{p.classList.add('show');o.classList.add('show');b.classList.add('active');}
+  }
 }
-function closeToolsPanel(){
-  var p=document.getElementById('toolsPanel');
-  var o=document.getElementById('tpOverlay');
-  var b=document.getElementById('toolsBtn');
-  if(p)p.classList.remove('show');
-  if(o)o.classList.remove('show');
-  if(b)b.classList.remove('active');
+
+// ═══════════════════════════════
+// STATS & BADGES
+// ═══════════════════════════════
+function renderStats(){
+  document.getElementById('statGrid').innerHTML=
+    '<div class="stat-card"><div class="stn">'+stats.msgs+'</div><div class="stl">Messages Sent</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.streak+'</div><div class="stl">Day Streak 🔥</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.images+'</div><div class="stl">Images Created</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.longest+'</div><div class="stl">Best Streak 🏆</div></div>';
+  var B=[
+    {e:'👑',l:'First Chat',got:stats.msgs>=1},{e:'🔥',l:'7-Day Streak',got:stats.longest>=7},
+    {e:'💬',l:'100 Messages',got:stats.msgs>=100},{e:'🎨',l:'AI Artist',got:stats.images>=5},
+    {e:'🧠',l:'Memory Pro',got:(memory.facts||[]).length>=5},{e:'🌍',l:'Polyglot',got:false},
+    {e:'🏆',l:'30-Day Streak',got:stats.longest>=30},{e:'🚀',l:'Power User',got:stats.msgs>=500},
+    {e:'💎',l:'Premium User',got:true}
+  ];
+  document.getElementById('badgeGrid').innerHTML=B.map(function(b){
+    return '<div class="badge'+(b.got?' earned':'')+'">'+b.e+'<span class="badge-l">'+(b.got?b.l:'???')+'</span></div>';
+  }).join('');
 }
-function toggleModesDrawer(){
-  var d=document.getElementById('modesDrawer');
-  var o=document.getElementById('mdOverlay');
-  if(d.classList.contains('show')){closeModesDrawer();}
-  else{d.classList.add('show');o.classList.add('show');}
+
+// ═══════════════════════════════
+// GALLERY
+// ═══════════════════════════════
+function renderGal(){
+  var el=document.getElementById('galGrid');
+  if(!imgGal.length){el.innerHTML='<div class="ge">No images yet! Type "create image:" to generate 4K art 🎨</div>';return;}
+  el.innerHTML=imgGal.slice().reverse().map(function(u){
+    return '<div class="gi" onclick="viewImg(\''+u+'\')"><img src="'+u+'" loading="lazy"></div>';
+  }).join('');
 }
-function closeModesDrawer(){
-  var d=document.getElementById('modesDrawer');
-  var o=document.getElementById('mdOverlay');
-  if(d)d.classList.remove('show');
-  if(o)o.classList.remove('show');
+function viewImg(u){document.getElementById('imgVSrc').src=u;document.getElementById('imgVDl').href=u;openM('imgv');}
+
+// ═══════════════════════════════
+// HISTORY
+// ═══════════════════════════════
+function renderHist(){
+  var el=document.getElementById('histList');
+  if(!savedChats.length){el.innerHTML='<div class="he">No saved chats yet.</div>';return;}
+  el.innerHTML=savedChats.map(function(c,i){
+    return '<div class="hi" onclick="loadChat('+i+')"><div class="hit">'+c.title+'</div><div class="hid">'+c.date+'</div></div>';
+  }).join('');
 }
-function setModeD(m,label){
+function loadChat(i){
+  var c=savedChats[i];clearChat();
+  chatHistory=c.history.slice();
+  chatHistory.forEach(function(m){if(m.role!=='system')addMsg(m.content,m.role==='assistant'?'ai':'user');});
+  closeM('hist');showToast('Chat loaded!');
+}
+function saveChat(){
+  if(!chatHistory.length)return;
+  savedChats.unshift({title:chatHistory[0].content.substring(0,55),history:chatHistory.slice(),date:new Date().toLocaleDateString()});
+  if(savedChats.length>20)savedChats=savedChats.slice(0,20);
+  S.s('chats',savedChats);
+}
+
+// ═══════════════════════════════
+// MODE
+// ═══════════════════════════════
+function setMode(m,btn,label){
   mode=m;
-  // Update pill
-  var lbl=document.getElementById('modeLabel');
-  if(lbl)lbl.textContent=label;
-  // Update drawer pills
-  document.querySelectorAll('.md-pill').forEach(function(b){
-    b.classList.toggle('on', b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'"+m+"'")>-1);
-  });
-  // Sync old hidden mbtn for JS compatibility
   document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
-  var mbtns=document.querySelectorAll('.mbtn');
-  mbtns.forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+m+"'")>-1)b.classList.add('on');});
-  // Exam bar
-  var eb=document.getElementById('examBar');
-  if(eb)eb.style.display=m==='exam'?'flex':'none';
-  if(typeof S!=='undefined')S.s('mode',m);
-  closeModesDrawer();
-  showToast(label.replace(/^[^\w]*/,'')+' mode ✓');
+  btn.classList.add('on');
+  document.getElementById('modeLabel').textContent=label;
+  document.getElementById('examBar').classList.toggle('show',m==='exam');
 }
-// Restore saved mode on load
-(function(){
-  try{
-    var saved=typeof S!=='undefined'?S.g('mode'):null;
-    if(saved){
-      var pills=document.querySelectorAll('.md-pill');
-      for(var i=0;i<pills.length;i++){
-        var oc=pills[i].getAttribute('onclick')||'';
-        if(oc.indexOf("'"+saved+"'")>-1){
-          setModeD(saved,pills[i].textContent.trim());
-          break;
-        }
-      }
-    }
-  }catch(e){}
-})();
-// Close panels on Escape
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeToolsPanel();closeModesDrawer();}
-});
-// ═══════════════════════════════════════════════════
-// QVIO LENS — AI Visual Intelligence
-// ═══════════════════════════════════════════════════
-// Register lens in MAP
-if(typeof MAP!=='undefined')MAP.lens=['o_lens','m_lens'];
 
-var lensMode='identify';
-var lensImageB64=null;
-var lensMimeType='image/jpeg';
-var lensStream=null;
+// ═══════════════════════════════
+// MODALS
+// ═══════════════════════════════
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
+function openM(t){
+  var ids=MAP[t];if(!ids)return;
+  document.getElementById(ids[0]).classList.add('show');
+  document.getElementById(ids[1]).classList.add('show');
+  if(t==='mem')renderMemList();
+  if(t==='stats')renderStats();
+  if(t==='gal')renderGal();
+  if(t==='hist')renderHist();
+}
+function closeM(t){
+  var ids=MAP[t];if(!ids)return;
+  document.getElementById(ids[0]).classList.remove('show');
+  document.getElementById(ids[1]).classList.remove('show');
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')Object.keys(MAP).forEach(closeM);
+  if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}
+  if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}
+});
+function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
+
+// ═══════════════════════════════
+// CHAT CORE
+// ═══════════════════════════════
+function hideWelcome(){
+  var w=document.getElementById('welcome');
+  if(w){w.style.opacity='0';w.style.transition='opacity .25s';setTimeout(function(){w&&w.remove();},250);}
+}
+function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
+function scrollToTop(){document.getElementById('chat').scrollTop=0;}
+
+function renderText(t){
+  return t
+    .replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,code){return '<pre><button class="code-copy" onclick="copyCode(this)">Copy</button><code>'+escH(code.trim())+'</code></pre>';})
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^### (.*)/gm,'<h4 style="margin:8px 0 4px;font-size:15px;color:var(--navy);">$1</h4>')
+    .replace(/^## (.*)/gm,'<h3 style="margin:8px 0 4px;font-size:17px;font-family:\'Cormorant Garamond\',serif;color:var(--navy);">$1</h3>')
+    .replace(/\n/g,'<br>');
+}
+function escH(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyCode(btn){
+  navigator.clipboard.writeText(btn.nextElementSibling.textContent);
+  btn.textContent='Copied!';btn.style.background='rgba(21,128,61,.3)';
+  setTimeout(function(){btn.textContent='Copy';btn.style.background='';},2000);
+}
+
+function addMsg(content,role,isImg,speed){
+  hideWelcome();
+  var c=document.getElementById('chat');
+  var div=document.createElement('div');div.className='msg '+role;
+  var av=document.createElement('div');av.className='av '+(role==='ai'?'ai':'usr');
+  if(role==='user'&&currentUser&&currentUser.photoURL)av.innerHTML='<img src="'+currentUser.photoURL+'">';
+  else av.textContent=role==='ai'?'QV':'You';
+  var wrap=document.createElement('div');wrap.className='mwrap';
+  var bub=document.createElement('div');bub.className='bubble';
+
+  if(isImg){
+    var img=document.createElement('img');img.src=content;img.className='gen-img';img.alt='QVIO Art';
+    img.onclick=function(){viewImg(content);};
+    img.onerror=function(){bub.innerHTML='Image generation failed. Try a different prompt!';};
+    bub.appendChild(img);
+    var dl=document.createElement('a');dl.href=content;dl.download='qvio-'+Date.now()+'.jpg';dl.className='img-dl';dl.textContent='⬇ Download';
+    bub.appendChild(dl);
+    wrap.appendChild(bub);
+  }else{
+    bub.innerHTML=renderText(content);
+    if(role==='ai'){
+      var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
+      cb.onclick=function(){navigator.clipboard.writeText(content);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
+      bub.appendChild(cb);
+
+      var meta=document.createElement('div');meta.className='mmeta';
+      function makeAct(icon,tip,fn){
+        var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
+      }
+      makeAct('🔊','Listen',function(){speakText(content,this);});
+      var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
+      var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
+      var pin=makeAct('📌','Pin',function(){
+        pin.classList.toggle('active');
+        if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');document.getElementById('pinnedBar').classList.add('show');document.getElementById('pinnedTxt').textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
+        else{bub.classList.remove('pinned-msg');document.getElementById('pinnedBar').classList.remove('show');}
+      });
+      // Share button — inline, no override needed
+      (function(msgContent){
+        makeAct('📤','Share',function(){openShare(msgContent);});
+      })(content);
+      makeAct('🔄','Regenerate',function(){if(lastMsg)send(lastMsg);});
+      if(speed){var sp=document.createElement('span');sp.className='speed-tag';sp.textContent='⚡'+(speed/1000).toFixed(1)+'s';meta.appendChild(sp);}
+      wrap.appendChild(bub);wrap.appendChild(meta);
+    }else{
+      wrap.appendChild(bub);
+    }
+  }
+  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
+  div.appendChild(av);div.appendChild(wrap);
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+  checkScroll();
+}
+
+function checkScroll(){
+  var c=document.getElementById('chat'),btn=document.getElementById('scrollBtn');
+  btn.classList.toggle('show',c.scrollHeight-c.scrollTop-c.clientHeight>160);
+}
+document.getElementById('chat').addEventListener('scroll',checkScroll);
+function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
+
+// ═══════════════════════════════
+// TTS
+// ═══════════════════════════════
+// ═══════════════════════════════
+// VOICE ENGINE — 150+ LANGUAGES
+// ═══════════════════════════════
+var cachedVoices=[];
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){cachedVoices=window.speechSynthesis.getVoices();};}
+var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['hi-IN'],'manipuri':['hi-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['hi-IN'],'konkani':['hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['zh-CN'],'mongolian':['mn-MN'],'javanese':['id-ID'],'sundanese':['id-ID'],'cebuano':['fil-PH'],'arabic':['ar-SA','ar-EG'],'persian':['fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF'],'kurdish':['ku-TR'],'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],'swahili':['sw-KE'],'amharic':['am-ET'],'hausa':['ha-NG'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'spanish':['es-ES','es-MX'],'french':['fr-FR'],'german':['de-DE'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'english':['en-IN','en-US','en-GB'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX']};
+function detectSpeakLang(text){
+  var sc={hindi:/[ऀ-ॿ]/,arabic:/[؀-ۿ]/,chinese:/[一-鿿]/,japanese:/[぀-ヿ]/,korean:/[가-힯]/,thai:/[฀-๿]/,telugu:/[ఀ-౿]/,tamil:/[஀-௿]/,kannada:/[ಀ-೿]/,bengali:/[ঀ-৿]/,malayalam:/[ഀ-ൿ]/,gujarati:/[઀-૿]/,punjabi:/[਀-੿]/,odia:/[଀-୿]/};
+  for(var lang in sc){if(sc[lang].test(text))return {lang:lang,tags:LANG_TAGS[lang]||['en-IN']};}
+  if(LANG_TAGS[mode])return {lang:mode,tags:LANG_TAGS[mode]};
+  return {lang:'english',tags:['en-IN','en-US']};
+}
+function findBestVoice(tags){
+  var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
+  if(!voices.length)return null;
+  function s(v,tag){var n=v.name.toLowerCase(),sc=0;if(v.lang===tag)sc+=100;else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;else return -1;if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1)sc+=30;if(v.localService===false)sc+=15;if(n.indexOf('zira')>-1||n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('hazel')>-1)sc-=60;return sc;}
+  var best=null,bs=-999;
+  for(var ti=0;ti<tags.length;ti++){for(var vi=0;vi<voices.length;vi++){var sc2=s(voices[vi],tags[ti]);if(sc2>bs){bs=sc2;best=voices[vi];}}if(best&&bs>=50)break;}
+  return best;
+}
+var curU=null;
+function speakText(t,btn){
+  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;return;}
+  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'');
+  clean=clean.substring(0,2000);
+  var u=new SpeechSynthesisUtterance(clean);
+  var detected=detectSpeakLang(clean);
+  var voice=findBestVoice(detected.tags);
+  if(voice)u.voice=voice;
+  u.lang=detected.tags[0];
+  u.rate=0.93;u.pitch=1.0;u.volume=1.0;
+  showToast('🔊 Speaking in '+detected.lang+'...');
+  if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
+  u.onend=u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
+  curU=u;window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════
+// TYPING / SKELETON
+// ═══════════════════════════════
+function showTyping(){
+  hideWelcome();
+  document.getElementById('typeBar').classList.add('show');
+  var c=document.getElementById('chat');
+  var d=document.createElement('div');d.className='tywrap';d.id='typer';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var sk=document.createElement('div');sk.className='skel';
+  sk.innerHTML='<div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line"></div>';
+  d.appendChild(av);d.appendChild(sk);
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function hideTyping(){
+  document.getElementById('typeBar').classList.remove('show');
+  var t=document.getElementById('typer');if(t)t.remove();
+}
+
+// ═══════════════════════════════
+// SEND & API
+// ═══════════════════════════════
+var funnyErrors=["QVIO took a quick chai break ☕ — tap retry!","The AI sneezed 🤧 — try again!","QVIO is thinking too hard 🧠 — one more try?","Signal lost in space 🛸 — retry please!","QVIO blinked 😅 — send again!"];
+function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
+
+async function sendMsg(){
+  var inp=document.getElementById('inp');
+  var text=inp.value.trim();if(!text)return;
+  inp.value='';inp.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('charCnt').textContent='';
+  lastMsg=text;
+  addMsg(text,'user');
+  chatHistory.push({role:'user',content:text});
+  extractMem(text);
+  stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
+
+  // IMAGE GENERATION
+  if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
+    var prompt=text.replace(/^[^:]+:/i,'').trim();
+    showTyping();stats.images++;saveStats();
+
+    var seed=Date.now();
+    var enhancedPrompt=prompt+', ultra photorealistic, 4K, 8K masterpiece, cinematic lighting, sharp focus, highly detailed, award winning photography';
+    var imageUrls=[
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&enhance=true&seed='+seed,
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&seed='+(seed+1),
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&nologo=true&seed='+(seed+2)
+    ];
+
+    function tryLoadImage(urlIndex){
+      if(urlIndex>=imageUrls.length){
+        hideTyping();
+        addMsg('⚠️ Image generation is temporarily unavailable. Please try again in a moment! The AI art servers might be busy.','ai');
+        document.getElementById('sendBtn').disabled=false;
+        return;
+      }
+      var testImg=new Image();
+      var currentUrl=imageUrls[urlIndex];
+      var timeout=setTimeout(function(){
+        testImg.src='';
+        tryLoadImage(urlIndex+1);
+      },15000);
+      testImg.onload=function(){
+        clearTimeout(timeout);
+        hideTyping();
+        addMsg(currentUrl,'ai',true);
+        imgGal.push(currentUrl);saveGal();
+        document.getElementById('sendBtn').disabled=false;
+      };
+      testImg.onerror=function(){
+        clearTimeout(timeout);
+        tryLoadImage(urlIndex+1);
+      };
+      testImg.src=currentUrl;
+    }
+
+    // Show generating message after 1s
+    setTimeout(function(){
+      var tb=document.getElementById('typeBar');
+      if(tb)tb.querySelector('span:last-child').textContent='✨ Generating your 4K image...';
+    },1000);
+
+    tryLoadImage(0);
+    return;
+  }
+
+  showTyping();
+  var t0=Date.now();
+  try{
+    var reply=await callGroq(text);
+    var spd=Date.now()-t0;
+    hideTyping();
+    addMsg(reply,'ai',false,spd);
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
+    saveChat();
+  }catch(e){
+    hideTyping();
+    var em=e.message||'';
+    if(em.indexOf('rate')>-1||em.indexOf('429')>-1){
+      var wait=30;var m2=em.match(/(\d+)s/);if(m2)wait=parseInt(m2[1]);
+      var tid='t'+Date.now();
+      addMsg('<span id="'+tid+'">⏳ Rate limited — wait <strong>'+wait+'s</strong> then retry.</span>','ai');
+      var cd=wait;
+      var itv=setInterval(function(){
+        cd--;var el=document.getElementById(tid);
+        if(cd<=0){clearInterval(itv);if(el)el.innerHTML='✅ Ready! Send again.';document.getElementById('sendBtn').disabled=false;}
+        else if(el)el.innerHTML='⏳ Rate limited — wait <strong>'+cd+'s</strong> then retry.';
+      },1000);
+    }else{
+      addMsg(humanError(),'ai');
+    }
+  }
+  document.getElementById('sendBtn').disabled=false;
+}
+
+async function callGroq(msg){
+  var sys=PROMPTS[mode]+getMemCtx();
+  var msgs=[{role:'system',content:sys}];
+  chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
+  msgs.push({role:'user',content:msg});
+  var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+    body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
+  });
+  var data=await res.json();
+  if(data.error)throw new Error(data.error.message);
+  return data.choices[0].message.content;
+}
+
+function send(t){document.getElementById('inp').value=t;sendMsg();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function onInp(el){
+  el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
+  var n=el.value.length;
+  document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
+  document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';
+}
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+function clearChat(){
+  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
+  chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
+}
+function toggleFocus(){
+  isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);
+  document.getElementById('focusBtn').classList.toggle('on',isFocus);
+  showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');
+}
+function exportChat(){
+  if(!chatHistory.length){showToast('Nothing to export!');return;}
+  var txt='QVIO Premium Chat\n'+new Date().toLocaleString()+'\n'+'═'.repeat(50)+'\n\n';
+  chatHistory.forEach(function(m){txt+=(m.role==='user'?'YOU':'QVIO')+': '+m.content+'\n\n';});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='qvio-chat-'+Date.now()+'.txt';a.click();
+  showToast('💾 Chat exported!');
+}
+
+// ═══════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════
+function toggleCalc(){document.getElementById('calcW').classList.toggle('show');}
+function ci(v){
+  var d=document.getElementById('calcDisp');
+  if(v==='C'){calcExpr='';d.textContent='0';return;}
+  if(v==='±'){try{calcExpr=String(-parseFloat(calcExpr));}catch(e){}d.textContent=calcExpr||'0';return;}
+  if(v==='%'){try{calcExpr=String(Function('"use strict";return('+calcExpr+')')())/100;}catch(e){calcExpr='';}d.textContent=calcExpr||'0';return;}
+  if(v==='='){try{calcExpr=String(Function('"use strict";return('+calcExpr+')')());}catch(e){calcExpr='Error';}d.textContent=calcExpr;calcExpr='';return;}
+  calcExpr+=v;d.textContent=calcExpr;
+}
+
+// ═══════════════════════════════
+// MIC
+// ═══════════════════════════════
+function toggleMic(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    showToast('🎤 Voice needs Chrome or Edge browser!');
+    return;
+  }
+  // If already recording, stop it
+  if(isRec){
+    if(recog){
+      try{recog.stop();}catch(e){}
+    }
+    isRec=false;
+    document.getElementById('micBtn').classList.remove('rec');
+    document.getElementById('micBtn').textContent='🎤';
+    return;
+  }
+  // Request mic permission explicitly first
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop();}); // release stream, just needed permission
+      startRecognition();
+    }).catch(function(err){
+      if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){
+        showToast('🎤 Mic permission denied — allow it in browser settings!');
+      }else{
+        showToast('🎤 Mic error: '+err.message);
+      }
+    });
+  }else{
+    startRecognition();
+  }
+}
+
+function startRecognition(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    recog=new SR();
+    recog.continuous=false;
+    recog.interimResults=true;
+    recog.maxAlternatives=1;
+    recog.lang=mode==='hindi'?'hi-IN':mode==='kannada'?'kn-IN':mode==='tamil'?'ta-IN':'en-IN';
+
+    recog.onstart=function(){
+      isRec=true;
+      document.getElementById('micBtn').classList.add('rec');
+      document.getElementById('micBtn').textContent='⏹';
+      showToast('🎤 Listening... speak now!');
+    };
+
+    recog.onresult=function(e){
+      var transcript='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        transcript+=e.results[i][0].transcript;
+      }
+      var inp=document.getElementById('inp');
+      inp.value=transcript;
+      onInp(inp);
+    };
+
+    recog.onerror=function(e){
+      isRec=false;
+      document.getElementById('micBtn').classList.remove('rec');
+      document.getElementById('micBtn').textContent='🎤';
+      if(e.error==='not-allowed'){
+        showToast('🎤 Mic blocked — allow microphone in browser!');
+      }else if(e.error==='no-speech'){
+        showToast('🎤 No speech detected — try again!');
+      }else if(e.error==='network'){
+        showToast('🎤 Network error — check your connection!');
+      }else{
+        showToast('🎤 Mic error: '+e.error);
+      }
+    };
+
+    recog.onend=function(){
+      isRec=false;
+      document.getElementById('micBtn').classList.remove('rec');
+      document.getElementById('micBtn').textContent='🎤';
+      // Auto-send if we got text
+      var val=document.getElementById('inp').value.trim();
+      if(val)showToast('✅ Got it! Press Send or Enter.');
+    };
+
+    recog.start();
+  }catch(e){
+    showToast('🎤 Could not start mic: '+e.message);
+    isRec=false;
+  }
+}
+
+// ═══════════════════════════════
+// PWA
+// ═══════════════════════════════
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!S.g('noPWA'))document.getElementById('instBar').classList.add('show');});
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;dismissInstall();});}}
+function dismissInstall(){document.getElementById('instBar').classList.remove('show');S.s('noPWA',true);}
+window.addEventListener('online',function(){document.getElementById('offBar').classList.remove('show');showToast('✅ Back online!');});
+window.addEventListener('offline',function(){document.getElementById('offBar').classList.add('show');});
+if(!navigator.onLine)document.getElementById('offBar').classList.add('show');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
+
+// ═══════════════════════════════
+// SHARE
+// ═══════════════════════════════
+function openShare(text){
+  shareContent=text;
+  var preview=text.replace(/<[^>]*>/g,'').substring(0,220);
+  if(preview.length===220)preview+='...';
+  document.getElementById('shareText').textContent=preview;
+  document.getElementById('shareCard').classList.add('show');
+}
+function closeShare(){document.getElementById('shareCard').classList.remove('show');}
+function copyShareText(){
+  var txt='QVIO says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry QVIO free at qvio.in 🇮🇳';
+  navigator.clipboard.writeText(txt);showToast('📋 Copied!');closeShare();
+}
+function shareWhatsApp(){
+  var txt='Check this from QVIO AI 🤖\n\n'+shareContent.replace(/<[^>]*>/g,'').substring(0,300)+'\n\nTry free at qvio.in 🇮🇳';
+  window.open('https://wa.me/?text='+encodeURIComponent(txt));closeShare();
+}
+
+// ═══════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════
+var obSteps=[
+  {icon:'⚡',title:'QVIO is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence for every Indian.',step:'Step 1 of 3'},
+  {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — QVIO understands everything.',step:'Step 2 of 3'},
+  {icon:'🎨',title:'Type "create image:" for 4K AI art',desc:'Type "create image: golden temple sunset" and get a stunning 4K image in seconds!',step:'Step 3 of 3'},
+];
+var obCur=0;
+function showOnboard(){
+  if(localStorage.getItem('qvio_toured'))return;
+  setTimeout(function(){document.getElementById('onboard').classList.add('show');},1200);
+}
+function nextOnboard(){
+  obCur++;
+  if(obCur>=obSteps.length){skipOnboard();return;}
+  var s=obSteps[obCur];
+  document.getElementById('obIcon').textContent=s.icon;
+  document.getElementById('obTitle').textContent=s.title;
+  document.getElementById('obDesc').textContent=s.desc;
+  document.getElementById('obStep').textContent=s.step;
+  for(var i=0;i<3;i++)document.getElementById('dot'+i).classList.toggle('on',i===obCur);
+  if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using QVIO!';
+}
+function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
+
+// ═══════════════════════════════
+// SMART GREETING
+// ═══════════════════════════════
+function setSmartGreeting(){
+  var h=new Date().getHours();
+  var nm=memory.name?', '+memory.name:'';
+  var greets=[[5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],[12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],[17,20,'🌇 Good evening'+nm+'! How can QVIO help?'],[20,24,'🌙 Good night'+nm+'! Still grinding? QVIO is here!'],[0,5,'🦉 Late night'+nm+'? QVIO never sleeps!']];
+  var msg='👋 Welcome'+nm+'!';
+  greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
+  document.getElementById('greetTxt').textContent=msg;
+  document.getElementById('greetBar').classList.add('show');
+}
+
+// ═══════════════════════════════
+// CHALLENGES
+// ═══════════════════════════════
+var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask QVIO to explain something you always wondered 🧠','Get QVIO to write a poem about your day ✍️','Ask for a 90-day study plan for your next exam 🎯'];
+function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨🧠✍️🎯]/g,'').trim());}
+
+// ═══════════════════════════════
+// INIT — runs everything on load
+// ═══════════════════════════════
+(function init(){
+  // Apply saved theme immediately
+  var th=S.g('theme')||'auto';
+  if(th==='auto')autoTheme();else{document.documentElement.setAttribute('data-theme',th);document.getElementById('themeBtn').textContent=th==='dark'?'☀️':'🌙';}
+  // Core inits
+  updateStreak();
+  updateMemUI();
+  initParticles();
+  rotateTip();setInterval(rotateTip,8000);
+  document.getElementById('challengeTxt').textContent=CH[new Date().getDay()%CH.length];
+  setInterval(function(){if((S.g('theme')||'auto')==='auto')autoTheme();},60000);
+  // Delayed inits
+  setTimeout(function(){
+    setSmartGreeting();
+    showOnboard();
+    showToast('👑 Welcome to QVIO Premium!');
+  },600);
+})();
+
+// ═══════════════════════════════════════════════════
+// 20 NEW FEATURES JS — by Varun, CEO & Godfather QVIO
+// ═══════════════════════════════════════════════════
+
+// Extend MAP for new modals
+Object.assign(MAP, {
+  todo:['o_todo','m_todo'],timer:['o_timer','m_timer'],currency:['o_currency','m_currency'],
+  mood:['o_mood','m_mood'],wpm:['o_wpm','m_wpm'],news:['o_news','m_news'],
+  emoji:['o_emoji','m_emoji'],cv:['o_cv','m_cv'],notes:['o_notes','m_notes'],
+  age:['o_age','m_age'],bmi:['o_bmi','m_bmi'],qotd:['o_qotd','m_qotd'],
+  word:['o_word','m_word'],poll:['o_poll','m_poll']
+});
+
+// ── FEATURE 1: TODO LIST ──────────────────────────────
+var todos = S.g('todos') || [];
+function saveTodos(){S.s('todos',todos);}
+function addTodo(){
+  var v=document.getElementById('todoInp').value.trim();if(!v)return;
+  todos.unshift({id:Date.now(),text:v,done:false});
+  document.getElementById('todoInp').value='';
+  saveTodos();renderTodos();showToast('✅ Task added!');
+}
+function toggleTodo(id){
+  var t=todos.find(function(x){return x.id===id;});
+  if(t)t.done=!t.done;saveTodos();renderTodos();
+}
+function deleteTodo(id){
+  todos=todos.filter(function(x){return x.id!==id;});saveTodos();renderTodos();
+}
+function clearDoneTodos(){
+  todos=todos.filter(function(x){return !x.done;});saveTodos();renderTodos();showToast('Cleared done tasks!');
+}
+function renderTodos(){
+  var el=document.getElementById('todoList');if(!el)return;
+  if(!todos.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px;">No tasks yet! Add one above 🎯</div>';return;}
+  el.innerHTML=todos.map(function(t){
+    return '<div class="todo-item'+(t.done?' done':'')+'" onclick="toggleTodo('+t.id+')"><div class="todo-cb">'+(t.done?'✓':'')+'</div><span class="todo-txt">'+t.text+'</span><button onclick="event.stopPropagation();deleteTodo('+t.id+')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;">✕</button></div>';
+  }).join('');
+}
+
+// ── FEATURE 2: TIMER / STOPWATCH / POMODORO ──────────
+var timerInterval=null,timerMs=0,timerRunning=false,timerMode='stopwatch';
+var pomodoroPhase=0,pomodoroPhases=['Focus 🍅','Short Break ☕','Focus 🍅','Short Break ☕','Focus 🍅','Long Break 🌙'];
+var pomodoroDurations=[25*60,5*60,25*60,5*60,25*60,15*60];
+var lapCount=0,lapTimes=[];
+function switchTimerMode(m){
+  timerMode=m;timerAction('reset');
+  document.querySelectorAll('[id^=timerMode]').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('timerMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.add('on');
+  document.getElementById('countdownSet').style.display=m==='countdown'?'block':'none';
+  document.getElementById('pomodoroLabel').style.display=m==='pomodoro'?'block':'none';
+  document.getElementById('lapBtn').style.display=m==='stopwatch'?'':'none';
+  if(m==='pomodoro'){pomodoroPhase=0;timerMs=pomodoroDurations[0]*1000;updateTimerDisplay();}
+}
+function timerAction(a){
+  if(a==='start'){
+    if(timerMode==='countdown'&&!timerRunning&&timerMs===0){
+      var m=parseInt(document.getElementById('cdMin').value)||0,s=parseInt(document.getElementById('cdSec').value)||0;
+      timerMs=(m*60+s)*1000;if(!timerMs)return;
+    }
+    timerRunning=true;
+    var last=Date.now();
+    timerInterval=setInterval(function(){
+      var now=Date.now(),diff=now-last;last=now;
+      if(timerMode==='countdown'||timerMode==='pomodoro'){
+        timerMs-=diff;
+        if(timerMs<=0){
+          timerMs=0;clearInterval(timerInterval);timerRunning=false;
+          showToast('⏰ Time is up!');
+          document.getElementById('timerStartBtn').style.display='';
+          document.getElementById('timerStopBtn').style.display='none';
+          if(timerMode==='pomodoro'){
+            pomodoroPhase=(pomodoroPhase+1)%pomodoroPhases.length;
+            timerMs=pomodoroDurations[pomodoroPhase]*1000;
+            document.getElementById('pomodoroLabel').textContent=pomodoroPhases[pomodoroPhase];
+            showToast('🍅 '+pomodoroPhases[pomodoroPhase]+' time!');
+          }
+        }
+      }else{timerMs+=diff;}
+      updateTimerDisplay();
+    },50);
+    document.getElementById('timerStartBtn').style.display='none';
+    document.getElementById('timerStopBtn').style.display='';
+  }else if(a==='stop'){
+    clearInterval(timerInterval);timerRunning=false;
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+  }else if(a==='reset'){
+    clearInterval(timerInterval);timerRunning=false;timerMs=0;lapCount=0;lapTimes=[];
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+    if(timerMode==='pomodoro'){timerMs=pomodoroDurations[0]*1000;}
+    updateTimerDisplay();
+    var el=document.getElementById('timerLaps');if(el)el.innerHTML='';
+  }else if(a==='lap'){
+    lapCount++;lapTimes.push({n:lapCount,t:timerMs});
+    var el=document.getElementById('timerLaps');
+    if(el)el.innerHTML='<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>'+lapTimes.slice().reverse().map(function(l){return '<div class="lap-item"><span>Lap '+l.n+'</span><span>'+fmtTime(l.t)+'</span></div>';}).join('')+el.innerHTML.replace('<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>','');
+  }
+}
+function fmtTime(ms){
+  var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+  return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function updateTimerDisplay(){
+  var el=document.getElementById('timerDisplay');
+  if(el)el.textContent=fmtTime(timerMs);
+  if(timerMode==='pomodoro'){var pl=document.getElementById('pomodoroLabel');if(pl)pl.textContent=pomodoroPhases[pomodoroPhase];}
+}
+
+// ── FEATURE 3: CURRENCY CONVERTER ────────────────────
+var RATES={USD:0.012,EUR:0.011,GBP:0.0094,AED:0.044,SGD:0.016,JPY:1.78,CAD:0.016,AUD:0.018,CNY:0.087,SAR:0.045,KWD:0.0037,QAR:0.044,MYR:0.056,THB:0.42};
+var CURR_INFO={USD:{flag:'🇺🇸',name:'US Dollar'},EUR:{flag:'🇪🇺',name:'Euro'},GBP:{flag:'🇬🇧',name:'British Pound'},AED:{flag:'🇦🇪',name:'UAE Dirham'},SGD:{flag:'🇸🇬',name:'Singapore Dollar'},JPY:{flag:'🇯🇵',name:'Japanese Yen'},CAD:{flag:'🇨🇦',name:'Canadian Dollar'},AUD:{flag:'🇦🇺',name:'Australian Dollar'},CNY:{flag:'🇨🇳',name:'Chinese Yuan'},SAR:{flag:'🇸🇦',name:'Saudi Riyal'},KWD:{flag:'🇰🇼',name:'Kuwaiti Dinar'},QAR:{flag:'🇶🇦',name:'Qatari Riyal'},MYR:{flag:'🇲🇾',name:'Malaysian Ringgit'},THB:{flag:'🇹🇭',name:'Thai Baht'}};
+function convertCurrency(amt){
+  var a=parseFloat(amt)||1;
+  var el=document.getElementById('currList');if(!el)return;
+  el.innerHTML=Object.keys(RATES).map(function(c){
+    var info=CURR_INFO[c];
+    var val=(a*RATES[c]).toFixed(c==='KWD'?4:2);
+    return '<div class="currency-row"><span class="curr-flag">'+info.flag+'</span><span class="curr-name">'+c+' — '+info.name+'</span><span class="curr-val">'+val+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 4: MOOD TRACKER ───────────────────────────
+var moodLog=S.g('moods')||[];
+function logMood(emoji,label){
+  var entry={emoji:emoji,label:label,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  moodLog.unshift(entry);if(moodLog.length>30)moodLog=moodLog.slice(0,30);
+  S.s('moods',moodLog);renderMoodHist();
+  showToast(emoji+' Mood logged!');
+  send('I am feeling '+label+' right now. Give me a short warm personalised message and one practical tip to make my day better.');
+  closeM('mood');
+}
+function renderMoodHist(){
+  var el=document.getElementById('moodHist');if(!el)return;
+  if(!moodLog.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:16px;">No moods logged yet!</div>';return;}
+  el.innerHTML=moodLog.slice(0,7).map(function(m){
+    return '<div class="mood-entry"><span style="font-size:20px;">'+m.emoji+'</span><span style="font-weight:600;">'+m.label+'</span><span style="margin-left:auto;">'+m.date+' '+m.time+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 5: TYPING SPEED TEST ─────────────────────
+var WPM_TEXTS=["The quick brown fox jumps over the lazy dog near the river bank on a sunny morning in the forest","QVIO is India's most premium AI built by Varun the seventeen year old founder from Karnataka who dreams big","Artificial intelligence is changing the world in ways we never imagined and India is leading this revolution","Practice makes perfect and every day you type faster you become more efficient and productive in your work","Technology is best when it brings people together and QVIO was built to connect every Indian to world class AI"];
+var wpmStart=0,wpmDone=false,wpmCurrentText='';
+function startWPM(){
+  wpmCurrentText=WPM_TEXTS[Math.floor(Math.random()*WPM_TEXTS.length)];
+  var tw=document.getElementById('wpmText');
+  var inp=document.getElementById('wpmInp');
+  if(!tw||!inp)return;
+  tw.innerHTML=wpmCurrentText.split('').map(function(c){return '<span>'+c+'</span>';}).join('');
+  inp.value='';inp.disabled=false;inp.focus();
+  wpmStart=0;wpmDone=false;
+  document.getElementById('wpmStats').innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;">Start typing to begin the test!</div>';
+}
+function wpmCheck(inp){
+  if(wpmDone)return;
+  if(!wpmStart)wpmStart=Date.now();
+  var typed=inp.value;
+  var spans=document.querySelectorAll('#wpmText span');
+  var correct=0;
+  spans.forEach(function(sp,i){
+    sp.style.color='';sp.style.background='';
+    if(i<typed.length){
+      if(typed[i]===wpmCurrentText[i]){sp.style.color='var(--success)';correct++;}
+      else{sp.style.color='var(--danger)';sp.style.background='rgba(185,28,28,.1)';}
+    }
+  });
+  if(typed.length>=wpmCurrentText.length){
+    wpmDone=true;inp.disabled=true;
+    var elapsed=(Date.now()-wpmStart)/60000;
+    var words=wpmCurrentText.split(' ').length;
+    var wpm=Math.round(words/elapsed);
+    var acc=Math.round((correct/wpmCurrentText.length)*100);
+    var el=document.getElementById('wpmStats');
+    el.innerHTML='<div class="wpm-stat"><div class="wpm-stat-n">'+wpm+'</div><div class="wpm-stat-l">WPM</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+acc+'%</div><div class="wpm-stat-l">Accuracy</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+correct+'</div><div class="wpm-stat-l">Correct</div></div>';
+    showToast('🎉 '+wpm+' WPM with '+acc+'% accuracy!');
+  }
+}
+
+// ── FEATURE 6: QUICK NEWS ─────────────────────────────
+var NEWS_TOPICS=[
+  {hl:"QVIO AI surpasses 1 million users in India — Built by 17-year-old Varun from Karnataka",src:"QVIO Official · Just now"},
+  {hl:"India GDP growth accelerates — Economy on track for 7%+ expansion this year",src:"Economic Times · Today"},
+  {hl:"ISRO announces new moon mission with advanced lunar rover technology",src:"NDTV · Today"},
+  {hl:"IIT admissions 2025 — JEE Advanced cutoffs and counselling schedule released",src:"Times of India · Today"},
+  {hl:"India vs Australia — T20 series final preview and squad analysis",src:"Cricbuzz · Today"},
+  {hl:"Top 10 highest paying IT jobs in India for freshers in 2025",src:"Naukri.com · Today"},
+  {hl:"Supreme Court ruling on data privacy — What it means for every Indian",src:"The Hindu · Today"},
+  {hl:"AI startups in Bangalore raise record 2 billion dollars in latest funding round",src:"Inc42 · Today"},
+  {hl:"CBSE Class 12 results declared — Check your scores at cbseresults.nic.in",src:"Hindustan Times · Today"},
+  {hl:"Reliance Jio announces 5G expansion to 1000 new cities across India",src:"Business Standard · Today"},
+  {hl:"Budget 2025 — Tax relief for middle class, education funding doubled",src:"Mint · Today"},
+  {hl:"Virat Kohli scores another century — India wins series 3-1",src:"ESPN Cricinfo · Today"}
+];
+function askNews(i){
+  var topic=NEWS_TOPICS[i];if(!topic)return;
+  send('Tell me more about: '+topic.hl+'?');
+  closeM('news');
+}
+function renderNews(){
+  var el=document.getElementById('newsList');if(!el)return;
+  el.innerHTML=NEWS_TOPICS.map(function(n){
+    return '<div class="news-card" onclick="askNews('+i+');"><div class="news-hl">'+n.hl+'</div><div class="news-src">'+n.src+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 7: EMOJI PICKER ───────────────────────────
+var EMOJI_DATA={
+  'Smileys':['😀','😃','😄','😁','😅','😂','🤣','😊','😇','🙂','🙃','😉','😍','🥰','😘','😋','😛','😜','🤩','🥳','😎','🤓','🧐','😏','😒','😞','😔','😟','😕','🙁','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓'],
+  'Hands':['👋','🤚','🖐','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','🤲','🤝','🙏'],
+  'Hearts':['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','❤️‍🩹','💕','💞','💓','💗','💖','💘','💝','💟','♥️','🫀'],
+  'Animals':['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦅','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🦋','🐛','🐞'],
+  'Food':['🍎','🍊','🍋','🍇','🍓','🫐','🍈','🍉','🍑','🍒','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥕','🌽','🌶️','🫑','🥒','🧅','🧄','🥔','🍠','🌰','🍞','🥐','🍕','🍔','🍟','🌮','🌯','🍜','🍛','🍣','🍱','🍦','🎂','🍰','🧁','🍩','🍪','🍫','🍬','🍭','☕','🧋'],
+  'Travel':['🚀','✈️','🛸','🚂','🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚐','🛻','🛵','🏍','🚲','🛴','🛹','🚁','🛶','⛵','🚢','🗺️','🧳','🏖️','🏝️','⛰️','🏔️','🌋','🗼','🗽','🏰','🎡','🎢','🎠'],
+  'Sports':['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🎯','🥅','⛳','🏹','🎣','🤿','🎽','🛷','🥌','🛼','🛹'],
+  'Flags':['🇮🇳','🇺🇸','🇬🇧','🇯🇵','🇰🇷','🇨🇳','🇫🇷','🇩🇪','🇮🇹','🇪🇸','🇵🇹','🇧🇷','🇦🇺','🇨🇦','🇦🇪','🇸🇦','🇰🇼','🇸🇬','🇲🇾','🇹🇭','🇮🇩','🇵🇰','🇧🇩','🇳🇵','🇱🇰']
+};
+var curEmojiCat='Smileys';
+function initEmoji(){
+  var cats=document.getElementById('emojiCats');if(!cats)return;
+  cats.innerHTML=Object.keys(EMOJI_DATA).map(function(c){
+    return '<div class="emoji-cat'+(c===curEmojiCat?' on':'')+'" data-cat="'+c+'" onclick="showEmojiCat(this.dataset.cat)">'+c+'</div>';
+  }).join('');
+  renderEmoji(EMOJI_DATA[curEmojiCat]);
+}
+function showEmojiCat(cat){
+  curEmojiCat=cat;
+  document.querySelectorAll('.emoji-cat').forEach(function(el){el.classList.toggle('on',el.textContent===cat);});
+  renderEmoji(EMOJI_DATA[cat]);
+}
+function renderEmoji(arr){
+  var el=document.getElementById('emojiGrid');if(!el)return;
+  el.innerHTML=arr.map(function(e){return '<div class="eg" onclick="insertEmoji(this.dataset.e)" data-e="'+e+'">'+e+'</div>';}).join('');
+}
+function searchEmoji(q){
+  if(!q){renderEmoji(EMOJI_DATA[curEmojiCat]);return;}
+  var all=[];Object.values(EMOJI_DATA).forEach(function(arr){all=all.concat(arr);});
+  renderEmoji(all.slice(0,48));
+}
+function insertEmoji(e){
+  var inp=document.getElementById('inp');inp.value+=e;onInp(inp);inp.focus();
+  showToast(e+' Added!');
+}
+
+// ── FEATURE 8: CV / RESUME BUILDER ───────────────────
+function buildCV(){
+  var name=document.getElementById('cvName').value.trim();
+  var role=document.getElementById('cvRole').value.trim();
+  var email=document.getElementById('cvEmail').value.trim();
+  var phone=document.getElementById('cvPhone').value.trim();
+  var city=document.getElementById('cvCity').value.trim();
+  var edu=document.getElementById('cvEdu').value.trim();
+  var exp=document.getElementById('cvExp').value.trim();
+  var skills=document.getElementById('cvSkills').value.trim();
+  if(!name||!role){showToast('Please fill in name and target role!');return;}
+  closeM('cv');
+  send('Write a complete professional CV/resume for: Name: '+name+', Target Role: '+role+', Email: '+email+', Phone: '+phone+', City: '+city+', Education: '+edu+', Experience: '+exp+', Skills: '+skills+'. Make it ATS-friendly, professional, and impressive. Format it clearly with sections.');
+}
+
+// ── FEATURE 9: QUICK NOTES ────────────────────────────
+var notes=S.g('notes')||[];
+function saveNotes(){S.s('notes',notes);}
+function addNote(){
+  var v=document.getElementById('noteInp').value.trim();if(!v)return;
+  notes.unshift({id:Date.now(),text:v,date:new Date().toLocaleDateString()+' '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(notes.length>50)notes=notes.slice(0,50);
+  document.getElementById('noteInp').value='';saveNotes();renderNotes();showToast('📝 Note saved!');
+}
+function deleteNote(id){notes=notes.filter(function(n){return n.id!==id;});saveNotes();renderNotes();}
+function renderNotes(){
+  var el=document.getElementById('noteList');if(!el)return;
+  if(!notes.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px;">No notes yet! Write something above 📝</div>';return;}
+  el.innerHTML=notes.map(function(n){
+    return '<div class="note-item"><button class="note-del" onclick="deleteNote('+n.id+')">✕</button><div class="note-txt">'+n.text+'</div><div class="note-date">'+n.date+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 10: AGE CALCULATOR ───────────────────────
+function calcAge(){
+  var dob=new Date(document.getElementById('ageDate').value);
+  if(isNaN(dob))return;
+  var now=new Date();
+  var y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  var totalDays=Math.floor((now-dob)/86400000);
+  var totalHours=Math.floor((now-dob)/3600000);
+  var weeks=Math.floor(totalDays/7);
+  var nextBday=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
+  if(nextBday<now)nextBday.setFullYear(now.getFullYear()+1);
+  var daysToNext=Math.ceil((nextBday-now)/86400000);
+  document.getElementById('ageResult').innerHTML=
+    '<div class="age-big">'+y+'</div><div style="font-size:15px;font-weight:700;color:var(--text2);margin-top:4px;">years old</div>'+
+    '<div class="age-detail">'+y+' years · '+m+' months · '+d+' days<br>'+totalDays.toLocaleString()+' total days lived<br>'+weeks.toLocaleString()+' weeks · '+totalHours.toLocaleString()+' hours<br>🎂 Next birthday in <strong>'+daysToNext+' days</strong></div>';
+}
+
+// ── FEATURE 11: BMI CALCULATOR ───────────────────────
+function calcBMI(){
+  var w=parseFloat(document.getElementById('bmiW').value),h=parseFloat(document.getElementById('bmiH').value)/100;
+  if(!w||!h||h<=0)return;
+  var bmi=w/(h*h),cat,col,pos;
+  if(bmi<18.5){cat='Underweight';col='#3B82F6';pos=10;}
+  else if(bmi<25){cat='Normal ✅';col='#22C55E';pos=35;}
+  else if(bmi<30){cat='Overweight';col='#F59E0B';pos=62;}
+  else{cat='Obese';col='#EF4444';pos=85;}
+  document.getElementById('bmiResult').innerHTML=
+    '<div class="bmi-num" style="background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">'+bmi.toFixed(1)+'</div>'+
+    '<div class="bmi-cat" style="color:'+col+';">'+cat+'</div>'+
+    '<div class="bmi-bar-wrap" style="margin:16px 0;"><div class="bmi-needle" style="left:'+pos+'%;"></div></div>'+
+    '<div style="font-size:12px;color:var(--text3);">Ideal BMI: 18.5 – 24.9</div>';
+  send('My BMI is '+bmi.toFixed(1)+' which is '+cat.replace(' ✅','')+'. Weight: '+w+'kg, Height: '+(h*100)+'cm. Give me 5 specific health tips to maintain or improve my BMI.');
+}
+
+// ── FEATURE 12: QUOTE OF THE DAY ─────────────────────
+var QUOTES=[
+  {q:"The best way to predict the future is to create it.",a:"Peter Drucker"},
+  {q:"If you are working on something exciting that you really care about, you don't have to be pushed. The vision pulls you.",a:"Steve Jobs"},
+  {q:"A person who never made a mistake never tried anything new.",a:"Albert Einstein"},
+  {q:"You miss 100% of the shots you don't take.",a:"Wayne Gretzky"},
+  {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {q:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {q:"Don't watch the clock; do what it does — keep going.",a:"Sam Levenson"},
+  {q:"Arise, awake, and stop not until the goal is achieved.",a:"Swami Vivekananda"},
+  {q:"Be the change you wish to see in the world.",a:"Mahatma Gandhi"},
+  {q:"In the middle of every difficulty lies opportunity.",a:"Albert Einstein"},
+  {q:"Your time is limited, so don't waste it living someone else's life.",a:"Steve Jobs"},
+  {q:"The harder I work, the luckier I get.",a:"Samuel Goldwyn"},
+  {q:"Dream big, start small, but most of all — start.",a:"Simon Sinek"},
+  {q:"Success is not final; failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
+  {q:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
+  {q:"A young man who does not fight today will never fight — the fire of youth fades fast.",a:"Chanakya"},
+  {q:"Before you are a leader, success is all about growing yourself. When you become a leader, success is all about growing others.",a:"Jack Welch"},
+  {q:"The roots of education are bitter, but the fruit is sweet.",a:"Aristotle"},
+  {q:"Education is the most powerful weapon which you can use to change the world.",a:"Nelson Mandela"},
+  {q:"Where there is a will, there is a way.",a:"English Proverb"}
+];
+var qotdIdx=new Date().getDay()%QUOTES.length;
+function newQotd(){qotdIdx=(qotdIdx+1)%QUOTES.length;renderQotd();}
+function renderQotd(){
+  var el=document.getElementById('qotdWrap');if(!el)return;
+  var q=QUOTES[qotdIdx];
+  var shareText=q.q+' — '+q.a;
+  var card=document.createElement('div');card.className='qotd-card';
+  card.innerHTML='<div class="qotd-bg">&#8220;</div><div class="qotd-text">'+q.q+'</div><div class="qotd-author">— '+q.a+'</div>';
+  var btn=document.createElement('button');btn.className='qotd-share';btn.textContent='📤 Share';
+  btn.onclick=function(){openShare(shareText);};
+  card.appendChild(btn);
+  el.innerHTML='';el.appendChild(card);
+}
+
+// ── FEATURE 13: WORD OF THE DAY ──────────────────────
+var WORDS=[
+  {w:"Perspicacious",p:"/ˌpɜːspɪˈkeɪʃəs/",t:"adjective",d:"Having a ready insight into things; shrewd and clear-sighted.",e:"Her perspicacious analysis solved the problem instantly.",h:"तीक्ष्ण बुद्धि वाला"},
+  {w:"Ephemeral",p:"/ɪˈfem(ə)r(ə)l/",t:"adjective",d:"Lasting for a very short time; transitory.",e:"Fame is ephemeral — only your work lasts forever.",h:"क्षणिक / अल्पकालीन"},
+  {w:"Serendipity",p:"/ˌserənˈdɪpɪti/",t:"noun",d:"The occurrence of events by chance in a happy or beneficial way.",e:"Finding QVIO was pure serendipity.",h:"सुखद संयोग"},
+  {w:"Tenacious",p:"/tɪˈneɪʃəs/",t:"adjective",d:"Holding firmly to something; not giving up easily.",e:"Be tenacious in your dreams — never quit.",h:"दृढ़निश्चयी"},
+  {w:"Ubiquitous",p:"/juːˈbɪkwɪtəs/",t:"adjective",d:"Present, appearing, or found everywhere.",e:"Smartphones have become ubiquitous in modern life.",h:"सर्वव्यापी"},
+  {w:"Luminous",p:"/ˈluːmɪnəs/",t:"adjective",d:"Full of or shedding light; bright or shining.",e:"Her luminous smile lit up the entire room.",h:"चमकदार / प्रकाशमान"},
+  {w:"Resilient",p:"/rɪˈzɪlɪənt/",t:"adjective",d:"Able to recover quickly from difficulties; tough.",e:"Resilient people rise every time they fall.",h:"लचीला / दृढ़"},
+  {w:"Magnanimous",p:"/maɡˈnanɪməs/",t:"adjective",d:"Very generous or forgiving, especially towards rivals.",e:"The magnanimous leader forgave his fiercest opponent.",h:"उदार / महानुभाव"},
+  {w:"Cogent",p:"/ˈkəʊdʒ(ə)nt/",t:"adjective",d:"Clear, logical, and convincing in argument.",e:"She made a cogent case for the new policy.",h:"तर्कसंगत"},
+  {w:"Zenith",p:"/ˈzɛnɪθ/",t:"noun",d:"The highest point reached by a celestial or other object; the peak.",e:"QVIO is at the zenith of Indian AI innovation.",h:"शिखर / उत्कर्ष"}
+];
+var wordIdx=new Date().getDate()%WORDS.length;
+function newWord(){wordIdx=(wordIdx+1)%WORDS.length;renderWord();}
+function renderWord(){
+  var el=document.getElementById('wordWrap');if(!el)return;
+  var w=WORDS[wordIdx];
+  el.innerHTML='<div class="word-card"><div class="word-main">'+w.w+'</div><div class="word-pron">'+w.p+'</div><div class="word-type">'+w.t+'</div><div class="word-def">'+w.d+'</div><div class="word-eg">"'+w.e+'"</div><div class="word-hi">🇮🇳 '+w.h+'</div></div>';
+}
+
+// ── FEATURE 14: LIVE POLL ─────────────────────────────
+var activePoll=null;
+function createPoll(){
+  var q=document.getElementById('pollQ').value.trim();
+  var o1=document.getElementById('pollO1').value.trim();
+  var o2=document.getElementById('pollO2').value.trim();
+  if(!q||!o1||!o2){showToast('Add a question and at least 2 options!');return;}
+  var opts=[o1,o2];
+  var o3=document.getElementById('pollO3').value.trim(),o4=document.getElementById('pollO4').value.trim();
+  if(o3)opts.push(o3);if(o4)opts.push(o4);
+  activePoll={q:q,opts:opts,votes:opts.map(function(){return 0;}),voted:false};
+  renderPoll();
+  document.getElementById('pollResult').style.display='block';
+}
+function votePoll(i){
+  if(!activePoll||activePoll.voted)return;
+  activePoll.votes[i]++;activePoll.voted=true;
+  renderPoll();showToast('🗳 Vote cast!');
+}
+function renderPoll(){
+  var el=document.getElementById('pollResult');if(!el||!activePoll)return;
+  var total=activePoll.votes.reduce(function(a,b){return a+b;},0)||1;
+  el.innerHTML='<div class="poll-wrap"><div class="poll-q">'+activePoll.q+'</div>'+
+    activePoll.opts.map(function(o,i){
+      var pct=Math.round((activePoll.votes[i]/total)*100);
+      return '<div class="poll-opt" onclick="votePoll('+i+')"><span class="poll-lbl">'+o+'</span><div class="poll-bar-bg"><div class="poll-bar" style="width:'+pct+'%"><span class="poll-pct">'+pct+'%</span></div></div></div>';
+    }).join('')+
+    (activePoll.voted?'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Thanks for voting!</div>':'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Click an option to vote!</div>')+
+    '</div>';
+  // Share the poll
+  send('I created a poll: "'+activePoll.q+'" with options: '+activePoll.opts.join(', ')+'. Can you suggest 3 more interesting poll questions on this topic?');
+  closeM('poll');
+}
+
+// ── FEATURE 15: WORD COUNT TOOL (in chat) ────────────
+function wordCount(text){
+  var words=(text.match(/\S+/g)||[]).length;
+  var chars=text.length;
+  var sentences=(text.match(/[.!?]+/g)||[]).length;
+  var readTime=Math.ceil(words/200);
+  return words+' words · '+chars+' chars · '+sentences+' sentences · ~'+readTime+' min read';
+}
+
+// ── FEATURE 16: DARK MODE SCHEDULED ─────────────────
+// Already handled in autoTheme — extended to user preference memory
+
+// ── FEATURE 17: KEYBOARD SHORTCUTS PANEL ────────────
+function showShortcuts(){
+  var shortcuts=[
+    ['Enter','Send message'],['Shift+Enter','New line'],['Ctrl+K','Focus input'],
+    ['Ctrl+L','Clear chat'],['Escape','Close modal'],['Ctrl+D','Toggle dark mode']
+  ];
+  send('Show me all QVIO keyboard shortcuts and hidden features');
+}
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey&&e.key==='d'){e.preventDefault();cycleTh();}
+});
+
+// ── FEATURE 18: AUTO SAVE DRAFT ──────────────────────
+setInterval(function(){
+  var v=document.getElementById('inp').value.trim();
+  if(v)S.s('draft',v);
+},3000);
+// Restore draft on load
+setTimeout(function(){
+  var d=S.g('draft');
+  if(d){document.getElementById('inp').value=d;onInp(document.getElementById('inp'));showToast('📝 Draft restored!');}
+},1500);
+document.getElementById('inp').addEventListener('blur',function(){S.s('draft','');});
+
+// ── FEATURE 19: MESSAGE REACTIONS ────────────────────
+// Already have like/dislike — extended version handled in addMsg
+
+// ── FEATURE 20: UNIT CONVERTER (via AI) ──────────────
+function quickConvert(text){
+  send('Convert: '+text+'. Show result clearly with formula used.');
+}
+
+// ── OVERRIDE openM to init new features ──────────────
+var _baseOpenM = window.openM;
+window.openM = function(t){
+  _baseOpenM(t);
+  if(t==='todo')renderTodos();
+  if(t==='mood')renderMoodHist();
+  if(t==='wpm')startWPM();
+  if(t==='news')renderNews();
+  if(t==='emoji')initEmoji();
+  if(t==='notes')renderNotes();
+  if(t==='qotd')renderQotd();
+  if(t==='word')renderWord();
+  if(t==='currency')convertCurrency(1);
+  if(t==='timer'){
+    document.getElementById('timerStopBtn').style.display='none';
+    document.getElementById('lapBtn').style.display='';
+  }
+};
+
+
+
+// ═══ V5 FEATURES ═══
 
 var LENS_PROMPTS={
   identify:"You are QVIO Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
@@ -1706,12 +2828,16 @@ var LENS_PROMPTS={
   food:"You are QVIO Lens Food & Nature expert. Analyse this image:\nIf FOOD: Name the dish, cuisine, estimated calories, main ingredients, how it's made, allergens, regional origin, nutrition highlights\nIf PLANT/FLOWER: Species name, common name in India, whether edible/medicinal, care tips, interesting facts\nIf ANIMAL: Species, habitat, diet, whether endangered, interesting behaviour\nBe comprehensive and accurate.",
   qr:"You are QVIO Lens QR & Document Scanner. In this image:\n1. If there is a QR code — describe what type it is and decode its content if visible\n2. If it's a barcode — identify the product type\n3. If it's a document/form — extract key fields and data\n4. If it's a business card — extract all contact info\n5. Flag any suspicious URLs or scam indicators\n6. Suggest what action the user should take"
 };
+var lensMode='identify';
+var lensImageB64=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
+var lensImageB64=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
 
-function setLensMode(m,btn){
-  lensMode=m;
-  document.querySelectorAll('.ltab').forEach(function(b){b.classList.remove('on');});
-  if(btn)btn.classList.add('on');
-}
 
 function openLens(){
   // Register if not already
@@ -1719,6 +2845,7 @@ function openLens(){
   document.getElementById('o_lens').classList.add('show');
   document.getElementById('m_lens').classList.add('show');
 }
+
 
 function closeLens(){
   document.getElementById('o_lens').classList.remove('show');
@@ -1735,32 +2862,13 @@ function closeLens(){
   document.getElementById('lensFile').value='';
 }
 
-function lensLoadFile(inp){
-  var file=inp.files[0];
-  if(!file)return;
-  lensMimeType=file.type||'image/jpeg';
-  var reader=new FileReader();
-  reader.onload=function(e){
-    lensImageB64=e.target.result.split(',')[1];
-    var prev=document.getElementById('lensPreview');
-    prev.src=e.target.result;
-    prev.style.display='block';
-    document.getElementById('lensDropInner').style.display='none';
-    document.getElementById('lensAnalyseBtn').disabled=false;
-    document.getElementById('lensResult').style.display='none';
-  };
-  reader.readAsDataURL(file);
+
+function setLensMode(m,btn){
+  lensMode=m;
+  document.querySelectorAll('.ltab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
 }
 
-function lensDropFile(ev){
-  ev.preventDefault();
-  document.getElementById('lensDrop').classList.remove('drag');
-  var file=ev.dataTransfer.files[0];
-  if(!file||!file.type.startsWith('image/'))return showToast('Please drop an image file!');
-  var dt=new DataTransfer();dt.items.add(file);
-  var inp=document.getElementById('lensFile');inp.files=dt.files;
-  lensLoadFile(inp);
-}
 
 function startLensCamera(){
   var camBtn=document.getElementById('lensCamBtn');
@@ -1777,6 +2885,14 @@ function startLensCamera(){
     })
     .catch(function(){showToast('📷 Camera permission denied — upload a photo instead');});
 }
+
+
+function stopLensCamera(){
+  if(lensStream){lensStream.getTracks().forEach(function(t){t.stop();});lensStream=null;}
+  document.getElementById('lensVideo').style.display='none';
+  document.getElementById('lensVideo').srcObject=null;
+}
+
 
 function snapLens(){
   var video=document.getElementById('lensVideo');
@@ -1796,11 +2912,35 @@ function snapLens(){
   showToast('📸 Photo captured!');
 }
 
-function stopLensCamera(){
-  if(lensStream){lensStream.getTracks().forEach(function(t){t.stop();});lensStream=null;}
-  document.getElementById('lensVideo').style.display='none';
-  document.getElementById('lensVideo').srcObject=null;
+
+function lensDropFile(ev){
+  ev.preventDefault();
+  document.getElementById('lensDrop').classList.remove('drag');
+  var file=ev.dataTransfer.files[0];
+  if(!file||!file.type.startsWith('image/'))return showToast('Please drop an image file!');
+  var dt=new DataTransfer();dt.items.add(file);
+  var inp=document.getElementById('lensFile');inp.files=dt.files;
+  lensLoadFile(inp);
 }
+
+
+function lensLoadFile(inp){
+  var file=inp.files[0];
+  if(!file)return;
+  lensMimeType=file.type||'image/jpeg';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    lensImageB64=e.target.result.split(',')[1];
+    var prev=document.getElementById('lensPreview');
+    prev.src=e.target.result;
+    prev.style.display='block';
+    document.getElementById('lensDropInner').style.display='none';
+    document.getElementById('lensAnalyseBtn').disabled=false;
+    document.getElementById('lensResult').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
 
 async function analyseLens(){
   if(!lensImageB64){showToast('Please upload or capture an image first!');return;}
@@ -1855,6 +2995,7 @@ async function analyseLens(){
   document.getElementById('lensAnalyseBtn').disabled=false;
 }
 
+
 async function lensAskMore(){
   var inp=document.getElementById('lensAskInp');
   var q=inp.value.trim();if(!q)return;
@@ -1891,20 +3032,144 @@ async function lensAskMore(){
   }
 }
 
+
 function sendLensToChat(){
   if(!window._lensLastResult)return;
   closeLens();
   addMsg('[QVIO Lens Result]\n\n'+window._lensLastResult,'ai');
   showToast('✅ Lens result added to chat!');
 }
+
+
 function speakLensResult(){
   speakText(window._lensLastResult||'No result yet',null);
 }
+
+
 function copyLensResult(){
   if(navigator.clipboard&&window._lensLastResult){
     navigator.clipboard.writeText(window._lensLastResult).then(function(){showToast('📋 Copied!');});
   }
 }
+
+
+function setModeD(m,label){
+  mode=m;
+  // Update pill
+  var lbl=document.getElementById('modeLabel');
+  if(lbl)lbl.textContent=label;
+  // Update drawer pills
+  document.querySelectorAll('.md-pill').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'"+m+"'")>-1);
+  });
+  // Sync old hidden mbtn for JS compatibility
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
+  var mbtns=document.querySelectorAll('.mbtn');
+  mbtns.forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+m+"'")>-1)b.classList.add('on');});
+  // Exam bar
+  var eb=document.getElementById('examBar');
+  if(eb)eb.style.display=m==='exam'?'flex':'none';
+  if(typeof S!=='undefined')S.s('mode',m);
+  closeModesDrawer();
+  showToast(label.replace(/^[^\w]*/,'')+' mode ✓');
+}
+
+
+function toggleModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d.classList.contains('show')){closeModesDrawer();}
+  else{d.classList.add('show');o.classList.add('show');}
+}
+
+
+function closeModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d)d.classList.remove('show');
+  if(o)o.classList.remove('show');
+}
+
+
+function toggleToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p.classList.contains('show')){closeToolsPanel();}
+  else{p.classList.add('show');o.classList.add('show');b.classList.add('active');}
+}
+
+
+function closeToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p)p.classList.remove('show');
+  if(o)o.classList.remove('show');
+  if(b)b.classList.remove('active');
+}
+
+
+function revealNamasteText(name){
+  var greetEl=document.getElementById('nsGreeting');
+  if(greetEl){
+    greetEl.innerHTML='';
+    var deva=document.createElement('div');
+    deva.className='ns-deva';
+    deva.textContent='नमस्ते';
+    greetEl.appendChild(deva);
+    var eng=document.createElement('div');
+    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
+    'NAMASTE'.split('').forEach(function(ch,i){
+      var s=document.createElement('span');
+      s.className='ns-char';s.textContent=ch;
+      s.style.animationDelay=(.05+i*.07)+'s';
+      if(i===0||i===6){
+        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
+        s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
+      }
+      eng.appendChild(s);
+    });
+    greetEl.appendChild(eng);
+  }
+  var unEl=document.getElementById('nsUsername');
+  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
+  var pctEl=document.getElementById('nsPercent');
+  var pct=0;
+  var pTimer=setInterval(function(){
+    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
+    if(pctEl)pctEl.textContent=pct+'%';
+    if(pct>=100)clearInterval(pTimer);
+  },32);
+  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
+  var mi=0,stEl=document.getElementById('nsStatusTxt');
+  var sTimer=setInterval(function(){
+    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
+    if(mi>=msgs.length-1)clearInterval(sTimer);
+  },600);
+  fireConfetti();
+}
+
+// ── API Key Health Check ──
+// Runs once on load — shows a warning toast if key is invalid/expired
+setTimeout(function(){
+  fetch('https://api.groq.com/openai/v1/models',{
+    headers:{'Authorization':'Bearer '+GROQ_KEY}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error){
+      var code=d.error.code||'';
+      var msg=d.error.message||'';
+      if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
+        showToast('⚠️ Groq API key is invalid or expired — AI won\'t work. Get a new key at console.groq.com');
+        console.error('QVIO KEY EXPIRED:',msg);
+      }
+    }else{
+      console.log('✅ Groq API key is valid');
+    }
+  }).catch(function(){
+    // Network error or CORS — can't check, ignore silently
+  });
+},3000);
 </script>
 </body>
 </html>
