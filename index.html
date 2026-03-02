@@ -63,7 +63,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   align-items:center;justify-content:center;flex-direction:column;
   overflow:hidden;
 }
-#namasteScreen.show{display:flex;}
+#namasteScreen{display:none!important;}#namasteScreen.show{display:flex!important;}
 .ns-bg-canvas{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(212,140,0,0.13) 0%,rgba(5,8,20,1) 70%,#000 100%);}
 .ns-bg-canvas::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(-60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px);}
 .ns-scanline{display:none;}
@@ -1535,29 +1535,51 @@ function initParticles(){
 // NAMASTE ANIMATION
 // ═══════════════════════════════
 function showNamaste(user){
+  // Hide login screen
   var ls=document.getElementById('loginScreen');
-  ls.style.opacity='0';ls.style.transition='opacity .4s';
-  setTimeout(function(){ls.style.display='none';},400);
+  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';
+    setTimeout(function(){ls.style.display='none';},400);}
+  // Show namaste
   var ns=document.getElementById('namasteScreen');
+  if(!ns){showMainApp();return;} // fallback if no namaste screen
+  ns.style.opacity='';
   ns.classList.add('show');
   var nm=user.displayName||user.email||'Friend';
   var first=nm.split(' ')[0].toUpperCase();
-  // Trigger text
   setTimeout(function(){ revealNamasteText(first); }, 600);
-  // Dismiss after 4.5s
+  // Dismiss after 3.5s and show main app
   setTimeout(function(){
     ns.classList.add('exiting');
     setTimeout(function(){
       ns.style.opacity='0';ns.style.transition='opacity .5s';
       setTimeout(function(){
-        ns.classList.remove('show','exiting');ns.style.opacity='';
+        ns.classList.remove('show','exiting');
+        ns.style.opacity='';ns.style.display='none';
         var g=document.getElementById('nsGreeting');
         var u=document.getElementById('nsUsername');
         var p=document.getElementById('nsPercent');
         if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
+        showMainApp();
       },500);
     },300);
-  },4500);
+  },3500);
+}
+function showMainApp(){
+  // Make sure login and namaste are fully hidden
+  var ls=document.getElementById('loginScreen');
+  var ns=document.getElementById('namasteScreen');
+  if(ls){ls.style.display='none';ls.style.opacity='0';}
+  if(ns){ns.style.display='none';ns.classList.remove('show','exiting');}
+  // Make sure body/header/chat are visible
+  document.body.style.overflow='';
+  var header=document.querySelector('header');
+  var chat=document.getElementById('chat');
+  var inp=document.getElementById('inp');
+  if(header)header.style.display='';
+  if(chat)chat.style.display='';
+  if(inp)inp.style.display='';
+  // Show greeting
+  setTimeout(function(){setSmartGreeting();showOnboard();},300);
 }
 
 // ═══════════════════════════════
