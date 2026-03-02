@@ -731,144 +731,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 <div id="particles"></div>
 
-<!-- NAMASTE SCREEN — BRICS STYLE -->
-<div id="namasteScreen">
-  <div class="ns-bg-canvas" id="nsBgCanvas"></div>
-  <div class="ns-bracket ns-br-tl"></div>
-  <div class="ns-bracket ns-br-tr"></div>
-  <div class="ns-bracket ns-br-bl"></div>
-  <div class="ns-bracket ns-br-br"></div>
 
-  <!-- BRICS Namaste SVG — clean, flat, official style -->
-  <div class="ns-namaste-wrap" id="nsNamasteWrap">
-    <svg class="ns-namaste-svg" viewBox="0 0 260 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="sk1" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#E8A020"/>
-          <stop offset="60%" stop-color="#C87010"/>
-          <stop offset="100%" stop-color="#A05808"/>
-        </linearGradient>
-        <linearGradient id="sk2" x1="1" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#E8A020"/>
-          <stop offset="60%" stop-color="#C87010"/>
-          <stop offset="100%" stop-color="#A05808"/>
-        </linearGradient>
-        <linearGradient id="gold1" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#F5D060"/>
-          <stop offset="100%" stop-color="#C88800"/>
-        </linearGradient>
-        <filter id="hshadow">
-          <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(212,160,0,0.45)"/>
-        </filter>
-        <filter id="hglow">
-          <feGaussianBlur stdDeviation="10" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-
-      <!-- Aura glow ring behind hands -->
-      <ellipse cx="130" cy="200" rx="90" ry="75" fill="rgba(212,160,0,0.10)" class="ns-aura"/>
-      <ellipse cx="130" cy="200" rx="60" ry="50" fill="rgba(212,160,0,0.08)" class="ns-aura2"/>
-
-      <!-- ═══ LEFT HAND ═══ -->
-      <g filter="url(#hshadow)">
-        <!-- Wrist/Sleeve -->
-        <path d="M88 272 Q80 268 76 258 L80 238 Q82 230 90 228 L118 226 Q126 226 128 234 L128 260 Q128 272 118 276 Z" fill="#7A3A0A"/>
-        <!-- Gold bangle 1 -->
-        <ellipse cx="104" cy="228" rx="22" ry="5" fill="url(#gold1)" opacity="0.95"/>
-        <!-- Gold bangle 2 -->
-        <ellipse cx="104" cy="235" rx="19" ry="3.5" fill="url(#gold1)" opacity="0.8"/>
-        <!-- Palm body -->
-        <path d="M82 228 Q78 210 80 188 Q82 172 90 164 L118 162 Q128 162 130 174 L130 230 Q130 242 118 246 Q100 250 88 244 Z" fill="url(#sk1)"/>
-        <!-- Thumb (tucked to side, pointing right) -->
-        <path d="M128 220 Q140 215 148 205 Q154 196 150 188 Q146 182 138 184 Q132 186 130 196 L128 220 Z" fill="url(#sk1)"/>
-        <!-- Thumb tip round -->
-        <ellipse cx="149" cy="186" rx="7" ry="9" fill="#A05808"/>
-        <!-- Knuckle line -->
-        <path d="M84 166 Q106 160 128 164" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <!-- Finger 1 — pinky -->
-        <rect x="84" y="92" width="14" height="74" rx="7" fill="url(#sk1)"/>
-        <ellipse cx="91" cy="88" rx="7" ry="8" fill="#B06010"/>
-        <!-- Finger 2 — ring -->
-        <rect x="100" y="78" width="15" height="86" rx="7.5" fill="url(#sk1)"/>
-        <ellipse cx="107" cy="74" rx="7.5" ry="8.5" fill="#B06010"/>
-        <!-- Finger 3 — middle (longest) -->
-        <rect x="116" y="68" width="16" height="96" rx="8" fill="url(#sk1)"/>
-        <ellipse cx="124" cy="64" rx="8" ry="9" fill="#B06010"/>
-        <!-- Finger 4 — index -->
-        <rect x="114" y="75" width="15" height="89" rx="7.5" fill="url(#sk1)"/>
-        <!-- Finger joints (knuckle lines) -->
-        <line x1="84" y1="130" x2="98" y2="130" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="100" y1="118" x2="115" y2="118" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="116" y1="110" x2="132" y2="110" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <!-- Nail highlights -->
-        <ellipse cx="91" cy="90" rx="4" ry="5" fill="rgba(255,200,100,0.35)"/>
-        <ellipse cx="107" cy="76" rx="4.5" ry="5.5" fill="rgba(255,200,100,0.35)"/>
-        <ellipse cx="124" cy="66" rx="5" ry="6" fill="rgba(255,200,100,0.35)"/>
-      </g>
-
-      <!-- ═══ RIGHT HAND (mirror) ═══ -->
-      <g filter="url(#hshadow)">
-        <!-- Wrist/Sleeve -->
-        <path d="M172 272 Q180 268 184 258 L180 238 Q178 230 170 228 L142 226 Q134 226 132 234 L132 260 Q132 272 142 276 Z" fill="#7A3A0A"/>
-        <!-- Gold bangle 1 -->
-        <ellipse cx="156" cy="228" rx="22" ry="5" fill="url(#gold1)" opacity="0.95"/>
-        <!-- Gold bangle 2 -->
-        <ellipse cx="156" cy="235" rx="19" ry="3.5" fill="url(#gold1)" opacity="0.8"/>
-        <!-- Palm body -->
-        <path d="M178 228 Q182 210 180 188 Q178 172 170 164 L142 162 Q132 162 130 174 L130 230 Q130 242 142 246 Q160 250 172 244 Z" fill="url(#sk2)"/>
-        <!-- Thumb (tucked, pointing left) -->
-        <path d="M132 220 Q120 215 112 205 Q106 196 110 188 Q114 182 122 184 Q128 186 130 196 L132 220 Z" fill="url(#sk2)"/>
-        <!-- Thumb tip round -->
-        <ellipse cx="111" cy="186" rx="7" ry="9" fill="#A05808"/>
-        <!-- Knuckle line -->
-        <path d="M176 166 Q154 160 132 164" stroke="rgba(0,0,0,0.12)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <!-- Finger 1 — pinky -->
-        <rect x="162" y="92" width="14" height="74" rx="7" fill="url(#sk2)"/>
-        <ellipse cx="169" cy="88" rx="7" ry="8" fill="#B06010"/>
-        <!-- Finger 2 — ring -->
-        <rect x="145" y="78" width="15" height="86" rx="7.5" fill="url(#sk2)"/>
-        <ellipse cx="153" cy="74" rx="7.5" ry="8.5" fill="#B06010"/>
-        <!-- Finger 3 — middle (longest) -->
-        <rect x="128" y="68" width="16" height="96" rx="8" fill="url(#sk2)"/>
-        <ellipse cx="136" cy="64" rx="8" ry="9" fill="#B06010"/>
-        <!-- Finger 4 — index -->
-        <rect x="131" y="75" width="15" height="89" rx="7.5" fill="url(#sk2)"/>
-        <!-- Knuckle lines -->
-        <line x1="162" y1="130" x2="176" y2="130" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="145" y1="118" x2="160" y2="118" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="128" y1="110" x2="144" y2="110" stroke="rgba(0,0,0,0.1)" stroke-width="1" stroke-linecap="round"/>
-        <!-- Nail highlights -->
-        <ellipse cx="169" cy="90" rx="4" ry="5" fill="rgba(255,200,100,0.35)"/>
-        <ellipse cx="153" cy="76" rx="4.5" ry="5.5" fill="rgba(255,200,100,0.35)"/>
-        <ellipse cx="136" cy="66" rx="5" ry="6" fill="rgba(255,200,100,0.35)"/>
-      </g>
-
-      <!-- Sparkle dots around fingers -->
-      <g class="ns-sparkles">
-        <circle cx="130" cy="50" r="3" fill="#F5C842" opacity="0.9"/>
-        <circle cx="108" cy="58" r="2" fill="#fff" opacity="0.8"/>
-        <circle cx="152" cy="58" r="2" fill="#fff" opacity="0.8"/>
-        <circle cx="95"  cy="72" r="1.5" fill="#F5C842" opacity="0.7"/>
-        <circle cx="165" cy="72" r="1.5" fill="#F5C842" opacity="0.7"/>
-        <line x1="130" y1="42" x2="130" y2="28" stroke="#F5C842" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-        <line x1="110" y1="50" x2="100" y2="38" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-        <line x1="150" y1="50" x2="160" y2="38" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-      </g>
-    </svg>
-  </div>
-
-  <!-- Text -->
-  <div class="ns-text-wrap">
-    <div class="ns-greeting" id="nsGreeting"></div>
-    <div class="ns-username" id="nsUsername"></div>
-    <div class="ns-divider"></div>
-    <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
-    <div class="ns-progress-wrap"><div class="ns-progress-fill"></div></div>
-    <div class="ns-percent" id="nsPercent">0%</div>
-  </div>
-  <div class="ns-flash"></div>
-</div>
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
@@ -1535,35 +1398,13 @@ function initParticles(){
 // NAMASTE ANIMATION
 // ═══════════════════════════════
 function showNamaste(user){
-  // Hide login screen
+  // Skip namaste, go straight to app
   var ls=document.getElementById('loginScreen');
   if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';
     setTimeout(function(){ls.style.display='none';},400);}
-  // Show namaste
-  var ns=document.getElementById('namasteScreen');
-  if(!ns){showMainApp();return;} // fallback if no namaste screen
-  ns.style.opacity='';
-  ns.classList.add('show');
-  var nm=user.displayName||user.email||'Friend';
-  var first=nm.split(' ')[0].toUpperCase();
-  setTimeout(function(){ revealNamasteText(first); }, 600);
-  // Dismiss after 3.5s and show main app
-  setTimeout(function(){
-    ns.classList.add('exiting');
-    setTimeout(function(){
-      ns.style.opacity='0';ns.style.transition='opacity .5s';
-      setTimeout(function(){
-        ns.classList.remove('show','exiting');
-        ns.style.opacity='';ns.style.display='none';
-        var g=document.getElementById('nsGreeting');
-        var u=document.getElementById('nsUsername');
-        var p=document.getElementById('nsPercent');
-        if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
-        showMainApp();
-      },500);
-    },300);
-  },3500);
+  showMainApp();
 }
+
 function showMainApp(){
   // Make sure login and namaste are fully hidden
   var ls=document.getElementById('loginScreen');
