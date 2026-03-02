@@ -1645,318 +1645,312 @@ function showNamaste(user){
 function buildNamaste3D(container, ns, firstName){
   var W=window.innerWidth, H=window.innerHeight;
 
-  // ── Renderer ──
   var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
   renderer.setSize(W,H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.2;
+  renderer.toneMappingExposure=1.3;
+  renderer.shadowMap.enabled=true;
   container.appendChild(renderer.domElement);
 
-  // ── Scene & Camera ──
   var scene=new THREE.Scene();
-  scene.fog=new THREE.FogExp2(0x000000,0.008);
-  var camera=new THREE.PerspectiveCamera(55,W/H,0.1,1000);
-  camera.position.set(0,0,8);
+  var camera=new THREE.PerspectiveCamera(50,W/H,0.1,500);
+  camera.position.set(0,1.5,11);
+  camera.lookAt(0,0,0);
 
-  // ── Lights ──
-  var ambient=new THREE.AmbientLight(0x111122,0.8);
-  scene.add(ambient);
+  // Lights
+  scene.add(new THREE.AmbientLight(0x0d1122,1.2));
+  var key=new THREE.DirectionalLight(0xfff5dd,3.5);
+  key.position.set(4,8,6);key.castShadow=true;scene.add(key);
+  var fill=new THREE.DirectionalLight(0xd4a017,1.8);
+  fill.position.set(-5,3,4);scene.add(fill);
+  var rim=new THREE.DirectionalLight(0x4466cc,1.0);
+  rim.position.set(0,-4,-8);scene.add(rim);
+  var goldPt=new THREE.PointLight(0xd4a017,0,12);
+  goldPt.position.set(0,0,3);scene.add(goldPt);
+  var topPt=new THREE.PointLight(0xffffff,0,10);
+  topPt.position.set(0,5,2);scene.add(topPt);
 
-  var keyLight=new THREE.DirectionalLight(0xfff0cc,2.5);
-  keyLight.position.set(3,6,5);
-  keyLight.castShadow=true;
-  scene.add(keyLight);
+  // Stars
+  var sGeo=new THREE.BufferGeometry();
+  var sArr=new Float32Array(3000*3);
+  for(var i=0;i<9000;i++) sArr[i]=(Math.random()-0.5)*300;
+  sGeo.setAttribute('position',new THREE.BufferAttribute(sArr,3));
+  scene.add(new THREE.Points(sGeo,new THREE.PointsMaterial({color:0xffffff,size:0.15,transparent:true,opacity:0.6})));
 
-  var fillLight=new THREE.DirectionalLight(0xd4a017,1.2);
-  fillLight.position.set(-4,2,3);
-  scene.add(fillLight);
-
-  var rimLight=new THREE.DirectionalLight(0x6495ed,0.8);
-  rimLight.position.set(0,-3,-6);
-  scene.add(rimLight);
-
-  var goldPoint=new THREE.PointLight(0xd4a017,0,8);
-  goldPoint.position.set(0,0,3);
-  scene.add(goldPoint);
-
-  // ── Starfield ──
-  var starGeo=new THREE.BufferGeometry();
-  var starCount=2000;
-  var starPos=new Float32Array(starCount*3);
-  for(var i=0;i<starCount*3;i++) starPos[i]=(Math.random()-0.5)*200;
-  starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
-  var starMat=new THREE.PointsMaterial({color:0xffffff,size:0.12,transparent:true,opacity:0.7});
-  scene.add(new THREE.Points(starGeo,starMat));
-
-  // ── Skin material ──
+  // ── Materials ──
   var skinMat=new THREE.MeshStandardMaterial({
-    color:0xD4860A,
-    roughness:0.55,
-    metalness:0.05,
-    emissive:0x3a2000,
-    emissiveIntensity:0.15,
+    color:0xC8760A, roughness:0.5, metalness:0.04,
+    emissive:0x2a1400, emissiveIntensity:0.2
+  });
+  var skinLightMat=new THREE.MeshStandardMaterial({
+    color:0xDC9020, roughness:0.45, metalness:0.04,
+    emissive:0x301800, emissiveIntensity:0.15
+  });
+  var nailMat=new THREE.MeshStandardMaterial({
+    color:0xE8B87A, roughness:0.3, metalness:0.1
+  });
+  var bangleMat=new THREE.MeshStandardMaterial({
+    color:0xD4A017, metalness:0.95, roughness:0.08,
+    emissive:0xD4A017, emissiveIntensity:0.4
+  });
+  var sleeveMat=new THREE.MeshStandardMaterial({
+    color:0x8B4513, roughness:0.8, metalness:0.0,
+    emissive:0x1a0800, emissiveIntensity:0.1
   });
 
-  // ── Build a realistic hand using finger segments ──
-  function makeFingerSegment(len,topR,botR){
-    var geo=new THREE.CylinderGeometry(topR,botR,len,10,1);
-    return new THREE.Mesh(geo,skinMat);
-  }
+  // ── Build ONE hand — fingers all pressed together (namaste position) ──
+  // Returns a THREE.Group
+  function buildNamesteHand(){
+    var hand = new THREE.Group();
 
-  function buildHand(side){
-    // side: 1 = right hand, -1 = left hand
-    var hand=new THREE.Group();
-
-    // Palm — flattened box
-    var palmGeo=new THREE.BoxGeometry(1.4,0.22,1.8);
-    // Round it slightly by scaling vertices
-    var palmMesh=new THREE.Mesh(palmGeo,skinMat);
+    // === PALM ===
+    // Use a LatheGeometry-based wedge shape, widest at knuckles, tapering to wrist
+    var palmShape = new THREE.Shape();
+    palmShape.moveTo(-1.0, 0);
+    palmShape.bezierCurveTo(-1.05, 0.4, -1.0, 0.8, -0.9, 1.2);
+    palmShape.lineTo(0.9, 1.2);
+    palmShape.bezierCurveTo(1.0, 0.8, 1.05, 0.4, 1.0, 0);
+    palmShape.lineTo(0.7, -0.5);
+    palmShape.bezierCurveTo(0.3, -0.65, -0.3, -0.65, -0.7, -0.5);
+    palmShape.lineTo(-1.0, 0);
+    var extrudeSettings={depth:0.25, bevelEnabled:true, bevelSegments:3, steps:1, bevelSize:0.06, bevelThickness:0.06};
+    var palmGeo = new THREE.ExtrudeGeometry(palmShape, extrudeSettings);
+    palmGeo.center();
+    var palmMesh = new THREE.Mesh(palmGeo, skinMat);
     palmMesh.castShadow=true;
     hand.add(palmMesh);
 
-    // Thumb
-    var thumbGroup=new THREE.Group();
-    var th1=makeFingerSegment(0.55,0.14,0.16);
-    th1.position.y=0.27;
-    var th2=makeFingerSegment(0.42,0.11,0.13);
-    th2.position.y=0.27+0.48;
-    var thTip=new THREE.Mesh(new THREE.SphereGeometry(0.11,8,6),skinMat);
-    thTip.position.y=0.27+0.48+0.22;
-    thumbGroup.add(th1,th2,thTip);
-    thumbGroup.position.set(side*0.78,0.05,0.55);
-    thumbGroup.rotation.set(0.3,side*0.4,side*0.5);
-    hand.add(thumbGroup);
-
-    // 4 fingers
-    var fingerDefs=[
-      {x:-0.48,len:[0.72,0.52,0.38],r:[0.13,0.11,0.09],name:'pinky'},
-      {x:-0.16,len:[0.88,0.62,0.44],r:[0.145,0.12,0.10],name:'ring'},
-      {x: 0.16,len:[0.96,0.68,0.48],r:[0.15,0.125,0.105],name:'middle'},
-      {x: 0.48,len:[0.84,0.60,0.42],r:[0.14,0.115,0.096],name:'index'},
+    // === FINGERS (pressed together, slight curve forward) ===
+    // In namaste: all 4 fingers are held together and point straight up
+    // Finger data: [xOffset, totalLen, baseWidth]
+    var fdata=[
+      {x:-0.60, len:2.10, w:0.175},  // pinky
+      {x:-0.20, len:2.55, w:0.195},  // ring
+      {x: 0.20, len:2.75, w:0.205},  // middle (longest)
+      {x: 0.60, len:2.40, w:0.190},  // index
     ];
 
-    var fingerGroups=[];
-    fingerDefs.forEach(function(fd){
+    fdata.forEach(function(fd, fi){
       var fg=new THREE.Group();
-      var y=0;
-      // 3 phalanges per finger
-      fd.len.forEach(function(l,pi){
-        var seg=makeFingerSegment(l, fd.r[pi]*0.85, fd.r[pi]);
-        seg.position.y=y+l/2;
-        seg.castShadow=true;
-        fg.add(seg);
-        // Knuckle sphere
-        var knuck=new THREE.Mesh(new THREE.SphereGeometry(fd.r[pi],8,6),skinMat);
-        knuck.position.y=y;
-        fg.add(knuck);
-        y+=l;
+      // 3 phalanges with slight forward curve
+      var phalLen=[fd.len*0.45, fd.len*0.32, fd.len*0.23];
+      var phalW=[fd.w, fd.w*0.88, fd.w*0.76];
+      var yOff=0;
+      phalLen.forEach(function(pl,pi){
+        var pw=phalW[pi];
+        // Slightly tapered cylinder for each phalange
+        var pGeo=new THREE.CylinderGeometry(pw*0.9,pw,pl,10,2);
+        var pMesh=new THREE.Mesh(pGeo,pi===0?skinMat:skinLightMat);
+        pMesh.position.y=yOff+pl/2;
+        pMesh.castShadow=true;
+        fg.add(pMesh);
+        // Knuckle sphere between phalanges
+        if(pi<2){
+          var knuck=new THREE.Mesh(new THREE.SphereGeometry(pw*0.96,10,8),skinMat);
+          knuck.position.y=yOff+pl;
+          fg.add(knuck);
+        }
+        yOff+=pl;
       });
-      // Fingertip cap
-      var tip=new THREE.Mesh(new THREE.SphereGeometry(fd.r[2]*0.9,8,6),skinMat);
-      tip.position.y=y;
+      // Rounded fingertip
+      var tipGeo=new THREE.SphereGeometry(phalW[2]*0.82,10,8);
+      var tip=new THREE.Mesh(tipGeo,skinLightMat);
+      tip.position.y=yOff;
+      tip.scale.set(1,0.7,1);
       fg.add(tip);
+      // Tiny nail
+      var nailGeo=new THREE.BoxGeometry(phalW[2]*1.4,0.04,phalW[2]*1.0);
+      var nail=new THREE.Mesh(nailGeo,nailMat);
+      nail.position.set(0,yOff+0.02,-phalW[2]*0.2);
+      fg.add(nail);
 
-      fg.position.set(fd.x,0.11,-0.9);
-      fg.rotation.x=-0.15; // slight forward tilt
-      fingerGroups.push(fg);
+      // Position finger at top of palm
+      fg.position.set(fd.x, 0.68, 0);
+      // Slight inward lean so fingers touch each other
+      fg.rotation.z = -fd.x * 0.06;
+      // Slight forward curl (namaste prayer curl)
+      fg.rotation.x = -0.12 + fi*0.01;
       hand.add(fg);
     });
 
-    // Wrist cylinder
-    var wristGeo=new THREE.CylinderGeometry(0.62,0.72,0.6,12);
-    var wristMesh=new THREE.Mesh(wristGeo,new THREE.MeshStandardMaterial({
-      color:0x8B5E0A,roughness:0.7,metalness:0.0,
-      emissive:0x1a0f00,emissiveIntensity:0.2
-    }));
-    wristMesh.position.set(0,-0.35,0.35);
-    wristMesh.rotation.x=0.3;
-    hand.add(wristMesh);
+    // === THUMB — tucked to side ===
+    var thumbG=new THREE.Group();
+    // Thumb phalanges
+    var thLens=[0.55,0.44];
+    var thW=[0.22,0.18];
+    var ty=0;
+    thLens.forEach(function(tl,ti){
+      var tGeo=new THREE.CylinderGeometry(thW[ti]*0.88,thW[ti],tl,10,1);
+      var tMesh=new THREE.Mesh(tGeo,ti===0?skinMat:skinLightMat);
+      tMesh.position.y=ty+tl/2;
+      tMesh.castShadow=true;
+      thumbG.add(tMesh);
+      if(ti<1){
+        var tk=new THREE.Mesh(new THREE.SphereGeometry(thW[ti],10,8),skinMat);
+        tk.position.y=ty+tl;thumbG.add(tk);
+      }
+      ty+=tl;
+    });
+    var tTip=new THREE.Mesh(new THREE.SphereGeometry(thW[1]*0.9,10,8),skinLightMat);
+    tTip.position.y=ty;tTip.scale.set(1,0.7,1);thumbG.add(tTip);
+    thumbG.position.set(1.08,0.1,0.05);
+    thumbG.rotation.set(0.1, 0.0, 0.52);  // tucked in at 30deg
+    hand.add(thumbG);
+
+    // === WRIST ===
+    var wGeo=new THREE.CylinderGeometry(0.75,0.85,0.9,14);
+    var wMesh=new THREE.Mesh(wGeo,sleeveMat);
+    wMesh.position.y=-0.95;
+    hand.add(wMesh);
 
     // Gold bangle
-    var bangleGeo=new THREE.TorusGeometry(0.68,0.055,10,32);
-    var bangleMat=new THREE.MeshStandardMaterial({
-      color:0xD4A017,metalness:0.95,roughness:0.1,
-      emissive:0xD4A017,emissiveIntensity:0.3
-    });
-    var bangle=new THREE.Mesh(bangleGeo,bangleMat);
-    bangle.position.set(0,-0.38,0.35);
-    bangle.rotation.x=1.2;
+    var bangGeo=new THREE.TorusGeometry(0.82,0.07,12,40);
+    var bangle=new THREE.Mesh(bangGeo,bangleMat);
+    bangle.position.y=-1.0;
+    bangle.rotation.x=Math.PI/2;
     hand.add(bangle);
 
-    return {group:hand, fingers:fingerGroups};
+    // Second thinner bangle
+    var bangle2=new THREE.Mesh(new THREE.TorusGeometry(0.82,0.04,10,40),bangleMat);
+    bangle2.position.y=-0.78;
+    bangle2.rotation.x=Math.PI/2;
+    hand.add(bangle2);
+
+    return hand;
   }
 
-  var leftHandData=buildHand(-1);
-  var rightHandData=buildHand(1);
-  var leftHand=leftHandData.group;
-  var rightHand=rightHandData.group;
+  // Build two hands
+  var leftHand=buildNamesteHand();
+  var rightHand=buildNamesteHand();
 
-  // Orient hands for namaste — fingers pointing UP
-  // Left hand: palms face right, fingers up
-  leftHand.rotation.set(-Math.PI/2, 0, 0.12);
-  rightHand.rotation.set(-Math.PI/2, 0, -0.12);
+  // Namaste orientation — both palms face each other, fingers pointing UP
+  // Left hand: palm faces right (+X)
+  leftHand.rotation.set(0, Math.PI/2, 0);
+  // Right hand: palm faces left (-X)  
+  rightHand.rotation.set(0, -Math.PI/2, 0);
 
-  // Start positions — far apart
-  leftHand.position.set(-5,0,0);
-  rightHand.position.set(5,0,0);
+  // Start positions — fly in from sides
+  leftHand.position.set(-9, 0, 0);
+  rightHand.position.set(9, 0, 0);
 
   scene.add(leftHand);
   scene.add(rightHand);
 
-  // ── Particle system for burst ──
-  var partGeo=new THREE.BufferGeometry();
-  var partCount=200;
-  var pPos=new Float32Array(partCount*3);
-  var pVel=[];
-  for(var i=0;i<partCount;i++){
-    pPos[i*3]=0;pPos[i*3+1]=0;pPos[i*3+2]=0;
-    var ang=Math.random()*Math.PI*2;
-    var elev=(Math.random()-0.5)*Math.PI;
-    var spd=Math.random()*4+1;
-    pVel.push({
-      x:Math.cos(ang)*Math.cos(elev)*spd,
-      y:Math.sin(elev)*spd*0.6+1,
-      z:Math.sin(ang)*Math.cos(elev)*spd*0.5,
-      life:1
-    });
+  // ── Particle burst geo ──
+  var pCount=250;
+  var pGeo=new THREE.BufferGeometry();
+  var pBuf=new Float32Array(pCount*3);
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pBuf,3));
+  var pVels=[];
+  for(var i=0;i<pCount;i++){
+    var a=Math.random()*Math.PI*2, el2=(Math.random()-.5)*Math.PI, sp=Math.random()*5+1.5;
+    pVels.push({x:Math.cos(a)*Math.cos(el2)*sp,y:Math.abs(Math.sin(el2))*sp*0.8+0.5,z:Math.sin(a)*Math.cos(el2)*sp*.4,life:1,active:false});
   }
-  partGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
-  var partMat=new THREE.PointsMaterial({
-    color:0xF5C842,size:0.12,transparent:true,opacity:0,
-    blending:THREE.AdditiveBlending,depthWrite:false
-  });
-  var particles=new THREE.Points(partGeo,partMat);
-  scene.add(particles);
+  var pMat=new THREE.PointsMaterial({color:0xF5C842,size:0.1,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false});
+  scene.add(new THREE.Points(pGeo,pMat));
 
-  // ── Gold ring halo ──
-  var haloGeo=new THREE.TorusGeometry(2.2,0.015,8,80);
-  var haloMat=new THREE.MeshBasicMaterial({
-    color:0xD4A017,transparent:true,opacity:0,
-    blending:THREE.AdditiveBlending
-  });
-  var halo=new THREE.Mesh(haloGeo,haloMat);
-  halo.rotation.x=Math.PI/2;
-  scene.add(halo);
+  // Glow halos
+  function makeHalo(r,tube,col,op){
+    var m=new THREE.Mesh(new THREE.TorusGeometry(r,tube,8,80),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:op,blending:THREE.AdditiveBlending}));
+    m.rotation.x=Math.PI/2;scene.add(m);return m;
+  }
+  var halo1=makeHalo(2.8,0.018,0xD4A017,0);
+  var halo2=makeHalo(2.0,0.012,0xffffff,0);
+  var halo3=makeHalo(1.4,0.008,0xD4A017,0);
 
-  var halo2=new THREE.Mesh(
-    new THREE.TorusGeometry(1.6,0.01,8,80),
-    new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,blending:THREE.AdditiveBlending})
-  );
-  halo2.rotation.x=Math.PI/2;
-  scene.add(halo2);
-
-  // ── Animation state ──
+  // ── State ──
   var clock=new THREE.Clock();
-  var phase='approach';  // approach → joined → held
-  var joinTime=null;
-  var textDone=false;
+  var totalT=0;
+  var joined=false;
   var burstDone=false;
+  var textDone=false;
   var animId=null;
-  var totalTime=0;
+  var joinedAt=0;
 
   function animate(){
     animId=requestAnimationFrame(animate);
     var dt=clock.getDelta();
-    totalTime+=dt;
+    totalT+=dt;
 
-    // Camera subtle drift
-    camera.position.x=Math.sin(totalTime*0.3)*0.3;
-    camera.position.y=Math.cos(totalTime*0.2)*0.15+0.2;
-    camera.lookAt(0,0.3,0);
+    // Camera gentle breathing orbit
+    camera.position.x=Math.sin(totalT*0.25)*0.6;
+    camera.position.y=1.5+Math.cos(totalT*0.18)*0.3;
+    camera.lookAt(0,0.2,0);
 
-    // Star slow rotation
-    starGeo.rotationY=(totalTime*0.01)||0;
+    var lx=leftHand.position.x;
+    var rx=rightHand.position.x;
 
-    if(phase==='approach'){
-      // Ease hands toward centre over 1.2s
-      var spd=dt*3.5;
-      var lx=leftHand.position.x, rx=rightHand.position.x;
-      leftHand.position.x += (-0.05 - lx)*spd;
-      rightHand.position.x += (0.05 - rx)*spd;
-
-      // Progress indicator
-      var dist=rightHand.position.x-leftHand.position.x;
-
-      if(dist<0.2){
-        phase='joined';
-        joinTime=totalTime;
-        leftHand.position.x=-0.05;
-        rightHand.position.x=0.05;
+    if(!joined){
+      // Smooth ease-out approach
+      leftHand.position.x  += (-0.04-lx)*Math.min(dt*4,0.15);
+      rightHand.position.x += (0.04-rx)*Math.min(dt*4,0.15);
+      // Slight tilt as approaching
+      leftHand.rotation.z  = (-rx)*0.012;
+      rightHand.rotation.z = (lx)*0.012;
+      if(Math.abs(rx-0.04)<0.12){
+        joined=true;joinedAt=totalT;
+        leftHand.position.x=-0.04;rightHand.position.x=0.04;
       }
-    }
+    } else {
+      var jt=totalT-joinedAt;
 
-    if(phase==='joined'||phase==='held'){
-      var jt=totalTime-(joinTime||totalTime);
-
-      // Burst particles on join
+      // Burst on join
       if(!burstDone){
         burstDone=true;
-        partMat.opacity=1;
-        goldPoint.intensity=8;
-        haloMat.opacity=0.8;
-        halo2.material.opacity=0.5;
+        for(var pi=0;pi<pCount;pi++){pVels[pi].active=true;pBuf[pi*3]=0;pBuf[pi*3+1]=0;pBuf[pi*3+2]=0;}
+        pMat.opacity=1;
+        goldPt.intensity=12;topPt.intensity=6;
+        halo1.material.opacity=1.0;
+        halo2.material.opacity=0.7;
+        halo3.material.opacity=0.5;
       }
 
-      // Animate burst particles
-      var positions=partGeo.attributes.position.array;
-      for(var pi=0;pi<partCount;pi++){
-        var pv=pVel[pi];
-        if(pv.life>0){
-          pv.life-=dt*0.55;
-          positions[pi*3]+=pv.x*dt;
-          positions[pi*3+1]+=pv.y*dt;
-          positions[pi*3+2]+=pv.z*dt;
-          pv.y-=dt*2; // gravity
+      // Animate particles
+      for(var pi=0;pi<pCount;pi++){
+        var pv=pVels[pi];
+        if(pv.active&&pv.life>0){
+          pv.life-=dt*0.5;
+          pBuf[pi*3]  +=pv.x*dt;
+          pBuf[pi*3+1]+=pv.y*dt;
+          pBuf[pi*3+2]+=pv.z*dt;
+          pv.y-=dt*3.5; // gravity
         }
       }
-      partGeo.attributes.position.needsUpdate=true;
-      partMat.opacity=Math.max(0,pVel[0].life);
+      pGeo.attributes.position.needsUpdate=true;
+      pMat.opacity=Math.max(0,pVels[0].life);
 
       // Halo expand and fade
-      halo.scale.set(1+jt*0.8,1+jt*0.8,1);
-      haloMat.opacity=Math.max(0,0.7-jt*0.5);
-      halo2.scale.set(1+jt*1.2,1+jt*1.2,1);
-      halo2.material.opacity=Math.max(0,0.4-jt*0.35);
+      var hs=1+jt*1.2;
+      halo1.scale.set(hs,hs,1);halo1.material.opacity=Math.max(0,0.9-jt*0.7);
+      var hs2=1+jt*1.8;
+      halo2.scale.set(hs2,hs2,1);halo2.material.opacity=Math.max(0,0.6-jt*0.55);
+      var hs3=1+jt*0.7;
+      halo3.scale.set(hs3,hs3,1);halo3.material.opacity=Math.max(0,0.4-jt*0.4)+0.08*Math.sin(totalT*3);
 
-      // Gold light pulse
-      goldPoint.intensity=Math.max(0,8-jt*3)+2*Math.sin(totalTime*3);
+      // Gold light dim after burst
+      goldPt.intensity=Math.max(1,12-jt*6)+1.5*Math.sin(totalT*2.5);
+      topPt.intensity=Math.max(0.5,6-jt*4);
 
-      // Gentle bow — hands tilt forward slightly
-      var bowAngle=-Math.PI/2 + Math.min(jt*0.6, 0.25);
-      leftHand.rotation.x=bowAngle;
-      rightHand.rotation.x=bowAngle;
+      // Gentle namaste BOW — both hands tilt forward together
+      var bowTarget=-0.18+Math.min(jt*0.3,0.22);
+      leftHand.rotation.x  += (bowTarget-leftHand.rotation.x)*0.08;
+      rightHand.rotation.x += (bowTarget-rightHand.rotation.x)*0.08;
 
-      // Subtle sway
-      var sway=Math.sin(totalTime*1.8)*0.025;
-      leftHand.rotation.z=0.12+sway;
-      rightHand.rotation.z=-0.12-sway;
+      // Subtle breathing sway
+      var breathe=Math.sin(totalT*1.6)*0.018;
+      leftHand.rotation.z  = breathe;
+      rightHand.rotation.z = -breathe;
+      leftHand.position.y  = Math.sin(totalT*1.2)*0.04;
+      rightHand.position.y = Math.sin(totalT*1.2)*0.04;
 
-      // Finger subtle wiggle after join
-      if(jt>0.3){
-        leftHandData.fingers.forEach(function(fg,fi){
-          fg.rotation.x=-0.15+Math.sin(totalTime*2+fi*0.4)*0.03;
-        });
-        rightHandData.fingers.forEach(function(fg,fi){
-          fg.rotation.x=-0.15+Math.sin(totalTime*2+fi*0.4)*0.03;
-        });
-      }
-
-      if(jt>0.4&&!textDone){
-        textDone=true;
-        revealNamasteText(firstName);
-      }
-
-      phase='held';
+      if(jt>0.5&&!textDone){textDone=true;revealNamasteText(firstName);}
     }
 
     renderer.render(scene,camera);
   }
   animate();
 
-  // ── Dismiss ──
   setTimeout(function(){
     cancelAnimationFrame(animId);
     renderer.dispose();
@@ -1964,18 +1958,16 @@ function buildNamaste3D(container, ns, firstName){
     setTimeout(function(){
       ns.style.opacity='0';ns.style.transition='opacity .5s';
       setTimeout(function(){
-        ns.classList.remove('show','exiting');
-        ns.style.opacity='';
+        ns.classList.remove('show','exiting');ns.style.opacity='';
         container.innerHTML='';
-        // Clean up script tag
-        var s=document.querySelector('script[src*="three.min.js"]');
-        if(s)s.remove();
+        var sc=document.querySelector('script[src*="three.min.js"]');
+        if(sc)sc.remove();
         var g=document.getElementById('nsGreeting');
         var u=document.getElementById('nsUsername');
         if(g)g.innerHTML='';if(u)u.innerHTML='';
       },500);
     },300);
-  },5500);
+  },5800);
 }
 
 function revealNamasteText(name){
@@ -2630,19 +2622,41 @@ function detectSpeakLang(text){
 function findBestVoice(langCfg){
   var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
   if(!voices.length)return null;
-  // Try each preferred lang in order
+
+  // Score each voice — higher = better
+  function scoreVoice(v,tag){
+    var n=v.name.toLowerCase();
+    var score=0;
+    if(v.lang===tag) score+=100;                          // exact lang match
+    else if(v.lang.startsWith(tag.split('-')[0])) score+=50; // prefix match
+    else return -1;                                        // wrong language
+    if(n.indexOf('google')>-1) score+=40;                 // prefer Google
+    if(n.indexOf('neural')>-1||n.indexOf('natural')>-1) score+=30; // prefer neural
+    if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1) score+=25;
+    if(n.indexOf('microsoft')>-1) score-=30;              // deprioritise Microsoft
+    if(n.indexOf('zira')>-1||n.indexOf('david')>-1||n.indexOf('mark')>-1) score-=50; // worst MS voices
+    if(v.localService===false) score+=10;                 // online voices usually better
+    return score;
+  }
+
+  var best=null, bestScore=-999;
   for(var i=0;i<langCfg.langs.length;i++){
     var tag=langCfg.langs[i];
-    // Exact match first
-    var v=voices.find(function(x){return x.lang===tag;});
-    if(v)return v;
-    // Prefix match (e.g. 'hi' matches 'hi-IN')
-    var prefix=tag.split('-')[0];
-    v=voices.find(function(x){return x.lang.startsWith(prefix+'-')||x.lang===prefix;});
-    if(v)return v;
+    for(var j=0;j<voices.length;j++){
+      var s=scoreVoice(voices[j],tag);
+      if(s>bestScore){bestScore=s;best=voices[j];}
+    }
+    if(best&&bestScore>=50) break; // good enough, stop searching
   }
-  // Last resort: any voice
-  return voices[0]||null;
+  // If best is still a bad Microsoft voice and there's a Google fallback, use it
+  if(best){
+    var bn=best.name.toLowerCase();
+    if((bn.indexOf('microsoft')>-1&&(bn.indexOf('zira')>-1||bn.indexOf('david')>-1))){
+      var goog=voices.find(function(v){return v.name.toLowerCase().indexOf('google')>-1;});
+      if(goog) return goog;
+    }
+  }
+  return best;
 }
 
 function speakText(t,btn){
