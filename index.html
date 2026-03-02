@@ -1493,7 +1493,20 @@ initFirebase();
 // ═══════════════════════════════
 // GLOBALS
 // ═══════════════════════════════
-var GROQ_KEY='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';
+// 🔑 API Key Rotation — auto-switches when one hits rate limit
+var GROQ_KEYS=[
+  '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',
+  // Add more keys below (get free ones at console.groq.com):
+  // 'gsk_YOUR_KEY_2_HERE',
+  // 'gsk_YOUR_KEY_3_HERE',
+];
+var _keyIdx=0;
+var GROQ_KEY=GROQ_KEYS[0];
+function rotateKey(){
+  _keyIdx=(_keyIdx+1)%GROQ_KEYS.length;
+  GROQ_KEY=GROQ_KEYS[_keyIdx];
+  return _keyIdx!==0; // returns false if we've looped back to start
+}
 var MODEL='llama-3.3-70b-versatile';
 var mode='casual',chatHistory=[],currentUser=null,isRec=false,recog=null;
 var isFocus=false,pinnedEl=null,deferredPrompt=null,calcExpr='',lastMsg='';
@@ -2095,7 +2108,21 @@ async function sendMsg(){
         else if(el)el.innerHTML='⏳ Rate limited — wait <strong>'+cd+'s</strong> then retry.';
       },1000);
     }else{
-      addMsg(humanError(),'ai');
+      // Show real error so we can debug
+      var errMsg='❌ Error: '+em;
+      if(em.indexOf('401')>-1||em.indexOf('invalid_api_key')>-1||em.indexOf('Unauthorized')>-1){
+        errMsg='🔑 API key invalid or expired. Please update the Groq API key in the code.';
+      } else if(em.indexOf('402')>-1||em.indexOf('quota')>-1||em.indexOf('billing')>-1){
+        errMsg='💳 Groq quota exceeded. Get a new free API key at console.groq.com';
+      } else if(em.indexOf('model')>-1||em.indexOf('404')>-1){
+        errMsg='🤖 Model not found. Try a different model name.';
+      } else if(em.indexOf('fetch')>-1||em.indexOf('network')>-1||em.indexOf('Failed')>-1){
+        errMsg='📡 Network error — check your internet connection.';
+      } else if(em===''){
+        errMsg='⚠️ Unknown error — check browser console (F12) for details.';
+      }
+      addMsg(errMsg,'ai');
+      console.error('QVIO API Error:',em);
     }
   }
   document.getElementById('sendBtn').disabled=false;
@@ -2112,7 +2139,19 @@ async function callGroq(msg){
     body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
   });
   var data=await res.json();
-  if(data.error)throw new Error(data.error.message);
+  console.log('Groq response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
+  if(data.error){
+    var msg2=data.error.message||JSON.stringify(data.error);
+    // Auto-rotate key on rate limit (429) and retry once
+    if((res.status===429||msg2.indexOf('rate')>-1)&&GROQ_KEYS.length>1){
+      if(rotateKey()){
+        console.log('Key rotated to index',_keyIdx,', retrying...');
+        return callGroq(msg);
+      }
+    }
+    throw new Error('API '+res.status+': '+msg2);
+  }
+  if(!data.choices||!data.choices[0])throw new Error('Empty response: '+JSON.stringify(data).substring(0,100));
   return data.choices[0].message.content;
 }
 
