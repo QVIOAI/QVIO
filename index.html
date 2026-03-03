@@ -1313,7 +1313,7 @@ function showMainApp(){
 // ═══════════════════════════════
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
-  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+  fbAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(e){
       if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
