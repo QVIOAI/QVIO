@@ -6,7 +6,8 @@
 <title>QVIO — India's Premium AI</title>
 <meta name="description" content="QVIO - India's most premium AI. 150+ languages. Built for every Indian.">
 <meta name="theme-color" content="#FFFEF9">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <!-- Firebase FIRST before anything else -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -1296,16 +1297,10 @@ function showNamaste(user){
   showMainApp();
 }
 
-function showMainApp(){   document.getElementById('loginScreen').remove(); }   document.getElementById('loginScreen').remove(); }
-  var ls=document.getElementById('loginScreen');
-  if(ls){
-    ls.style.opacity='0';
-    setTimeout(function(){ls.parentNode.removeChild(ls);},300);
-  }
-  setTimeout(function(){
-    try{setSmartGreeting();}catch(e){}
-    try{showOnboard();}catch(e){}
-  },400);
+function showMainApp(){
+  var ls=document.getElementById("loginScreen");
+  if(ls&&ls.parentNode)ls.parentNode.removeChild(ls);
+  setTimeout(function(){try{setSmartGreeting();}catch(e){}try{showOnboard();}catch(e){}},300);
 }
 
 // ═══════════════════════════════
@@ -1316,8 +1311,7 @@ function signInGoogle(){
   fbAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(e){
-      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
-      else showToast('Error: '+e.message);
+      showToast('Error: '+e.message);
     });
 }
 function signInEmail(){
