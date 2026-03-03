@@ -1304,7 +1304,7 @@ function showMainApp(){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function signInGoogle(){
+window.signInGoogle=function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   var provider=new firebase.auth.GoogleAuthProvider();
   console.log('Starting Google login...');
@@ -1322,7 +1322,7 @@ function signInGoogle(){
     }
   });
 }
-function signInEmail(){
+window.signInEmail=function signInEmail(){
   if(!fbAuth){skipLogin();return;}
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
   if(!e||!p){showToast('Enter email and password');return;}
@@ -1330,7 +1330,7 @@ function signInEmail(){
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(er){showToast(er.message);});
 }
-function signUpEmail(){
+window.signUpEmail=function signUpEmail(){
   if(!fbAuth){skipLogin();return;}
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
   if(!e||!p){showToast('Enter email and password');return;}
@@ -1346,7 +1346,7 @@ function doSignOut(){
   closeM('prof');
   showToast('Signed out');
 }
-function skipLogin(){
+window.skipLogin=function skipLogin(){
   showMainApp();
   showToast('👑 Welcome to QVIO!');
 }
@@ -2128,6 +2128,9 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
 // ═══════════════════════════════
 // INIT — runs everything on load
 // ═══════════════════════════════
+
+// GLOBAL FUNCTIONS — accessible from HTML onclick
+
 document.addEventListener('DOMContentLoaded',function(){
 // Init Firebase after DOM is ready
 initFirebase();
