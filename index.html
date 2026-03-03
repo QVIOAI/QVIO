@@ -40,8 +40,7 @@
   --s1:0 1px 4px rgba(0,0,0,.5);--s2:0 4px 16px rgba(0,0,0,.5);
   --s3:0 8px 32px rgba(0,0,0,.5);--s4:0 20px 60px rgba(0,0,0,.6);
 }
-html,body{height:100%;overflow:hidden;}
-body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
+html,body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(212,160,23,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,rgba(13,27,62,.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(212,160,23,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
 
 #particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
@@ -612,6 +611,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
+html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
 </style>
 </head>
 <body style="overflow:hidden;margin:0;padding:0;">
