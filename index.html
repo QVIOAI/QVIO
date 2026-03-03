@@ -611,19 +611,9 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
-/* App hidden until login */
-body:not(.app-loaded) header,
-body:not(.app-loaded) .sub-bar,
-body:not(.app-loaded) .pinned-bar,
-body:not(.app-loaded) .type-bar,
-body:not(.app-loaded) .greeting-bar,
-body:not(.app-loaded) #chat,
-body:not(.app-loaded) .input-row,
-body:not(.app-loaded) .qrs,
-body:not(.app-loaded) #scrollBtn{
-  visibility:hidden;
-  pointer-events:none;
-}
+#appWrap{display:none;flex-direction:column;height:100dvh;overflow:hidden;}
+#appWrap{display:none;flex-direction:column;height:100dvh;overflow:hidden;width:100%;}
+#appWrap.visible{display:flex!important;}
 </style>
 </head>
 <body>
@@ -935,6 +925,7 @@ body:not(.app-loaded) #scrollBtn{
 </div>
 
 <!-- HEADER -->
+<div id="appWrap">
 <header>
   <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
@@ -1156,6 +1147,7 @@ body:not(.app-loaded) #scrollBtn{
     <div class="qr" onclick="openM('mood')">😊 Mood</div>
   </div>
 </div>
+</div>
 
 <!-- QVIO LENS -->
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
@@ -1305,12 +1297,11 @@ function showNamaste(user){
 }
 
 function showMainApp(){
-  // Hide login completely
   var ls=document.getElementById('loginScreen');
-  if(ls){ls.style.cssText='display:none!important;visibility:hidden!important;z-index:-9999!important;';}
-  // Reveal app
-  document.body.classList.add('app-loaded');
-  document.body.style.overflow='auto';
+  if(ls)ls.style.cssText='display:none!important;';
+  var app=document.getElementById('appWrap');
+  if(app){app.style.display='flex';app.style.flexDirection='column';app.style.height='100dvh';}
+  document.body.style.overflow='hidden';
   setTimeout(function(){
     try{setSmartGreeting();}catch(e){}
     try{showOnboard();}catch(e){}
