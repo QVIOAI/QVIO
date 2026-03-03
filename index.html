@@ -610,6 +610,20 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 /* ─── VOICE BUTTON STATES ─── */
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* App hidden until login */
+body:not(.app-loaded) header,
+body:not(.app-loaded) .sub-bar,
+body:not(.app-loaded) .pinned-bar,
+body:not(.app-loaded) .type-bar,
+body:not(.app-loaded) .greeting-bar,
+body:not(.app-loaded) #chat,
+body:not(.app-loaded) .input-row,
+body:not(.app-loaded) .qrs,
+body:not(.app-loaded) #scrollBtn{
+  visibility:hidden;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
@@ -1291,27 +1305,16 @@ function showNamaste(user){
 }
 
 function showMainApp(){
-  // NUCLEAR — hide login completely
+  // Hide login completely
   var ls=document.getElementById('loginScreen');
-  if(ls){
-    ls.style.cssText='display:none!important;opacity:0!important;visibility:hidden!important;z-index:-1!important;';
-  }
-  // Hide namaste if still exists
-  var ns=document.getElementById('namasteScreen');
-  if(ns) ns.style.cssText='display:none!important;';
-  // Reset body
+  if(ls){ls.style.cssText='display:none!important;visibility:hidden!important;z-index:-9999!important;';}
+  // Reveal app
+  document.body.classList.add('app-loaded');
   document.body.style.overflow='auto';
-  document.body.style.height='auto';
-  // Force all main elements visible
-  ['header','chat','inp','sendBtn','micBtn','typeBar'].forEach(function(id){
-    var el=document.getElementById(id)||document.querySelector(id);
-    if(el&&el.style.display==='none')el.style.display='';
-  });
-  // Greeting + onboard
   setTimeout(function(){
     try{setSmartGreeting();}catch(e){}
     try{showOnboard();}catch(e){}
-  },400);
+  },300);
 }
 
 // ═══════════════════════════════
@@ -1351,9 +1354,7 @@ function doSignOut(){
   showToast('Signed out');
 }
 function skipLogin(){
-  var ls=document.getElementById('loginScreen');
-  ls.style.opacity='0';ls.style.transition='opacity .4s';
-  setTimeout(function(){ls.style.display='none';},400);
+  showMainApp();
   showToast('👑 Welcome to QVIO Premium!');
 }
 function updateUserUI(user){
