@@ -616,7 +616,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 #appWrap.visible{display:flex!important;}
 </style>
 </head>
-<body>
+<body style="overflow:hidden;margin:0;padding:0;">
 
 <div id="particles"></div>
 
@@ -925,7 +925,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 </div>
 
 <!-- HEADER -->
-<div id="appWrap" style="display:none;flex-direction:column;height:100dvh;width:100%;overflow:hidden;">
+<div id="appWrap" style="display:none;flex-direction:column;height:100vh;width:100%;">
 <header>
   <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
@@ -1289,23 +1289,28 @@ function initParticles(){
 // NAMASTE ANIMATION
 // ═══════════════════════════════
 function showNamaste(user){
-  // Skip namaste, go straight to app
   var ls=document.getElementById('loginScreen');
-  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';
-    setTimeout(function(){ls.style.display='none';},400);}
+  if(ls)ls.style.display='none';
   showMainApp();
 }
 
 function showMainApp(){
+  // Hide login
   var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.cssText='display:none!important;';
+  if(ls)ls.style.display='none';
+  // Show app
   var app=document.getElementById('appWrap');
-  if(app){app.style.display='flex';app.style.flexDirection='column';app.style.height='100dvh';}
-  document.body.style.overflow='hidden';
+  if(app){
+    app.style.display='flex';
+    app.style.flexDirection='column';
+    app.style.height='100vh';
+    app.style.width='100%';
+  }
+  // Greetings
   setTimeout(function(){
     try{setSmartGreeting();}catch(e){}
     try{showOnboard();}catch(e){}
-  },300);
+  },200);
 }
 
 // ═══════════════════════════════
@@ -1345,8 +1350,10 @@ function doSignOut(){
   showToast('Signed out');
 }
 function skipLogin(){
+  var ls=document.getElementById('loginScreen');
+  if(ls)ls.style.display='none';
   showMainApp();
-  showToast('👑 Welcome to QVIO Premium!');
+  showToast('👑 Welcome to QVIO!');
 }
 function updateUserUI(user){
   var nm=user.displayName||user.email||'User';
