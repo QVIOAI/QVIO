@@ -66,7 +66,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 #namasteScreen{display:none!important;}#namasteScreen.show{display:flex!important;}
 
 /* LOGIN */
-#loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;transition:opacity 0.3s;}
 #loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
 .lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
 @keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
@@ -611,9 +611,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
-#appWrap{display:none;flex-direction:column;height:100dvh;overflow:hidden;}
-#appWrap{display:none;flex-direction:column;height:100dvh;overflow:hidden;width:100%;}
-#appWrap.visible{display:flex!important;}
 </style>
 </head>
 <body style="overflow:hidden;margin:0;padding:0;">
@@ -925,7 +922,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 </div>
 
 <!-- HEADER -->
-<div id="appWrap" style="display:none;flex-direction:column;height:100vh;width:100%;">
 <header>
   <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
@@ -1147,7 +1143,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <div class="qr" onclick="openM('mood')">😊 Mood</div>
   </div>
 </div>
-</div>
 
 <!-- QVIO LENS -->
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
@@ -1298,28 +1293,19 @@ function initParticles(){
 // NAMASTE ANIMATION
 // ═══════════════════════════════
 function showNamaste(user){
-  var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.display='none';
   showMainApp();
 }
 
 function showMainApp(){
-  // Hide login
   var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.display='none';
-  // Show app
-  var app=document.getElementById('appWrap');
-  if(app){
-    app.style.display='flex';
-    app.style.flexDirection='column';
-    app.style.height='100vh';
-    app.style.width='100%';
+  if(ls){
+    ls.style.opacity='0';
+    setTimeout(function(){ls.parentNode.removeChild(ls);},300);
   }
-  // Greetings
   setTimeout(function(){
     try{setSmartGreeting();}catch(e){}
     try{showOnboard();}catch(e){}
-  },200);
+  },400);
 }
 
 // ═══════════════════════════════
@@ -1359,8 +1345,6 @@ function doSignOut(){
   showToast('Signed out');
 }
 function skipLogin(){
-  var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.display='none';
   showMainApp();
   showToast('👑 Welcome to QVIO!');
 }
