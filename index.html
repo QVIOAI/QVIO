@@ -614,7 +614,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
 </style>
 </head>
-<body>
+<body style="overflow:hidden;margin:0;padding:0;">
 
 <div id="particles"></div>
 
@@ -1307,12 +1307,19 @@ function showMainApp(){
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   var provider=new firebase.auth.GoogleAuthProvider();
+  console.log('Starting Google login...');
   fbAuth.signInWithPopup(provider).then(function(r){
+    console.log('Popup success! user:', r.user.email);
     currentUser=r.user;updateUserUI(r.user);showMainApp();
   }).catch(function(e){
-    if(e.code==='auth/popup-closed-by-user')return;
-    if(e.code==='auth/popup-blocked'){fbAuth.signInWithRedirect(provider);}
-    else showToast('Login error: '+e.message);
+    console.log('Popup error:', e.code, e.message);
+    if(e.code==='auth/popup-closed-by-user'){showToast('Popup closed - try again');}
+    else if(e.code==='auth/popup-blocked'){
+      showToast('Trying redirect...');
+      fbAuth.signInWithRedirect(provider);
+    } else {
+      showToast('Login error: '+e.message);
+    }
   });
 }
 function signInEmail(){
