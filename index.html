@@ -1299,11 +1299,14 @@ function showMainApp(){
 // ═══════════════════════════════
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
-  fbAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
-    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
-    .catch(function(e){
-      showToast('Error: '+e.message);
-    });
+  var provider=new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(provider).then(function(r){
+    currentUser=r.user;updateUserUI(r.user);showMainApp();
+  }).catch(function(e){
+    if(e.code==='auth/popup-closed-by-user')return;
+    if(e.code==='auth/popup-blocked'){fbAuth.signInWithRedirect(provider);}
+    else showToast('Login error: '+e.message);
+  });
 }
 function signInEmail(){
   if(!fbAuth){skipLogin();return;}
