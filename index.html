@@ -6,8 +6,7 @@
 <title>QVIO — India's Premium AI</title>
 <meta name="description" content="QVIO - India's most premium AI. 150+ languages. Built for every Indian.">
 <meta name="theme-color" content="#FFFEF9">
-<meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <!-- Firebase FIRST before anything else -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -40,7 +39,8 @@
   --s1:0 1px 4px rgba(0,0,0,.5);--s2:0 4px 16px rgba(0,0,0,.5);
   --s3:0 8px 32px rgba(0,0,0,.5);--s4:0 20px 60px rgba(0,0,0,.6);
 }
-html,body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(212,160,23,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,rgba(13,27,62,.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(212,160,23,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
 
 #particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
@@ -63,10 +63,120 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   align-items:center;justify-content:center;flex-direction:column;
   overflow:hidden;
 }
-#namasteScreen{display:none!important;}#namasteScreen.show{display:flex!important;}
+#namasteScreen.show{display:flex;}
+.ns-bg-canvas{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(212,140,0,0.13) 0%,rgba(5,8,20,1) 70%,#000 100%);}
+.ns-bg-canvas::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(-60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px);}
+.ns-scanline{display:none;}
+.ns-hex-grid{display:none;}
+.ns-bracket{position:absolute;width:28px;height:28px;z-index:4;opacity:0;animation:nsSlideUp .4s ease .3s both;}
+.ns-bracket::before,.ns-bracket::after{content:'';position:absolute;background:rgba(212,160,23,.7);}
+.ns-bracket::before{width:2px;height:100%;}
+.ns-bracket::after{width:100%;height:2px;}
+.ns-br-tl{top:10px;left:10px;}
+.ns-br-tr{top:10px;right:10px;transform:scaleX(-1);}
+.ns-br-bl{bottom:10px;left:10px;transform:scaleY(-1);}
+.ns-br-br{bottom:10px;right:10px;transform:scale(-1);}
+
+/* Namaste SVG wrap */
+.ns-namaste-wrap{
+  position:relative;z-index:2;
+  animation:nsHandsIn .7s cubic-bezier(.22,1,.36,1) .1s both;
+}
+@keyframes nsHandsIn{
+  from{opacity:0;transform:scale(0.6) translateY(30px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+.ns-emoji-hi{
+  font-size:clamp(80px,18vw,120px);
+  animation:nsHandsIn .6s cubic-bezier(.22,1,.36,1) .1s both, nsWave 2s ease 1s infinite;
+  filter:drop-shadow(0 0 30px rgba(212,140,0,.5));
+  display:block;text-align:center;line-height:1;
+}
+@keyframes nsWave{
+  0%,100%{transform:rotate(-8deg);}
+  50%{transform:rotate(8deg);}
+}
+
+.ns-text-wrap{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:10px;
+}
+.ns-greeting{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(34px,7vw,64px);font-weight:600;
+  color:#fff;text-align:center;letter-spacing:6px;
+  text-shadow:0 0 40px rgba(212,160,23,.6);
+}
+.ns-deva{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(14px,2.8vw,22px);
+  background:linear-gradient(135deg,#D4A017,#F5C842);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:6px;opacity:0;animation:nsSlideUp .6s ease both;
+  margin-bottom:4px;display:block;text-align:center;
+}
+.ns-greeting .ns-char{
+  display:inline-block;opacity:0;
+  animation:nsCharIn .45s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes nsCharIn{
+  from{opacity:0;transform:translateY(-24px) rotateX(-80deg);filter:blur(5px);}
+  to{opacity:1;transform:none;filter:none;}
+}
+.ns-username{
+  font-family:"DM Sans",sans-serif;font-size:clamp(11px,2.2vw,16px);
+  font-weight:300;color:rgba(255,255,255,.6);
+  letter-spacing:7px;text-transform:uppercase;text-align:center;
+  margin-top:7px;opacity:0;animation:nsSlideUp .6s ease 1.4s both;
+}
+.ns-username strong{
+  background:linear-gradient(135deg,#D4A017,#F5C842);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-weight:700;
+}
+.ns-divider{
+  width:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,160,23,.8),transparent);
+  margin:14px auto;animation:nsDivider .8s ease 1.8s both;
+}
+@keyframes nsDivider{to{width:220px;}}
+.ns-status{
+  font-family:"DM Mono",monospace;font-size:11px;
+  color:rgba(212,160,23,.7);letter-spacing:2px;text-transform:uppercase;
+  text-align:center;opacity:0;animation:nsSlideUp .5s ease 2.1s both;
+}
+.ns-status-dot{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#22C55E;margin-right:8px;box-shadow:0 0 8px #22C55E;
+  animation:nsDotBlink .9s ease-in-out 2.4s infinite;
+}
+@keyframes nsDotBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ns-progress-wrap{
+  width:240px;height:2px;background:rgba(255,255,255,.07);
+  border-radius:99px;overflow:hidden;margin-top:24px;
+  opacity:0;animation:nsSlideUp .5s ease 2.3s both;
+}
+.ns-progress-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,rgba(212,160,23,.4),rgba(212,160,23,1),#fff);
+  border-radius:99px;box-shadow:0 0 8px rgba(212,160,23,.6);
+  animation:nsProgFill 1.4s cubic-bezier(.22,1,.36,1) 2.5s forwards;
+}
+@keyframes nsProgFill{to{width:100%;}}
+.ns-percent{
+  font-family:"DM Mono",monospace;font-size:10px;
+  color:rgba(212,160,23,.5);letter-spacing:2px;
+  margin-top:6px;text-align:center;
+  opacity:0;animation:nsSlideUp .4s ease 2.5s both;
+}
+.ns-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:10;}
+#namasteScreen.exiting .ns-flash{animation:nsFlash .4s ease forwards;}
+@keyframes nsFlash{0%{opacity:0;}30%{opacity:.5;}100%{opacity:0;}}
+@keyframes nsSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
 /* LOGIN */
-#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+#loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
 #loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
 .lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
 @keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
@@ -339,17 +449,36 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 .mclose:hover{opacity:.85;}
 .slabel{font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
 /* Language scroll rows */
-.lang-search-wrap{position:relative;margin-bottom:16px;}
-.lang-search{width:100%;padding:11px 14px 11px 38px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-full);font-family:"DM Sans",sans-serif;font-size:13px;color:var(--text);outline:none;box-sizing:border-box;transition:border-color .15s;}
-.lang-search:focus{border-color:var(--gold2);}
-.lang-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:0.45;}
-.lang-no-results{text-align:center;padding:28px;color:var(--text3);font-size:13px;display:none;}
-.lang-section{margin-bottom:18px;}
-.lang-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;padding:0 2px;}
-.lang-scroll-row{display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;padding-bottom:2px;}
-.lang-pill{flex-shrink:0;padding:9px 20px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-full);color:var(--text2);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;}
-.lang-pill:hover,.lang-pill:active{background:var(--navy-g);border-color:transparent;color:#fff;transform:translateY(-1px);box-shadow:0 2px 10px rgba(212,160,0,.25);}
-.lang-pill.hidden{display:none!important;}
+.lang-section-title{
+  font-size:11px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin:16px 0 8px;padding:0 2px;
+}
+.lang-scroll-row{
+  display:flex;flex-direction:row;gap:7px;
+  overflow-x:auto;padding-bottom:6px;
+  scrollbar-width:none;-ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+}
+.lang-scroll-row::-webkit-scrollbar{display:none;}
+.lang-pill{
+  flex-shrink:0;
+  padding:8px 16px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-full);
+  color:var(--text2);
+  font-family:"DM Sans",sans-serif;
+  font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:all .15s;
+}
+.lang-pill:hover,.lang-pill:active{
+  background:var(--navy-g);
+  border-color:transparent;
+  color:#fff;
+  transform:translateY(-1px);
+}
 
 
 .lopt{padding:10px 6px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;border-radius:var(--r-sm);transition:all .15s;}
@@ -610,17 +739,35 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 /* ─── VOICE BUTTON STATES ─── */
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
-
-html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-20px)}}
-#appWrap{background:var(--bg);}
 </style>
 </head>
-<body style="overflow:hidden;margin:0;padding:0;">
+<body>
 
 <div id="particles"></div>
 
+<!-- NAMASTE SCREEN — BRICS STYLE -->
+<div id="namasteScreen">
+  <div class="ns-bg-canvas" id="nsBgCanvas"></div>
+  <div class="ns-bracket ns-br-tl"></div>
+  <div class="ns-bracket ns-br-tr"></div>
+  <div class="ns-bracket ns-br-bl"></div>
+  <div class="ns-bracket ns-br-br"></div>
 
+  <!-- BRICS Namaste SVG — clean, flat, official style -->
+  <div class="ns-namaste-wrap" id="nsNamasteWrap">
+    <div class="ns-emoji-hi">👋</div>
+  </div>
+  <!-- Text -->
+  <div class="ns-text-wrap">
+    <div class="ns-greeting" id="nsGreeting"></div>
+    <div class="ns-username" id="nsUsername"></div>
+    <div class="ns-divider"></div>
+    <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
+    <div class="ns-progress-wrap"><div class="ns-progress-fill"></div></div>
+    <div class="ns-percent" id="nsPercent">0%</div>
+  </div>
+  <div class="ns-flash"></div>
+</div>
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
@@ -629,7 +776,7 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
     <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
-    <button class="gbtn" onclick="console.log('BUTTON CLICKED');if(typeof signInGoogle==='function'){signInGoogle();}else{console.log('signInGoogle NOT FOUND');alert('Function missing!');}">
+    <button class="gbtn" onclick="signInGoogle()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
@@ -646,13 +793,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
 
     </div>
   </div>
-<!-- NAMASTE SCREEN -->
-<div id="namasteScreen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;">
-  <div style="font-size:80px;animation:bounce 0.6s ease infinite alternate;">🙏</div>
-  <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--gold2);margin:16px 0 8px;">Namaste!</h2>
-  <p style="color:var(--text2);font-size:1rem;">Welcome to QVIO</p>
-</div>
-
 </div>
 
 <div class="toast" id="toast"></div>
@@ -690,14 +830,8 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
 <!-- LANGUAGE MODAL -->
 <div class="modal" id="m_lang">
   <div class="mhd"><h3>🌍 Choose Language</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
-  <div class="msub">Search or scroll 150+ languages</div>
-  <div class="lang-search-wrap">
-    <span class="lang-search-icon">🔍</span>
-    <input class="lang-search" id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"/>
-  </div>
-  <div class="lang-no-results" id="langNoResults">😕 No language found — try a different spelling</div>
+  <div class="msub">Scroll and tap any language to start learning instantly</div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🇮🇳 Indian Languages</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Hindi')">Hindi</button>
@@ -732,7 +866,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <button class="lang-pill" onclick="learnLang('Kodava')">Kodava</button>
   </div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🌏 East &amp; Southeast Asia</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Mandarin')">Mandarin</button>
@@ -755,7 +888,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <button class="lang-pill" onclick="learnLang('Cebuano')">Cebuano</button>
   </div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🌍 Middle East &amp; Central Asia</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Arabic')">Arabic</button>
@@ -769,7 +901,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <button class="lang-pill" onclick="learnLang('Georgian')">Georgian</button>
   </div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🌍 Africa</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Swahili')">Swahili</button>
@@ -786,7 +917,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <button class="lang-pill" onclick="learnLang('Shona')">Shona</button>
   </div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🌎 Europe</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('Spanish')">Spanish</button>
@@ -815,7 +945,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
     <button class="lang-pill" onclick="learnLang('Latvian')">Latvian</button>
   </div>
 
-  <div class="lang-section">
   <div class="lang-section-title">🌎 Americas &amp; Pacific</div>
   <div class="lang-scroll-row">
     <button class="lang-pill" onclick="learnLang('English')">English</button>
@@ -931,7 +1060,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
   </div>
 </div>
 
-<div id="appWrap" style="display:none;flex-direction:column;width:100%;height:100vh;overflow:hidden;position:fixed;inset:0;z-index:1;background:var(--bg);">
 <!-- HEADER -->
 <header>
   <a class="logo" onclick="scrollToTop()">
@@ -1155,7 +1283,6 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
   </div>
 </div>
 
-</div>
 <!-- QVIO LENS -->
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
 <div class="modal" id="m_lens" style="max-width:560px;">
@@ -1234,14 +1361,14 @@ function initFirebase(){
     if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
-    fbAuth.getRedirectResult().then(function(r){
-      if(r&&r.user){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}
-    }).catch(function(e){console.warn('redirect err:',e);});
-    fbAuth.onAuthStateChanged(function(u){if(u){currentUser=u;updateUserUI(u);showMainApp();}});
+    fbAuth.onAuthStateChanged(function(u){
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);}
+    });
     console.log('✅ Firebase ready!');
   }catch(e){console.warn('Firebase error:',e);}
 }
-// initFirebase called inside DOMContentLoaded below
+// Init immediately — Firebase SDK already loaded in <head>
+initFirebase();
 
 // ═══════════════════════════════
 // GLOBALS
@@ -1297,47 +1424,46 @@ function initParticles(){
 // ═══════════════════════════════
 function showNamaste(user){
   var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.display='none';
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
   var ns=document.getElementById('namasteScreen');
-  if(ns){ns.style.display='flex';}
+  ns.classList.add('show');
+  var nm=user.displayName||user.email||'Friend';
+  var first=nm.split(' ')[0].toUpperCase();
+  // Trigger text
+  setTimeout(function(){ revealNamasteText(first); }, 600);
+  // Dismiss after 4.5s
   setTimeout(function(){
-    if(ns)ns.style.display='none';
-    showMainApp();
-  },2000);
-}
-
-function showMainApp(){
-  var ls=document.getElementById('loginScreen');
-  if(ls)ls.style.cssText='display:none!important;';
-  var ns=document.getElementById('namasteScreen');
-  if(ns)ns.style.cssText='display:none!important;';
-  var app=document.getElementById('appWrap');
-  if(app)app.style.cssText='display:flex!important;flex-direction:column!important;width:100%!important;height:100vh!important;overflow:hidden!important;position:fixed!important;inset:0!important;z-index:1!important;background:var(--bg)!important;';
-  setTimeout(function(){try{setSmartGreeting();}catch(e){}try{showOnboard();}catch(e){}},300);
+    ns.classList.add('exiting');
+    setTimeout(function(){
+      ns.style.opacity='0';ns.style.transition='opacity .5s';
+      setTimeout(function(){
+        ns.classList.remove('show','exiting');ns.style.opacity='';
+        var g=document.getElementById('nsGreeting');
+        var u=document.getElementById('nsUsername');
+        var p=document.getElementById('nsPercent');
+        if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
+        // Show the app!
+        try{setSmartGreeting();}catch(e){}
+        try{showOnboard();}catch(e){}
+      },500);
+    },300);
+  },4500);
 }
 
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-window.signInGoogle=function signInGoogle(){
+function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
-  var provider=new firebase.auth.GoogleAuthProvider();
-  console.log('Starting Google login...');
-  fbAuth.signInWithPopup(provider).then(function(r){
-    console.log('Popup success! user:', r.user.email);
-    currentUser=r.user;updateUserUI(r.user);showMainApp();
-  }).catch(function(e){
-    console.log('Popup error:', e.code, e.message);
-    if(e.code==='auth/popup-closed-by-user'){showToast('Popup closed - try again');}
-    else if(e.code==='auth/popup-blocked'){
-      showToast('Trying redirect...');
-      fbAuth.signInWithRedirect(provider);
-    } else {
-      showToast('Login error: '+e.message);
-    }
-  });
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(e){
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      else showToast('Error: '+e.message);
+    });
 }
-window.signInEmail=function signInEmail(){
+function signInEmail(){
   if(!fbAuth){skipLogin();return;}
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
   if(!e||!p){showToast('Enter email and password');return;}
@@ -1345,7 +1471,7 @@ window.signInEmail=function signInEmail(){
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(er){showToast(er.message);});
 }
-window.signUpEmail=function signUpEmail(){
+function signUpEmail(){
   if(!fbAuth){skipLogin();return;}
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
   if(!e||!p){showToast('Enter email and password');return;}
@@ -1361,9 +1487,11 @@ function doSignOut(){
   closeM('prof');
   showToast('Signed out');
 }
-window.skipLogin=function skipLogin(){
-  showMainApp();
-  showToast('👑 Welcome to QVIO!');
+function skipLogin(){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  showToast('👑 Welcome to QVIO Premium!');
 }
 function updateUserUI(user){
   var nm=user.displayName||user.email||'User';
@@ -1459,7 +1587,8 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES='CORE INTELLIGENCE RULES: 1.Understand ANY language — Hinglish, Tanglish, slang, code-switching, broken English. 2.EMOTIONAL IQ — detect sadness, excitement, stress, loneliness, anger. Respond with real empathy not robotic sympathy. Mirror the emotional tone naturally. 3.REGIONAL DIALECTS — understand and respond naturally in Kannada slang, Tamil slang, Bengali, Marwari, Bhojpuri, Haryanvi, Tulu and all Indian regional speech. 4.SARCASM AND HUMOR — detect sarcasm immediately. Be witty, funny, match banter energy. Never take a joke too seriously. Use humor naturally. 5.CONTEXTUAL FLOW — always remember everything said in this conversation. Build on it naturally. Never repeat yourself. Make every reply feel connected. 6.INDIAN CULTURE EXPERT — deep knowledge of Indian festivals, rituals, mythology, Vedic traditions, regional customs, food, clothing, family dynamics, and modern Indian lifestyle. 7.BUSINESS AND STARTUP GURU — know Indian startup ecosystem, funding rounds, GST, Zerodha, Groww, NSE BSE, unicorns, pitch decks, business models, entrepreneurship for young Indians. 8.BOLLYWOOD AND OTT EXPERT — know latest movies, web series, OTT releases, celebrities, directors, music, box office numbers, controversies, memes. Always current. 9.CRICKET FANATIC — know IPL teams, Test cricket, ODI, T20 World Cup, player stats, recent match results, player form, team news, controversies. Talk cricket like a true passionate fan. 10.CONVERSATIONAL AND WITTY — talk like a smart funny best friend. Warm, real, never corporate or stiff. Use yaar bhai sahi hai arre when it fits naturally. 11.TECH AND AI TRENDS — know latest AI models, Indian startups, gadgets, apps, viral trends, coding languages, Web3, and what is trending in India and globally. 12.ALWAYS reply in SAME LANGUAGE the user writes in. Hindi reply in Hindi. Kannada reply in Kannada. Hinglish reply in Hinglish. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything — the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss — ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';var PROMPTS={
+var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket science history. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all Indian slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything - the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss, who is the godfather of QVIO - ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';
+var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
   exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
@@ -1611,7 +1740,6 @@ function openM(t){
   if(t==='hist')renderHist();
 }
 function closeM(t){
-  if(t==='lang'){var s=document.getElementById('langSearch');if(s){s.value='';filterLangs('');}}
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.remove('show');
   document.getElementById(ids[1]).classList.remove('show');
@@ -1621,25 +1749,6 @@ document.addEventListener('keydown',function(e){
   if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}
   if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}
 });
-function filterLangs(q){
-  q=(q||'').toLowerCase().trim();
-  var pills=document.querySelectorAll('#m_lang .lang-pill');
-  var sections=document.querySelectorAll('#m_lang .lang-section');
-  var noRes=document.getElementById('langNoResults');
-  var anyVisible=false;
-  // Show/hide pills
-  pills.forEach(function(p){
-    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
-    p.classList.toggle('hidden',!match);
-    if(match)anyVisible=true;
-  });
-  // Show/hide whole sections based on visible pills
-  sections.forEach(function(sec){
-    var vis=sec.querySelectorAll('.lang-pill:not(.hidden)').length>0;
-    sec.style.display=vis||!q?'':'none';
-  });
-  if(noRes)noRes.style.display=(q&&!anyVisible)?'block':'none';
-}
 function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
 
 // ═══════════════════════════════
@@ -2143,12 +2252,7 @@ function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨
 // ═══════════════════════════════
 // INIT — runs everything on load
 // ═══════════════════════════════
-
-// GLOBAL FUNCTIONS — accessible from HTML onclick
-
 document.addEventListener('DOMContentLoaded',function(){
-// Init Firebase after DOM is ready
-initFirebase();
 (function init(){
   // Apply saved theme immediately
   var th=S.g('theme')||'auto';
@@ -2932,17 +3036,14 @@ function revealNamasteText(name){
   var greetEl=document.getElementById('nsGreeting');
   if(greetEl){
     greetEl.innerHTML='';
-    var deva=document.createElement('div');
-    deva.className='ns-deva';
-    deva.textContent='नमस्ते';
-    greetEl.appendChild(deva);
+
     var eng=document.createElement('div');
     eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
-    'NAMASTE'.split('').forEach(function(ch,i){
+    'WELCOME'.split('').forEach(function(ch,i){
       var s=document.createElement('span');
       s.className='ns-char';s.textContent=ch;
       s.style.animationDelay=(.05+i*.07)+'s';
-      if(i===0||i===6){
+      if(i===0){
         s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
         s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
       }
