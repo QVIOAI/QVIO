@@ -1289,8 +1289,15 @@ function showNamaste(user){
 }
 
 function showMainApp(){
-  var ls=document.getElementById("loginScreen");
-  if(ls&&ls.parentNode)ls.parentNode.removeChild(ls);
+  console.log('showMainApp called!');
+  var ls=document.getElementById('loginScreen');
+  if(ls){
+    console.log('removing loginScreen');
+    ls.style.display='none';
+    if(ls.parentNode)ls.parentNode.removeChild(ls);
+  } else {
+    console.log('loginScreen already gone');
+  }
   setTimeout(function(){try{setSmartGreeting();}catch(e){}try{showOnboard();}catch(e){}},300);
 }
 
