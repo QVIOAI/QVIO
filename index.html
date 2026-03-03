@@ -1223,19 +1223,10 @@ function initFirebase(){
     if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
-    fbAuth.onAuthStateChanged(function(u){
-      if(u){
-        currentUser=u;
-        // Wait for DOM to be fully ready before showing app
-        if(document.readyState==='complete'||document.readyState==='interactive'){
-          updateUserUI(u);showMainApp();
-        } else {
-          document.addEventListener('DOMContentLoaded',function(){
-            updateUserUI(u);showMainApp();
-          });
-        }
-      }
-    });
+    fbAuth.getRedirectResult().then(function(r){
+      if(r&&r.user){currentUser=r.user;updateUserUI(r.user);showMainApp();}
+    }).catch(function(e){console.warn('redirect err:',e);});
+    fbAuth.onAuthStateChanged(function(u){if(u){currentUser=u;updateUserUI(u);showMainApp();}});
     console.log('✅ Firebase ready!');
   }catch(e){console.warn('Firebase error:',e);}
 }
