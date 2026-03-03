@@ -1289,15 +1289,15 @@ function showNamaste(user){
 }
 
 function showMainApp(){
-  console.log('showMainApp called!');
   var ls=document.getElementById('loginScreen');
-  if(ls){
-    console.log('removing loginScreen');
-    ls.style.display='none';
-    if(ls.parentNode)ls.parentNode.removeChild(ls);
-  } else {
-    console.log('loginScreen already gone');
-  }
+  if(ls)ls.parentNode&&ls.parentNode.removeChild(ls);
+  // Force browser repaint
+  document.body.style.overflow='hidden';
+  document.body.style.display='flex';
+  document.body.style.flexDirection='column';
+  document.body.style.height='100vh';
+  document.body.style.background='var(--bg)';
+  window.scrollTo(0,0);
   setTimeout(function(){try{setSmartGreeting();}catch(e){}try{showOnboard();}catch(e){}},300);
 }
 
