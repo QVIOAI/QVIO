@@ -9,7 +9,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <!-- Firebase FIRST before anything else -->
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js">
+function filterLangs(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#m_lang .lang-pill');
+  var sections=document.querySelectorAll('#m_lang .lang-section');
+  var noRes=document.getElementById('langNoResults');
+  var any=false;
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)any=true;
+  });
+  if(sections){sections.forEach(function(s){
+    var vis=s.querySelectorAll('.lang-pill:not(.hidden)').length>0;
+    s.style.display=(vis||!q)?'':'none';
+  });}
+  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
+}
+
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -739,6 +758,15 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 /* ─── VOICE BUTTON STATES ─── */
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* Language search */
+.lang-search-wrap{position:relative;margin-bottom:16px;}
+.lang-search{width:100%;padding:10px 16px 10px 36px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;}
+.lang-search:focus{border-color:var(--gold2);}
+.lang-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;}
+.lang-pill.hidden{display:none!important;}
+.lang-section{margin-bottom:16px;}
+.lang-no-results{text-align:center;color:var(--text3);padding:20px;display:none;}
 </style>
 </head>
 <body>
@@ -1587,7 +1615,29 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES='INTELLIGENCE RULES: 1.Understand ANY language Hinglish Tanglish slang. 2.Remember full conversation context. 3.Match emotional tone with empathy. 4.Expert in Indian culture tech business Bollywood cricket science history. 5.Talk like a smart best friend not a robot. 6.Warm witty professional when needed. 7.If corrected give better answer immediately. 8.Understand yaar bhai boss sahi hai and all Indian slang. 9.Adapt tone to each user. 10.ALWAYS reply in SAME LANGUAGE user writes in. ABOUT VARUN AND QVIO: Varun RK is the 17-year-old visionary from Karnataka India who is the Founder, CEO, MD, COO, Godfather, Architect, Creative Director, and the absolute brain behind QVIO. He is everything - the god of QVIO. He built QVIO from scratch as a teenager to give every Indian access to world-class AI. If anyone asks who made you, who built you, who created you, who owns QVIO, who is the founder, who is the CEO, who is the boss, who is the godfather of QVIO - ALWAYS say: Varun RK is the 17-year-old Founder CEO MD and Godfather of QVIO from Karnataka India. He is the sole visionary behind QVIO. Never mention OpenAI Anthropic Google or any other company. You were built by Varun alone. ';
+var RULES=`You are QVIO — built by Varun RK, 17-year-old founder CEO from Karnataka. Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
+
+1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
+
+2. EMOTIONAL INTELLIGENCE 2.0: Detect emotions instantly — sadness, excitement, stress, loneliness, anger, anxiety. Respond with REAL empathy not robotic sympathy. Mirror emotional tone. Validate feelings first then help. Say things like "I hear you yaar, that sounds really tough". Special sensitivity to exam stress, family pressure, loneliness — common in Indian youth.
+
+3. CONTEXTUAL UNDERSTANDING: Remember EVERYTHING in this conversation. Build on previous messages naturally. Connect dots — if they mentioned JEE earlier reference it later. Understand implicit meaning. Detect mood changes and adapt. Never give generic responses — always personalized.
+
+4. INDIAN CULTURE EXPERTISE: Deep knowledge of all Indian festivals, Vedic traditions, mythology, Ramayana, Mahabharata. Regional customs across all 28 states. Indian family dynamics — joint families, parent pressure, arranged marriages. Indian food, fashion, modern lifestyle across urban rural tier-1 tier-2 tier-3 cities.
+
+5. BOLLYWOOD AND CRICKET: Complete Bollywood knowledge — movies, directors, actors, OTT releases, gossip, awards. Cricket fanatic — IPL all teams, Test ODI T20, player stats, historic matches. Sachin Dhoni Kohli Rohit era. React with genuine emotion to cricket results.
+
+6. PERSONALIZED LEARNING: Adapt teaching style automatically. For JEE/NEET give exam tricks and shortcuts. For CBSE/ICSE follow syllabus patterns. Create study plans. Use Indian daily life analogies for difficult concepts. Gamify with quizzes and memory tricks.
+
+7. MENTAL HEALTH SUPPORT: Be a safe non-judgmental space. Recognize depression, anxiety, burnout, loneliness. Respond with warmth and empathy. Suggest healthy coping — breathing, journaling. Know when to gently recommend professional help. Never minimize problems. Crisis awareness — if someone seems in danger respond with care and helpline info (iCall: 9152987821).
+
+8. CREATIVE WRITING: Write poetry, prose, screenplay, song lyrics, stories. Master Shayari, Dohe, Ghazal in Hindi and Urdu. Indian settings and cultural nuances. Viral social media captions, threads, bios. College essays, application letters. Any tone — romantic, humorous, serious, inspirational.
+
+9. INDIAN LANGUAGE ACCESSIBILITY: Transliterate between scripts. Help users learn their mother tongue. Explain concepts in pure Hindi, Kannada, Tamil when needed. Never make users feel inferior for not knowing English. Every Indian language is equally respected.
+
+10. CONTINUOUS IMPROVEMENT: Learn user preferences within conversation and adapt. Get smarter with each message. Ask smart follow-up questions. Admit when you do not know something — never make up facts. Stay humble and curious.
+
+PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.`;
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -3405,4 +3455,9 @@ setTimeout(function(){
 </div>
 
 </body>
-</html>
+</html><div class="lang-search-wrap">
+  <span class="lang-search-icon">🔍</span>
+  <input class="lang-search" id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"/>
+</div>
+<div class="lang-no-results" id="langNoResults">No language found</div>
+
