@@ -66,7 +66,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 #namasteScreen{display:none!important;}#namasteScreen.show{display:flex!important;}
 
 /* LOGIN */
-#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;transition:opacity 0.3s;}
+#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
 #loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
 .lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
 @keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
@@ -612,6 +612,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
 html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-20px)}}
 </style>
 </head>
 <body style="overflow:hidden;margin:0;padding:0;">
@@ -644,6 +645,13 @@ html,body{height:100%;min-height:100vh;}header,#chat,.qrs{flex-shrink:0;}
 
     </div>
   </div>
+<!-- NAMASTE SCREEN -->
+<div id="namasteScreen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;">
+  <div style="font-size:80px;animation:bounce 0.6s ease infinite alternate;">🙏</div>
+  <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--gold2);margin:16px 0 8px;">Namaste!</h2>
+  <p style="color:var(--text2);font-size:1rem;">Welcome to QVIO</p>
+</div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1224,7 +1232,7 @@ function initFirebase(){
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbAuth.getRedirectResult().then(function(r){
-      if(r&&r.user){currentUser=r.user;updateUserUI(r.user);showMainApp();}
+      if(r&&r.user){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);}
     }).catch(function(e){console.warn('redirect err:',e);});
     fbAuth.onAuthStateChanged(function(u){if(u){currentUser=u;updateUserUI(u);showMainApp();}});
     console.log('✅ Firebase ready!');
@@ -1285,18 +1293,26 @@ function initParticles(){
 // NAMASTE ANIMATION
 // ═══════════════════════════════
 function showNamaste(user){
-  showMainApp();
+  var ls=document.getElementById('loginScreen');
+  if(ls)ls.style.display='none';
+  var ns=document.getElementById('namasteScreen');
+  if(ns){ns.style.display='flex';}
+  setTimeout(function(){
+    if(ns)ns.style.display='none';
+    showMainApp();
+  },2000);
 }
 
 function showMainApp(){
   var ls=document.getElementById('loginScreen');
-  if(ls)ls.parentNode&&ls.parentNode.removeChild(ls);
-  // Force browser repaint
-  document.body.style.overflow='hidden';
-  document.body.style.display='flex';
-  document.body.style.flexDirection='column';
-  document.body.style.height='100vh';
-  document.body.style.background='var(--bg)';
+  if(ls){ls.style.cssText='display:none!important;z-index:-9999!important;';}
+  document.body.style.cssText='display:flex!important;flex-direction:column!important;height:100vh!important;overflow:hidden!important;background:var(--bg)!important;';
+  var h=document.querySelector('header');
+  var c=document.getElementById('chat');
+  var t=document.getElementById('typeBar');
+  if(h)h.style.display='grid';
+  if(c)c.style.display='block';
+  if(t)t.style.display='flex';
   window.scrollTo(0,0);
   setTimeout(function(){try{setSmartGreeting();}catch(e){}try{showOnboard();}catch(e){}},300);
 }
