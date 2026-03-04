@@ -129,76 +129,6 @@ function activateQvioVoice(){
 // ═══════════════════════════════
 
 
-// ═══════════════════════════════
-// 3D EARTH LANGUAGE SELECTOR
-// ═══════════════════════════════
-var selectedAILang = localStorage.getItem('aiLang') || '';
-
-function openLangSelect(){
-  var overlay = document.getElementById('langSelectOverlay');
-  if(overlay) overlay.classList.add('show');
-  // Highlight current language
-  if(selectedAILang){
-    document.querySelectorAll('.lsm-pill').forEach(function(p){
-      p.classList.toggle('active', p.textContent.trim()===selectedAILang);
-    });
-  }
-  // Clear search
-  var s = document.getElementById('lsmSearch');
-  if(s){s.value='';filterLSM('');}
-}
-
-function closeLangSelect(){
-  var overlay = document.getElementById('langSelectOverlay');
-  if(overlay) overlay.classList.remove('show');
-}
-
-function selectAILang(lang){
-  // Toggle selection
-  document.querySelectorAll('.lsm-pill').forEach(function(p){
-    p.classList.remove('active');
-  });
-  event.target.classList.add('active');
-  selectedAILang = lang;
-}
-
-function confirmAILang(){
-  if(!selectedAILang){closeLangSelect();return;}
-  localStorage.setItem('aiLang', selectedAILang);
-  closeLangSelect();
-  showToast('🌍 QVIO will now respond in '+selectedAILang+'!');
-  // Update earth button tooltip
-  var eb = document.querySelector('.earth-btn');
-  if(eb) eb.title = 'Language: '+selectedAILang;
-}
-
-function filterLSM(q){
-  q=(q||'').toLowerCase().trim();
-  var pills=document.querySelectorAll('#langSelectModal .lsm-pill');
-  var sections=document.querySelectorAll('#langSelectModal .lsm-section-title');
-  var pillWraps=document.querySelectorAll('#langSelectModal .lsm-pills');
-  var noRes=document.getElementById('lsmNoResults');
-  var any=false;
-  pills.forEach(function(p){
-    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
-    p.classList.toggle('hidden',!match);
-    if(match)any=true;
-  });
-  // Hide empty sections
-  pillWraps.forEach(function(pw,i){
-    var vis=pw.querySelectorAll('.lsm-pill:not(.hidden)').length>0;
-    pw.style.display=vis||!q?'':'none';
-    if(sections[i])sections[i].style.display=vis||!q?'':'none';
-  });
-  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
-}
-
-// Inject selected language into RULES at runtime
-function getAILangInstruction(){
-  var lang = localStorage.getItem('aiLang');
-  if(!lang||lang==='') return '';
-  return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
-}
 
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -967,7 +897,8 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 }
 
 /* LANGUAGE SELECTOR MODAL */
-#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8888;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9990;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#langSelectOverlay.show{display:flex!important;}
 #langSelectOverlay.show{display:flex;}
 #langSelectModal{
   background:var(--bg);border-radius:20px;width:92%;max-width:500px;max-height:80vh;
@@ -1369,23 +1300,8 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 <div class="modes-drawer" id="modesDrawer">
   <div class="md-title">Choose AI Mode</div>
   <div class="md-pills">
-    <button class="md-pill on" onclick="setModeD('casual','💬 Casual')">💬 Casual</button>
+    <button class="md-pill on" onclick="setModeD('casual','⚡ Auto')">⚡ Auto</button>
     <button class="md-pill" onclick="setModeD('student','📚 Student')">📚 Student</button>
-    <button class="md-pill" onclick="setModeD('exam','🎯 Exam')">🎯 Exam</button>
-    <button class="md-pill" onclick="setModeD('pro','💼 Pro')">💼 Pro</button>
-    <button class="md-pill" onclick="setModeD('code','💻 Code')">💻 Code</button>
-    <button class="md-pill" onclick="setModeD('math','🔢 Math')">🔢 Math</button>
-    <button class="md-pill" onclick="setModeD('write','✍️ Write')">✍️ Write</button>
-    <button class="md-pill" onclick="setModeD('quiz','🧠 Quiz')">🧠 Quiz</button>
-    <button class="md-pill" onclick="setModeD('translate','🔄 Translate')">🔄 Translate</button>
-    <button class="md-pill" onclick="setModeD('business','🏢 Business')">🏢 Business</button>
-    <button class="md-pill" onclick="setModeD('career','💼 Career')">💼 Career</button>
-    <button class="md-pill" onclick="setModeD('health','🏥 Health')">🏥 Health</button>
-    <button class="md-pill" onclick="setModeD('legal','⚖️ Legal')">⚖️ Legal</button>
-    <button class="md-pill" onclick="setModeD('spiritual','🙏 Spiritual')">🙏 Spiritual</button>
-    <button class="md-pill" onclick="setModeD('recipe','🍳 Recipe')">🍳 Recipe</button>
-    <button class="md-pill" onclick="setModeD('news','📰 News')">📰 News</button>
-    <button class="md-pill" onclick="setModeD('travel','✈️ Travel')">✈️ Travel</button>
   </div>
 </div>
 
@@ -1399,7 +1315,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="h-mode-wrap">
     <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
       <span class="sdot"></span>
-      <span class="mlabel" id="modeLabel">💬 Casual</span>
+      <span class="mlabel" id="modeLabel">🤖 Auto Detect</span>
       <span style="color:var(--text3);font-size:10px;margin-left:2px;">▾</span>
     </div>
   </div>
@@ -2130,6 +2046,23 @@ var RULES=`You are QVIO — built by Varun RK, 17-year-old founder CEO from Karn
 9. INDIAN LANGUAGE ACCESSIBILITY: Transliterate between scripts. Help users learn their mother tongue. Explain concepts in pure Hindi, Kannada, Tamil when needed. Never make users feel inferior for not knowing English. Every Indian language is equally respected.
 
 10. CONTINUOUS IMPROVEMENT: Learn user preferences within conversation and adapt. Get smarter with each message. Ask smart follow-up questions. Admit when you do not know something — never make up facts. Stay humble and curious.
+
+AUTO MODE DETECTION: Automatically detect the right mode from message:
+- Mentions JEE/NEET/UPSC/exam/study/marks → switch to exam/student mode
+- Asks for code/programming/debug → switch to code mode  
+- Math problem/equation/solve → switch to math mode
+- Creative writing/story/poem → switch to creative mode
+- Business/startup/pitch → switch to business mode
+- Just chatting/casual → stay casual and friendly
+- Never ask the user to select a mode — just adapt automatically
+
+
+CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
+- If they ask about studies/exams → switch to Student/Exam mode automatically  
+- If they send code → switch to Code mode automatically
+- If they ask about business → switch to Business mode
+- If they seem sad/stressed → switch to supportive mode
+- NEVER tell the user you switched modes — just do it naturally
 
 PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
 
@@ -3785,6 +3718,78 @@ async function callGroqWithSearch(text){
   }
   
   return searchContext;
+}
+
+
+// ═══════════════════════════════
+// 3D EARTH LANGUAGE SELECTOR
+// ═══════════════════════════════
+var selectedAILang = localStorage.getItem('aiLang') || '';
+
+function openLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.add('show');
+  // Highlight current language
+  if(selectedAILang){
+    document.querySelectorAll('.lsm-pill').forEach(function(p){
+      p.classList.toggle('active', p.textContent.trim()===selectedAILang);
+    });
+  }
+  // Clear search
+  var s = document.getElementById('lsmSearch');
+  if(s){s.value='';filterLSM('');}
+}
+
+function closeLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.remove('show');
+}
+
+function selectAILang(lang){
+  // Toggle selection
+  document.querySelectorAll('.lsm-pill').forEach(function(p){
+    p.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  selectedAILang = lang;
+}
+
+function confirmAILang(){
+  if(!selectedAILang){closeLangSelect();return;}
+  localStorage.setItem('aiLang', selectedAILang);
+  closeLangSelect();
+  showToast('🌍 QVIO will now respond in '+selectedAILang+'!');
+  // Update earth button tooltip
+  var eb = document.querySelector('.earth-btn');
+  if(eb) eb.title = 'Language: '+selectedAILang;
+}
+
+function filterLSM(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#langSelectModal .lsm-pill');
+  var sections=document.querySelectorAll('#langSelectModal .lsm-section-title');
+  var pillWraps=document.querySelectorAll('#langSelectModal .lsm-pills');
+  var noRes=document.getElementById('lsmNoResults');
+  var any=false;
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)any=true;
+  });
+  // Hide empty sections
+  pillWraps.forEach(function(pw,i){
+    var vis=pw.querySelectorAll('.lsm-pill:not(.hidden)').length>0;
+    pw.style.display=vis||!q?'':'none';
+    if(sections[i])sections[i].style.display=vis||!q?'':'none';
+  });
+  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
+}
+
+// Inject selected language into RULES at runtime
+function getAILangInstruction(){
+  var lang = localStorage.getItem('aiLang');
+  if(!lang||lang==='') return '';
+  return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
 }
 
 </script>
