@@ -2203,7 +2203,8 @@ async function sendMsg(){
         if(sr)searchCtx='\n\n[LIVE WEB DATA]\n'+sr+'\n[/LIVE WEB DATA]\n\nUse this live data to answer accurately about current events.';
       }catch(e){}
     }
-    var reply=await callGroq(text+(searchCtx||''));
+    var finalMsg = searchCtx ? text + searchCtx : text;
+    var reply=await callGroq(finalMsg);
     var spd=Date.now()-t0;
     hideTyping();
     addMsg(reply,'ai',false,spd);
@@ -3399,31 +3400,64 @@ function needsWebSearch(text){
 }
 
 function webSearch(query){
-  // Use DuckDuckGo Instant Answer API - completely free, no key needed
-  var url = 'https://api.duckduckgo.com/?q='+encodeURIComponent(query)+'&format=json&no_redirect=1&no_html=1&skip_disambig=1';
-  return fetch(url).then(function(r){return r.json();}).then(function(d){
-    var results = [];
-    // Abstract (Wikipedia summary)
-    if(d.AbstractText && d.AbstractText.length > 20){
-      results.push('📖 '+d.AbstractText.substring(0,400));
-    }
-    // Answer (direct answer)
-    if(d.Answer && d.Answer.length > 0){
-      results.push('⚡ '+d.Answer);
-    }
-    // Related topics
-    if(d.RelatedTopics && d.RelatedTopics.length > 0){
-      var topics = d.RelatedTopics.slice(0,3).map(function(t){
-        return t.Text ? t.Text.substring(0,150) : '';
-      }).filter(Boolean);
-      if(topics.length) results.push('🔍 Related: '+topics.join(' | '));
-    }
-    // Definition
-    if(d.Definition && d.Definition.length > 0){
-      results.push('📚 '+d.Definition.substring(0,200));
-    }
+  var q = encodeURIComponent(query);
+  var results = [];
+
+  // 1. Wikipedia Search - facts and summaries
+  var wikiSearch = fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+q+'&format=json&origin=*&srlimit=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.query&&d.query.search){
+        d.query.search.slice(0,2).forEach(function(item){
+          var s=item.snippet.replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&#039;/g,"'");
+          results.push('📖 '+item.title+': '+s);
+        });
+      }
+    }).catch(function(){});
+
+  // 2. Reddit - trending discussions
+  var redditSearch = fetch('https://www.reddit.com/search.json?q='+q+'&sort=new&limit=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.data&&d.data.children){
+        d.data.children.slice(0,2).forEach(function(p){
+          var post=p.data;
+          if(post.title)results.push('💬 Reddit: '+post.title+' ('+post.subreddit_name_prefixed+')');
+        });
+      }
+    }).catch(function(){});
+
+  // 3. HackerNews - tech news
+  var hnSearch = fetch('https://hn.algolia.com/api/v1/search?query='+q+'&hitsPerPage=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.hits){
+        d.hits.slice(0,2).forEach(function(h){
+          if(h.title)results.push('💻 HackerNews: '+h.title);
+        });
+      }
+    }).catch(function(){});
+
+  // 4. RSS2JSON for news feeds (free tier - BBC/TOI)
+  var rssUrl = 'http://feeds.bbci.co.uk/news/rss.xml';
+  if(query.toLowerCase().indexOf('cricket')>-1||query.toLowerCase().indexOf('ipl')>-1){
+    rssUrl='https://www.espncricinfo.com/rss/content/story/feeds/0.xml';
+  } else if(query.toLowerCase().indexOf('india')>-1||query.toLowerCase().indexOf('bollywood')>-1){
+    rssUrl='https://timesofindia.indiatimes.com/rssfeedstopstories.cms';
+  }
+  var newsSearch = fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rssUrl)+'&count=3')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.items){
+        d.items.slice(0,3).forEach(function(item){
+          results.push('📰 '+item.title);
+        });
+      }
+    }).catch(function(){});
+
+  return Promise.all([wikiSearch, redditSearch, hnSearch, newsSearch]).then(function(){
     return results.length > 0 ? results.join('\n\n') : null;
-  }).catch(function(){return null;});
+  });
 }
 
 async function callGroqWithSearch(text){
