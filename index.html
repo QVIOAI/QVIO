@@ -125,6 +125,67 @@ function activateQvioVoice(){
   },200);
 }
 
+
+// ═══════════════════════════════
+// QVIO WEB SEARCH
+// ═══════════════════════════════
+var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
+  'war','match','score','ipl','election','price','stock','weather','who won','what happened',
+  'recently','this week','yesterday','trending','live','breaking'];
+
+function needsWebSearch(text){
+  var t = text.toLowerCase();
+  for(var i=0;i<SEARCH_KEYWORDS.length;i++){
+    if(t.indexOf(SEARCH_KEYWORDS[i])>-1) return true;
+  }
+  return false;
+}
+
+function webSearch(query){
+  // Use DuckDuckGo Instant Answer API - completely free, no key needed
+  var url = 'https://api.duckduckgo.com/?q='+encodeURIComponent(query)+'&format=json&no_redirect=1&no_html=1&skip_disambig=1';
+  return fetch(url).then(function(r){return r.json();}).then(function(d){
+    var results = [];
+    // Abstract (Wikipedia summary)
+    if(d.AbstractText && d.AbstractText.length > 20){
+      results.push('📖 '+d.AbstractText.substring(0,400));
+    }
+    // Answer (direct answer)
+    if(d.Answer && d.Answer.length > 0){
+      results.push('⚡ '+d.Answer);
+    }
+    // Related topics
+    if(d.RelatedTopics && d.RelatedTopics.length > 0){
+      var topics = d.RelatedTopics.slice(0,3).map(function(t){
+        return t.Text ? t.Text.substring(0,150) : '';
+      }).filter(Boolean);
+      if(topics.length) results.push('🔍 Related: '+topics.join(' | '));
+    }
+    // Definition
+    if(d.Definition && d.Definition.length > 0){
+      results.push('📚 '+d.Definition.substring(0,200));
+    }
+    return results.length > 0 ? results.join('\n\n') : null;
+  }).catch(function(){return null;});
+}
+
+async function callGroqWithSearch(text){
+  var searchContext = '';
+  
+  if(needsWebSearch(text)){
+    try{
+      var searchResult = await webSearch(text);
+      if(searchResult){
+        searchContext = '\n\n[WEB SEARCH RESULTS for: "'+text+'"]\n'+searchResult+'\n[END SEARCH RESULTS]\n\nUse these search results to give accurate current information. If search results are relevant, use them. Always be honest about what you know vs what you found online.';
+      }
+    }catch(e){
+      console.log('Search failed, continuing without it');
+    }
+  }
+  
+  return searchContext;
+}
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1807,7 +1868,9 @@ var RULES=`You are QVIO — built by Varun RK, 17-year-old founder CEO from Karn
 
 10. CONTINUOUS IMPROVEMENT: Learn user preferences within conversation and adapt. Get smarter with each message. Ask smart follow-up questions. Admit when you do not know something — never make up facts. Stay humble and curious.
 
-PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.`;
+PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
+
+WEB SEARCH: When you receive [LIVE WEB DATA] in the message, use it to answer current events, news, scores, prices accurately. Cite it naturally like 'According to latest info...' or 'As of now...'. Never say you don't have internet access when web data is provided.`;
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -2190,7 +2253,15 @@ async function sendMsg(){
   showTyping();
   var t0=Date.now();
   try{
-    var reply=await callGroq(text);
+    // Web search for current info
+    var searchCtx='';
+    if(needsWebSearch(text)){
+      try{
+        var sr=await webSearch(text);
+        if(sr)searchCtx='\n\n[LIVE WEB DATA]\n'+sr+'\n[/LIVE WEB DATA]\n\nUse this live data to answer accurately about current events.';
+      }catch(e){}
+    }
+    var reply=await callGroq(text+(searchCtx||''));
     var spd=Date.now()-t0;
     hideTyping();
     addMsg(reply,'ai',false,spd);
