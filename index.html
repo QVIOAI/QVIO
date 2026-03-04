@@ -128,6 +128,78 @@ function activateQvioVoice(){
 
 // ═══════════════════════════════
 
+
+// ═══════════════════════════════
+// 3D EARTH LANGUAGE SELECTOR
+// ═══════════════════════════════
+var selectedAILang = localStorage.getItem('aiLang') || '';
+
+function openLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.add('show');
+  // Highlight current language
+  if(selectedAILang){
+    document.querySelectorAll('.lsm-pill').forEach(function(p){
+      p.classList.toggle('active', p.textContent.trim()===selectedAILang);
+    });
+  }
+  // Clear search
+  var s = document.getElementById('lsmSearch');
+  if(s){s.value='';filterLSM('');}
+}
+
+function closeLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.remove('show');
+}
+
+function selectAILang(lang){
+  // Toggle selection
+  document.querySelectorAll('.lsm-pill').forEach(function(p){
+    p.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  selectedAILang = lang;
+}
+
+function confirmAILang(){
+  if(!selectedAILang){closeLangSelect();return;}
+  localStorage.setItem('aiLang', selectedAILang);
+  closeLangSelect();
+  showToast('🌍 QVIO will now respond in '+selectedAILang+'!');
+  // Update earth button tooltip
+  var eb = document.querySelector('.earth-btn');
+  if(eb) eb.title = 'Language: '+selectedAILang;
+}
+
+function filterLSM(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#langSelectModal .lsm-pill');
+  var sections=document.querySelectorAll('#langSelectModal .lsm-section-title');
+  var pillWraps=document.querySelectorAll('#langSelectModal .lsm-pills');
+  var noRes=document.getElementById('lsmNoResults');
+  var any=false;
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)any=true;
+  });
+  // Hide empty sections
+  pillWraps.forEach(function(pw,i){
+    var vis=pw.querySelectorAll('.lsm-pill:not(.hidden)').length>0;
+    pw.style.display=vis||!q?'':'none';
+    if(sections[i])sections[i].style.display=vis||!q?'':'none';
+  });
+  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
+}
+
+// Inject selected language into RULES at runtime
+function getAILangInstruction(){
+  var lang = localStorage.getItem('aiLang');
+  if(!lang||lang==='') return '';
+  return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
+}
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -871,6 +943,63 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.6);}70%{box-shadow:0 0 0 12px rgba(231,76,60,0);}100%{box-shadow:0 0 0 0 rgba(231,76,60,0);}}
 #micBtn.rec{animation:micPulse 1s ease infinite;}
+
+/* 3D EARTH BUTTON */
+.earth-btn{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#1a6b9a,#2ecc71,#1a6b9a);
+  font-size:20px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4);
+  animation:earthSpin 8s linear infinite;
+  transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.earth-btn:hover{transform:scale(1.15);box-shadow:0 0 0 3px rgba(46,204,113,.5),0 4px 20px rgba(26,107,154,.6);}
+.earth-btn::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 60%);
+}
+@keyframes earthSpin{
+  0%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),-4px 0 8px rgba(46,204,113,.2);}
+  50%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),4px 0 8px rgba(26,107,154,.3);}
+  100%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),-4px 0 8px rgba(46,204,113,.2);}
+}
+
+/* LANGUAGE SELECTOR MODAL */
+#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8888;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#langSelectOverlay.show{display:flex;}
+#langSelectModal{
+  background:var(--bg);border-radius:20px;width:92%;max-width:500px;max-height:80vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);border:1px solid var(--border2);
+}
+.lsm-head{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.lsm-head h3{margin:0;font-size:1.1rem;color:var(--text);}
+.lsm-sub{padding:8px 20px;font-size:12px;color:var(--text3);background:var(--bg2);flex-shrink:0;}
+.lsm-search-wrap{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;}
+.lsm-search{width:100%;padding:10px 16px 10px 38px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;}
+.lsm-search:focus{border-color:var(--gold2);}
+.lsm-search-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);font-size:14px;}
+.lsm-body{overflow-y:auto;padding:12px 16px;flex:1;}
+.lsm-section-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:12px 0 8px;padding:0 4px;}
+.lsm-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.lsm-pill{
+  padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--bg2);color:var(--text);font-size:13px;cursor:pointer;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.lsm-pill:hover{border-color:var(--gold2);background:var(--navy-soft);color:var(--navy);}
+.lsm-pill.active{background:var(--navy-g);color:#fff;border-color:var(--navy);box-shadow:0 2px 8px rgba(13,27,62,.3);}
+.lsm-pill.hidden{display:none!important;}
+.lsm-no-results{text-align:center;color:var(--text3);padding:30px;display:none;}
+.lsm-footer{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.lsm-confirm{flex:1;padding:11px;background:var(--navy-g);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
 </style>
 </head>
 <body>
@@ -1541,7 +1670,198 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 
 <!-- ══════════════════════════════════════════════════════
      ALL JAVASCRIPT — SINGLE CONSOLIDATED BLOCK
-     (No duplicate scripts, no scripts outside </body>)
+     (No duplicate scripts, no scripts outside 
+<!-- LANGUAGE SELECTOR MODAL -->
+<div id="langSelectOverlay" onclick="if(event.target===this)closeLangSelect()">
+  <div id="langSelectModal">
+    <div class="lsm-head">
+      <h3>🌍 AI Response Language</h3>
+      <button class="mx" onclick="closeLangSelect()">✕</button>
+    </div>
+    <div class="lsm-sub">Choose which language QVIO responds in</div>
+    <div class="lsm-search-wrap">
+      <span class="lsm-search-icon">🔍</span>
+      <input class="lsm-search" id="lsmSearch" type="text" placeholder="Search 150+ languages..." oninput="filterLSM(this.value)" autocomplete="off"/>
+    </div>
+    <div class="lsm-body" id="lsmBody">
+      
+          <div class="lsm-section-title">🇮🇳 Indian Languages</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Hindi')">Hindi</button>
+            <button class="lsm-pill" onclick="selectAILang('Kannada')">Kannada</button>
+            <button class="lsm-pill" onclick="selectAILang('Tamil')">Tamil</button>
+            <button class="lsm-pill" onclick="selectAILang('Telugu')">Telugu</button>
+            <button class="lsm-pill" onclick="selectAILang('Bengali')">Bengali</button>
+            <button class="lsm-pill" onclick="selectAILang('Marathi')">Marathi</button>
+            <button class="lsm-pill" onclick="selectAILang('Gujarati')">Gujarati</button>
+            <button class="lsm-pill" onclick="selectAILang('Punjabi')">Punjabi</button>
+            <button class="lsm-pill" onclick="selectAILang('Malayalam')">Malayalam</button>
+            <button class="lsm-pill" onclick="selectAILang('Odia')">Odia</button>
+            <button class="lsm-pill" onclick="selectAILang('Urdu')">Urdu</button>
+            <button class="lsm-pill" onclick="selectAILang('Assamese')">Assamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Sanskrit')">Sanskrit</button>
+            <button class="lsm-pill" onclick="selectAILang('Kashmiri')">Kashmiri</button>
+            <button class="lsm-pill" onclick="selectAILang('Nepali')">Nepali</button>
+            <button class="lsm-pill" onclick="selectAILang('Sindhi')">Sindhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Manipuri')">Manipuri</button>
+            <button class="lsm-pill" onclick="selectAILang('Dogri')">Dogri</button>
+            <button class="lsm-pill" onclick="selectAILang('Santali')">Santali</button>
+            <button class="lsm-pill" onclick="selectAILang('Bodo')">Bodo</button>
+            <button class="lsm-pill" onclick="selectAILang('Konkani')">Konkani</button>
+            <button class="lsm-pill" onclick="selectAILang('Tulu')">Tulu</button>
+            <button class="lsm-pill" onclick="selectAILang('Bhojpuri')">Bhojpuri</button>
+            <button class="lsm-pill" onclick="selectAILang('Maithili')">Maithili</button>
+            <button class="lsm-pill" onclick="selectAILang('Rajasthani')">Rajasthani</button>
+            <button class="lsm-pill" onclick="selectAILang('Chhattisgarhi')">Chhattisgarhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Haryanvi')">Haryanvi</button>
+            <button class="lsm-pill" onclick="selectAILang('Awadhi')">Awadhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Kumaoni')">Kumaoni</button>
+            <button class="lsm-pill" onclick="selectAILang('Kodava')">Kodava</button>
+            <button class="lsm-pill" onclick="selectAILang('Mizo')">Mizo</button>
+            <button class="lsm-pill" onclick="selectAILang('Nagamese')">Nagamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Ladakhi')">Ladakhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Saurashtra')">Saurashtra</button>
+            <button class="lsm-pill" onclick="selectAILang('Gondi')">Gondi</button>
+          </div>
+
+          <div class="lsm-section-title">🌏 East & Southeast Asia</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Mandarin')">Mandarin</button>
+            <button class="lsm-pill" onclick="selectAILang('Japanese')">Japanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Korean')">Korean</button>
+            <button class="lsm-pill" onclick="selectAILang('Vietnamese')">Vietnamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Thai')">Thai</button>
+            <button class="lsm-pill" onclick="selectAILang('Indonesian')">Indonesian</button>
+            <button class="lsm-pill" onclick="selectAILang('Malay')">Malay</button>
+            <button class="lsm-pill" onclick="selectAILang('Tagalog')">Tagalog</button>
+            <button class="lsm-pill" onclick="selectAILang('Burmese')">Burmese</button>
+            <button class="lsm-pill" onclick="selectAILang('Khmer')">Khmer</button>
+            <button class="lsm-pill" onclick="selectAILang('Lao')">Lao</button>
+            <button class="lsm-pill" onclick="selectAILang('Sinhalese')">Sinhalese</button>
+            <button class="lsm-pill" onclick="selectAILang('Tibetan')">Tibetan</button>
+            <button class="lsm-pill" onclick="selectAILang('Mongolian')">Mongolian</button>
+            <button class="lsm-pill" onclick="selectAILang('Cantonese')">Cantonese</button>
+            <button class="lsm-pill" onclick="selectAILang('Javanese')">Javanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Sundanese')">Sundanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Cebuano')">Cebuano</button>
+            <button class="lsm-pill" onclick="selectAILang('Uyghur')">Uyghur</button>
+            <button class="lsm-pill" onclick="selectAILang('Kazakh')">Kazakh</button>
+            <button class="lsm-pill" onclick="selectAILang('Uzbek')">Uzbek</button>
+            <button class="lsm-pill" onclick="selectAILang('Taiwanese')">Taiwanese</button>
+          </div>
+
+          <div class="lsm-section-title">🌍 Middle East & Central Asia</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Arabic')">Arabic</button>
+            <button class="lsm-pill" onclick="selectAILang('Persian')">Persian</button>
+            <button class="lsm-pill" onclick="selectAILang('Hebrew')">Hebrew</button>
+            <button class="lsm-pill" onclick="selectAILang('Turkish')">Turkish</button>
+            <button class="lsm-pill" onclick="selectAILang('Pashto')">Pashto</button>
+            <button class="lsm-pill" onclick="selectAILang('Kurdish')">Kurdish</button>
+            <button class="lsm-pill" onclick="selectAILang('Azerbaijani')">Azerbaijani</button>
+            <button class="lsm-pill" onclick="selectAILang('Armenian')">Armenian</button>
+            <button class="lsm-pill" onclick="selectAILang('Georgian')">Georgian</button>
+            <button class="lsm-pill" onclick="selectAILang('Turkmen')">Turkmen</button>
+            <button class="lsm-pill" onclick="selectAILang('Dari')">Dari</button>
+          </div>
+
+          <div class="lsm-section-title">🌍 Africa</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Swahili')">Swahili</button>
+            <button class="lsm-pill" onclick="selectAILang('Amharic')">Amharic</button>
+            <button class="lsm-pill" onclick="selectAILang('Hausa')">Hausa</button>
+            <button class="lsm-pill" onclick="selectAILang('Yoruba')">Yoruba</button>
+            <button class="lsm-pill" onclick="selectAILang('Igbo')">Igbo</button>
+            <button class="lsm-pill" onclick="selectAILang('Zulu')">Zulu</button>
+            <button class="lsm-pill" onclick="selectAILang('Xhosa')">Xhosa</button>
+            <button class="lsm-pill" onclick="selectAILang('Somali')">Somali</button>
+            <button class="lsm-pill" onclick="selectAILang('Oromo')">Oromo</button>
+            <button class="lsm-pill" onclick="selectAILang('Afrikaans')">Afrikaans</button>
+            <button class="lsm-pill" onclick="selectAILang('Wolof')">Wolof</button>
+            <button class="lsm-pill" onclick="selectAILang('Shona')">Shona</button>
+            <button class="lsm-pill" onclick="selectAILang('Tigrinya')">Tigrinya</button>
+            <button class="lsm-pill" onclick="selectAILang('Kinyarwanda')">Kinyarwanda</button>
+            <button class="lsm-pill" onclick="selectAILang('Luganda')">Luganda</button>
+            <button class="lsm-pill" onclick="selectAILang('Twi')">Twi</button>
+            <button class="lsm-pill" onclick="selectAILang('Fula')">Fula</button>
+            <button class="lsm-pill" onclick="selectAILang('Lingala')">Lingala</button>
+          </div>
+
+          <div class="lsm-section-title">🌎 Europe</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('English')">English</button>
+            <button class="lsm-pill" onclick="selectAILang('Spanish')">Spanish</button>
+            <button class="lsm-pill" onclick="selectAILang('French')">French</button>
+            <button class="lsm-pill" onclick="selectAILang('German')">German</button>
+            <button class="lsm-pill" onclick="selectAILang('Portuguese')">Portuguese</button>
+            <button class="lsm-pill" onclick="selectAILang('Russian')">Russian</button>
+            <button class="lsm-pill" onclick="selectAILang('Italian')">Italian</button>
+            <button class="lsm-pill" onclick="selectAILang('Dutch')">Dutch</button>
+            <button class="lsm-pill" onclick="selectAILang('Polish')">Polish</button>
+            <button class="lsm-pill" onclick="selectAILang('Greek')">Greek</button>
+            <button class="lsm-pill" onclick="selectAILang('Swedish')">Swedish</button>
+            <button class="lsm-pill" onclick="selectAILang('Norwegian')">Norwegian</button>
+            <button class="lsm-pill" onclick="selectAILang('Danish')">Danish</button>
+            <button class="lsm-pill" onclick="selectAILang('Finnish')">Finnish</button>
+            <button class="lsm-pill" onclick="selectAILang('Czech')">Czech</button>
+            <button class="lsm-pill" onclick="selectAILang('Romanian')">Romanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Hungarian')">Hungarian</button>
+            <button class="lsm-pill" onclick="selectAILang('Ukrainian')">Ukrainian</button>
+            <button class="lsm-pill" onclick="selectAILang('Catalan')">Catalan</button>
+            <button class="lsm-pill" onclick="selectAILang('Serbian')">Serbian</button>
+            <button class="lsm-pill" onclick="selectAILang('Croatian')">Croatian</button>
+            <button class="lsm-pill" onclick="selectAILang('Slovak')">Slovak</button>
+            <button class="lsm-pill" onclick="selectAILang('Bulgarian')">Bulgarian</button>
+            <button class="lsm-pill" onclick="selectAILang('Lithuanian')">Lithuanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Latvian')">Latvian</button>
+            <button class="lsm-pill" onclick="selectAILang('Albanian')">Albanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Macedonian')">Macedonian</button>
+            <button class="lsm-pill" onclick="selectAILang('Slovenian')">Slovenian</button>
+            <button class="lsm-pill" onclick="selectAILang('Estonian')">Estonian</button>
+            <button class="lsm-pill" onclick="selectAILang('Belarusian')">Belarusian</button>
+            <button class="lsm-pill" onclick="selectAILang('Welsh')">Welsh</button>
+            <button class="lsm-pill" onclick="selectAILang('Irish')">Irish</button>
+            <button class="lsm-pill" onclick="selectAILang('Basque')">Basque</button>
+            <button class="lsm-pill" onclick="selectAILang('Maltese')">Maltese</button>
+          </div>
+
+          <div class="lsm-section-title">🌎 Americas & Pacific</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Brazilian Portuguese')">Brazilian Portuguese</button>
+            <button class="lsm-pill" onclick="selectAILang('Mexican Spanish')">Mexican Spanish</button>
+            <button class="lsm-pill" onclick="selectAILang('Quechua')">Quechua</button>
+            <button class="lsm-pill" onclick="selectAILang('Guarani')">Guarani</button>
+            <button class="lsm-pill" onclick="selectAILang('Hawaiian')">Hawaiian</button>
+            <button class="lsm-pill" onclick="selectAILang('Maori')">Maori</button>
+            <button class="lsm-pill" onclick="selectAILang('Samoan')">Samoan</button>
+            <button class="lsm-pill" onclick="selectAILang('Tongan')">Tongan</button>
+            <button class="lsm-pill" onclick="selectAILang('Haitian Creole')">Haitian Creole</button>
+            <button class="lsm-pill" onclick="selectAILang('Nahuatl')">Nahuatl</button>
+            <button class="lsm-pill" onclick="selectAILang('Aymara')">Aymara</button>
+          </div>
+
+          <div class="lsm-section-title">🤟 Sign & Special</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('ISL Indian Sign')">ISL Indian Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('ASL American Sign')">ASL American Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('BSL British Sign')">BSL British Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('Esperanto')">Esperanto</button>
+            <button class="lsm-pill" onclick="selectAILang('Latin')">Latin</button>
+            <button class="lsm-pill" onclick="selectAILang('Pali')">Pali</button>
+            <button class="lsm-pill" onclick="selectAILang('Sanskrit')">Sanskrit</button>
+            <button class="lsm-pill" onclick="selectAILang('Morse Code')">Morse Code</button>
+          </div>
+
+      <div class="lsm-no-results" id="lsmNoResults">😕 No language found</div>
+    </div>
+    <div class="lsm-footer">
+      <button class="lsm-cancel" onclick="closeLangSelect()">Cancel</button>
+      <button class="lsm-confirm" onclick="confirmAILang()">✅ Set Language</button>
+    </div>
+  </div>
+</div>
+
+</body>)
 ══════════════════════════════════════════════════════ -->
 <script>
 // ═══════════════════════════════
@@ -1812,7 +2132,7 @@ var RULES=`You are QVIO — built by Varun RK, 17-year-old founder CEO from Karn
 
 PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
 
-WEB SEARCH: When you receive [LIVE WEB DATA] in the message, use it to answer current events, news, scores, prices accurately. Cite it naturally like 'According to latest info...' or 'As of now...'. Never say you don't have internet access when web data is provided.`;
+WEB SEARCH: When you receive [LIVE WEB DATA], use it. Always mention the date/time of the info. Be honest if results seem old. For very recent events like live scores, say you have info up to a certain point.`;
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -2204,7 +2524,7 @@ async function sendMsg(){
       }catch(e){}
     }
     var finalMsg = searchCtx ? text + searchCtx : text;
-    var reply=await callGroq(finalMsg);
+    var langInstr=getAILangInstruction();var reply=await callGroq(finalMsg+(langInstr||""));
     var spd=Date.now()-t0;
     hideTyping();
     addMsg(reply,'ai',false,spd);
@@ -3402,8 +3722,9 @@ function needsWebSearch(text){
 function webSearch(query){
   var q = encodeURIComponent(query);
   var results = [];
+  var today = new Date().toDateString();
 
-  // 1. Wikipedia Search - facts and summaries
+  // 1. Wikipedia - facts
   var wikiSearch = fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+q+'&format=json&origin=*&srlimit=2')
     .then(function(r){return r.json();})
     .then(function(d){
@@ -3415,48 +3736,36 @@ function webSearch(query){
       }
     }).catch(function(){});
 
-  // 2. Reddit - trending discussions
-  var redditSearch = fetch('https://www.reddit.com/search.json?q='+q+'&sort=new&limit=2')
+  // 2. Reddit - fresh discussions (sorted by new)
+  var redditSearch = fetch('https://www.reddit.com/search.json?q='+q+'&sort=new&limit=3&t=week')
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.data&&d.data.children){
-        d.data.children.slice(0,2).forEach(function(p){
+        d.data.children.slice(0,3).forEach(function(p){
           var post=p.data;
-          if(post.title)results.push('💬 Reddit: '+post.title+' ('+post.subreddit_name_prefixed+')');
+          var age=Math.floor((Date.now()-post.created_utc*1000)/3600000);
+          if(post.title)results.push('💬 Reddit ('+age+'h ago): '+post.title);
         });
       }
     }).catch(function(){});
 
   // 3. HackerNews - tech news
-  var hnSearch = fetch('https://hn.algolia.com/api/v1/search?query='+q+'&hitsPerPage=2')
+  var hnSearch = fetch('https://hn.algolia.com/api/v1/search_by_date?query='+q+'&hitsPerPage=2')
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.hits){
         d.hits.slice(0,2).forEach(function(h){
-          if(h.title)results.push('💻 HackerNews: '+h.title);
+          if(h.title){
+            var age=Math.floor((Date.now()-new Date(h.created_at).getTime())/3600000);
+            results.push('💻 HackerNews ('+age+'h ago): '+h.title);
+          }
         });
       }
     }).catch(function(){});
 
-  // 4. RSS2JSON for news feeds (free tier - BBC/TOI)
-  var rssUrl = 'http://feeds.bbci.co.uk/news/rss.xml';
-  if(query.toLowerCase().indexOf('cricket')>-1||query.toLowerCase().indexOf('ipl')>-1){
-    rssUrl='https://www.espncricinfo.com/rss/content/story/feeds/0.xml';
-  } else if(query.toLowerCase().indexOf('india')>-1||query.toLowerCase().indexOf('bollywood')>-1){
-    rssUrl='https://timesofindia.indiatimes.com/rssfeedstopstories.cms';
-  }
-  var newsSearch = fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rssUrl)+'&count=3')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.items){
-        d.items.slice(0,3).forEach(function(item){
-          results.push('📰 '+item.title);
-        });
-      }
-    }).catch(function(){});
-
-  return Promise.all([wikiSearch, redditSearch, hnSearch, newsSearch]).then(function(){
-    return results.length > 0 ? results.join('\n\n') : null;
+  return Promise.all([wikiSearch, redditSearch, hnSearch]).then(function(){
+    if(results.length===0) return null;
+    return '[As of '+today+']\n'+results.join('\n\n');
   });
 }
 
