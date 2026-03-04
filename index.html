@@ -28,6 +28,103 @@ function filterLangs(q){
   if(noRes)noRes.style.display=(q&&!any)?'block':'none';
 }
 
+
+// ═══════════════════════════════
+// QVIO VOICE — HEY QVIO WAKE WORD
+// ═══════════════════════════════
+var wakeRecog=null;
+var wakeActive=false;
+var heyQvioEnabled=false;
+
+function startHeyQvio(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Hey QVIO needs Chrome or Edge!');return;}
+  heyQvioEnabled=true;
+  listenForWakeWord();
+  showToast('👂 Hey QVIO is active!');
+  var btn=document.getElementById('heyQvioBtn');
+  if(btn){btn.textContent='👂 Listening...';btn.style.background='linear-gradient(135deg,#1a6b3a,#27ae60)';}
+}
+
+function stopHeyQvio(){
+  heyQvioEnabled=false;
+  if(wakeRecog){try{wakeRecog.stop();}catch(e){}}
+  wakeRecog=null;
+  showToast('Hey QVIO disabled');
+  var btn=document.getElementById('heyQvioBtn');
+  if(btn){btn.textContent='🎤 Hey QVIO';btn.style.background='';}
+}
+
+function toggleHeyQvio(){
+  if(heyQvioEnabled){stopHeyQvio();}
+  else{startHeyQvio();}
+}
+
+function listenForWakeWord(){
+  if(!heyQvioEnabled)return;
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    wakeRecog=new SR();
+    wakeRecog.continuous=false;
+    wakeRecog.interimResults=false;
+    wakeRecog.lang='en-IN';
+    wakeRecog.maxAlternatives=5;
+
+    wakeRecog.onresult=function(e){
+      for(var i=0;i<e.results.length;i++){
+        for(var j=0;j<e.results[i].length;j++){
+          var t=e.results[i][j].transcript.toLowerCase().trim();
+          // Check for wake words
+          if(t.indexOf('hey qvio')>-1||t.indexOf('hi qvio')>-1||
+             t.indexOf('okay qvio')>-1||t.indexOf('ok qvio')>-1||
+             t.indexOf('hey kvio')>-1||t.indexOf('hey quio')>-1){
+            // Wake word detected!
+            activateQvioVoice();
+            return;
+          }
+        }
+      }
+      // Not a wake word - keep listening
+      if(heyQvioEnabled)setTimeout(listenForWakeWord,100);
+    };
+
+    wakeRecog.onerror=function(e){
+      if(e.error==='not-allowed'){
+        heyQvioEnabled=false;
+        showToast('Mic permission denied!');
+        return;
+      }
+      // Restart on other errors
+      if(heyQvioEnabled)setTimeout(listenForWakeWord,1000);
+    };
+
+    wakeRecog.onend=function(){
+      // Keep listening if still enabled and not in active voice mode
+      if(heyQvioEnabled&&!isRec)setTimeout(listenForWakeWord,200);
+    };
+
+    wakeRecog.start();
+  }catch(e){
+    if(heyQvioEnabled)setTimeout(listenForWakeWord,2000);
+  }
+}
+
+function activateQvioVoice(){
+  // Wake word heard! Now listen for actual command
+  showToast('✨ QVIO is listening!');
+  // Visual feedback on mic button
+  var mb=document.getElementById('micBtn');
+  if(mb){mb.style.transform='scale(1.3)';setTimeout(function(){mb.style.transform='';},300);}
+  // Start main recognition
+  setTimeout(function(){
+    toggleMic();
+    // Resume wake word after mic done
+    setTimeout(function(){
+      if(heyQvioEnabled&&!isRec)listenForWakeWord();
+    },5000);
+  },200);
+}
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -767,6 +864,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lang-pill.hidden{display:none!important;}
 .lang-section{margin-bottom:16px;}
 .lang-no-results{text-align:center;color:var(--text3);padding:20px;display:none;}
+
+
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.6);}70%{box-shadow:0 0 0 12px rgba(231,76,60,0);}100%{box-shadow:0 0 0 0 rgba(231,76,60,0);}}
+#micBtn.rec{animation:micPulse 1s ease infinite;}
 </style>
 </head>
 <body>
@@ -1294,6 +1395,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="ibox">
     <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
+      <button id="heyQvioBtn" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
       <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
       <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
       <button class="sendbtn" id="sendBtn" onclick="sendMsg()">↑</button>
@@ -2145,9 +2247,7 @@ function toggleMic(){
       try{recog.stop();}catch(e){}
     }
     isRec=false;
-    document.getElementById('micBtn').classList.remove('rec');
-    document.getElementById('micBtn').textContent='🎤';
-    return;
+    resetMicBtns();return;
   }
   // Request mic permission explicitly first
   if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
@@ -2170,57 +2270,121 @@ function startRecognition(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   try{
     recog=new SR();
-    recog.continuous=false;
+    recog.continuous=true;
     recog.interimResults=true;
     recog.maxAlternatives=1;
-    recog.lang=mode==='hindi'?'hi-IN':mode==='kannada'?'kn-IN':mode==='tamil'?'ta-IN':'en-IN';
+    // Auto-detect language based on current mode
+    var langMap={
+      'hindi':'hi-IN','kannada':'kn-IN','tamil':'ta-IN','telugu':'te-IN',
+      'bengali':'bn-IN','marathi':'mr-IN','gujarati':'gu-IN','punjabi':'pa-IN',
+      'malayalam':'ml-IN','urdu':'ur-IN','odia':'or-IN'
+    };
+    recog.lang=langMap[curLang]||'en-IN';
+
+    var finalTranscript='';
+    var interimTranscript='';
 
     recog.onstart=function(){
       isRec=true;
-      document.getElementById('micBtn').classList.add('rec');
-      document.getElementById('micBtn').textContent='⏹';
-      showToast('🎤 Listening... speak now!');
+      finalTranscript='';
+      var mb=document.getElementById('micBtn');
+      var fb=document.getElementById('floatMicBtn');
+      if(mb){mb.classList.add('rec');mb.textContent='⏹';}
+      if(fb){fb.classList.add('rec');fb.textContent='⏹';}
+      showToast('🎤 QVIO Voice is listening...');
+      // Show live indicator
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='🎤 Listening... speak now';
     };
 
     recog.onresult=function(e){
-      var transcript='';
-      for(var i=e.resultIndex;i<e.results.length;i++){
-        transcript+=e.results[i][0].transcript;
+      interimTranscript='';
+      finalTranscript='';
+      for(var i=0;i<e.results.length;i++){
+        if(e.results[i].isFinal){
+          finalTranscript+=e.results[i][0].transcript;
+        } else {
+          interimTranscript+=e.results[i][0].transcript;
+        }
       }
       var inp=document.getElementById('inp');
-      inp.value=transcript;
-      onInp(inp);
+      if(inp){
+        inp.value=finalTranscript||interimTranscript;
+        onInp(inp);
+      }
     };
 
     recog.onerror=function(e){
       isRec=false;
-      document.getElementById('micBtn').classList.remove('rec');
-      document.getElementById('micBtn').textContent='🎤';
-      if(e.error==='not-allowed'){
-        showToast('🎤 Mic blocked — allow microphone in browser!');
-      }else if(e.error==='no-speech'){
-        showToast('🎤 No speech detected — try again!');
-      }else if(e.error==='network'){
-        showToast('🎤 Network error — check your connection!');
-      }else{
-        showToast('🎤 Mic error: '+e.error);
-      }
+      resetMicBtns();
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='Ask anything...';
+      if(e.error==='not-allowed'){showToast('🎤 Mic blocked — allow mic in browser!');}
+      else if(e.error==='no-speech'){showToast('🎤 No speech — try again!');}
+      else if(e.error==='network'){showToast('🎤 Network error!');}
+      else{showToast('🎤 Mic error: '+e.error);}
     };
 
     recog.onend=function(){
       isRec=false;
-      document.getElementById('micBtn').classList.remove('rec');
-      document.getElementById('micBtn').textContent='🎤';
-      // Auto-send if we got text
-      var val=document.getElementById('inp').value.trim();
-      if(val)showToast('✅ Got it! Press Send or Enter.');
+      resetMicBtns();
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='Ask anything...';
+      var val=(inp&&inp.value)||'';
+      if(!val)return;
+
+      // VOICE COMMANDS
+      var cmd=val.toLowerCase().trim();
+      if(cmd==='clear chat'||cmd==='clear'){clearChat();showToast('🗑 Chat cleared!');if(inp)inp.value='';return;}
+      if(cmd==='send'||cmd==='go'){sendMsg();if(inp)inp.value='';return;}
+      if(cmd.startsWith('change mode to ')){
+        var m=cmd.replace('change mode to ','').trim();
+        showToast('Mode: '+m);if(inp)inp.value='';return;
+      }
+
+      // AI GRAMMAR CLEANUP then auto-send
+      cleanAndSend(val);
     };
 
     recog.start();
   }catch(e){
-    showToast('🎤 Could not start mic: '+e.message);
+    showToast('🎤 Could not start: '+e.message);
     isRec=false;
   }
+}
+
+function resetMicBtns(){
+  var mb=document.getElementById('micBtn');
+  var fb=document.getElementById('floatMicBtn');
+  if(mb){mb.classList.remove('rec');mb.textContent='🎤';}
+  if(fb){fb.classList.remove('rec');fb.textContent='🎤';}
+}
+
+function cleanAndSend(text){
+  // AI grammar cleanup via Groq
+  var inp=document.getElementById('inp');
+  showToast('✨ Cleaning up...');
+  var headers={'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEYS[_keyIdx]};
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:headers,
+    body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',
+      max_tokens:500,
+      messages:[
+        {role:'system',content:'Fix grammar and punctuation of the spoken text. Keep the same language and meaning. Return ONLY the fixed text, nothing else.'},
+        {role:'user',content:text}
+      ]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    var cleaned=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||text;
+    if(inp)inp.value=cleaned.trim();
+    sendMsg();
+  }).catch(function(){
+    if(inp)inp.value=text;
+    sendMsg();
+  });
 }
 
 // ═══════════════════════════════
