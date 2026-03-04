@@ -959,7 +959,13 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 <!-- LANGUAGE MODAL -->
 <div class="modal" id="m_lang">
   <div class="mhd"><h3>🌍 Choose Language</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
-  <div class="msub">Scroll and tap any language to start learning instantly</div>
+  <div class="msub">Search or scroll 150+ languages</div>
+  <div class="lang-search-wrap" style="position:relative;margin:12px 0;">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;">🔍</span>
+    <input id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"
+      style="width:100%;padding:10px 16px 10px 36px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;"/>
+  </div>
+  <div id="langNoResults" style="text-align:center;color:var(--text3);padding:20px;display:none;">😕 No language found</div>
 
   <div class="lang-section-title">🇮🇳 Indian Languages</div>
   <div class="lang-scroll-row">
@@ -993,6 +999,17 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Awadhi')">Awadhi</button>
     <button class="lang-pill" onclick="learnLang('Kumaoni')">Kumaoni</button>
     <button class="lang-pill" onclick="learnLang('Kodava')">Kodava</button>
+  
+    <button class="lang-pill" onclick="learnLang('Saurashtra')">Saurashtra</button>
+    <button class="lang-pill" onclick="learnLang('Gondi')">Gondi</button>
+    <button class="lang-pill" onclick="learnLang('Mundari')">Mundari</button>
+    <button class="lang-pill" onclick="learnLang('Kokborok')">Kokborok</button>
+    <button class="lang-pill" onclick="learnLang('Ladakhi')">Ladakhi</button>
+    <button class="lang-pill" onclick="learnLang('Kurukh')">Kurukh</button>
+    <button class="lang-pill" onclick="learnLang('Ho')">Ho</button>
+    <button class="lang-pill" onclick="learnLang('Mizo')">Mizo</button>
+    <button class="lang-pill" onclick="learnLang('Nagamese')">Nagamese</button>
+    <button class="lang-pill" onclick="learnLang('Thadou')">Thadou</button>
   </div>
 
   <div class="lang-section-title">🌏 East &amp; Southeast Asia</div>
@@ -1015,6 +1032,13 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Javanese')">Javanese</button>
     <button class="lang-pill" onclick="learnLang('Sundanese')">Sundanese</button>
     <button class="lang-pill" onclick="learnLang('Cebuano')">Cebuano</button>
+  
+    <button class="lang-pill" onclick="learnLang('Uyghur')">Uyghur</button>
+    <button class="lang-pill" onclick="learnLang('Kazakh')">Kazakh</button>
+    <button class="lang-pill" onclick="learnLang('Uzbek')">Uzbek</button>
+    <button class="lang-pill" onclick="learnLang('Kyrgyz')">Kyrgyz</button>
+    <button class="lang-pill" onclick="learnLang('Tajik')">Tajik</button>
+    <button class="lang-pill" onclick="learnLang('Taiwanese')">Taiwanese</button>
   </div>
 
   <div class="lang-section-title">🌍 Middle East &amp; Central Asia</div>
@@ -1028,6 +1052,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Azerbaijani')">Azerbaijani</button>
     <button class="lang-pill" onclick="learnLang('Armenian')">Armenian</button>
     <button class="lang-pill" onclick="learnLang('Georgian')">Georgian</button>
+  
+    <button class="lang-pill" onclick="learnLang('Sorani')">Sorani</button>
+    <button class="lang-pill" onclick="learnLang('Turkmen')">Turkmen</button>
+    <button class="lang-pill" onclick="learnLang('Dari')">Dari</button>
   </div>
 
   <div class="lang-section-title">🌍 Africa</div>
@@ -1044,6 +1072,13 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Afrikaans')">Afrikaans</button>
     <button class="lang-pill" onclick="learnLang('Wolof')">Wolof</button>
     <button class="lang-pill" onclick="learnLang('Shona')">Shona</button>
+  
+    <button class="lang-pill" onclick="learnLang('Tigrinya')">Tigrinya</button>
+    <button class="lang-pill" onclick="learnLang('Kinyarwanda')">Kinyarwanda</button>
+    <button class="lang-pill" onclick="learnLang('Luganda')">Luganda</button>
+    <button class="lang-pill" onclick="learnLang('Twi')">Twi</button>
+    <button class="lang-pill" onclick="learnLang('Fula')">Fula</button>
+    <button class="lang-pill" onclick="learnLang('Lingala')">Lingala</button>
   </div>
 
   <div class="lang-section-title">🌎 Europe</div>
@@ -1072,6 +1107,16 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Bulgarian')">Bulgarian</button>
     <button class="lang-pill" onclick="learnLang('Lithuanian')">Lithuanian</button>
     <button class="lang-pill" onclick="learnLang('Latvian')">Latvian</button>
+  
+    <button class="lang-pill" onclick="learnLang('Albanian')">Albanian</button>
+    <button class="lang-pill" onclick="learnLang('Macedonian')">Macedonian</button>
+    <button class="lang-pill" onclick="learnLang('Slovenian')">Slovenian</button>
+    <button class="lang-pill" onclick="learnLang('Estonian')">Estonian</button>
+    <button class="lang-pill" onclick="learnLang('Belarusian')">Belarusian</button>
+    <button class="lang-pill" onclick="learnLang('Welsh')">Welsh</button>
+    <button class="lang-pill" onclick="learnLang('Irish')">Irish</button>
+    <button class="lang-pill" onclick="learnLang('Basque')">Basque</button>
+    <button class="lang-pill" onclick="learnLang('Maltese')">Maltese</button>
   </div>
 
   <div class="lang-section-title">🌎 Americas &amp; Pacific</div>
@@ -1085,6 +1130,29 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="lang-pill" onclick="learnLang('Maori')">Maori</button>
     <button class="lang-pill" onclick="learnLang('Samoan')">Samoan</button>
     <button class="lang-pill" onclick="learnLang('Tongan')">Tongan</button>
+  
+    <button class="lang-pill" onclick="learnLang('Haitian Creole')">Haitian Creole</button>
+    <button class="lang-pill" onclick="learnLang('Jamaican Patois')">Jamaican Patois</button>
+    <button class="lang-pill" onclick="learnLang('Nahuatl')">Nahuatl</button>
+    <button class="lang-pill" onclick="learnLang('Aymara')">Aymara</button>
+
+  <div class="lang-section-title">🤟 Sign and Special</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('ISL Indian Sign')">ISL Indian Sign</button>
+    <button class="lang-pill" onclick="learnLang('ASL American Sign')">ASL American Sign</button>
+    <button class="lang-pill" onclick="learnLang('BSL British Sign')">BSL British Sign</button>
+    <button class="lang-pill" onclick="learnLang('Esperanto')">Esperanto</button>
+    <button class="lang-pill" onclick="learnLang('Latin')">Latin</button>
+    <button class="lang-pill" onclick="learnLang('Pali')">Pali</button>
+    <button class="lang-pill" onclick="learnLang('Prakrit')">Prakrit</button>
+    <button class="lang-pill" onclick="learnLang('Old Tamil')">Old Tamil</button>
+    <button class="lang-pill" onclick="learnLang('Morse Code')">Morse Code</button>
+    <button class="lang-pill" onclick="learnLang('Braille')">Braille</button>
+    <button class="lang-pill" onclick="learnLang('Zarma')">Zarma</button>
+    <button class="lang-pill" onclick="learnLang('Ewe')">Ewe</button>
+    <button class="lang-pill" onclick="learnLang('Bambara')">Bambara</button>
+    <button class="lang-pill" onclick="learnLang('Dinka')">Dinka</button>
+  </div>
   </div>
 </div>
 
@@ -3619,9 +3687,4 @@ setTimeout(function(){
 </div>
 
 </body>
-</html><div class="lang-search-wrap">
-  <span class="lang-search-icon">🔍</span>
-  <input class="lang-search" id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"/>
-</div>
-<div class="lang-no-results" id="langNoResults">No language found</div>
-
+</html>
