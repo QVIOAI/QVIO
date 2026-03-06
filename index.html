@@ -2314,8 +2314,8 @@ initFirebase();
 // ═══════════════════════════════
 // 🔑 API Key Rotation — auto-switches when one hits rate limit
 var GROQ_KEYS=[
-  ' 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',
-  // Add more keys below (get free ones at console.groq.com):
+  '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',
+  // Add more keys below:
   // 'gsk_YOUR_KEY_2_HERE',
   // 'gsk_YOUR_KEY_3_HERE',
 ];
@@ -2971,20 +2971,20 @@ async function sendMsg(){
     if(em.indexOf('rate')>-1||em.indexOf('429')>-1){
       var wait=30;var m2=em.match(/(\d+)s/);if(m2)wait=parseInt(m2[1]);
       var tid='t'+Date.now();
-      addMsg('<span id="'+tid+'">⏳ Rate limited — wait <strong>'+wait+'s</strong> then retry.</span>','ai');
+      addMsg('<span id="'+tid+'">⏳ QVIO Brain is thinking hard — wait <strong>'+wait+'s</strong> then retry.</span>','ai');
       var cd=wait;
       var itv=setInterval(function(){
         cd--;var el=document.getElementById(tid);
         if(cd<=0){clearInterval(itv);if(el)el.innerHTML='✅ Ready! Send again.';document.getElementById('sendBtn').disabled=false;}
-        else if(el)el.innerHTML='⏳ Rate limited — wait <strong>'+cd+'s</strong> then retry.';
+        else if(el)el.innerHTML='⏳ QVIO Brain is thinking hard — wait <strong>'+cd+'s</strong> then retry.';
       },1000);
     }else{
       // Show real error so we can debug
       var errMsg='❌ Error: '+em;
       if(em.indexOf('401')>-1||em.indexOf('invalid_api_key')>-1||em.indexOf('Unauthorized')>-1){
-        errMsg='🔑 API key invalid or expired. Please update the Groq API key in the code.';
+        errMsg='🔑 QVIO Brain is temporarily unavailable. Please try again in a moment.';
       } else if(em.indexOf('402')>-1||em.indexOf('quota')>-1||em.indexOf('billing')>-1){
-        errMsg='💳 Groq quota exceeded. Get a new free API key at console.groq.com';
+        errMsg='💳 QVIO Brain is at capacity right now. Please try again shortly.';
       } else if(em.indexOf('model')>-1||em.indexOf('404')>-1){
         errMsg='🤖 Model not found. Try a different model name.';
       } else if(em.indexOf('fetch')>-1||em.indexOf('network')>-1||em.indexOf('Failed')>-1){
@@ -3010,7 +3010,7 @@ async function callGroq(msg){
     body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
   });
   var data=await res.json();
-  console.log('Groq response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
+  console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
   if(data.error){
     var msg2=data.error.message||JSON.stringify(data.error);
     // Auto-rotate key on rate limit (429) and retry once
@@ -3204,7 +3204,7 @@ function resetMicBtns(){
 }
 
 function cleanAndSend(text){
-  // AI grammar cleanup via Groq
+  // AI grammar cleanup via QVIO Brain
   var inp=document.getElementById('inp');
   showToast('✨ Cleaning up...');
   var headers={'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEYS[_keyIdx]};
@@ -3965,7 +3965,7 @@ async function analyseLens(){
       resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
     }
   }catch(e){
-    // Vision model not available on all Groq tiers — fallback to text description
+    // Vision fallback to text description
     resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
   }
   document.getElementById('lensAnalyseBtn').disabled=false;
@@ -4133,7 +4133,7 @@ setTimeout(function(){
       var code=d.error.code||'';
       var msg=d.error.message||'';
       if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
-        showToast('⚠️ Groq API key is invalid or expired — AI won\'t work. Get a new key at console.groq.com');
+        showToast('⚠️ QVIO Brain needs a restart. Refresh the page and try again.');
         console.error('QVIO KEY EXPIRED:',msg);
       }
     }else{
