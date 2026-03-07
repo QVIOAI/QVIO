@@ -1791,6 +1791,14 @@ button{ cursor:pointer; }
 
 /* ══ END STUDY MODE ══ */
 
+
+/* News skeleton loader */
+.news-skeleton{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;}
+.ns-line{background:var(--border);border-radius:4px;animation:nsSkel 1.4s ease-in-out infinite;}
+.ns-l1{height:14px;width:85%;margin-bottom:8px;}
+.ns-l2{height:10px;width:40%;}
+@keyframes nsSkel{0%,100%{opacity:.4;}50%{opacity:1;}}
+
 </style>
 </head>
 <body>
@@ -3751,30 +3759,131 @@ function wpmCheck(inp){
 }
 
 // ── FEATURE 6: QUICK NEWS ─────────────────────────────
-var NEWS_TOPICS=[
-  {hl:"QVIO AI surpasses 1 million users in India — Built by Varun",src:"QVIO Official · Just now"},
-  {hl:"India GDP growth accelerates — Economy on track for 7%+ expansion this year",src:"Economic Times · Today"},
-  {hl:"ISRO announces new moon mission with advanced lunar rover technology",src:"NDTV · Today"},
-  {hl:"IIT admissions 2025 — JEE Advanced cutoffs and counselling schedule released",src:"Times of India · Today"},
-  {hl:"India vs Australia — T20 series final preview and squad analysis",src:"Cricbuzz · Today"},
-  {hl:"Top 10 highest paying IT jobs in India for freshers in 2025",src:"Naukri.com · Today"},
-  {hl:"Supreme Court ruling on data privacy — What it means for every Indian",src:"The Hindu · Today"},
-  {hl:"AI startups in Bangalore raise record 2 billion dollars in latest funding round",src:"Inc42 · Today"},
-  {hl:"CBSE Class 12 results declared — Check your scores at cbseresults.nic.in",src:"Hindustan Times · Today"},
-  {hl:"Reliance Jio announces 5G expansion to 1000 new cities across India",src:"Business Standard · Today"},
-  {hl:"Budget 2025 — Tax relief for middle class, education funding doubled",src:"Mint · Today"},
-  {hl:"Virat Kohli scores another century — India wins series 3-1",src:"ESPN Cricinfo · Today"}
+// ── LIVE NEWS via FREE RSS feeds — zero cost, zero API key ──
+var _newsCache = null;
+var _newsCacheTime = 0;
+
+// Free RSS feeds — proxied via rss2json.com (free, 10k req/day)
+var RSS_FEEDS = [
+  {name:'NDTV',     url:'https://feeds.feedburner.com/ndtvnews-top-stories'},
+  {name:'TOI',      url:'https://timesofindia.indiatimes.com/rssfeedstopstories.cms'},
+  {name:'Hindustan Times', url:'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml'},
+  {name:'India Today', url:'https://www.indiatoday.in/rss/1206550'},
+  {name:'The Hindu', url:'https://www.thehindu.com/news/national/feeder/default.rss'}
 ];
-function askNews(i){
-  var topic=NEWS_TOPICS[i];if(!topic)return;
-  send('Tell me more about: '+topic.hl+'?');
+var _rssFeedIdx = 0;
+
+function renderNews(){
+  var el = document.getElementById('newsList');
+  if(!el) return;
+
+  // Skeleton
+  var sk = '';
+  for(var x=0;x<5;x++) sk += '<div class="news-skeleton"><div class="ns-line ns-l1"></div><div class="ns-line ns-l2"></div></div>';
+  el.innerHTML = sk;
+
+  // Cache check (5 min)
+  if(_newsCache && (Date.now() - _newsCacheTime) < 300000){
+    renderNewsCards(_newsCache); return;
+  }
+  tryNextFeed();
+}
+
+function tryNextFeed(){
+  if(_rssFeedIdx >= RSS_FEEDS.length){
+    _rssFeedIdx = 0;
+    fetchAINews(); // all feeds failed, use AI
+    return;
+  }
+  var feed = RSS_FEEDS[_rssFeedIdx];
+  var proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feed.url) + '&count=10';
+  fetch(proxyUrl)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.status === 'ok' && d.items && d.items.length){
+        var articles = d.items.map(function(item){
+          return {
+            hl: item.title,
+            src: feed.name + ' · ' + timeAgo(item.pubDate),
+            url: item.link
+          };
+        });
+        _newsCache = articles; _newsCacheTime = Date.now();
+        _rssFeedIdx = 0;
+        renderNewsCards(articles);
+      } else {
+        _rssFeedIdx++;
+        tryNextFeed();
+      }
+    })
+    .catch(function(){
+      _rssFeedIdx++;
+      tryNextFeed();
+    });
+}
+
+function fetchAINews(){
+  var el = document.getElementById('newsList');
+  if(!el) return;
+  var today = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var prompt = 'List exactly 8 real top India news headlines for today ('+today+'). Return ONLY a JSON array. Each item: {"hl":"headline","src":"source name"}. Real news only. No extra text.';
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+    body:JSON.stringify({model:MODEL,max_tokens:500,messages:[{role:'user',content:prompt}]})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    var text = d.choices[0].message.content.trim().replace(/```json|```/g,'').trim();
+    try{
+      var articles = JSON.parse(text);
+      _newsCache = articles; _newsCacheTime = Date.now();
+      renderNewsCards(articles);
+    }catch(e){ renderNewsError(); }
+  })
+  .catch(renderNewsError);
+}
+
+function renderNewsCards(articles){
+  var el = document.getElementById('newsList');
+  if(!el) return;
+  var html = '';
+  for(var i=0;i<articles.length;i++){
+    var n = articles[i];
+    var safeHl = n.hl.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    var safeSrc = n.src || 'News';
+    if(n.url){
+      html += '<div class="news-card" onclick="window.open(this.dataset.url,\'_blank\')" data-url="'+n.url+'">';
+    } else {
+      html += '<div class="news-card" onclick="askNews(this.dataset.hl)" data-hl="'+safeHl+'">';
+    }
+    html += '<div class="news-hl">'+n.hl+'</div>';
+    html += '<div class="news-src">'+safeSrc+'</div>';
+    html += '</div>';
+  }
+  html += '<div style="text-align:center;margin-top:10px;"><button onclick="_newsCache=null;renderNews()" style="background:transparent;border:1px solid var(--border);color:var(--text3);padding:6px 16px;border-radius:99px;font-size:12px;cursor:pointer;font-family:\'DM Sans\',sans-serif;">🔄 Refresh</button></div>';
+  el.innerHTML = html;
+}
+
+function renderNewsError(){
+  var el = document.getElementById('newsList');
+  if(!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">Could not load news. Check your connection.<br><br><button onclick="renderNews()" style="background:var(--cyber-g);color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;">Try Again</button></div>';
+}
+
+function askNews(headline){
+  if(!headline) return;
+  send('Tell me more about this news: ' + headline);
   closeM('news');
 }
-function renderNews(){
-  var el=document.getElementById('newsList');if(!el)return;
-  el.innerHTML=NEWS_TOPICS.map(function(n){
-    return '<div class="news-card" onclick="askNews('+i+');"><div class="news-hl">'+n.hl+'</div><div class="news-src">'+n.src+'</div></div>';
-  }).join('');
+
+function timeAgo(dateStr){
+  if(!dateStr) return 'Today';
+  var diff = (Date.now() - new Date(dateStr).getTime()) / 60000;
+  if(diff < 1)   return 'Just now';
+  if(diff < 60)  return Math.floor(diff)+'m ago';
+  if(diff < 1440)return Math.floor(diff/60)+'h ago';
+  return Math.floor(diff/1440)+'d ago';
 }
 
 // ── FEATURE 7: EMOJI PICKER ───────────────────────────
