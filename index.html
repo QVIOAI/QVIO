@@ -875,6 +875,259 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.6);}70%{box-shadow:0 0 0 12px rgba(231,76,60,0);}100%{box-shadow:0 0 0 0 rgba(231,76,60,0);}}
 #micBtn.rec{animation:micPulse 1s ease infinite;}
 
+/* ═══════════════════════════════════════
+   🚀 QVIO FUTURISTIC PREMIUM ANIMATIONS
+═══════════════════════════════════════ */
+
+/* ── HOLOGRAPHIC SHIMMER on AI bubbles ── */
+.msg.ai .bubble{
+  position:relative;
+  overflow:hidden;
+  transition:box-shadow .35s cubic-bezier(.22,1,.36,1), border-color .35s;
+}
+.msg.ai .bubble::after{
+  content:'';
+  position:absolute;
+  top:-100%;left:-60%;
+  width:40%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(212,160,23,.10) 50%,rgba(255,255,255,.08) 55%,transparent 65%);
+  transform:skewX(-15deg);
+  transition:none;
+  pointer-events:none;
+  opacity:0;
+}
+.msg.ai .bubble:hover::after{
+  opacity:1;
+  left:130%;
+  transition:left .65s cubic-bezier(.22,1,.36,1), opacity .1s;
+}
+.msg.ai .bubble:hover{
+  border-color:var(--gold3);
+  box-shadow:0 0 0 1px rgba(212,160,23,.15), 0 8px 32px rgba(13,27,62,.13), 0 0 20px rgba(212,160,23,.08);
+}
+
+/* ── MAGNETIC LIFT on suggestion cards ── */
+.sug{
+  transform-style:preserve-3d;
+  will-change:transform;
+  transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s, border-color .25s;
+}
+.sug:hover{
+  transform:translateY(-6px) rotateX(2deg) rotateY(-1deg) scale(1.01);
+  box-shadow:0 16px 40px rgba(13,27,62,.18), 0 0 0 1px rgba(212,160,23,.2), 0 0 30px rgba(212,160,23,.06);
+  border-color:var(--border2);
+}
+
+/* ── CYBER GLOW on send button ── */
+.sendbtn{
+  position:relative;
+  overflow:hidden;
+  transition:all .28s cubic-bezier(.22,1,.36,1);
+}
+.sendbtn::before{
+  content:'';
+  position:absolute;
+  inset:-2px;
+  background:linear-gradient(135deg,#D4A017,#F0C842,#8B6914,#D4A017);
+  background-size:300% 300%;
+  border-radius:inherit;
+  z-index:-1;
+  opacity:0;
+  animation:cyberRotate 3s linear infinite;
+  transition:opacity .3s;
+}
+@keyframes cyberRotate{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+.sendbtn:hover::before{opacity:1;}
+.sendbtn:hover{
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 8px 28px rgba(13,27,62,.45), 0 0 20px rgba(212,160,23,.3);
+}
+.sendbtn:active{transform:translateY(0) scale(.97);}
+
+/* ── NEON PULSE on input focus ── */
+.ibox{
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+}
+.ibox:focus-within{
+  border-color:var(--gold2);
+  box-shadow:0 0 0 2px rgba(212,160,23,.12), 0 0 30px rgba(212,160,23,.08), var(--s2);
+  transform:translateY(-1px);
+}
+
+/* ── WARP ENTRANCE for messages ── */
+@keyframes warpIn{
+  0%{opacity:0;transform:translateY(18px) scale(.97);filter:blur(4px);}
+  60%{filter:blur(0);}
+  100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
+}
+.msg{animation:warpIn .32s cubic-bezier(.22,1,.36,1);}
+
+/* ── HOLOGRAPHIC HEADER border ── */
+header::after{
+  background:linear-gradient(90deg,transparent,var(--gold3),var(--gold2),var(--gold3),transparent);
+  background-size:200% 100%;
+  animation:headerFlow 4s linear infinite;
+  opacity:.5;
+  height:1px;
+}
+@keyframes headerFlow{
+  0%{background-position:200% 0;}
+  100%{background-position:-200% 0;}
+}
+
+/* ── MODAL ENTRANCE — slide + scale ── */
+.modal.show{
+  animation:modalWarp .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modalWarp{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.9) translateY(12px);}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) translateY(0);}
+}
+
+/* ── QUICK REPLY PILL hover ── */
+.qr{
+  transition:all .22s cubic-bezier(.22,1,.36,1);
+  position:relative;
+  overflow:hidden;
+}
+.qr::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:var(--gold-g);
+  opacity:0;
+  transition:opacity .22s;
+  border-radius:inherit;
+}
+.qr:hover{
+  transform:translateY(-2px) scale(1.04);
+  border-color:var(--gold2);
+  box-shadow:0 4px 14px rgba(212,160,23,.2);
+  color:var(--navy);
+}
+[data-theme="dark"] .qr:hover{color:var(--gold2);}
+
+/* ── FLOATING PARTICLES — upgrade to holographic ── */
+.ptc{
+  background:radial-gradient(circle,rgba(212,160,23,.9),rgba(240,200,66,.3),transparent) !important;
+  box-shadow:0 0 6px rgba(212,160,23,.5);
+}
+[data-theme="dark"] .ptc{
+  background:radial-gradient(circle,rgba(240,200,66,.95),rgba(212,160,23,.4),transparent) !important;
+  box-shadow:0 0 8px rgba(240,200,66,.6);
+}
+
+/* ── AVATAR pulse ring ── */
+.av.ai{
+  animation:avatarPulse 3s ease-in-out infinite;
+  position:relative;
+}
+@keyframes avatarPulse{
+  0%,100%{box-shadow:0 2px 8px var(--gold-glow);}
+  50%{box-shadow:0 2px 8px var(--gold-glow), 0 0 0 4px rgba(212,160,23,.12);}
+}
+
+/* ── TOAST — futuristic slide ── */
+.toast{
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  background:rgba(13,27,62,.92) !important;
+  border:1px solid rgba(212,160,23,.3) !important;
+  box-shadow:0 8px 32px rgba(13,27,62,.4), 0 0 20px rgba(212,160,23,.1) !important;
+}
+.toast.show{
+  animation:toastWarp .35s cubic-bezier(.22,1,.36,1);
+}
+@keyframes toastWarp{
+  0%{opacity:0;transform:translateX(-50%) translateY(20px) scale(.9);}
+  100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+}
+
+/* ── TOOL buttons — glowing hover ── */
+.tp-btn{
+  transition:all .25s cubic-bezier(.22,1,.36,1);
+}
+.tp-btn:hover{
+  transform:translateY(-3px) scale(1.06);
+  box-shadow:0 6px 20px rgba(13,27,62,.18), 0 0 0 1px rgba(212,160,23,.15);
+  border-color:var(--gold2) !important;
+}
+.tp-btn:active{transform:translateY(0) scale(.96);}
+
+/* ── LOGO — holographic glow on hover ── */
+.logo:hover .l-mark, .logo:hover .w-icon{
+  box-shadow:0 8px 32px var(--gold-glow), 0 0 0 2px rgba(212,160,23,.25), 0 0 60px rgba(212,160,23,.15);
+  transition:box-shadow .4s cubic-bezier(.22,1,.36,1);
+}
+
+/* ── SCROLL BUTTON — orbit ring ── */
+.scroll-btn{
+  transition:all .25s cubic-bezier(.22,1,.36,1);
+}
+.scroll-btn:hover{
+  transform:scale(1.15) rotate(8deg);
+  box-shadow:0 6px 24px rgba(13,27,62,.5), 0 0 20px rgba(212,160,23,.2);
+}
+
+/* ── USER BUBBLE — subtle shimmer ── */
+.msg.user .bubble{
+  position:relative;
+  overflow:hidden;
+  transition:box-shadow .3s;
+}
+.msg.user .bubble::after{
+  content:'';
+  position:absolute;
+  top:-100%;left:-60%;
+  width:35%;height:300%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 65%);
+  transform:skewX(-15deg);
+  pointer-events:none;
+  opacity:0;
+}
+.msg.user .bubble:hover::after{
+  opacity:1;
+  left:130%;
+  transition:left .6s cubic-bezier(.22,1,.36,1), opacity .1s;
+}
+
+/* ── DARK MODE — amplified neon glow ── */
+[data-theme="dark"] .sendbtn{
+  box-shadow:0 3px 12px rgba(13,27,62,.3), 0 0 15px rgba(212,160,23,.12);
+}
+[data-theme="dark"] .sendbtn:hover{
+  box-shadow:0 8px 28px rgba(0,0,0,.6), 0 0 30px rgba(240,200,66,.25);
+}
+[data-theme="dark"] .msg.ai .bubble:hover{
+  box-shadow:0 0 0 1px rgba(240,200,66,.2), 0 8px 32px rgba(0,0,0,.4), 0 0 30px rgba(240,200,66,.08);
+}
+[data-theme="dark"] .ibox:focus-within{
+  box-shadow:0 0 0 2px rgba(240,200,66,.15), 0 0 40px rgba(240,200,66,.1), var(--s2);
+}
+[data-theme="dark"] header::after{
+  opacity:.7;
+}
+[data-theme="dark"] .sug:hover{
+  box-shadow:0 16px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(240,200,66,.2), 0 0 40px rgba(240,200,66,.07);
+}
+
+/* ── SMOOTH PAGE TRANSITIONS ── */
+* {
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+:focus-visible{
+  outline:2px solid rgba(212,160,23,.5);
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+/* ══ END FUTURISTIC ANIMATIONS ══ */
+
 /* 3D EARTH BUTTON */
 .earth-btn{
   width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
@@ -4694,6 +4947,136 @@ function getAILangInstruction(){
   <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
+
+
+<!-- ═══════════════════════════════════════
+     🚀 QVIO FUTURISTIC INTERACTION LAYER
+═══════════════════════════════════════ -->
+<script>
+(function(){
+  // ── RIPPLE EFFECT on all buttons ──
+  function addRipple(e){
+    var btn=e.currentTarget;
+    var r=btn.getBoundingClientRect();
+    var size=Math.max(r.width,r.height)*2;
+    var x=e.clientX-r.left-size/2;
+    var y=e.clientY-r.top-size/2;
+    var rip=document.createElement('span');
+    rip.style.cssText='position:absolute;border-radius:50%;pointer-events:none;'+
+      'width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px;'+
+      'background:rgba(255,255,255,0.18);transform:scale(0);'+
+      'animation:rippleAnim .55s cubic-bezier(.22,1,.36,1) forwards;z-index:9;';
+    if(!btn.style.position||btn.style.position==='static'){btn.style.position='relative';}
+    btn.style.overflow='hidden';
+    btn.appendChild(rip);
+    setTimeout(function(){rip.remove();},600);
+  }
+
+  // Inject ripple keyframe
+  var st=document.createElement('style');
+  st.textContent='@keyframes rippleAnim{to{transform:scale(1);opacity:0;}}';
+  document.head.appendChild(st);
+
+  // Attach to buttons after DOM ready
+  function attachRipples(){
+    var btns=document.querySelectorAll('.sendbtn,.mclose,.lbtn,.ob-next,.tp-btn,.qr,.sug,.lang-pill,.md-pill,.gbtn,.madd');
+    btns.forEach(function(b){
+      if(!b._ripple){
+        b._ripple=true;
+        b.addEventListener('click',addRipple);
+      }
+    });
+  }
+
+  // ── STAGGERED ENTRANCE for tool grid ──
+  function staggerToolButtons(){
+    var btns=document.querySelectorAll('.tp-btn');
+    btns.forEach(function(b,i){
+      b.style.opacity='0';
+      b.style.transform='translateY(12px) scale(.95)';
+      b.style.transition='opacity .3s, transform .3s cubic-bezier(.22,1,.36,1)';
+      setTimeout(function(){
+        b.style.opacity='1';
+        b.style.transform='translateY(0) scale(1)';
+      }, 40 + i * 35);
+    });
+  }
+
+  // ── SMOOTH LOGO CLICK RIPPLE ──
+  function logoRipple(){
+    var logo=document.querySelector('.logo');
+    if(!logo)return;
+    logo.addEventListener('click',function(){
+      var mark=logo.querySelector('.l-mark,.w-icon');
+      if(!mark)return;
+      mark.style.transition='transform .15s cubic-bezier(.22,1,.36,1)';
+      mark.style.transform='scale(.88)';
+      setTimeout(function(){
+        mark.style.transform='scale(1.08)';
+        setTimeout(function(){mark.style.transform='scale(1)';},150);
+      },100);
+    });
+  }
+
+  // ── HEADER SCAN LINE (subtle futuristic effect) ──
+  function addHeaderScanline(){
+    var hdr=document.querySelector('header');
+    if(!hdr)return;
+    var scan=document.createElement('div');
+    scan.style.cssText='position:absolute;bottom:0;left:0;width:0%;height:1px;'+
+      'background:linear-gradient(90deg,transparent,rgba(212,160,23,.8),transparent);'+
+      'pointer-events:none;z-index:99;transition:none;';
+    hdr.style.position='relative';
+    hdr.appendChild(scan);
+
+    var pos=0,dir=1;
+    setInterval(function(){
+      pos+=dir*2;
+      if(pos>=100){dir=-1;}
+      if(pos<=0){dir=1;}
+      scan.style.cssText='position:absolute;bottom:0;left:0;width:30%;height:1px;'+
+        'background:linear-gradient(90deg,transparent,rgba(212,160,23,.6),transparent);'+
+        'pointer-events:none;z-index:99;'+
+        'transform:translateX('+pos+'%);opacity:.7;transition:transform .08s linear;';
+    }, 80);
+  }
+
+  // ── SEND BUTTON IDLE PULSE (dark mode enhanced) ──
+  function sendBtnPulse(){
+    var btn=document.querySelector('.sendbtn');
+    if(!btn)return;
+    var on=true;
+    setInterval(function(){
+      if(document.querySelector('[data-theme="dark"]')){
+        btn.style.boxShadow=on
+          ?'0 3px 12px rgba(13,27,62,.3),0 0 18px rgba(212,160,23,.15)'
+          :'0 3px 12px rgba(13,27,62,.3),0 0 8px rgba(212,160,23,.05)';
+        on=!on;
+      }
+    },1800);
+  }
+
+  // ── INIT after load ──
+  document.addEventListener('DOMContentLoaded',function(){
+    attachRipples();
+    logoRipple();
+    addHeaderScanline();
+    sendBtnPulse();
+    // Reattach when new messages appear (MutationObserver)
+    var obs=new MutationObserver(attachRipples);
+    var chat=document.getElementById('chat');
+    if(chat)obs.observe(chat,{childList:true,subtree:true});
+    // Stagger tool drawer when opened
+    var origOpenM=window.openM;
+    if(origOpenM){
+      window.openM=function(id){
+        origOpenM(id);
+        if(id==='tools')setTimeout(staggerToolButtons,50);
+      };
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
