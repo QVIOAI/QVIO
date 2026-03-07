@@ -29,108 +29,6 @@ function filterLangs(q){
   if(noRes)noRes.style.display=(q&&!any)?'block':'none';
 }
 
-
-// ═══════════════════════════════
-// QVIO VOICE — HEY QVIO WAKE WORD
-// ═══════════════════════════════
-var wakeRecog=null;
-var wakeActive=false;
-var heyQvioEnabled=false;
-
-function startHeyQvio(){
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Hey QVIO needs Chrome or Edge!');return;}
-  heyQvioEnabled=true;
-  listenForWakeWord();
-  showToast('👂 Hey QVIO is active!');
-  var btn=document.getElementById('heyQvioBtn');
-  if(btn){btn.textContent='👂 Listening...';btn.style.background='linear-gradient(135deg,#1a6b3a,#27ae60)';}
-}
-
-function stopHeyQvio(){
-  heyQvioEnabled=false;
-  if(wakeRecog){try{wakeRecog.stop();}catch(e){}}
-  wakeRecog=null;
-  showToast('Hey QVIO disabled');
-  var btn=document.getElementById('heyQvioBtn');
-  if(btn){btn.textContent='🎤 Hey QVIO';btn.style.background='';}
-}
-
-function toggleHeyQvio(){
-  if(heyQvioEnabled){stopHeyQvio();}
-  else{startHeyQvio();}
-}
-
-function listenForWakeWord(){
-  if(!heyQvioEnabled)return;
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  try{
-    wakeRecog=new SR();
-    wakeRecog.continuous=false;
-    wakeRecog.interimResults=false;
-    wakeRecog.lang='en-IN';
-    wakeRecog.maxAlternatives=5;
-
-    wakeRecog.onresult=function(e){
-      for(var i=0;i<e.results.length;i++){
-        for(var j=0;j<e.results[i].length;j++){
-          var t=e.results[i][j].transcript.toLowerCase().trim();
-          // Check for wake words
-          if(t.indexOf('hey qvio')>-1||t.indexOf('hi qvio')>-1||
-             t.indexOf('okay qvio')>-1||t.indexOf('ok qvio')>-1||
-             t.indexOf('hey kvio')>-1||t.indexOf('hey quio')>-1){
-            // Wake word detected!
-            activateQvioVoice();
-            return;
-          }
-        }
-      }
-      // Not a wake word - keep listening
-      if(heyQvioEnabled)setTimeout(listenForWakeWord,100);
-    };
-
-    wakeRecog.onerror=function(e){
-      if(e.error==='not-allowed'){
-        heyQvioEnabled=false;
-        showToast('Mic permission denied!');
-        return;
-      }
-      // Restart on other errors
-      if(heyQvioEnabled)setTimeout(listenForWakeWord,1000);
-    };
-
-    wakeRecog.onend=function(){
-      // Keep listening if still enabled and not in active voice mode
-      if(heyQvioEnabled&&!isRec)setTimeout(listenForWakeWord,200);
-    };
-
-    wakeRecog.start();
-  }catch(e){
-    if(heyQvioEnabled)setTimeout(listenForWakeWord,2000);
-  }
-}
-
-function activateQvioVoice(){
-  // Wake word heard! Now listen for actual command
-  showToast('✨ QVIO is listening!');
-  // Visual feedback on mic button
-  var mb=document.getElementById('micBtn');
-  if(mb){mb.style.transform='scale(1.3)';setTimeout(function(){mb.style.transform='';},300);}
-  // Start main recognition
-  setTimeout(function(){
-    toggleMic();
-    // Resume wake word after mic done
-    setTimeout(function(){
-      if(heyQvioEnabled&&!isRec)listenForWakeWord();
-    },5000);
-  },200);
-}
-
-
-// ═══════════════════════════════
-
-
-
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -205,128 +103,6 @@ body::before{
 
 .confetti{position:fixed;top:-10px;pointer-events:none;z-index:9999;animation:cffall cubic-bezier(.25,.46,.45,.94) forwards;}
 @keyframes cffall{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0);}10%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(105vh) rotate(720deg) scale(.5);}}
-
-/* NAMASTE */
-/* ═══════════════════════════════════════════════
-   NAMASTE SCREEN
-═══════════════════════════════════════════════ */
-#namasteScreen{
-  position:fixed;inset:0;z-index:9500;
-  background:#000;display:none;
-  align-items:center;justify-content:center;flex-direction:column;
-  overflow:hidden;
-}
-#namasteScreen.show{display:flex;}
-.ns-bg-canvas{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(212,140,0,0.13) 0%,rgba(5,8,20,1) 70%,#000 100%);}
-.ns-bg-canvas::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(-60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px);}
-.ns-scanline{display:none;}
-.ns-hex-grid{display:none;}
-.ns-bracket{position:absolute;width:28px;height:28px;z-index:4;opacity:0;animation:nsSlideUp .4s ease .3s both;}
-.ns-bracket::before,.ns-bracket::after{content:'';position:absolute;background:rgba(212,160,23,.7);}
-.ns-bracket::before{width:2px;height:100%;}
-.ns-bracket::after{width:100%;height:2px;}
-.ns-br-tl{top:10px;left:10px;}
-.ns-br-tr{top:10px;right:10px;transform:scaleX(-1);}
-.ns-br-bl{bottom:10px;left:10px;transform:scaleY(-1);}
-.ns-br-br{bottom:10px;right:10px;transform:scale(-1);}
-
-/* Namaste SVG wrap */
-.ns-namaste-wrap{
-  position:relative;z-index:2;
-  animation:nsHandsIn .7s cubic-bezier(.22,1,.36,1) .1s both;
-}
-@keyframes nsHandsIn{
-  from{opacity:0;transform:scale(0.6) translateY(30px);}
-  to{opacity:1;transform:scale(1) translateY(0);}
-}
-.ns-emoji-hi{
-  font-size:clamp(80px,18vw,120px);
-  animation:nsHandsIn .6s cubic-bezier(.22,1,.36,1) .1s both, nsWave 2s ease 1s infinite;
-  filter:drop-shadow(0 0 30px rgba(212,140,0,.5));
-  display:block;text-align:center;line-height:1;
-}
-@keyframes nsWave{
-  0%,100%{transform:rotate(-8deg);}
-  50%{transform:rotate(8deg);}
-}
-
-.ns-text-wrap{
-  position:relative;z-index:2;
-  display:flex;flex-direction:column;align-items:center;
-  margin-top:10px;
-}
-.ns-greeting{
-  font-family:"Cormorant Garamond",serif;
-  font-size:clamp(34px,7vw,64px);font-weight:600;
-  color:#fff;text-align:center;letter-spacing:6px;
-  text-shadow:0 0 40px rgba(212,160,23,.6);
-}
-.ns-deva{
-  font-family:"Cormorant Garamond",serif;
-  font-size:clamp(14px,2.8vw,22px);
-  background:linear-gradient(135deg,#D4A017,#F5C842);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  letter-spacing:6px;opacity:0;animation:nsSlideUp .6s ease both;
-  margin-bottom:4px;display:block;text-align:center;
-}
-.ns-greeting .ns-char{
-  display:inline-block;opacity:0;
-  animation:nsCharIn .45s cubic-bezier(.22,1,.36,1) both;
-}
-@keyframes nsCharIn{
-  from{opacity:0;transform:translateY(-24px) rotateX(-80deg);filter:blur(5px);}
-  to{opacity:1;transform:none;filter:none;}
-}
-.ns-username{
-  font-family:"DM Sans",sans-serif;font-size:clamp(11px,2.2vw,16px);
-  font-weight:300;color:rgba(255,255,255,.6);
-  letter-spacing:7px;text-transform:uppercase;text-align:center;
-  margin-top:7px;opacity:0;animation:nsSlideUp .6s ease 1.4s both;
-}
-.ns-username strong{
-  background:linear-gradient(135deg,#D4A017,#F5C842);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  font-weight:700;
-}
-.ns-divider{
-  width:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,160,23,.8),transparent);
-  margin:14px auto;animation:nsDivider .8s ease 1.8s both;
-}
-@keyframes nsDivider{to{width:220px;}}
-.ns-status{
-  font-family:"DM Mono",monospace;font-size:11px;
-  color:rgba(212,160,23,.7);letter-spacing:2px;text-transform:uppercase;
-  text-align:center;opacity:0;animation:nsSlideUp .5s ease 2.1s both;
-}
-.ns-status-dot{
-  display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:#22C55E;margin-right:8px;box-shadow:0 0 8px #22C55E;
-  animation:nsDotBlink .9s ease-in-out 2.4s infinite;
-}
-@keyframes nsDotBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
-.ns-progress-wrap{
-  width:240px;height:2px;background:rgba(255,255,255,.07);
-  border-radius:99px;overflow:hidden;margin-top:24px;
-  opacity:0;animation:nsSlideUp .5s ease 2.3s both;
-}
-.ns-progress-fill{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,rgba(212,160,23,.4),rgba(212,160,23,1),#fff);
-  border-radius:99px;box-shadow:0 0 8px rgba(212,160,23,.6);
-  animation:nsProgFill 1.4s cubic-bezier(.22,1,.36,1) 2.5s forwards;
-}
-@keyframes nsProgFill{to{width:100%;}}
-.ns-percent{
-  font-family:"DM Mono",monospace;font-size:10px;
-  color:rgba(212,160,23,.5);letter-spacing:2px;
-  margin-top:6px;text-align:center;
-  opacity:0;animation:nsSlideUp .4s ease 2.5s both;
-}
-.ns-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:10;}
-#namasteScreen.exiting .ns-flash{animation:nsFlash .4s ease forwards;}
-@keyframes nsFlash{0%{opacity:0;}30%{opacity:.5;}100%{opacity:0;}}
-@keyframes nsSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
@@ -447,19 +223,19 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 .mbtn.on{background:var(--navy-g);color:#fff;}
 
 /* SUB BARS */
-.sub-bar{border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;font-weight:600;display:none;align-items:center;gap:8px;flex-shrink:0;}
+
 .sub-bar.show{display:flex;}
 .sub-bar.mem{background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);color:var(--gold);}
 .sub-bar.exam{background:linear-gradient(90deg,rgba(124,58,237,.06),transparent);color:#7C3AED;}
-.pinned-bar{background:linear-gradient(90deg,rgba(212,160,23,.06),transparent);border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;color:var(--gold);display:none;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;font-weight:600;}
+
 .pinned-bar.show{display:flex;}
-.type-bar{background:linear-gradient(90deg,var(--navy-soft),transparent);border-bottom:1px solid var(--border);padding:5px var(--pad);font-size:11px;color:var(--text3);display:none;align-items:center;gap:8px;flex-shrink:0;}
+
 .type-bar.show{display:flex;}
 .tdots span{width:4px;height:4px;border-radius:50%;background:var(--gold2);display:inline-block;margin:0 1px;animation:td 1s infinite;}
 .tdots span:nth-child(2){animation-delay:.18s;}
 .tdots span:nth-child(3){animation-delay:.36s;}
 @keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
-.greeting-bar{padding:6px var(--pad);font-size:12.5px;color:var(--gold);background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);border-bottom:1px solid var(--border);display:none;align-items:center;gap:8px;flex-shrink:0;font-weight:500;}
+
 .greeting-bar.show{display:flex;}
 
 /* CHAT */
@@ -468,7 +244,7 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 .chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
 /* WELCOME */
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;gap:16px;max-width:var(--max);margin:0 auto;padding:20px;}
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:14px;max-width:var(--max);margin:0 auto;padding:20px;}
 .w-crown{font-size:34px;animation:float 4.5s ease-in-out infinite;}
 .w-icon{width:64px;height:64px;background:var(--cyber-g);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:16px;color:#fff;font-weight:700;box-shadow:0 8px 32px var(--cyber-glow);animation:float 5s ease-in-out infinite;}
 .w-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy-soft);border:1px solid var(--navy3);padding:5px 16px;border-radius:var(--r-full);font-size:11.5px;color:var(--navy);font-weight:600;}
@@ -478,10 +254,10 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 .welcome h1 em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .wsub{font-size:15px;color:var(--text2);line-height:1.65;max-width:380px;}
 .tip-box{font-size:13px;color:var(--text2);background:var(--surface);border:1px solid var(--border);padding:11px 18px;border-radius:var(--r-sm);max-width:480px;width:100%;transition:opacity .4s;border-left:3px solid var(--cyber);}
-.mem-banner{background:linear-gradient(135deg,rgba(13,27,62,.06),rgba(212,160,23,.05));border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 16px;font-size:13px;color:var(--navy);font-weight:600;display:none;align-items:center;gap:8px;width:100%;max-width:480px;text-align:left;}
-[data-theme="dark"] .mem-banner{color:var(--gold2);}
+
+[data-theme="dark"] 
 .mem-banner.show{display:flex;}
-.challenge{background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(219,39,119,.04));border:1px solid rgba(124,58,237,.18);border-radius:var(--r);padding:13px 18px;font-size:13px;color:#6D28D9;font-weight:600;max-width:480px;width:100%;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
+
 .challenge:hover{transform:translateY(-2px);background:rgba(124,58,237,.1);}
 .sugs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:580px;}
 .sug{background:var(--white);border:1px solid var(--border);padding:17px 18px;border-radius:var(--r-lg);cursor:pointer;text-align:left;transition:all .22s;font-family:"DM Sans",sans-serif;box-shadow:var(--s1);position:relative;overflow:hidden;}
@@ -632,7 +408,6 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
   color:#fff;
   transform:translateY(-1px);
 }
-
 
 .lopt{padding:10px 6px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;border-radius:var(--r-sm);transition:all .15s;}
 .lopt:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
@@ -977,7 +752,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lang-pill.hidden{display:none!important;}
 .lang-section{margin-bottom:16px;}
 .lang-no-results{text-align:center;color:var(--text3);padding:20px;display:none;}
-
 
 @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.6);}70%{box-shadow:0 0 0 12px rgba(231,76,60,0);}100%{box-shadow:0 0 0 0 rgba(231,76,60,0);}}
 #micBtn.rec{animation:micPulse 1s ease infinite;}
@@ -1342,7 +1116,6 @@ code{color:var(--cyber2) !important;}
 
 /* ══ END CYBER EXTRAS ══ */
 
-
 /* ═══════════════════════════════════════
    📱 MOBILE BOTTOM NAV BAR
 ═══════════════════════════════════════ */
@@ -1434,7 +1207,6 @@ code{color:var(--cyber2) !important;}
 .lsm-footer{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
 .lsm-confirm{flex:1;padding:11px;background:var(--navy-g);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-
 
 /* ══════════════════════════════════════════════════════════
    QVIO V10 — WORLD #1 FUTURISTIC DESIGN SYSTEM
@@ -1908,10 +1680,8 @@ code{ font-family:'DM Mono', monospace !important; }
 .ob-next:hover{ transform:translateY(-3px) scale(1.03) !important; box-shadow:0 12px 32px rgba(13,27,62,.45) !important; }
 
 /* ── GREETING BAR ── */
-.greeting-bar{ background:linear-gradient(90deg, rgba(212,160,23,.1), transparent) !important; font-weight:600 !important; }
 
 /* ── PINNED BAR ── */
-.pinned-bar{ background:linear-gradient(90deg, rgba(212,160,23,.1), transparent) !important; border-bottom:1px solid rgba(212,160,23,.2) !important; }
 
 /* ── PAGE ENTRANCE ── */
 @keyframes pageIn{ from{ opacity:0; } to{ opacity:1; } }
@@ -1929,6 +1699,97 @@ body{ animation:pageIn .55s ease both !important; }
 *,*::before,*::after{ -webkit-tap-highlight-color:transparent !important; }
 button{ cursor:pointer; }
 ::-webkit-scrollbar-thumb:hover{ background:rgba(212,160,23,.7) !important; }
+
+
+/* ═══════════════════════════════════════
+   🎓 STUDY MODE STYLES
+═══════════════════════════════════════ */
+
+/* Tab bar */
+.study-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--surface);padding:4px;border-radius:12px;border:1px solid var(--border);}
+.stab{flex:1;padding:8px 6px;background:transparent;border:none;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--text3);cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s cubic-bezier(.22,1,.36,1);}
+.stab.on{background:var(--cyber-g);color:#fff;box-shadow:0 2px 12px var(--cyber-glow);}
+
+/* Study panels */
+.study-panel{animation:warpIn .25s cubic-bezier(.22,1,.36,1);}
+
+/* ── POMODORO ── */
+.pom-status{text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--cyber);margin-bottom:14px;}
+.pom-ring-wrap{position:relative;width:160px;height:160px;margin:0 auto 18px;}
+.pom-svg{width:160px;height:160px;transform:rotate(-90deg);}
+.pom-track{fill:none;stroke:var(--border);stroke-width:8;}
+.pom-progress{fill:none;stroke:url(#pomGrad);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s linear;}
+.pom-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pom-time{font-family:"DM Mono",monospace;font-size:32px;font-weight:700;color:var(--text);line-height:1;}
+.pom-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:4px;}
+.pom-mode-row{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
+.pom-mbt{padding:6px 14px;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.pom-mbt.on{background:var(--cyber-g);color:#fff;border-color:transparent;box-shadow:0 2px 10px var(--cyber-glow);}
+.pom-btns{display:flex;gap:8px;justify-content:center;margin-bottom:14px;}
+.pom-btn{padding:10px 24px;border-radius:10px;border:none;font-size:13.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s;}
+.pom-btn.start{background:var(--cyber-g);color:#fff;box-shadow:0 3px 14px var(--cyber-glow);}
+.pom-btn.start:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--cyber-glow);}
+.pom-btn.stop{background:rgba(255,100,100,.1);color:#FF6464;border:1.5px solid rgba(255,100,100,.3);}
+.pom-btn.reset{background:var(--surface);color:var(--text3);border:1.5px solid var(--border);}
+.pom-streak{text-align:center;font-size:13px;color:var(--text3);margin-bottom:10px;}
+.pom-streak strong{color:var(--gold2);}
+.focus-tip{background:var(--cyber3);border:1px solid rgba(26,111,255,.2);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--text2);text-align:center;border-left:3px solid var(--cyber);}
+[data-theme="dark"] .focus-tip{border-left-color:var(--cyber);}
+
+/* ── EXAM AI ── */
+.exam-intro{font-size:13px;color:var(--text3);margin-bottom:14px;text-align:center;}
+.exam-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;justify-content:center;}
+.exam-chip{padding:7px 18px;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.exam-chip.on{background:var(--gold-gs);color:#fff;border-color:transparent;box-shadow:0 2px 12px var(--gold-glow);}
+.exam-qs{margin-bottom:14px;}
+.exam-q-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px;}
+.exam-qlist{display:flex;flex-direction:column;gap:6px;}
+.exam-qitem{padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .18s;}
+.exam-qitem:hover{border-color:var(--cyber);color:var(--cyber);background:var(--cyber3);}
+.exam-inp{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;resize:none;min-height:80px;}
+.exam-inp:focus{border-color:var(--cyber);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
+
+/* ── FLASHCARDS ── */
+.flash-gen-row{display:flex;gap:8px;margin-bottom:14px;}
+.flash-topic-inp{flex:1;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;}
+.flash-topic-inp:focus{border-color:var(--cyber);}
+.flash-gen-btn{padding:10px 18px;background:var(--cyber-g);color:#fff;border:none;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;white-space:nowrap;box-shadow:0 3px 12px var(--cyber-glow);}
+.flash-loading{text-align:center;color:var(--cyber);font-size:14px;padding:20px;font-weight:600;}
+.flash-deck{perspective:1000px;}
+.flash-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:16px;padding:28px 22px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;}
+.flash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyber),var(--cyber2),var(--gold2));border-radius:16px 16px 0 0;}
+.flash-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(26,111,255,.15),0 0 0 1px rgba(26,111,255,.15);}
+.flash-card.flipped .flash-front{display:none;}
+.flash-card.flipped .flash-back{display:flex;}
+.flash-front,.flash-back{width:100%;}
+.flash-back{display:none;flex-direction:column;align-items:center;}
+.flash-q{font-size:15px;font-weight:600;color:var(--text);line-height:1.5;}
+.flash-a{font-size:14px;color:var(--text2);line-height:1.6;}
+.flash-hint{font-size:11px;color:var(--text3);margin-top:10px;}
+.flash-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyber);margin-bottom:8px;}
+.flash-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;}
+.flash-nav-btn{padding:8px 20px;background:var(--surface);border:1.5px solid var(--border);border-radius:99px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .18s;font-family:"DM Sans",sans-serif;}
+.flash-nav-btn:hover{border-color:var(--cyber);color:var(--cyber);}
+.flash-counter{font-size:13px;font-weight:700;color:var(--text3);font-family:"DM Mono",monospace;}
+
+/* ── STUDY NOTES ── */
+.snote-row{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.snote-inp{padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;}
+.snote-inp:focus{border-color:var(--cyber);}
+.snote-body{padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;font-size:13.5px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;resize:none;min-height:100px;}
+.snote-body:focus{border-color:var(--cyber);}
+.snote-list{display:flex;flex-direction:column;gap:8px;max-height:240px;overflow-y:auto;}
+.snote-item{padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;position:relative;border-left:3px solid var(--cyber);}
+.snote-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.snote-text{font-size:12.5px;color:var(--text2);line-height:1.5;white-space:pre-wrap;}
+.snote-del{position:absolute;top:10px;right:10px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;}
+.snote-del:hover{color:var(--danger);}
+.snote-empty{text-align:center;color:var(--text3);font-size:13px;padding:24px;}
+
+/* Focus overlay */
+#focusOverlay.show{display:flex !important;}
+
+/* ══ END STUDY MODE ══ */
 
 </style>
 </head>
@@ -2268,20 +2129,21 @@ button{ cursor:pointer; }
 <div class="tools-panel" id="toolsPanel">
   <div class="tp-sect">⚡ Quick Tools</div>
   <div class="tp-grid">
+    <div class="tp-btn" onclick="openStudy();closeToolsPanel()" style="border-color:var(--cyber);background:rgba(26,111,255,.07);"><span class="tp-ico">🎓</span><span class="tp-lbl" style="color:var(--cyber);">Study</span></div>
     <div class="tp-btn" onclick="openM('todo');closeToolsPanel()"><span class="tp-ico">✅</span><span class="tp-lbl">Tasks</span></div>
     <div class="tp-btn" onclick="openM('timer');closeToolsPanel()"><span class="tp-ico">⏱</span><span class="tp-lbl">Timer</span></div>
     <div class="tp-btn" onclick="openM('notes');closeToolsPanel()"><span class="tp-ico">📝</span><span class="tp-lbl">Notes</span></div>
-    <div class="tp-btn" onclick="openM('mood');closeToolsPanel()"><span class="tp-ico">😊</span><span class="tp-lbl">Mood</span></div>
+    
     <div class="tp-btn" onclick="openM('currency');closeToolsPanel()"><span class="tp-ico">💱</span><span class="tp-lbl">Currency</span></div>
-    <div class="tp-btn" onclick="openM('wpm');closeToolsPanel()"><span class="tp-ico">⌨️</span><span class="tp-lbl">Typing</span></div>
+    
     <div class="tp-btn" onclick="openM('news');closeToolsPanel()"><span class="tp-ico">📰</span><span class="tp-lbl">News</span></div>
-    <div class="tp-btn" onclick="openM('emoji');closeToolsPanel()"><span class="tp-ico">😄</span><span class="tp-lbl">Emoji</span></div>
-    <div class="tp-btn" onclick="openM('cv');closeToolsPanel()"><span class="tp-ico">📄</span><span class="tp-lbl">CV</span></div>
-    <div class="tp-btn" onclick="openM('age');closeToolsPanel()"><span class="tp-ico">🎂</span><span class="tp-lbl">Age</span></div>
+    
+    
+    
     <div class="tp-btn" onclick="openM('bmi');closeToolsPanel()"><span class="tp-ico">⚖️</span><span class="tp-lbl">BMI</span></div>
-    <div class="tp-btn" onclick="openM('qotd');closeToolsPanel()"><span class="tp-ico">💬</span><span class="tp-lbl">Quote</span></div>
-    <div class="tp-btn" onclick="openM('word');closeToolsPanel()"><span class="tp-ico">📖</span><span class="tp-lbl">Word</span></div>
-    <div class="tp-btn" onclick="openM('poll');closeToolsPanel()"><span class="tp-ico">🗳</span><span class="tp-lbl">Poll</span></div>
+    
+    
+    
     <div class="tp-btn" onclick="toggleCalc();closeToolsPanel()"><span class="tp-ico">🔢</span><span class="tp-lbl">Calc</span></div>
     <div class="tp-btn" onclick="openM('lang');closeToolsPanel()"><span class="tp-ico">🌍</span><span class="tp-lbl">Learn</span></div>
   </div>
@@ -2313,22 +2175,17 @@ button{ cursor:pointer; }
   <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
     <span class="lname">QV<em>IO</em></span>
-    <span class="ltag">Premium AI</span>
   </a>
   <div class="h-mode-wrap">
     <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
       <span class="sdot"></span>
-      <span class="mlabel" id="modeLabel">🤖 Auto Detect</span>
+      <span class="mlabel" id="modeLabel">Auto</span>
       <span style="color:var(--text3);font-size:10px;margin-left:2px;">▾</span>
     </div>
   </div>
   <div class="h-actions">
-    <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
-    <button class="earth-btn" onclick="openLangSelect()" title="Choose AI language">🌍</button>
     <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
-    <button class="hico" id="focusBtn" onclick="toggleFocus()" title="Focus" style="display:none;">⛶</button>
     <button class="hico" onclick="toggleToolsPanel()" id="toolsBtn" title="Tools">⚡</button>
-    <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
     <div class="uchip" onclick="openM('prof')">
       <div class="uav" id="uAv">?</div>
       <span class="unm" id="uNm">Guest</span>
@@ -2336,80 +2193,36 @@ button{ cursor:pointer; }
   </div>
 </header>
 
-<div class="greeting-bar" id="greetBar">👋 <span id="greetTxt">Good morning!</span></div>
-<div class="sub-bar mem" id="memBar"></div>
-<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
-<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
-
-<div class="modes">
-  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
-  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
-  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
-  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
-  <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
-  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
-  <button class="mbtn" onclick="setMode('business',this,'Business')">🏢 Business</button>
-  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
-  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
-  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
-  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
-  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
-  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
-  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
-  <button class="mbtn" onclick="setMode('career',this,'Career')">💼 Career</button>
-  <button class="mbtn" onclick="setMode('health',this,'Health')">🏥 Health</button>
-  <button class="mbtn" onclick="setMode('legal',this,'Legal')">⚖️ Legal</button>
-  <button class="mbtn" onclick="setMode('recipe',this,'Recipe')">🍳 Recipe</button>
-  <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
-</div>
-
-<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
-
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
-    <div class="w-crown">👑</div>
     <div class="w-icon">QV</div>
     <div class="w-badge">🇮🇳 India's #1 AI &nbsp;·&nbsp; 150+ Languages </div>
-    <h1 style="font-family:'Playfair Display',Georgia,serif">Namaste — <em>QVIO</em></h1>
-    <p class="wsub">Your brilliant desi companion — voice, 4K art, memory, 150+ languages..</p>
-    <div class="challenge" id="challengeCard" onclick="doChallenge()">🎯 <span><strong>Today's Challenge:</strong> <span id="challengeTxt">Loading...</span></span></div>
-    <div class="tip-box" id="tipBox">💡 Loading tip...</div>
-    <div class="mem-banner" id="memBanner"></div>
-    <div class="sugs">
-      <div class="sug" onclick="send('Explain black holes using a cricket match as an analogy — make it mind-blowing for a 16-year-old!')"><span class="si">⚡</span><span class="st">Explain Anything</span><span class="sd2">Simple · Fun · Mind-bending</span></div>
-      <div class="sug" onclick="send('create image: Taj Mahal at golden hour, ultra-realistic 8K cinematic masterpiece, dramatic clouds')"><span class="si">🎨</span><span class="st">Free 4K AI Art</span><span class="sd2">Type "create image: anything"</span></div>
-      <div class="sug" onclick="send('Give me a brutal 90-day JEE 2025 battle plan — 4 hours daily, include what toppers do differently')"><span class="si">🎯</span><span class="st">Crack Any Exam</span><span class="sd2">JEE · NEET · UPSC · CBSE · CAT</span></div>
-      <div class="sug" onclick="send('Teach me 10 essential Kannada phrases with correct pronunciation — I want to surprise my friends!')"><span class="si">🌍</span><span class="st">Learn Any Language</span><span class="sd2">Every Indian language + 120 global</span></div>
-      <div class="sug" onclick="send('Build me a Python Flipkart price tracker — full working code, explained step by step for beginners')"><span class="si">💻</span><span class="st">Code Anything</span><span class="sd2">Any language · Any level · Explained</span></div>
-      <div class="sug" onclick="send('Write a 90-second emotional investor pitch for an AI tutoring app for rural India — make it powerful')"><span class="si">💼</span><span class="st">Business Genius</span><span class="sd2">Pitches · Funding · Strategy · Growth</span></div>
+    <h1>Namaste, I'm <em>QVIO</em></h1>
+    <p class="wsub">Your brilliant AI companion — voice, vision, memory, 150+ languages..</p>
+                <div class="sugs">
+      <div class="sug" onclick="send('Explain black holes using a cricket match — make it mind-blowing')"><span class="si">⚡</span><span class="st">Explain Anything</span><span class="sd2">Simple · Deep · Mind-bending</span></div>
+      <div class="sug" onclick="send('create image: Taj Mahal at golden hour, ultra-realistic 8K cinematic')"><span class="si">🎨</span><span class="st">Generate AI Art</span><span class="sd2">Type "create image: anything"</span></div>
+      <div class="sug" onclick="send('Give me a 90-day JEE battle plan — 4 hours daily, what toppers do differently')"><span class="si">🎯</span><span class="st">Crack Any Exam</span><span class="sd2">JEE · NEET · UPSC · CBSE</span></div>
+      <div class="sug" onclick="send('Build me a Python price tracker — full working code, explained for beginners')"><span class="si">💻</span><span class="st">Code Anything</span><span class="sd2">Any language · Any level</span></div>
     </div>
-
-
-
   </div>
 </div>
 
 <div class="input-area">
   <div class="char-cnt" id="charCnt"></div>
   <div class="ibox">
-    <textarea id="inp" placeholder="Ask anything… or say 'create image:' for free 4K art 🎨" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+    <textarea id="inp" placeholder="Ask anything..." rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
-      <button id="heyQvioBtn" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+            <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
       <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
       <button class="sendbtn" id="sendBtn" onclick="sendMsg()">⬆</button>
     </div>
   </div>
   <div class="qrs">
-    <div class="qr" onclick="send('Tell me something that will absolutely blow my mind right now')">🤯 Blow my mind</div>
-    <div class="qr" onclick="send('Give me 5 powerful study hacks most toppers use that I probably don\'t know')">📚 Study hacks</div>
-    <div class="qr" onclick="send('I need your most powerful motivation right now — make it hit hard, I really need it')">🔥 Fire me up</div>
-    <div class="qr" onclick="send('Tell me the most mind-blowing fact about our universe that almost nobody knows')">🧠 Mind-blower</div>
-    <div class="qr" onclick="send('Write a beautiful shayari about chasing dreams against all odds — Hindi and English')">✍️ Shayari</div>
-    <div class="qr" onclick="send('What are the most important India news stories I should know about right now?')">📰 India Today</div>
-    <div class="qr" onclick="openM('todo')">✅ Tasks</div>
-    <div class="qr" onclick="openM('mood')">😊 My Mood</div>
-    <div class="qr" onclick="openM('timer')">⏱ Pomodoro</div>
+    <div class="qr" onclick="send('Tell me something mind-blowing right now')">🤯 Blow my mind</div>
+    <div class="qr" onclick="send('Give me 5 study hacks most toppers use')">📚 Study hacks</div>
+    <div class="qr" onclick="send('Write a shayari about chasing dreams — Hindi and English')">✍️ Shayari</div>
+    <div class="qr" onclick="send('What are the biggest India news stories right now?')">📰 India Today</div>
   </div>
 </div>
 
@@ -2816,15 +2629,15 @@ function skipLogin(){
 }
 function updateUserUI(user){
   var nm=user.displayName||user.email||'User';
-  document.getElementById('uNm').textContent=nm.split(' ')[0];
-  document.getElementById('profName').textContent=nm;
-  document.getElementById('profEmail').textContent=user.email||'';
+  var _unm=document.getElementById('uNm');if(_unm)_unm.textContent=nm.split(' ')[0];
+  var _pn=document.getElementById('profName');if(_pn)_pn.textContent=nm;
+  var _pe=document.getElementById('profEmail');if(_pe)_pe.textContent=user.email||'';
   if(user.photoURL){
-    document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';
-    document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';
+    var _uavi=document.getElementById('uAv');if(_uavi)_uavi.innerHTML='<img src="'+user.photoURL+'">';
+    var _pavi=document.getElementById('profAv');if(_pavi)_pavi.innerHTML='<img src="'+user.photoURL+'">';
   }else{
-    document.getElementById('uAv').textContent=nm[0].toUpperCase();
-    document.getElementById('profAv').textContent=nm[0].toUpperCase();
+    var _ua=document.getElementById('uAv');if(_ua)_ua.textContent=nm[0].toUpperCase();
+    var _pa=document.getElementById('profAv');if(_pa)_pa.textContent=nm[0].toUpperCase();
   }
   if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
   updateMemUI();
@@ -2878,12 +2691,12 @@ function fireConfetti(){
 function autoTheme(){
   var h=new Date().getHours(),dark=h<6||h>=20;
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
+  var _tb=document.getElementById('themeBtn');if(_tb)_tb.textContent=dark?'☀️':'🌙';
 }
 function setTh(t){
   S.s('theme',t);
   if(t==='auto')autoTheme();
-  else{document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}
+  else{document.documentElement.setAttribute('data-theme',t);var _tb2=document.getElementById('themeBtn');if(_tb2)_tb2.textContent=t==='dark'?'☀️':'🌙';}
   closeM('theme');
 }
 function cycleTh(){setTh(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
@@ -2938,7 +2751,6 @@ AUTO MODE DETECTION: Automatically detect the right mode from message:
 - Business/startup/pitch → switch to business mode
 - Just chatting/casual → stay casual and friendly
 - Never ask the user to select a mode — just adapt automatically
-
 
 CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
 - If they ask about studies/exams → switch to Student/Exam mode automatically  
@@ -3083,8 +2895,8 @@ function setMode(m,btn,label){
   mode=m;
   document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
   btn.classList.add('on');
-  document.getElementById('modeLabel').textContent=label;
-  document.getElementById('examBar').classList.toggle('show',m==='exam');
+  var _ml=document.getElementById('modeLabel');if(_ml)_ml.textContent=label;
+  var _eb=document.getElementById('examBar');if(_eb)_eb.classList.toggle('show',m==='exam');
 }
 
 // ═══════════════════════════════
@@ -3093,8 +2905,8 @@ function setMode(m,btn,label){
 var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
-  document.getElementById(ids[0]).classList.add('show');
-  document.getElementById(ids[1]).classList.add('show');
+  var _m0=document.getElementById(ids[0]);if(_m0)_m0.classList.add('show');
+  var _m1=document.getElementById(ids[1]);if(_m1)_m1.classList.add('show');
   if(t==='mem')renderMemList();
   if(t==='stats')renderStats();
   if(t==='gal')renderGal();
@@ -3102,8 +2914,8 @@ function openM(t){
 }
 function closeM(t){
   var ids=MAP[t];if(!ids)return;
-  document.getElementById(ids[0]).classList.remove('show');
-  document.getElementById(ids[1]).classList.remove('show');
+  var _m0c=document.getElementById(ids[0]);if(_m0c)_m0c.classList.remove('show');
+  var _m1c=document.getElementById(ids[1]);if(_m1c)_m1c.classList.remove('show');
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape')Object.keys(MAP).forEach(closeM);
@@ -3174,8 +2986,8 @@ function addMsg(content,role,isImg,speed){
       var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
       var pin=makeAct('📌','Pin',function(){
         pin.classList.toggle('active');
-        if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');document.getElementById('pinnedBar').classList.add('show');document.getElementById('pinnedTxt').textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
-        else{bub.classList.remove('pinned-msg');document.getElementById('pinnedBar').classList.remove('show');}
+        if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');var _pb=document.getElementById('pinnedBar');if(_pb)_pb.classList.add('show');var _pt=document.getElementById('pinnedTxt');if(_pt)_pt.textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
+        else{bub.classList.remove('pinned-msg');var _pb2=document.getElementById('pinnedBar');if(_pb2)_pb2.classList.remove('show');}
       });
       // Share button — inline, no override needed
       (function(msgContent){
@@ -3246,7 +3058,7 @@ function speakText(t,btn){
 // ═══════════════════════════════
 function showTyping(){
   hideWelcome();
-  document.getElementById('typeBar').classList.add('show');
+  var _tyb=document.getElementById('typeBar');if(_tyb)_tyb.classList.add('show');
   var c=document.getElementById('chat');
   var d=document.createElement('div');d.className='tywrap';d.id='typer';
   var av=document.createElement('div');av.className='av ai';av.textContent='QV';
@@ -3256,7 +3068,7 @@ function showTyping(){
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
 function hideTyping(){
-  document.getElementById('typeBar').classList.remove('show');
+  var _tyb2=document.getElementById('typeBar');if(_tyb2)_tyb2.classList.remove('show');
   var t=document.getElementById('typer');if(t)t.remove();
 }
 
@@ -3271,7 +3083,7 @@ async function sendMsg(){
   var text=inp.value.trim();if(!text)return;
   inp.value='';inp.style.height='auto';
   document.getElementById('sendBtn').disabled=true;
-  document.getElementById('charCnt').textContent='';
+  var _cc=document.getElementById('charCnt');if(_cc)_cc.textContent='';
   lastMsg=text;
   addMsg(text,'user');
   chatHistory.push({role:'user',content:text});
@@ -3413,7 +3225,7 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMs
 function onInp(el){
   el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
   var n=el.value.length;
-  document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
+  var _cc2=document.getElementById('charCnt');if(_cc2)_cc2.textContent=n>0?n+'/2000':'';
   document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';
 }
 function showToast(msg,type){
@@ -3429,11 +3241,11 @@ function showToast(msg,type){
 }
 function clearChat(){
   document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
-  chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('✨ Fresh start!','success');
+  chatHistory=[];var _pb3=document.getElementById('pinnedBar');if(_pb3)_pb3.classList.remove('show');pinnedEl=null;showToast('✨ Fresh start!','success');
 }
 function toggleFocus(){
   isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);
-  document.getElementById('focusBtn').classList.toggle('on',isFocus);
+  var _fb=document.getElementById('focusBtn');if(_fb)_fb.classList.toggle('on',isFocus);
   showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');
 }
 function exportChat(){
@@ -3447,7 +3259,7 @@ function exportChat(){
 // ═══════════════════════════════
 // CALCULATOR
 // ═══════════════════════════════
-function toggleCalc(){document.getElementById('calcW').classList.toggle('show');}
+function toggleCalc(){var _cw=document.getElementById('calcW');if(_cw)_cw.classList.toggle('show');}
 function ci(v){
   var d=document.getElementById('calcDisp');
   if(v==='C'){calcExpr='';d.textContent='0';return;}
@@ -3617,9 +3429,9 @@ function cleanAndSend(text){
 // ═══════════════════════════════
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!S.g('noPWA'))document.getElementById('instBar').classList.add('show');});
 function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;dismissInstall();});}}
-function dismissInstall(){document.getElementById('instBar').classList.remove('show');S.s('noPWA',true);}
-window.addEventListener('online',function(){document.getElementById('offBar').classList.remove('show');showToast('✅ Back online!');});
-window.addEventListener('offline',function(){document.getElementById('offBar').classList.add('show');});
+function dismissInstall(){var _ib=document.getElementById('instBar');if(_ib)_ib.classList.remove('show');S.s('noPWA',true);}
+window.addEventListener('online',function(){var _ob=document.getElementById('offBar');if(_ob)_ob.classList.remove('show');showToast('✅ Back online!');});
+window.addEventListener('offline',function(){var _ob2=document.getElementById('offBar');if(_ob2)_ob2.classList.add('show');});
 if(!navigator.onLine)document.getElementById('offBar').classList.add('show');
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 
@@ -3630,10 +3442,10 @@ function openShare(text){
   shareContent=text;
   var preview=text.replace(/<[^>]*>/g,'').substring(0,220);
   if(preview.length===220)preview+='...';
-  document.getElementById('shareText').textContent=preview;
-  document.getElementById('shareCard').classList.add('show');
+  var _st=document.getElementById('shareText');if(_st)_st.textContent=preview;
+  var _sc=document.getElementById('shareCard');if(_sc)_sc.classList.add('show');
 }
-function closeShare(){document.getElementById('shareCard').classList.remove('show');}
+function closeShare(){var _sc2=document.getElementById('shareCard');if(_sc2)_sc2.classList.remove('show');}
 function copyShareText(){
   var txt='QVIO says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry QVIO free at qvio.in 🇮🇳';
   navigator.clipboard.writeText(txt);showToast('📋 Copied!');closeShare();
@@ -3654,20 +3466,20 @@ var obSteps=[
 var obCur=0;
 function showOnboard(){
   if(localStorage.getItem('qvio_toured'))return;
-  setTimeout(function(){document.getElementById('onboard').classList.add('show');},1200);
+  setTimeout(function(){var _ob3=document.getElementById('onboard');if(_ob3)_ob3.classList.add('show');},1200);
 }
 function nextOnboard(){
   obCur++;
   if(obCur>=obSteps.length){skipOnboard();return;}
   var s=obSteps[obCur];
-  document.getElementById('obIcon').textContent=s.icon;
-  document.getElementById('obTitle').textContent=s.title;
-  document.getElementById('obDesc').textContent=s.desc;
-  document.getElementById('obStep').textContent=s.step;
+  var _oi=document.getElementById('obIcon');if(_oi)_oi.textContent=s.icon;
+  var _ot=document.getElementById('obTitle');if(_ot)_ot.textContent=s.title;
+  var _od=document.getElementById('obDesc');if(_od)_od.textContent=s.desc;
+  var _os=document.getElementById('obStep');if(_os)_os.textContent=s.step;
   for(var i=0;i<3;i++)document.getElementById('dot'+i).classList.toggle('on',i===obCur);
   if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using QVIO!';
 }
-function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
+function skipOnboard(){var _ob4=document.getElementById('onboard');if(_ob4)_ob4.classList.remove('show');localStorage.setItem('qvio_toured','1');}
 
 // ═══════════════════════════════
 // SMART GREETING
@@ -3678,8 +3490,8 @@ function setSmartGreeting(){
   var greets=[[5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],[12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],[17,20,'🌇 Good evening'+nm+'! How can QVIO help?'],[20,24,'🌙 Good night'+nm+'! Still grinding? QVIO is here!'],[0,5,'🦉 Late night'+nm+'? QVIO never sleeps!']];
   var msg='👋 Welcome'+nm+'!';
   greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
-  document.getElementById('greetTxt').textContent=msg;
-  document.getElementById('greetBar').classList.add('show');
+  var _gt=document.getElementById('greetTxt');if(_gt)_gt.textContent=msg;
+  var _gb=document.getElementById('greetBar');if(_gb)_gb.classList.add('show');
 }
 
 // ═══════════════════════════════
@@ -3757,7 +3569,7 @@ var lapCount=0,lapTimes=[];
 function switchTimerMode(m){
   timerMode=m;timerAction('reset');
   document.querySelectorAll('[id^=timerMode]').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('timerMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.add('on');
+  var _tm=document.getElementById('timerMode'+m.charAt(0).toUpperCase()+m.slice(1));if(_tm)_tm.classList.add('on');
   document.getElementById('countdownSet').style.display=m==='countdown'?'block':'none';
   document.getElementById('pomodoroLabel').style.display=m==='pomodoro'?'block':'none';
   document.getElementById('lapBtn').style.display=m==='stopwatch'?'':'none';
@@ -3783,7 +3595,7 @@ function timerAction(a){
           if(timerMode==='pomodoro'){
             pomodoroPhase=(pomodoroPhase+1)%pomodoroPhases.length;
             timerMs=pomodoroDurations[pomodoroPhase]*1000;
-            document.getElementById('pomodoroLabel').textContent=pomodoroPhases[pomodoroPhase];
+            var _pol=document.getElementById('pomodoroLabel');if(_pol)_pol.textContent=pomodoroPhases[pomodoroPhase];
             showToast('🍅 '+pomodoroPhases[pomodoroPhase]+' time!');
           }
         }
@@ -4177,8 +3989,6 @@ window.openM = function(t){
   }
 };
 
-
-
 // ═══ V5 FEATURES ═══
 
 var LENS_PROMPTS={
@@ -4196,18 +4006,16 @@ var lensStream=null;
 var lensMimeType='image/jpeg';
 var lensStream=null;
 
-
 function openLens(){
   // Register if not already
   if(typeof MAP!=='undefined'&&!MAP.lens)MAP.lens=['o_lens','m_lens'];
-  document.getElementById('o_lens').classList.add('show');
-  document.getElementById('m_lens').classList.add('show');
+  var _ol=document.getElementById('o_lens');if(_ol)_ol.classList.add('show');
+  var _ml2=document.getElementById('m_lens');if(_ml2)_ml2.classList.add('show');
 }
 
-
 function closeLens(){
-  document.getElementById('o_lens').classList.remove('show');
-  document.getElementById('m_lens').classList.remove('show');
+  var _ol2=document.getElementById('o_lens');if(_ol2)_ol2.classList.remove('show');
+  var _ml3=document.getElementById('m_lens');if(_ml3)_ml3.classList.remove('show');
   stopLensCamera();
   // Reset
   lensImageB64=null;
@@ -4220,13 +4028,11 @@ function closeLens(){
   document.getElementById('lensFile').value='';
 }
 
-
 function setLensMode(m,btn){
   lensMode=m;
   document.querySelectorAll('.ltab').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
 }
-
 
 function startLensCamera(){
   var camBtn=document.getElementById('lensCamBtn');
@@ -4244,13 +4050,11 @@ function startLensCamera(){
     .catch(function(){showToast('📷 Camera permission denied — upload a photo instead');});
 }
 
-
 function stopLensCamera(){
   if(lensStream){lensStream.getTracks().forEach(function(t){t.stop();});lensStream=null;}
   document.getElementById('lensVideo').style.display='none';
   document.getElementById('lensVideo').srcObject=null;
 }
-
 
 function snapLens(){
   var video=document.getElementById('lensVideo');
@@ -4270,17 +4074,15 @@ function snapLens(){
   showToast('📸 Photo captured!');
 }
 
-
 function lensDropFile(ev){
   ev.preventDefault();
-  document.getElementById('lensDrop').classList.remove('drag');
+  var _ld=document.getElementById('lensDrop');if(_ld)_ld.classList.remove('drag');
   var file=ev.dataTransfer.files[0];
   if(!file||!file.type.startsWith('image/'))return showToast('Please drop an image file!');
   var dt=new DataTransfer();dt.items.add(file);
   var inp=document.getElementById('lensFile');inp.files=dt.files;
   lensLoadFile(inp);
 }
-
 
 function lensLoadFile(inp){
   var file=inp.files[0];
@@ -4298,7 +4100,6 @@ function lensLoadFile(inp){
   };
   reader.readAsDataURL(file);
 }
-
 
 async function analyseLens(){
   if(!lensImageB64){showToast('Please upload or capture an image first!');return;}
@@ -4353,7 +4154,6 @@ async function analyseLens(){
   document.getElementById('lensAnalyseBtn').disabled=false;
 }
 
-
 async function lensAskMore(){
   var inp=document.getElementById('lensAskInp');
   var q=inp.value.trim();if(!q)return;
@@ -4390,7 +4190,6 @@ async function lensAskMore(){
   }
 }
 
-
 function sendLensToChat(){
   if(!window._lensLastResult)return;
   closeLens();
@@ -4398,18 +4197,15 @@ function sendLensToChat(){
   showToast('✅ Lens result added to chat!');
 }
 
-
 function speakLensResult(){
   speakText(window._lensLastResult||'No result yet',null);
 }
-
 
 function copyLensResult(){
   if(navigator.clipboard&&window._lensLastResult){
     navigator.clipboard.writeText(window._lensLastResult).then(function(){showToast('📋 Copied!');});
   }
 }
-
 
 function setModeD(m,label){
   mode=m;
@@ -4432,7 +4228,6 @@ function setModeD(m,label){
   showToast(label.replace(/^[^\w]*/,'')+' mode ✓');
 }
 
-
 function toggleModesDrawer(){
   var d=document.getElementById('modesDrawer');
   var o=document.getElementById('mdOverlay');
@@ -4440,14 +4235,12 @@ function toggleModesDrawer(){
   else{d.classList.add('show');o.classList.add('show');}
 }
 
-
 function closeModesDrawer(){
   var d=document.getElementById('modesDrawer');
   var o=document.getElementById('mdOverlay');
   if(d)d.classList.remove('show');
   if(o)o.classList.remove('show');
 }
-
 
 function toggleToolsPanel(){
   var p=document.getElementById('toolsPanel');
@@ -4457,7 +4250,6 @@ function toggleToolsPanel(){
   else{p.classList.add('show');o.classList.add('show');b.classList.add('active');}
 }
 
-
 function closeToolsPanel(){
   var p=document.getElementById('toolsPanel');
   var o=document.getElementById('tpOverlay');
@@ -4466,7 +4258,6 @@ function closeToolsPanel(){
   if(o)o.classList.remove('show');
   if(b)b.classList.remove('active');
 }
-
 
 function revealNamasteText(name){
   var greetEl=document.getElementById('nsGreeting');
@@ -4606,7 +4397,6 @@ async function callGroqWithSearch(text){
   return searchContext;
 }
 
-
 // ═══════════════════════════════
 // 3D EARTH LANGUAGE SELECTOR
 // ═══════════════════════════════
@@ -4677,7 +4467,6 @@ function getAILangInstruction(){
   if(!lang||lang==='') return '';
   return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
 }
-
 
 // ═══════════════════════════════════════════
 // CUSTOM MAGNETIC CURSOR
@@ -4874,23 +4663,13 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
 </div>
 
-
 <!-- NEW FEATURE OVERLAYS -->
 <div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
 <div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
 <div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
-<div class="overlay" id="o_mood" onclick="closeM('mood')"></div>
-<div class="overlay" id="o_wpm" onclick="closeM('wpm')"></div>
 <div class="overlay" id="o_news" onclick="closeM('news')"></div>
-<div class="overlay" id="o_emoji" onclick="closeM('emoji')"></div>
-<div class="overlay" id="o_cv" onclick="closeM('cv')"></div>
 <div class="overlay" id="o_notes" onclick="closeM('notes')"></div>
-<div class="overlay" id="o_age" onclick="closeM('age')"></div>
 <div class="overlay" id="o_bmi" onclick="closeM('bmi')"></div>
-<div class="overlay" id="o_qotd" onclick="closeM('qotd')"></div>
-<div class="overlay" id="o_word" onclick="closeM('word')"></div>
-<div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
-
 <!-- TODO LIST -->
 <div class="modal" id="m_todo">
   <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
@@ -4937,72 +4716,12 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('currency')">Close</button>
 </div>
 
-<!-- MOOD TRACKER -->
-<div class="modal" id="m_mood">
-  <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
-  <div class="msub">How are you feeling today?</div>
-  <div class="mood-grid">
-    <div class="mood-btn" onclick="logMood('😄','Amazing')"><span class="mood-emoji">😄</span><span class="mood-lbl">Amazing</span></div>
-    <div class="mood-btn" onclick="logMood('😊','Happy')"><span class="mood-emoji">😊</span><span class="mood-lbl">Happy</span></div>
-    <div class="mood-btn" onclick="logMood('😐','Okay')"><span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span></div>
-    <div class="mood-btn" onclick="logMood('😔','Sad')"><span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span></div>
-    <div class="mood-btn" onclick="logMood('😤','Stressed')"><span class="mood-emoji">😤</span><span class="mood-lbl">Stressed</span></div>
-  </div>
-  <div class="slabel">Recent Moods</div>
-  <div class="mood-hist" id="moodHist"></div>
-  <button class="mclose" onclick="closeM('mood')">Close</button>
-</div>
-
-<!-- TYPING SPEED TEST -->
-<div class="modal" id="m_wpm">
-  <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
-  <div class="msub">Test your WPM — how fast do you type?</div>
-  <div class="wpm-text-area" id="wpmText"></div>
-  <input class="wpm-inp" id="wpmInp" placeholder="Start typing here..." oninput="wpmCheck(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
-  <div class="wpm-stats" id="wpmStats"></div>
-  <div style="display:flex;gap:8px;margin-top:12px;">
-    <button class="mclose" style="margin-top:0;" onclick="startWPM()">New Test</button>
-    <button class="mclose" style="margin-top:0;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('wpm')">Close</button>
-  </div>
-</div>
-
 <!-- QUICK NEWS -->
 <div class="modal" id="m_news">
   <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
   <div class="msub">Ask QVIO about any of these stories</div>
   <div id="newsList"></div>
   <button class="mclose" onclick="closeM('news')">Close</button>
-</div>
-
-<!-- EMOJI PICKER -->
-<div class="modal" id="m_emoji">
-  <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
-  <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
-  <div class="emoji-cats" id="emojiCats"></div>
-  <div class="emoji-grid" id="emojiGrid"></div>
-  <button class="mclose" onclick="closeM('emoji')">Close</button>
-</div>
-
-<!-- CV / RESUME BUILDER -->
-<div class="modal" id="m_cv">
-  <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
-  <div class="msub">Fill in your details and AI will write your CV</div>
-  <div class="cv-form">
-    <div class="cv-section-title">Personal Info</div>
-    <input class="cv-inp" id="cvName" placeholder="Full Name">
-    <input class="cv-inp" id="cvRole" placeholder="Target Role (e.g. Software Engineer)">
-    <input class="cv-inp" id="cvEmail" placeholder="Email">
-    <input class="cv-inp" id="cvPhone" placeholder="Phone">
-    <input class="cv-inp" id="cvCity" placeholder="City">
-    <div class="cv-section-title">Education</div>
-    <textarea class="cv-inp" id="cvEdu" placeholder="e.g. B.Tech Computer Science, IIT Delhi, 2024" rows="2"></textarea>
-    <div class="cv-section-title">Experience</div>
-    <textarea class="cv-inp" id="cvExp" placeholder="e.g. Intern at TCS, built payment gateway, 2023" rows="2"></textarea>
-    <div class="cv-section-title">Skills</div>
-    <input class="cv-inp" id="cvSkills" placeholder="e.g. Python, React, SQL, Leadership">
-  </div>
-  <button class="mclose" onclick="buildCV()">✨ Generate My CV with AI →</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
 </div>
 
 <!-- QUICK NOTES -->
@@ -5015,16 +4734,6 @@ function getAILangInstruction(){
   </div>
   <div id="noteList" style="margin-top:12px;max-height:300px;overflow-y:auto;"></div>
   <button class="mclose" onclick="closeM('notes')">Done</button>
-</div>
-
-<!-- AGE CALCULATOR -->
-<div class="modal" id="m_age">
-  <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
-  <div class="msub">Find exact age in years, months and days</div>
-  <div class="slabel">Date of Birth</div>
-  <input type="date" class="cv-inp" id="ageDate" onchange="calcAge()" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
-  <div class="age-result" id="ageResult"></div>
-  <button class="mclose" onclick="closeM('age')">Close</button>
 </div>
 
 <!-- BMI CALCULATOR -->
@@ -5044,39 +4753,6 @@ function getAILangInstruction(){
   <div class="bmi-result" id="bmiResult"></div>
   <button class="mclose" onclick="closeM('bmi')">Close</button>
 </div>
-
-<!-- QUOTE OF THE DAY -->
-<div class="modal" id="m_qotd">
-  <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
-  <div class="msub">Daily wisdom to inspire your journey</div>
-  <div id="qotdWrap"></div>
-  <button class="mclose" onclick="newQotd()">Next Quote ✨</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
-</div>
-
-<!-- WORD OF THE DAY -->
-<div class="modal" id="m_word">
-  <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
-  <div class="msub">Expand your vocabulary daily</div>
-  <div id="wordWrap"></div>
-  <button class="mclose" onclick="newWord()">Next Word 🔄</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
-</div>
-
-<!-- LIVE POLL -->
-<div class="modal" id="m_poll">
-  <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
-  <div class="msub">Create a poll and share with friends</div>
-  <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
-  <input class="cv-inp" id="pollO1" placeholder="Option 1" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO2" placeholder="Option 2" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO3" placeholder="Option 3 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO4" placeholder="Option 4 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:10px;">
-  <div id="pollResult" style="display:none;"></div>
-  <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
-</div>
-
 
 <!-- ═══════════════════════════════════════
      🚀 QVIO FUTURISTIC INTERACTION LAYER
@@ -5219,13 +4895,13 @@ function getAILangInstruction(){
     <span class="mnb-ico">⚡</span>
     <span class="mnb-lbl">Tools</span>
   </button>
-  <button class="mnb" id="mnb-mic" onclick="toggleMic()" style="position:relative;">
+  <button class="mnb" id="mnb-mic" onclick="toggleMic()">
     <span class="mnb-ico" style="font-size:24px;">🎤</span>
     <span class="mnb-lbl">Voice</span>
   </button>
-  <button class="mnb" id="mnb-lang" onclick="openLangSelect()">
-    <span class="mnb-ico">🌍</span>
-    <span class="mnb-lbl">Language</span>
+  <button class="mnb" id="mnb-theme" onclick="cycleTh()">
+    <span class="mnb-ico">🌙</span>
+    <span class="mnb-lbl">Theme</span>
   </button>
   <button class="mnb" id="mnb-profile" onclick="openM('prof')">
     <span class="mnb-ico">👤</span>
@@ -5242,5 +4918,401 @@ function mobNav(tab){
 }
 </script>
 
+
+<!-- ═══════════════════════════════════════
+     🎓 STUDY MODE
+═══════════════════════════════════════ -->
+<div class="overlay" id="o_study" onclick="closeStudy()"></div>
+<div class="modal" id="m_study" style="max-width:560px;max-height:92vh;">
+  <div class="mhd">
+    <h3>🎓 Study Mode</h3>
+    <button class="mx" onclick="closeStudy()">✕</button>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="study-tabs">
+    <button class="stab on" id="stab-focus" onclick="switchStudyTab('focus',this)">🍅 Focus</button>
+    <button class="stab" id="stab-exam" onclick="switchStudyTab('exam',this)">🎯 Exam AI</button>
+    <button class="stab" id="stab-flash" onclick="switchStudyTab('flash',this)">🃏 Flashcards</button>
+    <button class="stab" id="stab-notes" onclick="switchStudyTab('snotes',this)">📝 Notes</button>
+  </div>
+
+  <!-- ── FOCUS / POMODORO ── -->
+  <div class="study-panel" id="sp-focus">
+    <div class="pom-status" id="pomStatus">Focus Session</div>
+    <div class="pom-ring-wrap">
+      <svg class="pom-svg" viewBox="0 0 120 120">
+        <circle class="pom-track" cx="60" cy="60" r="52"/>
+        <circle class="pom-progress" id="pomArc" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/>
+      </svg>
+      <div class="pom-center">
+        <div class="pom-time" id="pomTime">25:00</div>
+        <div class="pom-label" id="pomLabel">Focus</div>
+      </div>
+    </div>
+    <div class="pom-mode-row">
+      <button class="pom-mbt on" id="pbt-focus" onclick="setPomMode('focus',this)">Focus 25m</button>
+      <button class="pom-mbt" id="pbt-short" onclick="setPomMode('short',this)">Break 5m</button>
+      <button class="pom-mbt" id="pbt-long" onclick="setPomMode('long',this)">Long 15m</button>
+    </div>
+    <div class="pom-btns">
+      <button class="pom-btn start" id="pomStartBtn" onclick="pomAction('start')">▶ Start</button>
+      <button class="pom-btn stop" id="pomStopBtn" onclick="pomAction('stop')" style="display:none;">⏸ Pause</button>
+      <button class="pom-btn reset" onclick="pomAction('reset')">↺ Reset</button>
+    </div>
+    <div class="pom-streak" id="pomStreak">🍅 Sessions today: <strong id="pomCount">0</strong></div>
+    <div class="focus-tip">💡 Tip: Close other tabs, put your phone face-down, and commit fully.</div>
+  </div>
+
+  <!-- ── EXAM AI ── -->
+  <div class="study-panel" id="sp-exam" style="display:none;">
+    <div class="exam-intro">Ask QVIO anything about your exam — it will answer like a top tutor.</div>
+    <div class="exam-chips">
+      <button class="exam-chip on" id="echip-jee" onclick="setExam('JEE',this)">JEE</button>
+      <button class="exam-chip" id="echip-neet" onclick="setExam('NEET',this)">NEET</button>
+      <button class="exam-chip" id="echip-upsc" onclick="setExam('UPSC',this)">UPSC</button>
+      <button class="exam-chip" id="echip-cbse" onclick="setExam('CBSE',this)">CBSE</button>
+      <button class="exam-chip" id="echip-cat" onclick="setExam('CAT',this)">CAT</button>
+      <button class="exam-chip" id="echip-ielts" onclick="setExam('IELTS',this)">IELTS</button>
+    </div>
+    <div class="exam-qs">
+      <div class="exam-q-label">Quick questions:</div>
+      <div class="exam-qlist" id="examQList"></div>
+    </div>
+    <textarea class="exam-inp" id="examInp" placeholder="Ask your doubt here..."></textarea>
+    <button class="mclose" style="margin-top:10px;" onclick="sendExamQ()">⚡ Ask QVIO →</button>
+  </div>
+
+  <!-- ── FLASHCARDS ── -->
+  <div class="study-panel" id="sp-flash" style="display:none;">
+    <div class="flash-gen-row">
+      <input class="flash-topic-inp" id="flashTopic" placeholder="Topic (e.g. Newton's Laws, Photosynthesis)">
+      <button class="flash-gen-btn" onclick="generateFlash()">✨ Generate</button>
+    </div>
+    <div class="flash-loading" id="flashLoading" style="display:none;">⚡ Generating flashcards...</div>
+    <div class="flash-deck" id="flashDeck"></div>
+    <div class="flash-nav" id="flashNav" style="display:none;">
+      <button class="flash-nav-btn" onclick="prevCard()">← Prev</button>
+      <span class="flash-counter" id="flashCounter">1 / 5</span>
+      <button class="flash-nav-btn" onclick="nextCard()">Next →</button>
+    </div>
+  </div>
+
+  <!-- ── STUDY NOTES ── -->
+  <div class="study-panel" id="sp-snotes" style="display:none;">
+    <div class="snote-row">
+      <input class="snote-inp" id="snoteInp" placeholder="Note title...">
+      <textarea class="snote-body" id="snoteBody" placeholder="Write your note..."></textarea>
+      <button class="mclose" style="margin-top:8px;" onclick="saveStudyNote()">💾 Save Note</button>
+    </div>
+    <div class="snote-list" id="snoteList"></div>
+  </div>
+
+  <button class="mclose" style="margin-top:14px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeStudy()">Close</button>
+</div>
+
+<!-- FOCUS MODE OVERLAY (distraction-free) -->
+<div id="focusOverlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:4000;flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="lmark">QV</div>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--cyber);">Focus Mode</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="pom-mini" id="pomMini" onclick="openStudy()" style="cursor:pointer;font-size:13px;font-weight:700;color:var(--cyber);background:var(--cyber3);padding:5px 14px;border-radius:99px;border:1px solid var(--cyber);">🍅 25:00</div>
+      <button onclick="exitFocusMode()" style="background:transparent;border:1px solid var(--border);color:var(--text3);padding:5px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">✕ Exit Focus</button>
+    </div>
+  </div>
+  <div class="chat" id="focusChat" style="flex:1;overflow-y:auto;padding:24px 20px;"></div>
+  <div style="padding:10px 16px 16px;border-top:1px solid var(--border);">
+    <div class="ibox" style="max-width:680px;margin:0 auto;">
+      <textarea id="focusInp" placeholder="Ask anything..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendFocusMsg();}" style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:'DM Sans',sans-serif;resize:none;max-height:120px;min-height:22px;line-height:1.5;"></textarea>
+      <button class="sendbtn" onclick="sendFocusMsg()">⬆</button>
+    </div>
+  </div>
+</div>
+
 </body>
-</html>
+</html><!-- 🎓 STUDY MODE JS -->
+<script>
+// ── Open/Close ──
+function openStudy(){
+  var _os2=document.getElementById('o_study');if(_os2)_os2.classList.add('show');
+  var _ms=document.getElementById('m_study');if(_ms)_ms.classList.add('show');
+  renderStudyNotes();
+}
+function closeStudy(){
+  var _os3=document.getElementById('o_study');if(_os3)_os3.classList.remove('show');
+  var _ms2=document.getElementById('m_study');if(_ms2)_ms2.classList.remove('show');
+}
+
+// ── Tab switching ──
+function switchStudyTab(tab,btn){
+  document.querySelectorAll('.stab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  document.querySelectorAll('.study-panel').forEach(function(p){p.style.display='none';});
+  var id=tab==='snotes'?'sp-snotes':'sp-'+tab;
+  var panel=document.getElementById(id);
+  if(panel){panel.style.display='';}
+  if(tab==='flash')renderFlashDeck();
+  if(tab==='snotes')renderStudyNotes();
+  if(tab==='exam')renderExamQuestions();
+}
+
+// ── POMODORO ──
+var pomInterval=null,pomRunning=false,pomMs=25*60*1000,pomTotal=25*60*1000;
+var pomSessionCount=0;
+var pomModes={focus:{ms:25*60*1000,label:'Focus'},short:{ms:5*60*1000,label:'Short Break'},long:{ms:15*60*1000,label:'Long Break'}};
+var currentPomMode='focus';
+
+function setPomMode(m,btn){
+  currentPomMode=m;
+  pomAction('reset');
+  document.querySelectorAll('.pom-mbt').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+function pomAction(a){
+  if(a==='start'){
+    if(!pomMs)return;
+    pomRunning=true;
+    var last=Date.now();
+    var startBtn=document.getElementById('pomStartBtn');
+    var stopBtn=document.getElementById('pomStopBtn');
+    var status=document.getElementById('pomStatus');
+    if(startBtn)startBtn.style.display='none';
+    if(stopBtn)stopBtn.style.display='';
+    if(status)status.textContent=currentPomMode==='focus'?'🔴 Stay Focused!':'☕ Rest Up!';
+    pomInterval=setInterval(function(){
+      var now=Date.now(),diff=now-last;last=now;
+      pomMs-=diff;
+      if(pomMs<=0){
+        pomMs=0;clearInterval(pomInterval);pomRunning=false;
+        if(startBtn)startBtn.style.display='';
+        if(stopBtn)stopBtn.style.display='none';
+        if(currentPomMode==='focus'){
+          pomSessionCount++;
+          try{localStorage.setItem('qvio_pomCount',pomSessionCount);}catch(e){}
+          var pc=document.getElementById('pomCount');
+          if(pc)pc.textContent=pomSessionCount;
+          showToast('🍅 Session done! Take a break.');
+          if(status)status.textContent='✅ Done!';
+        } else {
+          showToast('⚡ Break over — back to focus!');
+          if(status)status.textContent='Ready';
+        }
+      }
+      updatePomDisplay();
+    },200);
+  } else if(a==='stop'){
+    clearInterval(pomInterval);pomRunning=false;
+    var startBtn=document.getElementById('pomStartBtn');
+    var stopBtn=document.getElementById('pomStopBtn');
+    if(startBtn)startBtn.style.display='';
+    if(stopBtn)stopBtn.style.display='none';
+    var status=document.getElementById('pomStatus');
+    if(status)status.textContent='Paused';
+  } else if(a==='reset'){
+    clearInterval(pomInterval);pomRunning=false;
+    pomMs=pomModes[currentPomMode].ms;
+    pomTotal=pomMs;
+    var startBtn=document.getElementById('pomStartBtn');
+    var stopBtn=document.getElementById('pomStopBtn');
+    if(startBtn)startBtn.style.display='';
+    if(stopBtn)stopBtn.style.display='none';
+    var status=document.getElementById('pomStatus');
+    if(status)status.textContent=pomModes[currentPomMode].label+' Session';
+    updatePomDisplay();
+  }
+}
+
+function updatePomDisplay(){
+  var m=Math.floor(pomMs/60000),s=Math.floor((pomMs%60000)/1000);
+  var str=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  var el=document.getElementById('pomTime');if(el)el.textContent=str;
+  var mini=document.getElementById('pomMini');if(mini)mini.textContent='🍅 '+str;
+  var arc=document.getElementById('pomArc');
+  if(arc){
+    var total=326.7,progress=(pomTotal>0?pomMs/pomTotal:1)*total;
+    arc.style.strokeDashoffset=String(total-progress);
+  }
+}
+
+// ── FOCUS/DISTRACTION-FREE MODE ──
+function enterFocusMode(){
+  var overlay=document.getElementById('focusOverlay');
+  if(!overlay)return;
+  overlay.style.display='flex';
+  setTimeout(function(){overlay.classList.add('show');},10);
+  var fi=document.getElementById('focusInp');if(fi)fi.focus();
+  var fc=document.getElementById('focusChat');
+  var mc=document.getElementById('chat');
+  if(fc&&mc)fc.innerHTML=mc.innerHTML;
+  showToast('⛶ Focus Mode active');
+}
+function exitFocusMode(){
+  var overlay=document.getElementById('focusOverlay');
+  if(!overlay)return;
+  overlay.classList.remove('show');
+  setTimeout(function(){overlay.style.display='none';},300);
+}
+function sendFocusMsg(){
+  var inp=document.getElementById('focusInp');
+  if(!inp||!inp.value.trim())return;
+  var val=inp.value.trim();
+  inp.value='';
+  var main=document.getElementById('inp');
+  if(main)main.value=val;
+  sendMsg();
+  setTimeout(function(){
+    var fc=document.getElementById('focusChat');
+    var mc=document.getElementById('chat');
+    if(fc&&mc){fc.innerHTML=mc.innerHTML;fc.scrollTop=99999;}
+  },200);
+}
+
+// ── EXAM AI ──
+var currentExam='JEE';
+var examQuestions={
+  JEE:["Explain Newton's laws with examples","Differentiate speed vs velocity","What is Ohm's Law?","Solve: x² - 5x + 6 = 0","Explain electrostatic induction"],
+  NEET:["What is the powerhouse of the cell?","Explain DNA replication","Difference: mitosis vs meiosis","What are hormones? Give examples","Explain photosynthesis step by step"],
+  UPSC:["Explain the Preamble of the Indian Constitution","Rajya Sabha vs Lok Sabha differences","What is federalism in India?","Explain Directive Principles of State Policy","Role of UPSC in India"],
+  CBSE:["Explain the water cycle","Difference between acids and bases","Explain the French Revolution","What is photosynthesis?","Describe the human digestive system"],
+  CAT:["Formula for compound interest?","Permutation vs combination","Profit and loss percentage basics","Solve a time-speed-distance problem","What is critical reasoning?"],
+  IELTS:["How to write a band 9 essay intro?","Task 1 vs task 2 difference","Common IELTS speaking mistakes","How to improve reading speed?","Tips for the listening section"]
+};
+
+function setExam(exam,btn){
+  currentExam=exam;
+  document.querySelectorAll('.exam-chip').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  renderExamQuestions();
+}
+
+function renderExamQuestions(){
+  var qs=examQuestions[currentExam]||[];
+  var list=document.getElementById('examQList');
+  if(!list)return;
+  list.innerHTML=qs.map(function(q){
+    return '<div class="exam-qitem" onclick="fillExamQ(this.dataset.q)" data-q="'+q.replace(/"/g,'&quot;')+'">→ '+q+'</div>';
+  }).join('');
+}
+
+function fillExamQ(q){
+  var inp=document.getElementById('examInp');
+  if(inp){inp.value=q;inp.focus();}
+}
+
+function sendExamQ(){
+  var inp=document.getElementById('examInp');
+  if(!inp||!inp.value.trim())return;
+  var q=inp.value.trim();
+  inp.value='';
+  closeStudy();
+  var main=document.getElementById('inp');
+  if(main)main.value='['+currentExam+'] '+q;
+  sendMsg();
+  showToast('🎯 '+currentExam+' mode!');
+}
+
+// ── FLASHCARDS ──
+var flashCards=[],flashIdx=0;
+
+function generateFlash(){
+  var topic=document.getElementById('flashTopic');
+  if(!topic||!topic.value.trim()){showToast('Enter a topic first!');return;}
+  var t=topic.value.trim();
+  var loading=document.getElementById('flashLoading');
+  var deck=document.getElementById('flashDeck');
+  var nav=document.getElementById('flashNav');
+  if(loading)loading.style.display='block';
+  if(deck)deck.innerHTML='';
+  if(nav)nav.style.display='none';
+
+  var prompt='Generate exactly 6 flashcards for: '+t+'. Return ONLY a valid JSON array, no markdown, no extra text. Format: [{"q":"question here","a":"answer here"}]. Keep questions under 15 words, answers under 40 words.';
+
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+    body:JSON.stringify({model:MODEL,max_tokens:600,messages:[{role:'user',content:prompt}]})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(loading)loading.style.display='none';
+    var text=d.choices[0].message.content.trim().replace(/```json|```/g,'').trim();
+    try{
+      flashCards=JSON.parse(text);
+      flashIdx=0;
+      renderFlashDeck();
+      if(nav)nav.style.display='flex';
+      showToast('🃏 '+flashCards.length+' flashcards ready!');
+    }catch(e){showToast('Could not parse — try again');}
+  })
+  .catch(function(){
+    if(loading)loading.style.display='none';
+    showToast('Network error — try again');
+  });
+}
+
+function renderFlashDeck(){
+  var deck=document.getElementById('flashDeck');
+  if(!deck||!flashCards.length)return;
+  var card=flashCards[flashIdx];
+  deck.innerHTML='<div class="flash-card" id="flashCard" onclick="flipCard()"><div class="flash-front"><div class="flash-tag">Question '+(flashIdx+1)+'</div><div class="flash-q">'+card.q+'</div><div class="flash-hint">Tap to reveal answer</div></div><div class="flash-back"><div class="flash-tag">Answer</div><div class="flash-a">'+card.a+'</div></div></div>';
+  var ctr=document.getElementById('flashCounter');
+  if(ctr)ctr.textContent=(flashIdx+1)+' / '+flashCards.length;
+}
+
+function flipCard(){var c=document.getElementById('flashCard');if(c)c.classList.toggle('flipped');}
+function nextCard(){if(!flashCards.length)return;flashIdx=(flashIdx+1)%flashCards.length;renderFlashDeck();}
+function prevCard(){if(!flashCards.length)return;flashIdx=(flashIdx-1+flashCards.length)%flashCards.length;renderFlashDeck();}
+
+// ── STUDY NOTES ──
+var studyNotes=[];
+function saveStudyNote(){
+  var t=document.getElementById('snoteInp'),b=document.getElementById('snoteBody');
+  if(!t||(!t.value.trim()&&!b.value.trim())){showToast('Write something first!');return;}
+  studyNotes=JSON.parse(localStorage.getItem('qvio_studyNotes')||'[]');
+  studyNotes.unshift({id:Date.now(),title:t.value.trim()||'Untitled',body:b.value.trim()});
+  localStorage.setItem('qvio_studyNotes',JSON.stringify(studyNotes));
+  t.value='';b.value='';
+  renderStudyNotes();
+  showToast('📝 Note saved!');
+}
+function deleteStudyNote(id){
+  studyNotes=studyNotes.filter(function(n){return n.id!==id;});
+  localStorage.setItem('qvio_studyNotes',JSON.stringify(studyNotes));
+  renderStudyNotes();
+}
+function renderStudyNotes(){
+  studyNotes=JSON.parse(localStorage.getItem('qvio_studyNotes')||'[]');
+  var list=document.getElementById('snoteList');
+  if(!list)return;
+  if(!studyNotes.length){list.innerHTML='<div class="snote-empty">No notes yet — start writing! 📝</div>';return;}
+  list.innerHTML=studyNotes.map(function(n){
+    return '<div class="snote-item"><div class="snote-title">'+n.title+'</div><div class="snote-text">'+n.body+'</div><button class="snote-del" onclick="deleteStudyNote('+n.id+')">✕</button></div>';
+  }).join('');
+}
+
+// ── INIT study on page load ──
+window.addEventListener('load',function(){
+  try{pomSessionCount=parseInt(localStorage.getItem('qvio_pomCount'))||0;}catch(e){}
+  // Don't touch pomCount DOM here — modal is hidden, update when opened
+  updatePomDisplay();
+  renderExamQuestions();
+  // Add SVG gradient for ring
+  var svgDefs=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svgDefs.setAttribute('width','0');svgDefs.setAttribute('height','0');
+  svgDefs.style.position='absolute';
+  svgDefs.innerHTML='<defs><linearGradient id="pomGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1A6FFF"/><stop offset="50%" stop-color="#00C8FF"/><stop offset="100%" stop-color="#FFD000"/></linearGradient></defs>';
+  document.body.appendChild(svgDefs);
+});
+
+// Update pomCount only when study modal opens
+var _origOpenStudy=window.openStudy;
+window.openStudy=function(){
+  if(_origOpenStudy)_origOpenStudy();
+  var pc=document.getElementById('pomCount');
+  if(pc)pc.textContent=pomSessionCount;
+};
+</script>
