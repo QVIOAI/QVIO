@@ -662,8 +662,84 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 body.focus header .hright{display:none;}
 body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!important;}
 
-/* RESPONSIVE */
-@media(max-width:600px){:root{--pad:16px;}.welcome h1{font-size:26px;}.sugs{grid-template-columns:1fr;}.ltag{display:none;}}
+/* ═══════════════════════════════════════
+   📱 MOBILE-FIRST CLEAN LAYOUT
+═══════════════════════════════════════ */
+@media(max-width:600px){
+  :root{--pad:14px;}
+
+  /* HEADER: clean, minimal */
+  header{height:52px;padding:0 12px;gap:6px;}
+
+  /* Hide low-priority items on small screens */
+  .streak-pill{display:none!important;}
+  .pro-hbtn{display:none!important;}
+  .earth-btn{display:none!important;}
+  .ltag{display:none!important;}
+  .unm{display:none!important;}
+
+  /* Compact mode pill */
+  .h-mode-pill{padding:5px 10px;font-size:11.5px;max-width:120px;}
+
+  /* Compact header icons */
+  .hico{width:32px;height:32px;font-size:14px;border-radius:9px;}
+  .uav{width:28px;height:28px;font-size:10px;}
+  .uchip{padding:3px 6px 3px 3px;gap:4px;}
+
+  /* INPUT: cleaner, no clutter */
+  .input-area{padding:8px 12px 12px;}
+  #heyQvioBtn{display:none!important;}
+  .ibox{padding:9px 10px;border-radius:16px;gap:6px;}
+  #inp{font-size:14px;}
+  .micbtn{padding:6px 8px;font-size:14px;}
+  .sendbtn{padding:8px 14px;font-size:13px;}
+
+  /* QUICK REPLIES: horizontal scroll, no wrap */
+  .qrs{gap:5px;margin-top:7px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;}
+  .qrs::-webkit-scrollbar{display:none;}
+  .qr{flex-shrink:0;padding:5px 11px;font-size:11.5px;white-space:nowrap;}
+
+  /* WELCOME: simplified */
+  .welcome{gap:12px;padding:16px 12px;min-height:auto;}
+  .welcome h1{font-size:24px;line-height:1.15;}
+  .wsub{font-size:13.5px;max-width:100%;}
+  .w-badge{font-size:10.5px;padding:4px 12px;}
+  .w-crown{font-size:28px;}
+  .w-icon{width:52px;height:52px;font-size:13px;border-radius:16px;}
+  .sugs{grid-template-columns:1fr 1fr;gap:8px;width:100%;}
+  .sug{padding:12px 13px;}
+  .si{font-size:18px;margin-bottom:5px;}
+  .st{font-size:12px;}
+  .sd2{font-size:10.5px;}
+
+  /* Hide comparison table — too wide for phone */
+  .cmp-wrap{display:none;}
+
+  /* CHAT */
+  .chat{padding:20px 14px;}
+  .bubble{font-size:14px;padding:11px 14px;}
+  .msg{margin-bottom:18px;}
+
+  /* MODALS: full width */
+  .modal{width:96%;padding:22px 18px;max-height:92vh;border-radius:22px;}
+
+  /* TOOLS PANEL: full width on mobile */
+  .tools-panel{width:calc(100vw - 20px);right:10px;left:10px;}
+  .tp-grid{grid-template-columns:repeat(4,1fr);gap:4px;}
+  .tp-btn{padding:9px 3px;}
+  .tp-ico{font-size:17px;}
+  .tp-lbl{font-size:8.5px;}
+
+  /* Toast + scroll btn */
+  .toast{bottom:75px;font-size:12px;padding:9px 18px;}
+  .scroll-btn{bottom:80px;right:14px;width:36px;height:36px;font-size:14px;}
+}
+
+/* Slightly bigger phones (400–600px): show streak back */
+@media(min-width:400px) and (max-width:600px){
+  .streak-pill{display:flex!important;}
+  .h-mode-pill{max-width:140px;}
+}
 
 /* ONBOARDING */
 #onboard{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;}
@@ -1127,6 +1203,41 @@ header::after{
 }
 
 /* ══ END FUTURISTIC ANIMATIONS ══ */
+
+/* ═══════════════════════════════════════
+   📱 MOBILE BOTTOM NAV BAR
+═══════════════════════════════════════ */
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,254,249,.97);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  z-index:300;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  grid-template-columns:repeat(5,1fr);
+  gap:2px;
+}
+[data-theme="dark"] .mob-nav{background:rgba(5,8,15,.97);}
+.mob-nav::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.4;}
+.mnb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:10px;cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1);background:transparent;border:none;font-family:"DM Sans",sans-serif;flex:1;}
+.mnb:active{transform:scale(.92);}
+.mnb.active{background:var(--navy-soft);}
+[data-theme="dark"] .mnb.active{background:rgba(212,160,23,.08);}
+.mnb-ico{font-size:20px;line-height:1;transition:transform .2s;}
+.mnb:active .mnb-ico{transform:scale(.88);}
+.mnb-lbl{font-size:9.5px;font-weight:600;color:var(--text3);transition:color .2s;}
+.mnb.active .mnb-lbl{color:var(--gold);}
+[data-theme="dark"] .mnb.active .mnb-lbl{color:var(--gold2);}
+
+/* Show bottom nav only on mobile, adjust input area bottom padding */
+@media(max-width:600px){
+  .mob-nav{display:grid;}
+  .input-area{padding-bottom:calc(12px + 64px + env(safe-area-inset-bottom))!important;}
+  .toast{bottom:calc(80px + 64px)!important;}
+  .scroll-btn{bottom:calc(80px + 64px)!important;}
+  .tools-panel{bottom:calc(64px + 10px);top:auto;max-height:70vh;overflow-y:auto;}
+}
 
 /* 3D EARTH BUTTON */
 .earth-btn{
@@ -5076,6 +5187,41 @@ function getAILangInstruction(){
     }
   });
 })();
+</script>
+
+<!-- ═══════════════════════════════════════
+     📱 MOBILE BOTTOM NAV BAR
+═══════════════════════════════════════ -->
+<nav class="mob-nav" id="mobNav">
+  <button class="mnb active" id="mnb-chat" onclick="mobNav('chat')">
+    <span class="mnb-ico">💬</span>
+    <span class="mnb-lbl">Chat</span>
+  </button>
+  <button class="mnb" id="mnb-tools" onclick="mobNav('tools')">
+    <span class="mnb-ico">⚡</span>
+    <span class="mnb-lbl">Tools</span>
+  </button>
+  <button class="mnb" id="mnb-mic" onclick="toggleMic()" style="position:relative;">
+    <span class="mnb-ico" style="font-size:24px;">🎤</span>
+    <span class="mnb-lbl">Voice</span>
+  </button>
+  <button class="mnb" id="mnb-lang" onclick="openLangSelect()">
+    <span class="mnb-ico">🌍</span>
+    <span class="mnb-lbl">Language</span>
+  </button>
+  <button class="mnb" id="mnb-profile" onclick="openM('prof')">
+    <span class="mnb-ico">👤</span>
+    <span class="mnb-lbl">Profile</span>
+  </button>
+</nav>
+
+<script>
+function mobNav(tab){
+  document.querySelectorAll('.mnb').forEach(function(b){b.classList.remove('active');});
+  var btn=document.getElementById('mnb-'+tab);
+  if(btn)btn.classList.add('active');
+  if(tab==='tools')toggleToolsPanel();
+}
 </script>
 
 </body>
