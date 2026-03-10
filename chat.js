@@ -1,23 +1,8 @@
 export default async function handler(req, res) {
-  // CORS — allow your domains only
-  const allowed = [
-    'https://qvio.in',
-    'https://www.qvio.in',
-    'https://qvio-one.vercel.app',
-    'https://qvioai.web.app',
-    'https://qvioai-f7659.web.app',
-    'http://localhost',
-    'http://127.0.0.1',
-    'null' // local file open
-  ];
-  const origin = req.headers.origin || '';
-  if (allowed.includes(origin) || origin === '') {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
-  } else {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+  // Allow all Vercel/qvio domains + local dev
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -34,10 +19,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid request body' });
     }
 
-    // Key lives ONLY here in Vercel environment — never in frontend
     const GROQ_KEY = process.env.GROQ_API_KEY;
     if (!GROQ_KEY) {
-      return res.status(500).json({ error: 'Server misconfigured' });
+      console.error('GROQ_API_KEY not set in environment');
+      return res.status(500).json({ error: 'Server misconfigured — API key missing' });
     }
 
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -57,12 +42,14 @@ export default async function handler(req, res) {
     const data = await groqRes.json();
 
     if (!groqRes.ok) {
-      return res.status(groqRes.status).json({ error: data.error?.message || 'Groq error' });
+      console.error('Groq error:', groqRes.status, data);
+      return res.status(groqRes.status).json({ error: data.error?.message || 'Groq API error' });
     }
 
     return res.status(200).json(data);
 
   } catch (err) {
+    console.error('Handler error:', err);
     return res.status(500).json({ error: 'Internal server error: ' + err.message });
   }
 }
