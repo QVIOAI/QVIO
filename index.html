@@ -2694,27 +2694,27 @@ async function callGroq(msg){
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  // ── Backend API — key is safe on server, never in frontend ──
-  var BACKEND='/api/chat';
-  var res=await fetch(BACKEND,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:MODEL,
-      messages:msgs,
-      temperature:0.82,
-      max_tokens:2048
-    })
-  });
-  var data=await res.json();
+  // Use absolute URL so it works from any origin
+  var BACKEND=(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'||window.location.protocol==='file:')
+    ?'https://qvio-one.vercel.app/api/chat'
+    :'/api/chat';
+  var res;
+  try{
+    res=await fetch(BACKEND,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
+    });
+  }catch(fetchErr){
+    throw new Error('Cannot reach QVIO server. Check internet: '+fetchErr.message);
+  }
+  var data;
+  try{data=await res.json();}catch(e){throw new Error('Server returned invalid response ('+res.status+')');}
   if(!res.ok){
-    var em=data.error||('API '+res.status);
-    if(res.status===429||em.indexOf('rate')>-1){
-      throw new Error('Rate limit hit — please wait a moment and try again.');
-    }
-    if(res.status===401||res.status===403){
-      throw new Error('API auth error — please contact QVIO support.');
-    }
+    var em=data.error||('API error '+res.status);
+    if(res.status===429||em.indexOf('rate')>-1)throw new Error('Too many requests — wait a moment and try again.');
+    if(res.status===401||res.status===403)throw new Error('API key error — contact QVIO support.');
+    if(res.status===500)throw new Error('Server error: '+em);
     throw new Error(em);
   }
   if(!data.choices||!data.choices[0])throw new Error('Empty response from AI');
