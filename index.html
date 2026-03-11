@@ -130,35 +130,44 @@ function activateQvioVoice(){
 
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
 :root{
-  --bg:#FFFEF9;--bg2:#FFFBF0;--surface:#FDF8EE;--border:#EDE3C8;--border2:#C8A84B;
-  --navy:#0D1B3E;--navy2:#162554;--navy3:#1E336A;--navy-soft:rgba(13,27,62,.06);
-  --gold:#B8860B;--gold2:#D4A017;--gold3:#F0C842;
-  --gold-glow:rgba(212,160,23,.25);
-  --gold-g:linear-gradient(135deg,#8B6914,#D4A017,#F0C842,#D4A017,#8B6914);
-  --gold-gs:linear-gradient(135deg,#8B6914,#C8920E);
-  --navy-g:linear-gradient(135deg,#0D1B3E,#162554,#1E336A);
-  --text:#0D1B3E;--text2:#2C3E6B;--text3:#7A8BAD;--white:#FFFFFF;
-  --danger:#B91C1C;--success:#15803D;
-  --s1:0 1px 4px rgba(13,27,62,.08);--s2:0 4px 16px rgba(13,27,62,.10);
-  --s3:0 8px 32px rgba(13,27,62,.13);--s4:0 20px 60px rgba(13,27,62,.18);
-  --sgold:0 4px 20px rgba(212,160,23,.30);
+  /* Light: Clean Intelligence */
+  --bg:#F8F9FF;--bg2:#F0F2FF;--surface:#FFFFFF;--border:#E2E5F5;--border2:#A8B4E8;
+  --navy:#0D1B2A;--navy2:#162236;--navy3:#1E3050;--navy-soft:rgba(13,27,42,.06);
+  --indigo:#4F46E5;--indigo2:#6366F1;--indigo3:#818CF8;
+  --gold:#F5A623;--gold2:#FFB74D;--gold3:#FFF3E0;
+  --gold-glow:rgba(245,166,35,.25);
+  --gold-g:linear-gradient(135deg,#E08A00,#F5A623,#FFD080,#F5A623,#E08A00);
+  --gold-gs:linear-gradient(135deg,#E08A00,#F5A623);
+  --navy-g:linear-gradient(135deg,#0D1B2A,#162236,#1E3050);
+  --indigo-g:linear-gradient(135deg,#4F46E5,#6366F1,#818CF8);
+  --text:#0D1B2A;--text2:#374151;--text3:#9CA3AF;--white:#FFFFFF;
+  --danger:#DC2626;--success:#16A34A;--ok:#16A34A;
+  --s1:0 1px 4px rgba(13,27,42,.08);--s2:0 4px 16px rgba(13,27,42,.10);
+  --s3:0 8px 32px rgba(13,27,42,.13);--s4:0 20px 60px rgba(13,27,42,.18);
+  --sgold:0 4px 20px rgba(245,166,35,.30);
+  --sindigo:0 4px 20px rgba(79,70,229,.30);
   --r:14px;--r-sm:10px;--r-xs:6px;--r-lg:20px;--r-xl:28px;--r-full:999px;
   --pad:22px;--max:720px;
 }
 [data-theme="dark"]{
-  --bg:#05080F;--bg2:#080D18;--surface:#0D1424;--border:#162040;--border2:#2A3D6B;
-  --text:#EEF2FF;--text2:#8FA0CC;--text3:#3D5080;--white:#0D1424;
-  --gold:#F0C842;--gold2:#FFD966;--gold3:#2A1E08;
-  --navy-soft:rgba(238,242,255,.04);
-  --s1:0 1px 4px rgba(0,0,0,.5);--s2:0 4px 16px rgba(0,0,0,.5);
-  --s3:0 8px 32px rgba(0,0,0,.5);--s4:0 20px 60px rgba(0,0,0,.6);
+  /* Dark: Deep Space Intelligence */
+  --bg:#080C14;--bg2:#0D1220;--surface:#111827;--border:#1F2937;--border2:#374151;
+  --text:#F9FAFB;--text2:#D1D5DB;--text3:#6B7280;--white:#111827;
+  --indigo:#6366F1;--indigo2:#818CF8;--indigo3:#A5B4FC;
+  --gold:#F5A623;--gold2:#FFB74D;--gold3:#1C1408;
+  --gold-glow:rgba(245,166,35,.20);
+  --indigo-g:linear-gradient(135deg,#4F46E5,#6366F1,#818CF8);
+  --navy-soft:rgba(249,250,251,.04);
+  --s1:0 1px 4px rgba(0,0,0,.6);--s2:0 4px 16px rgba(0,0,0,.6);
+  --s3:0 8px 32px rgba(0,0,0,.7);--s4:0 20px 60px rgba(0,0,0,.8);
+  --sindigo:0 4px 20px rgba(99,102,241,.25);
 }
-html,body{height:100%;overflow:hidden;}
+html,body{font-family:'Sora',sans-serif;height:100%;overflow:hidden;}
 body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(212,160,23,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,rgba(13,27,62,.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(212,160,23,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
 
@@ -523,7 +532,16 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 .micbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
 .micbtn.rec{background:rgba(185,28,28,.07);border-color:var(--danger);color:var(--danger);animation:recpulse 1s infinite;}
 @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.3);}50%{box-shadow:0 0 0 6px rgba(185,28,28,0);}}
-.sendbtn{padding:9px 18px;background:var(--navy-g);border:none;color:#fff;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);transition:all .2s;white-space:nowrap;box-shadow:0 3px 12px rgba(13,27,62,.3);}
+.sendbtn{
+  width:38px;height:38px;border-radius:10px;border:none;
+  background:var(--indigo-g,var(--indigo));
+  color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+  box-shadow:var(--sindigo);
+}
+.sendbtn:hover{transform:scale(1.05);filter:brightness(1.1);}
+.sendbtn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .sendbtn:hover{transform:scale(1.05);box-shadow:0 5px 18px rgba(13,27,62,.4);}
 .sendbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
 .qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:8px 16px;width:100%;}
@@ -947,6 +965,119 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
 /* Greeting and memory bars */
 .greeting-bar{padding:8px 16px;font-size:13px;border-bottom:1px solid var(--bdr);}
 .sub-bar{padding:6px 16px;font-size:12px;border-bottom:1px solid var(--bdr);}
+
+/* ── QVIO PREMIUM UI ── */
+*{font-family:'Sora',sans-serif!important;}
+code,pre{font-family:'JetBrains Mono',monospace!important;}
+
+/* Welcome */
+.welcome{padding:60px 20px 32px;text-align:center;max-width:640px;margin:0 auto;}
+.w-logo-wrap{margin-bottom:20px;}
+.w-icon{
+  width:64px;height:64px;border-radius:18px;
+  background:var(--indigo-g,var(--indigo));
+  color:#fff;font-size:22px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto;
+  box-shadow:var(--sindigo);
+  letter-spacing:-1px;
+}
+.welcome h1{
+  font-size:clamp(28px,5vw,44px);
+  font-weight:800;
+  letter-spacing:-1.5px;
+  margin-bottom:10px;
+  color:var(--text);
+}
+.welcome h1 em{
+  font-style:italic;
+  background:var(--indigo-g,var(--indigo));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.wsub{
+  font-size:15px;
+  color:var(--text3);
+  font-weight:400;
+  margin-bottom:0;
+}
+
+/* Header */
+header{
+  padding:0 24px;height:56px;
+  border-bottom:1px solid var(--border);
+  background:rgba(var(--bg-rgb,248,249,255),.9);
+  backdrop-filter:blur(20px);
+}
+.lname{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+.lmark{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--indigo-g,var(--indigo));
+  color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Mode pill */
+.h-mode-pill{
+  padding:6px 14px;font-size:12px;font-weight:600;
+  border-radius:99px;border:1.5px solid var(--border);
+  background:var(--surface);
+  transition:all .2s;
+}
+.h-mode-pill:hover{border-color:var(--indigo);color:var(--indigo);}
+
+/* Chips */
+.qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 16px;}
+.qr{
+  padding:8px 16px;border-radius:99px;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  color:var(--text2);
+}
+.qr:hover{border-color:var(--indigo);color:var(--indigo);background:rgba(79,70,229,.06);}
+
+/* Pro button */
+.pro-hbtn{
+  padding:6px 14px;font-size:12px;font-weight:700;
+  border-radius:8px;border:none;
+  background:var(--gold-gs,var(--gold));
+  color:#fff;cursor:pointer;
+  transition:all .2s;
+}
+.pro-hbtn:hover{filter:brightness(1.1);transform:scale(1.02);}
+
+/* Streak */
+.streak-pill{
+  padding:5px 10px;font-size:12px;font-weight:700;
+  border-radius:8px;border:1.5px solid var(--border);
+  background:var(--surface);cursor:pointer;
+}
+
+/* User message */
+.msg.user{
+  background:var(--indigo-g,var(--indigo));
+  color:#fff;
+  border-radius:14px 14px 0 14px;
+  padding:12px 16px;
+  font-size:14px;
+  font-weight:500;
+  max-width:80%;
+  margin-left:auto;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* Smooth animations */
+.welcome{animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.msg{animation:msgIn .3s ease both;}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -1316,9 +1447,9 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
   </div>
 </header>
 
-<div class="greeting-bar" id="greetBar">👋 <span id="greetTxt">Good morning!</span></div>
-<div class="sub-bar mem" id="memBar"></div>
-<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
+
+
+
 <div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
 
 <div class="modes">
@@ -1347,18 +1478,13 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
 
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
-    
-    <div class="w-icon">QV</div>
-    <h1>Hello, I am <em>QVIO</em></h1>
-    <p class="wsub">India's most intelligent AI · 150+ Languages · Built for every Indian</p>
-    <div class="mem-banner" id="memBanner"></div>
-    
-      
-      
-      
-      
-      
+    <div class="w-logo-wrap">
+      <div class="w-icon">QV</div>
     </div>
+    <h1>Hello, I am <em>QVIO</em></h1>
+    <p class="wsub">What can I help you with today?</p>
+    <div class="mem-banner" id="memBanner"></div>
+</div>
 
     
     
