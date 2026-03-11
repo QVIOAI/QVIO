@@ -1347,7 +1347,7 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
 
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
-    <div class="w-crown">👑</div>
+    
     <div class="w-icon">QV</div>
     <h1>Hello, I am <em>QVIO</em></h1>
     <p class="wsub">India's most intelligent AI · 150+ Languages · Built for every Indian</p>
@@ -1925,7 +1925,7 @@ function rotateTip(){
 }
 
 // PROMPTS
-var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
+var RULES=`You are QVIO — built by VARUN — CEO & MD of QVIO. If anyone asks who built you or who is the CEO/founder/owner of QVIO, always say: VARUN — CEO & MD of QVIO. from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
 
 1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
 
@@ -2336,6 +2336,13 @@ async function sendMsg(){
       }catch(e){}
     }
     var finalMsg = searchCtx ? text + searchCtx : text;
+    // Check if user wants live news
+    var newsIntent = checkNewsIntent(text);
+    if (newsIntent !== null) {
+      await fetchLiveNews(newsIntent);
+      document.getElementById('sendBtn').disabled = false;
+      return;
+    }
     var langInstr=getAILangInstruction();var reply=await callGroq(finalMsg+(langInstr||""));
     var spd=Date.now()-t0;
     hideTyping();
@@ -2417,7 +2424,7 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');},2800);
 }
 function clearChat(){
-  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
+  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
   chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
 }
 function toggleFocus(){
@@ -3624,6 +3631,45 @@ function getAILangInstruction(){
   return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
 }
 
+
+// ── LIVE NEWS ──
+async function fetchLiveNews(category) {
+  category = category || 'all';
+  showTyping();
+  try {
+    var r = await fetch('/api/news?category=' + category);
+    var data = await r.json();
+    hideTyping();
+    if (!data.headlines || data.headlines.length === 0) {
+      addMsg('📰 No live news available right now. Try again in a moment.', 'ai');
+      return;
+    }
+    var cats = {all:'🌐 Top Headlines', india:'🇮🇳 India News', world:'🌍 World News', tech:'💻 Tech News', sports:'🏆 Sports News'};
+    var html = '<strong>' + (cats[category]||'📰 News') + '</strong><br><br>';
+    data.headlines.forEach(function(h, i) {
+      html += (i+1) + '. ' + h.title + (h.time ? ' <span style="color:var(--text3);font-size:11px;">· ' + h.time + '</span>' : '') + '<br><br>';
+    });
+    html += '<span style="color:var(--text3);font-size:11px;">Live news · Updated just now</span>';
+    addMsg(html, 'ai');
+  } catch(e) {
+    hideTyping();
+    addMsg('📡 Could not fetch news. Check your connection.', 'ai');
+  }
+}
+
+// Detect news requests in sendMsg
+function checkNewsIntent(text) {
+  var t = text.toLowerCase();
+  if (/(news|headline|today.*news|latest.*news|current.*news|what.*happening|breaking)/.test(t)) {
+    var cat = 'all';
+    if (/india|indian|bharat/.test(t)) cat = 'india';
+    else if (/world|global|international/.test(t)) cat = 'world';
+    else if (/tech|technology|ai|startup/.test(t)) cat = 'tech';
+    else if (/sport|cricket|football|ipl|match/.test(t)) cat = 'sports';
+    return cat;
+  }
+  return null;
+}
 </script>
 
 <div class="modal" id="m_mem">
