@@ -469,7 +469,19 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 /* MESSAGES */
 .msg{display:flex;gap:12px;margin-bottom:22px;animation:fadeup .23s cubic-bezier(.22,1,.36,1);max-width:var(--max);margin-left:auto;margin-right:auto;width:100%;}
 @keyframes fadeup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.msg.user{flex-direction:row-reverse;}
+.msg.user{
+  background:linear-gradient(135deg,#4F46E5,#6366F1);
+  color:#fff;
+  border-radius:18px 18px 4px 18px;
+  padding:12px 18px;
+  font-size:14px;
+  font-weight:500;
+  max-width:70%;
+  width:fit-content;
+  margin-left:auto;
+  box-shadow:0 4px 16px rgba(79,70,229,.25);
+  word-break:break-word;
+}
 .av{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;font-weight:700;overflow:hidden;}
 .av.ai{background:var(--gold-gs);color:#fff;box-shadow:0 2px 8px var(--gold-glow);}
 .av.usr{background:var(--navy-g);color:#fff;}
@@ -1058,14 +1070,17 @@ header{
 
 /* User message */
 .msg.user{
-  background:var(--indigo-g,var(--indigo));
+  background:linear-gradient(135deg,#4F46E5,#6366F1);
   color:#fff;
-  border-radius:14px 14px 0 14px;
-  padding:12px 16px;
+  border-radius:18px 18px 4px 18px;
+  padding:12px 18px;
   font-size:14px;
   font-weight:500;
-  max-width:80%;
+  max-width:70%;
+  width:fit-content;
   margin-left:auto;
+  box-shadow:0 4px 16px rgba(79,70,229,.25);
+  word-break:break-word;
 }
 
 /* Scrollbar */
@@ -1213,11 +1228,15 @@ header{
 .msg.user{
   background:linear-gradient(135deg,#4F46E5,#6366F1);
   color:#fff;
-  border-radius:14px 14px 0 14px;
-  padding:12px 16px;
-  font-size:14px;font-weight:500;
-  max-width:80%;margin-left:auto;
+  border-radius:18px 18px 4px 18px;
+  padding:12px 18px;
+  font-size:14px;
+  font-weight:500;
+  max-width:70%;
+  width:fit-content;
+  margin-left:auto;
   box-shadow:0 4px 16px rgba(79,70,229,.25);
+  word-break:break-word;
 }
 
 /* Typing dots */
@@ -2408,7 +2427,11 @@ function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 es
 // CHAT CORE
 function hideWelcome(){
   var w=document.getElementById('welcome');
-  if(w){w.style.opacity='0';w.style.transition='opacity .25s';setTimeout(function(){w&&w.remove();},250);}
+  if(w&&w.style.display!=='none'){
+    w.style.opacity='0';
+    w.style.transition='opacity .3s';
+    setTimeout(function(){w.style.display='none';},300);
+  }
 }
 function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
