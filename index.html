@@ -1886,8 +1886,14 @@ initFirebase();
 // GLOBALS
 // ═══════════════════════════════
 // 🔑 API Key Rotation — auto-switches when one hits rate limit
-// Key secured on backend ✅
-var _qk=[];var _keyIdx=0;var _qc="";function rotateKey(){return false;}
+var _qk=[(function(){var _e=atob('NiI6DjY3EDo/aRRgNggmJmM3AhY2AQZgBhY1KDNiFwgJAGkEMhY+IhQ4OhspNT4IZjswMGQEFRM='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
+var _keyIdx=0;
+var _qc=_qk[0];
+function rotateKey(){
+  _keyIdx=(_keyIdx+1)%_qk.length;
+  _qc=_qk[_keyIdx];
+  return _keyIdx!==0; // returns false if we've looped back to start
+}
 var MODEL=(function(){var _e=atob('PT0wPDB8Yn9ifGZhM3wnNCMiMCU4PTQ='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})();
 var mode='casual',chatHistory=[],currentUser=null,isRec=false,recog=null;
 var isFocus=false,pinnedEl=null,deferredPrompt=null,calcExpr='',lastMsg='';
@@ -2567,26 +2573,25 @@ async function callGroq(msg){
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  var BACKEND='/api/chat';
-  var res;
-  try{
-    res=await fetch(BACKEND,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
-    });
-  }catch(fetchErr){
-    throw new Error('fetch failed: '+fetchErr.message);
+  var res=await fetch('/api/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',},
+    body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
+  });
+  var data=await res.json();
+  console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
+  if(data.error){
+    var msg2=data.error.message||JSON.stringify(data.error);
+    // Auto-rotate key on rate limit (429) and retry once
+    if((res.status===429||msg2.indexOf('rate')>-1)&&GROQ_KEYS.length>1){
+      if(rotateKey()){
+        console.log('Key rotated to index',_keyIdx,', retrying...');
+        return callGroq(msg);
+      }
+    }
+    throw new Error('API '+res.status+': '+msg2);
   }
-  var data;
-  try{data=await res.json();}catch(e){throw new Error('Bad server response '+res.status);}
-  if(!res.ok){
-    var em=data.error||('API '+res.status);
-    if(res.status===429)throw new Error('rate limit');
-    if(res.status===401||res.status===403)throw new Error('auth/unauthorized');
-    throw new Error(em);
-  }
-  if(!data.choices||!data.choices[0])throw new Error('Empty response');
+  if(!data.choices||!data.choices[0])throw new Error('Empty response: '+JSON.stringify(data).substring(0,100));
   return data.choices[0].message.content;
 }
 
@@ -3485,7 +3490,7 @@ async function analyseLens(){
 
   var prompt=LENS_PROMPTS[lensMode]||LENS_PROMPTS.identify;
   try{
-    var res=await fetch('/api/vision',{
+    var res=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json',},
       body:JSON.stringify({
@@ -3683,7 +3688,7 @@ function revealNamasteText(name){
 // ── API Key Health Check ──
 // Runs once on load — shows a warning toast if key is invalid/expired
 setTimeout(function(){
-  fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})().replace('/chat/completions','/models'),{
+  fetch('/api/chat'.replace('/chat/completions','/models'),{
     headers:{}
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error){
