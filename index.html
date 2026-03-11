@@ -470,17 +470,8 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 .msg{display:flex;gap:12px;margin-bottom:22px;animation:fadeup .23s cubic-bezier(.22,1,.36,1);max-width:var(--max);margin-left:auto;margin-right:auto;width:100%;}
 @keyframes fadeup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .msg.user{
-  background:linear-gradient(135deg,#4F46E5,#6366F1);
-  color:#fff;
-  border-radius:18px 18px 4px 18px;
-  padding:12px 18px;
-  font-size:14px;
-  font-weight:500;
-  max-width:70%;
-  width:fit-content;
-  margin-left:auto;
-  box-shadow:0 4px 16px rgba(79,70,229,.25);
-  word-break:break-word;
+  flex-direction:row-reverse;
+  justify-content:flex-start;
 }
 .av{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;font-weight:700;overflow:hidden;}
 .av.ai{background:var(--gold-gs);color:#fff;box-shadow:0 2px 8px var(--gold-glow);}
@@ -1070,17 +1061,8 @@ header{
 
 /* User message */
 .msg.user{
-  background:linear-gradient(135deg,#4F46E5,#6366F1);
-  color:#fff;
-  border-radius:18px 18px 4px 18px;
-  padding:12px 18px;
-  font-size:14px;
-  font-weight:500;
-  max-width:70%;
-  width:fit-content;
-  margin-left:auto;
-  box-shadow:0 4px 16px rgba(79,70,229,.25);
-  word-break:break-word;
+  flex-direction:row-reverse;
+  justify-content:flex-start;
 }
 
 /* Scrollbar */
@@ -1226,17 +1208,8 @@ header{
   font-size:14.5px;
 }
 .msg.user{
-  background:linear-gradient(135deg,#4F46E5,#6366F1);
-  color:#fff;
-  border-radius:18px 18px 4px 18px;
-  padding:12px 18px;
-  font-size:14px;
-  font-weight:500;
-  max-width:70%;
-  width:fit-content;
-  margin-left:auto;
-  box-shadow:0 4px 16px rgba(79,70,229,.25);
-  word-break:break-word;
+  flex-direction:row-reverse;
+  justify-content:flex-start;
 }
 
 /* Typing dots */
@@ -1254,6 +1227,35 @@ header{
 /* Msg animation */
 .msg{animation:msgIn .3s cubic-bezier(.16,1,.3,1) both;}
 @keyframes msgIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.msg.user .bubble{
+  background:linear-gradient(135deg,#4F46E5,#6366F1);
+  color:#fff;
+  border-radius:18px 18px 4px 18px;
+  padding:12px 18px;
+  font-size:14px;
+  font-weight:500;
+  max-width:100%;
+  width:fit-content;
+  box-shadow:0 4px 16px rgba(79,70,229,.25);
+  word-break:break-word;
+  white-space:pre-wrap;
+}
+.msg.user .av{
+  background:linear-gradient(135deg,#4F46E5,#818CF8);
+  color:#fff;
+  font-size:11px;
+}
+.msg.ai .bubble{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid #4F46E5;
+  border-radius:4px 18px 18px 18px;
+  padding:16px 18px;
+  line-height:1.8;
+  font-size:14.5px;
+  word-break:break-word;
+}
 </style>
 </head>
 <body>
