@@ -1256,6 +1256,9 @@ header{
   font-size:14.5px;
   word-break:break-word;
 }
+
+#welcome{transition:none;}
+#welcome.hidden{display:none!important;}
 </style>
 </head>
 <body>
@@ -2429,11 +2432,7 @@ function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 es
 // CHAT CORE
 function hideWelcome(){
   var w=document.getElementById('welcome');
-  if(w&&w.style.display!=='none'){
-    w.style.opacity='0';
-    w.style.transition='opacity .3s';
-    setTimeout(function(){w.style.display='none';},300);
-  }
+  if(w){w.style.display='none';}
 }
 function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
