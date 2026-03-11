@@ -2292,14 +2292,13 @@ function getMemCtx(){
   return '\n\n[USER MEMORY: '+(n?'Name: '+n+'. ':'')+f.join('. ')+']';
 }
 function updateMemUI(){
+  var bar=document.getElementById('memBar')||null;
+  var ban=document.getElementById('memBanner')||null;
   var n=memory.name||'',f=memory.facts||[];
   if(n||f.length){
     var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';
     if(bar){bar.textContent=t;bar.classList.add('show');}
     if(ban){ban.textContent=t;ban.classList.add('show');}
-  }else{
-    if(bar)bar.classList.remove('show');
-    if(ban)ban.classList.remove('show');
   }
 }
 function renderMemList(){
@@ -2387,7 +2386,7 @@ function setMode(m,btn,label){
   document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
   btn.classList.add('on');
   document.getElementById('modeLabel').textContent=label;
-  document.getElementById('examBar').classList.toggle('show',m==='exam');
+  (document.getElementById('examBar')||{}).classList.toggle('show',m==='exam');
 }
 
 // MODALS
@@ -2958,7 +2957,7 @@ function setSmartGreeting(){
   var msg='👋 Welcome'+nm+'!';
   greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
   document.getElementById('greetTxt').textContent=msg;
-  document.getElementById('greetBar').classList.add('show');
+  (document.getElementById('greetBar')||{}).classList.add('show');
 }
 
 // CHALLENGES
