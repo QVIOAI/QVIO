@@ -1,73 +1,4036 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QVIO — India's Premium AI</title>
+<meta name="description" content="QVIO - India's most premium AI. 150+ languages. Built for every Indian.">
+<meta name="theme-color" content="#FFFEF9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
 
-  try {
-    const { messages } = req.body;
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: 'Invalid request' });
-    }
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script>
+function filterLangs(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#m_lang .lang-pill');
+  var sections=document.querySelectorAll('#m_lang .lang-section');
+  var noRes=document.getElementById('langNoResults');
+  var any=false;
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)any=true;
+  });
+  if(sections){sections.forEach(function(s){
+    var vis=s.querySelectorAll('.lang-pill:not(.hidden)').length>0;
+    s.style.display=(vis||!q)?'':'none';
+  });}
+  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
+}
 
-    // Build keys array from all 60 env variables
-    const keys = [
-      process.env.GROQ_API_KEY,
-      ...Array.from({length: 59}, (_, i) => process.env[`GROQ_KEY_${i + 2}`])
-    ].filter(Boolean); // remove undefined/empty
 
-    if (keys.length === 0) {
-      return res.status(500).json({ error: 'No API keys configured' });
-    }
+// ═══════════════════════════════
+// QVIO VOICE — HEY QVIO WAKE WORD
+// ═══════════════════════════════
+var wakeRecog=null;
+var wakeActive=false;
+var heyQvioEnabled=false;
 
-    // Try each key until one works
-    let lastError = null;
-    for (let i = 0; i < keys.length; i++) {
-      try {
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${keys[i]}`
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages,
-            temperature: 0.82,
-            max_tokens: 2048
-          })
-        });
+function startHeyQvio(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Hey QVIO needs Chrome or Edge!');return;}
+  heyQvioEnabled=true;
+  listenForWakeWord();
+  showToast('👂 Hey QVIO is active!');
+  var btn=document.getElementById('heyQvioBtn');
+  if(btn){btn.textContent='👂 Listening...';btn.style.background='linear-gradient(135deg,#1a6b3a,#27ae60)';}
+}
 
-        const data = await groqRes.json();
+function stopHeyQvio(){
+  heyQvioEnabled=false;
+  if(wakeRecog){try{wakeRecog.stop();}catch(e){}}
+  wakeRecog=null;
+  showToast('Hey QVIO disabled');
+  var btn=document.getElementById('heyQvioBtn');
+  if(btn){btn.textContent='🎤 Hey QVIO';btn.style.background='';}
+}
 
-        // If rate limited or key dead, try next key
-        if (groqRes.status === 429 || groqRes.status === 401) {
-          console.log(`Key ${i + 1} failed (${groqRes.status}), trying next...`);
-          lastError = data.error?.message || `Key ${i+1} failed`;
-          continue;
+function toggleHeyQvio(){
+  if(heyQvioEnabled){stopHeyQvio();}
+  else{startHeyQvio();}
+}
+
+function listenForWakeWord(){
+  if(!heyQvioEnabled)return;
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    wakeRecog=new SR();
+    wakeRecog.continuous=false;
+    wakeRecog.interimResults=false;
+    wakeRecog.lang='en-IN';
+    wakeRecog.maxAlternatives=5;
+
+    wakeRecog.onresult=function(e){
+      for(var i=0;i<e.results.length;i++){
+        for(var j=0;j<e.results[i].length;j++){
+          var t=e.results[i][j].transcript.toLowerCase().trim();
+          // Check for wake words
+          if(t.indexOf('hey qvio')>-1||t.indexOf('hi qvio')>-1||
+             t.indexOf('okay qvio')>-1||t.indexOf('ok qvio')>-1||
+             t.indexOf('hey kvio')>-1||t.indexOf('hey quio')>-1){
+            // Wake word detected!
+            activateQvioVoice();
+            return;
+          }
         }
-
-        if (!groqRes.ok) {
-          lastError = data.error?.message || 'Groq error';
-          continue;
-        }
-
-        // Success!
-        return res.status(200).json(data);
-
-      } catch (err) {
-        console.log(`Key ${i + 1} threw error: ${err.message}`);
-        lastError = err.message;
-        continue;
       }
-    }
+      // Not a wake word - keep listening
+      if(heyQvioEnabled)setTimeout(listenForWakeWord,100);
+    };
 
-    // All keys failed
-    return res.status(429).json({ error: 'All keys exhausted: ' + lastError });
+    wakeRecog.onerror=function(e){
+      if(e.error==='not-allowed'){
+        heyQvioEnabled=false;
+        showToast('Mic permission denied!');
+        return;
+      }
+      // Restart on other errors
+      if(heyQvioEnabled)setTimeout(listenForWakeWord,1000);
+    };
 
-  } catch (err) {
-    console.error('Handler error:', err.message);
-    return res.status(500).json({ error: err.message });
+    wakeRecog.onend=function(){
+      // Keep listening if still enabled and not in active voice mode
+      if(heyQvioEnabled&&!isRec)setTimeout(listenForWakeWord,200);
+    };
+
+    wakeRecog.start();
+  }catch(e){
+    if(heyQvioEnabled)setTimeout(listenForWakeWord,2000);
   }
 }
+
+function activateQvioVoice(){
+  // Wake word heard! Now listen for actual command
+  showToast('✨ QVIO is listening!');
+  // Visual feedback on mic button
+  var mb=document.getElementById('micBtn');
+  if(mb){mb.style.transform='scale(1.3)';setTimeout(function(){mb.style.transform='';},300);}
+  // Start main recognition
+  setTimeout(function(){
+    toggleMic();
+    // Resume wake word after mic done
+    setTimeout(function(){
+      if(heyQvioEnabled&&!isRec)listenForWakeWord();
+    },5000);
+  },200);
+}
+
+
+// ═══════════════════════════════
+
+
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --bg:#FFFEF9;--bg2:#FFFBF0;--surface:#FDF8EE;--border:#EDE3C8;--border2:#C8A84B;
+  --navy:#0D1B3E;--navy2:#162554;--navy3:#1E336A;--navy-soft:rgba(13,27,62,.06);
+  --gold:#B8860B;--gold2:#D4A017;--gold3:#F0C842;
+  --gold-glow:rgba(212,160,23,.25);
+  --gold-g:linear-gradient(135deg,#8B6914,#D4A017,#F0C842,#D4A017,#8B6914);
+  --gold-gs:linear-gradient(135deg,#8B6914,#C8920E);
+  --navy-g:linear-gradient(135deg,#0D1B3E,#162554,#1E336A);
+  --text:#0D1B3E;--text2:#2C3E6B;--text3:#7A8BAD;--white:#FFFFFF;
+  --danger:#B91C1C;--success:#15803D;
+  --s1:0 1px 4px rgba(13,27,62,.08);--s2:0 4px 16px rgba(13,27,62,.10);
+  --s3:0 8px 32px rgba(13,27,62,.13);--s4:0 20px 60px rgba(13,27,62,.18);
+  --sgold:0 4px 20px rgba(212,160,23,.30);
+  --r:14px;--r-sm:10px;--r-xs:6px;--r-lg:20px;--r-xl:28px;--r-full:999px;
+  --pad:22px;--max:720px;
+}
+[data-theme="dark"]{
+  --bg:#05080F;--bg2:#080D18;--surface:#0D1424;--border:#162040;--border2:#2A3D6B;
+  --text:#EEF2FF;--text2:#8FA0CC;--text3:#3D5080;--white:#0D1424;
+  --gold:#F0C842;--gold2:#FFD966;--gold3:#2A1E08;
+  --navy-soft:rgba(238,242,255,.04);
+  --s1:0 1px 4px rgba(0,0,0,.5);--s2:0 4px 16px rgba(0,0,0,.5);
+  --s3:0 8px 32px rgba(0,0,0,.5);--s4:0 20px 60px rgba(0,0,0,.6);
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(212,160,23,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,rgba(13,27,62,.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(212,160,23,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+#particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.ptc{position:absolute;border-radius:50%;animation:ptcFloat linear infinite;}
+@keyframes ptcFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg);}15%{opacity:1;}85%{opacity:.5;}100%{opacity:0;transform:translateY(-10vh) scale(1) rotate(360deg);}}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--navy);color:#fff;padding:10px 24px;border-radius:var(--r-full);font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);pointer-events:none;white-space:nowrap;box-shadow:var(--s3);border:1px solid var(--navy3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.confetti{position:fixed;top:-10px;pointer-events:none;z-index:9999;animation:cffall cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes cffall{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0);}10%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(105vh) rotate(720deg) scale(.5);}}
+
+/* NAMASTE */
+/* ═══════════════════════════════════════════════
+   NAMASTE SCREEN
+═══════════════════════════════════════════════ */
+#namasteScreen{
+  position:fixed;inset:0;z-index:9500;
+  background:#000;display:none;
+  align-items:center;justify-content:center;flex-direction:column;
+  overflow:hidden;
+}
+#namasteScreen.show{display:flex;}
+.ns-bg-canvas{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(212,140,0,0.13) 0%,rgba(5,8,20,1) 70%,#000 100%);}
+.ns-bg-canvas::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(-60deg,rgba(212,160,23,.018) 0px,rgba(212,160,23,.018) 1px,transparent 1px,transparent 30px);}
+.ns-scanline{display:none;}
+.ns-hex-grid{display:none;}
+.ns-bracket{position:absolute;width:28px;height:28px;z-index:4;opacity:0;animation:nsSlideUp .4s ease .3s both;}
+.ns-bracket::before,.ns-bracket::after{content:'';position:absolute;background:rgba(212,160,23,.7);}
+.ns-bracket::before{width:2px;height:100%;}
+.ns-bracket::after{width:100%;height:2px;}
+.ns-br-tl{top:10px;left:10px;}
+.ns-br-tr{top:10px;right:10px;transform:scaleX(-1);}
+.ns-br-bl{bottom:10px;left:10px;transform:scaleY(-1);}
+.ns-br-br{bottom:10px;right:10px;transform:scale(-1);}
+
+/* Namaste SVG wrap */
+.ns-namaste-wrap{
+  position:relative;z-index:2;
+  animation:nsHandsIn .7s cubic-bezier(.22,1,.36,1) .1s both;
+}
+@keyframes nsHandsIn{
+  from{opacity:0;transform:scale(0.6) translateY(30px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+.ns-emoji-hi{
+  font-size:clamp(80px,18vw,120px);
+  animation:nsHandsIn .6s cubic-bezier(.22,1,.36,1) .1s both, nsWave 2s ease 1s infinite;
+  filter:drop-shadow(0 0 30px rgba(212,140,0,.5));
+  display:block;text-align:center;line-height:1;
+}
+@keyframes nsWave{
+  0%,100%{transform:rotate(-8deg);}
+  50%{transform:rotate(8deg);}
+}
+
+.ns-text-wrap{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  margin-top:10px;
+}
+.ns-greeting{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(34px,7vw,64px);font-weight:600;
+  color:#fff;text-align:center;letter-spacing:6px;
+  text-shadow:0 0 40px rgba(212,160,23,.6);
+}
+.ns-deva{
+  font-family:"Cormorant Garamond",serif;
+  font-size:clamp(14px,2.8vw,22px);
+  background:linear-gradient(135deg,#D4A017,#F5C842);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:6px;opacity:0;animation:nsSlideUp .6s ease both;
+  margin-bottom:4px;display:block;text-align:center;
+}
+.ns-greeting .ns-char{
+  display:inline-block;opacity:0;
+  animation:nsCharIn .45s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes nsCharIn{
+  from{opacity:0;transform:translateY(-24px) rotateX(-80deg);filter:blur(5px);}
+  to{opacity:1;transform:none;filter:none;}
+}
+.ns-username{
+  font-family:"DM Sans",sans-serif;font-size:clamp(11px,2.2vw,16px);
+  font-weight:300;color:rgba(255,255,255,.6);
+  letter-spacing:7px;text-transform:uppercase;text-align:center;
+  margin-top:7px;opacity:0;animation:nsSlideUp .6s ease 1.4s both;
+}
+.ns-username strong{
+  background:linear-gradient(135deg,#D4A017,#F5C842);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-weight:700;
+}
+.ns-divider{
+  width:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,160,23,.8),transparent);
+  margin:14px auto;animation:nsDivider .8s ease 1.8s both;
+}
+@keyframes nsDivider{to{width:220px;}}
+.ns-status{
+  font-family:"DM Mono",monospace;font-size:11px;
+  color:rgba(212,160,23,.7);letter-spacing:2px;text-transform:uppercase;
+  text-align:center;opacity:0;animation:nsSlideUp .5s ease 2.1s both;
+}
+.ns-status-dot{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#22C55E;margin-right:8px;box-shadow:0 0 8px #22C55E;
+  animation:nsDotBlink .9s ease-in-out 2.4s infinite;
+}
+@keyframes nsDotBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ns-progress-wrap{
+  width:240px;height:2px;background:rgba(255,255,255,.07);
+  border-radius:99px;overflow:hidden;margin-top:24px;
+  opacity:0;animation:nsSlideUp .5s ease 2.3s both;
+}
+.ns-progress-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,rgba(212,160,23,.4),rgba(212,160,23,1),#fff);
+  border-radius:99px;box-shadow:0 0 8px rgba(212,160,23,.6);
+  animation:nsProgFill 1.4s cubic-bezier(.22,1,.36,1) 2.5s forwards;
+}
+@keyframes nsProgFill{to{width:100%;}}
+.ns-percent{
+  font-family:"DM Mono",monospace;font-size:10px;
+  color:rgba(212,160,23,.5);letter-spacing:2px;
+  margin-top:6px;text-align:center;
+  opacity:0;animation:nsSlideUp .4s ease 2.5s both;
+}
+.ns-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:10;}
+#namasteScreen.exiting .ns-flash{animation:nsFlash .4s ease forwards;}
+@keyframes nsFlash{0%{opacity:0;}30%{opacity:.5;}100%{opacity:0;}}
+@keyframes nsSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+#loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
+.lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
+@keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
+.l-crown{font-size:36px;margin-bottom:10px;animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.l-mark{width:62px;height:62px;background:var(--gold-gs);border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:15px;color:#fff;font-weight:700;margin-bottom:22px;box-shadow:0 6px 24px var(--gold-glow);}
+.l-h1{font-family:"Cormorant Garamond",serif;font-size:40px;font-weight:600;color:var(--navy);text-align:center;margin-bottom:10px;line-height:1.1;}
+.l-h1 em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+[data-theme="dark"] .l-h1{color:var(--text);}
+.l-p{font-size:14px;color:var(--text3);text-align:center;line-height:1.65;margin-bottom:36px;max-width:300px;}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:15px 20px;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r);font-size:14px;font-weight:600;color:var(--navy);cursor:pointer;transition:all .22s;font-family:"DM Sans",sans-serif;box-shadow:var(--s2);margin-bottom:16px;}
+.gbtn:hover{border-color:var(--gold2);box-shadow:var(--sgold);transform:translateY(-2px);}
+.gicon{width:20px;height:20px;}
+.l-or{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:16px;}
+.l-or span{font-size:12px;color:var(--text3);}
+.l-or::before,.l-or::after{content:'';flex:1;height:1px;background:var(--border);}
+.lf{width:100%;padding:13px 16px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:10px;transition:all .2s;}
+.lf:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(212,160,23,.12);}
+.lbtn{width:100%;padding:14px;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-bottom:10px;transition:all .22s;letter-spacing:.2px;}
+.lbtn.main{background:var(--navy-g);color:#fff;box-shadow:0 4px 16px rgba(13,27,62,.3);}
+.lbtn.main:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,27,62,.4);}
+.lbtn.ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border);}
+.lbtn.ghost:hover{border-color:var(--gold2);color:var(--gold);}
+.l-skip{font-size:13px;color:var(--text3);cursor:pointer;margin-top:16px;text-align:center;transition:color .15s;}
+.l-skip:hover{color:var(--gold);}
+.l-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.l-badge{font-size:11px;color:var(--text3);background:var(--surface);padding:5px 12px;border-radius:var(--r-full);border:1px solid var(--border);}
+
+/* BARS */
+.off-bar{background:var(--danger);color:#fff;text-align:center;padding:7px;font-size:12px;font-weight:600;display:none;flex-shrink:0;}
+.off-bar.show{display:block;}
+.inst-bar{background:linear-gradient(90deg,var(--navy-soft),transparent);border-bottom:1px solid var(--border);padding:8px var(--pad);font-size:12px;color:var(--navy);display:none;align-items:center;gap:10px;flex-shrink:0;justify-content:space-between;}
+.inst-bar.show{display:flex;}
+.inst-bar button{background:var(--navy-g);color:#fff;border:none;padding:5px 14px;border-radius:var(--r-xs);font-size:11.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.idism{background:transparent!important;color:var(--text3)!important;font-size:18px!important;padding:0 4px!important;}
+
+/* ─── HEADER (clean 3-zone) ─── */
+header{
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;padding:0 var(--pad);height:56px;
+  flex-shrink:0;gap:10px;
+  background:rgba(255,254,249,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
+}
+[data-theme="dark"] header{background:rgba(5,8,15,.96);}
+header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.35;}
+.logo{display:flex;align-items:center;gap:9px;cursor:pointer;text-decoration:none;flex-shrink:0;}
+.lmark{width:32px;height:32px;background:var(--gold-gs);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:9px;color:#fff;font-weight:700;box-shadow:0 2px 8px var(--gold-glow);transition:transform .2s;}
+.logo:hover .lmark{transform:rotate(-8deg) scale(1.1);}
+.lname{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;color:var(--navy);}
+[data-theme="dark"] .lname{color:var(--text);}
+.lname em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ltag{font-size:9px;color:var(--text3);background:var(--navy-soft);border:1px solid var(--border);padding:2px 8px;border-radius:var(--r-full);display:none;}
+@media(min-width:440px){.ltag{display:inline-block;}}
+/* Mode pill (center) */
+.h-mode-wrap{display:flex;justify-content:center;}
+.h-mode-pill{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);padding:7px 16px;border-radius:var(--r-full);cursor:pointer;transition:all .2s;font-size:12.5px;font-weight:600;color:var(--text2);white-space:nowrap;max-width:170px;overflow:hidden;}
+.h-mode-pill:hover{border-color:var(--border2);color:var(--navy);}
+[data-theme="dark"] .h-mode-pill:hover{color:var(--gold2);}
+.h-mode-pill .sdot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:sdpulse 2s infinite;flex-shrink:0;}
+@keyframes sdpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(21,128,61,.4);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(21,128,61,0);}}
+.h-mode-pill span.mlabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Right actions */
+.h-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.streak-pill{display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#FF6B35,#F59E0B);color:#fff;padding:5px 11px;border-radius:var(--r-full);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(255,107,53,.3);transition:transform .15s;flex-shrink:0;}
+.streak-pill:hover{transform:scale(1.05);}
+.hico{width:36px;height:36px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .17s;flex-shrink:0;}
+.hico:hover{background:var(--navy-soft);border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .hico:hover{color:var(--gold2);border-color:var(--border2);}
+.hico.active{background:var(--navy-g);border-color:transparent;color:#fff;}
+.pro-hbtn{padding:0 12px;height:36px;border-radius:10px;background:var(--gold-gs);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:opacity .15s;flex-shrink:0;}
+.pro-hbtn:hover{opacity:.88;}
+.uchip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);padding:4px 10px 4px 4px;border-radius:var(--r-full);cursor:pointer;transition:all .17s;flex-shrink:0;}
+.uchip:hover{border-color:var(--border2);}
+.uav{width:26px;height:26px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.uav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.unm{font-size:12px;font-weight:600;color:var(--text);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none;}
+@media(min-width:500px){.unm{display:block;}}
+/* Tools panel */
+.tools-panel{position:fixed;top:64px;right:10px;width:296px;background:var(--white);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--s4);z-index:200;padding:16px;display:none;animation:tpIn .2s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .tools-panel{background:var(--bg2);}
+.tools-panel.show{display:block;}
+.tools-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:20px 20px 0 0;}
+@keyframes tpIn{from{opacity:0;transform:scale(.92) translateY(-8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.tp-sect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:0 0 8px;}
+.tp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px;}
+.tp-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+.tp-btn:hover{background:var(--navy-soft);border-color:var(--navy3);}
+[data-theme="dark"] .tp-btn:hover{border-color:var(--border2);}
+.tp-ico{font-size:19px;line-height:1;}
+.tp-lbl{font-size:9px;color:var(--text3);font-weight:600;}
+.tp-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.tp-act{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--text2);}
+.tp-act:hover{background:var(--navy-soft);border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .tp-act:hover{border-color:var(--border2);color:var(--gold2);}
+.tp-overlay{position:fixed;inset:0;z-index:199;display:none;}
+.tp-overlay.show{display:block;}
+/* Modes drawer */
+.modes-drawer{position:fixed;top:64px;left:50%;transform:translateX(-50%);width:min(500px,95vw);background:var(--white);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--s4);z-index:200;padding:18px;display:none;animation:tpIn .2s cubic-bezier(.22,1,.36,1);max-height:80vh;overflow-y:auto;}
+[data-theme="dark"] .modes-drawer{background:var(--bg2);}
+.modes-drawer.show{display:block;}
+.modes-drawer::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:20px 20px 0 0;}
+.md-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;}
+.md-pills{display:flex;flex-wrap:wrap;gap:7px;}
+.md-pill{padding:7px 15px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap;transition:all .17s;font-family:"DM Sans",sans-serif;}
+.md-pill:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
+[data-theme="dark"] .md-pill:hover{color:var(--gold2);}
+.md-pill.on{background:var(--navy-g);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(13,27,62,.2);}
+.md-overlay{position:fixed;inset:0;z-index:199;display:none;}
+.md-overlay.show{display:block;}
+
+/* MODES BAR - hidden, kept for JS compatibility */
+.modes{display:none;}
+.mbtn{padding:6px 14px;border:1px solid transparent;background:transparent;color:var(--text3);border-radius:var(--r-sm);cursor:pointer;font-size:12.5px;font-family:"DM Sans",sans-serif;font-weight:500;white-space:nowrap;transition:all .17s;flex-shrink:0;}
+.mbtn.on{background:var(--navy-g);color:#fff;}
+
+/* SUB BARS */
+.sub-bar{border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;font-weight:600;display:none;align-items:center;gap:8px;flex-shrink:0;}
+.sub-bar.show{display:flex;}
+.sub-bar.mem{background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);color:var(--gold);}
+.sub-bar.exam{background:linear-gradient(90deg,rgba(124,58,237,.06),transparent);color:#7C3AED;}
+.pinned-bar{background:linear-gradient(90deg,rgba(212,160,23,.06),transparent);border-bottom:1px solid var(--border);padding:7px var(--pad);font-size:12px;color:var(--gold);display:none;align-items:center;gap:8px;flex-shrink:0;cursor:pointer;font-weight:600;}
+.pinned-bar.show{display:flex;}
+.type-bar{background:linear-gradient(90deg,var(--navy-soft),transparent);border-bottom:1px solid var(--border);padding:5px var(--pad);font-size:11px;color:var(--text3);display:none;align-items:center;gap:8px;flex-shrink:0;}
+.type-bar.show{display:flex;}
+.tdots span{width:4px;height:4px;border-radius:50%;background:var(--gold2);display:inline-block;margin:0 1px;animation:td 1s infinite;}
+.tdots span:nth-child(2){animation-delay:.18s;}
+.tdots span:nth-child(3){animation-delay:.36s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+.greeting-bar{padding:6px var(--pad);font-size:12.5px;color:var(--gold);background:linear-gradient(90deg,rgba(212,160,23,.07),transparent);border-bottom:1px solid var(--border);display:none;align-items:center;gap:8px;flex-shrink:0;font-weight:500;}
+.greeting-bar.show{display:flex;}
+
+/* CHAT */
+.chat{flex:1;overflow-y:auto;padding:28px var(--pad);scrollbar-width:thin;scrollbar-color:var(--border) transparent;position:relative;z-index:2;}
+.chat::-webkit-scrollbar{width:3px;}
+.chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* WELCOME */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;gap:16px;max-width:var(--max);margin:0 auto;padding:20px;}
+.w-crown{font-size:34px;animation:float 4.5s ease-in-out infinite;}
+.w-icon{width:64px;height:64px;background:var(--gold-gs);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:16px;color:#fff;font-weight:700;box-shadow:0 8px 28px var(--gold-glow);animation:float 5s ease-in-out infinite;}
+.w-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy-soft);border:1px solid var(--navy3);padding:5px 16px;border-radius:var(--r-full);font-size:11.5px;color:var(--navy);font-weight:600;}
+[data-theme="dark"] .w-badge{border-color:var(--border2);color:var(--gold2);}
+.welcome h1{font-family:"Cormorant Garamond",serif;font-size:clamp(28px,5vw,46px);font-weight:600;letter-spacing:-.3px;line-height:1.12;color:var(--navy);max-width:520px;}
+[data-theme="dark"] .welcome h1{color:var(--text);}
+.welcome h1 em{font-style:italic;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.wsub{font-size:15px;color:var(--text2);line-height:1.65;max-width:380px;}
+.tip-box{font-size:13px;color:var(--text2);background:var(--surface);border:1px solid var(--border);padding:11px 18px;border-radius:var(--r-sm);max-width:480px;width:100%;transition:opacity .4s;border-left:3px solid var(--gold2);}
+.mem-banner{background:linear-gradient(135deg,rgba(13,27,62,.06),rgba(212,160,23,.05));border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 16px;font-size:13px;color:var(--navy);font-weight:600;display:none;align-items:center;gap:8px;width:100%;max-width:480px;text-align:left;}
+[data-theme="dark"] .mem-banner{color:var(--gold2);}
+.mem-banner.show{display:flex;}
+.challenge{background:linear-gradient(135deg,rgba(124,58,237,.07),rgba(219,39,119,.04));border:1px solid rgba(124,58,237,.18);border-radius:var(--r);padding:13px 18px;font-size:13px;color:#6D28D9;font-weight:600;max-width:480px;width:100%;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
+.challenge:hover{transform:translateY(-2px);background:rgba(124,58,237,.1);}
+.sugs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:580px;}
+.sug{background:var(--white);border:1px solid var(--border);padding:17px 18px;border-radius:var(--r-lg);cursor:pointer;text-align:left;transition:all .22s;font-family:"DM Sans",sans-serif;box-shadow:var(--s1);position:relative;overflow:hidden;}
+.sug::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold-g);transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+.sug:hover{border-color:var(--border2);box-shadow:var(--s3);transform:translateY(-3px);}
+.sug:hover::after{transform:scaleX(1);}
+.si{font-size:22px;margin-bottom:8px;display:block;}
+.st{font-size:13px;font-weight:700;color:var(--navy);display:block;margin-bottom:3px;}
+[data-theme="dark"] .st{color:var(--text);}
+.sd2{font-size:11.5px;color:var(--text3);display:block;}
+
+/* MESSAGES */
+.msg{display:flex;gap:12px;margin-bottom:22px;animation:fadeup .23s cubic-bezier(.22,1,.36,1);max-width:var(--max);margin-left:auto;margin-right:auto;width:100%;}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{flex-direction:row-reverse;}
+.av{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:10px;font-weight:700;overflow:hidden;}
+.av.ai{background:var(--gold-gs);color:#fff;box-shadow:0 2px 8px var(--gold-glow);}
+.av.usr{background:var(--navy-g);color:#fff;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
+.mwrap{max-width:calc(100% - 46px);display:flex;flex-direction:column;}
+.msg.user .mwrap{align-items:flex-end;}
+.bubble{padding:13px 17px;font-size:14.5px;line-height:1.75;border-radius:var(--r);position:relative;word-break:break-word;}
+.msg.ai .bubble{background:var(--white);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);box-shadow:var(--s1);border-left:3px solid var(--gold3);}
+[data-theme="dark"] .msg.ai .bubble{background:var(--bg2);}
+.msg.user .bubble{background:var(--navy-g);color:#EEF2FF;border-radius:var(--r) 3px var(--r) var(--r);box-shadow:0 4px 14px rgba(13,27,62,.25);}
+.cpbtn{position:absolute;top:9px;right:9px;background:var(--bg);border:1px solid var(--border);color:var(--text3);padding:2px 8px;border-radius:5px;font-size:9px;cursor:pointer;opacity:0;transition:opacity .15s;font-family:"DM Sans",sans-serif;}
+.bubble:hover .cpbtn{opacity:1;}
+.mmeta{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.msg.user .mmeta{justify-content:flex-end;}
+.act{background:transparent;border:none;cursor:pointer;padding:4px 8px;border-radius:var(--r-xs);color:var(--text3);font-size:11px;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.act:hover{background:var(--navy-soft);color:var(--navy);}
+[data-theme="dark"] .act:hover{background:var(--surface);color:var(--gold2);}
+.act.liked{color:var(--success);}
+.act.disliked{color:var(--danger);}
+.speed-tag{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;padding:2px 7px;background:var(--navy-soft);border-radius:4px;border:1px solid var(--border);}
+.ts{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;margin-top:4px;}
+.msg.user .ts{text-align:right;}
+.pinned-msg{border-left:3px solid var(--gold)!important;}
+
+/* TYPING / SKELETON */
+.tywrap{display:flex;gap:12px;margin-bottom:22px;max-width:var(--max);margin-left:auto;margin-right:auto;}
+.ty{display:flex;gap:5px;padding:13px 17px;background:var(--white);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);align-items:center;border-left:3px solid var(--gold3);box-shadow:var(--s1);}
+[data-theme="dark"] .ty{background:var(--bg2);}
+.ty span{width:6px;height:6px;background:var(--gold2);border-radius:50%;animation:td 1.2s infinite;}
+.ty span:nth-child(2){animation-delay:.16s;}
+.ty span:nth-child(3){animation-delay:.32s;}
+.skel{padding:13px 17px;background:var(--surface);border:1px solid var(--border);border-radius:3px var(--r) var(--r) var(--r);border-left:3px solid var(--border2);}
+.skel-line{height:12px;background:linear-gradient(90deg,var(--border),var(--surface),var(--border));border-radius:6px;margin-bottom:8px;animation:skelShim 1.5s infinite;}
+@keyframes skelShim{0%{background-position:-200px 0;}100%{background-position:200px 0;}}
+.skel-line:last-child{width:60%;margin-bottom:0;}
+
+/* IMAGES */
+.gen-img{max-width:300px;margin-top:10px;border-radius:var(--r);border:2px solid var(--border2);display:block;box-shadow:var(--s3);cursor:pointer;transition:transform .2s;}
+.gen-img:hover{transform:scale(1.03);}
+.img-dl{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 16px;background:var(--navy-g);color:#fff;text-decoration:none;font-size:12px;font-family:"DM Sans",sans-serif;border-radius:var(--r-sm);font-weight:700;box-shadow:0 3px 10px rgba(13,27,62,.25);}
+
+/* CODE */
+pre{background:var(--navy);color:#EEF2FF;border:1px solid var(--navy3);border-left:3px solid var(--gold2);padding:16px;overflow-x:auto;font-size:13px;margin:10px 0;border-radius:var(--r-sm);font-family:"DM Mono",monospace;position:relative;}
+pre .code-copy{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#EEF2FF;padding:3px 10px;border-radius:5px;font-size:9px;cursor:pointer;font-family:"DM Sans",sans-serif;opacity:0;transition:opacity .15s;}
+pre:hover .code-copy{opacity:1;}
+code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
+
+/* INPUT */
+.input-area{padding:10px var(--pad) 16px;background:rgba(255,254,249,.96);backdrop-filter:blur(24px);border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:10;}
+[data-theme="dark"] .input-area{background:rgba(5,8,15,.96);}
+.input-area::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--gold3),transparent);opacity:.5;}
+.char-cnt{font-size:10px;color:var(--text3);text-align:right;max-width:var(--max);margin:0 auto 5px;font-family:"DM Mono",monospace;height:14px;}
+.ibox{display:flex;gap:8px;align-items:flex-end;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r-lg);padding:10px 12px;transition:all .22s;box-shadow:var(--s1);max-width:var(--max);margin:0 auto;}
+[data-theme="dark"] .ibox{background:var(--bg2);}
+.ibox:focus-within{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(212,160,23,.12),var(--s2);}
+#inp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:"DM Sans",sans-serif;resize:none;max-height:140px;min-height:22px;line-height:1.5;}
+#inp::placeholder{color:var(--text3);}
+.ibtns{display:flex;gap:6px;align-items:center;}
+.micbtn{background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;font-size:15px;padding:7px 9px;border-radius:var(--r-sm);transition:all .17s;line-height:1;}
+.micbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
+.micbtn.rec{background:rgba(185,28,28,.07);border-color:var(--danger);color:var(--danger);animation:recpulse 1s infinite;}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.3);}50%{box-shadow:0 0 0 6px rgba(185,28,28,0);}}
+.sendbtn{padding:9px 18px;background:var(--navy-g);border:none;color:#fff;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);transition:all .2s;white-space:nowrap;box-shadow:0 3px 12px rgba(13,27,62,.3);}
+.sendbtn:hover{transform:scale(1.05);box-shadow:0 5px 18px rgba(13,27,62,.4);}
+.sendbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:8px 16px;width:100%;}
+.qr{padding:5px 12px;background:var(--white);border:1px solid var(--border);color:var(--text3);font-size:12px;cursor:pointer;border-radius:var(--r-full);transition:all .17s;font-family:"DM Sans",sans-serif;font-weight:500;}
+[data-theme="dark"] .qr{background:var(--bg2);}
+.qr:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
+[data-theme="dark"] .qr:hover{color:var(--gold2);}
+
+/* SCROLL BTN */
+.scroll-btn{position:fixed;bottom:94px;right:22px;width:40px;height:40px;background:var(--navy-g);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:16px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(13,27,62,.35);z-index:100;transition:all .17s;}
+.scroll-btn.show{display:flex;}
+.scroll-btn:hover{transform:scale(1.12);}
+
+/* CALCULATOR */
+.calc-w{position:fixed;bottom:94px;right:20px;background:var(--white);border:1px solid var(--border2);border-radius:var(--r-xl);padding:18px;box-shadow:var(--s4);z-index:200;display:none;width:244px;}
+[data-theme="dark"] .calc-w{background:var(--bg2);}
+.calc-w.show{display:block;animation:popIn .22s cubic-bezier(.22,1,.36,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.88) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.calc-disp{background:var(--navy);color:#EEF2FF;border:1px solid var(--navy3);border-radius:var(--r-sm);padding:12px 14px;font-family:"DM Mono",monospace;font-size:24px;text-align:right;margin-bottom:12px;min-height:54px;display:flex;align-items:center;justify-content:flex-end;word-break:break-all;}
+.calc-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px;font-size:14px;font-family:"DM Mono",monospace;cursor:pointer;transition:all .13s;color:var(--text);}
+.cb:hover{background:var(--border);transform:scale(1.05);}
+.cb.op{color:var(--navy);font-weight:700;}
+.cb.eq{background:var(--gold-gs);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 2px 8px var(--gold-glow);}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(13,27,62,.45);z-index:99;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.overlay.show{display:block;}
+.modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.94);width:92%;max-width:520px;background:var(--white);border:1px solid var(--border2);border-radius:var(--r-xl);box-shadow:var(--s4);z-index:100;padding:28px;max-height:88vh;overflow-y:auto;transition:transform .25s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .modal{background:var(--bg2);}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.modal.show{display:block;transform:translate(-50%,-50%) scale(1);}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.modal h3{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:var(--navy);}
+[data-theme="dark"] .modal h3{color:var(--text);}
+.mx{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:var(--r-xs);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.mx:hover{background:var(--navy-soft);color:var(--navy);}
+.msub{font-size:13px;color:var(--text3);margin-bottom:18px;}
+.mclose{width:100%;background:var(--navy-g);color:#fff;border:none;padding:12px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);margin-top:14px;box-shadow:0 3px 10px rgba(13,27,62,.25);transition:all .17s;}
+.mclose:hover{opacity:.85;}
+.slabel{font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 8px;}
+/* Language scroll rows */
+.lang-section-title{
+  font-size:11px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin:16px 0 8px;padding:0 2px;
+}
+.lang-scroll-row{
+  display:flex;flex-direction:row;gap:7px;
+  overflow-x:auto;padding-bottom:6px;
+  scrollbar-width:none;-ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+}
+.lang-scroll-row::-webkit-scrollbar{display:none;}
+.lang-pill{
+  flex-shrink:0;
+  padding:8px 16px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-full);
+  color:var(--text2);
+  font-family:"DM Sans",sans-serif;
+  font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:all .15s;
+}
+.lang-pill:hover,.lang-pill:active{
+  background:var(--navy-g);
+  border-color:transparent;
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+
+.lopt{padding:10px 6px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12px;font-family:"DM Sans",sans-serif;font-weight:500;border-radius:var(--r-sm);transition:all .15s;}
+.lopt:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
+.mi{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;margin-bottom:7px;}
+.mdel{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:15px;margin-left:auto;transition:color .15s;}
+.mdel:hover{color:var(--danger);}
+.mmt{text-align:center;color:var(--text3);font-size:13px;padding:24px;}
+.mrow{display:flex;gap:8px;margin-top:12px;}
+.minp{flex:1;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;}
+.minp:focus{border-color:var(--gold2);}
+.madd{padding:10px 18px;background:var(--navy-g);color:#fff;border:none;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:linear-gradient(135deg,var(--bg2),var(--surface));border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;}
+.stn{font-family:"Cormorant Garamond",serif;font-size:36px;font-weight:600;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stl{font-size:11.5px;color:var(--text3);margin-top:4px;font-weight:600;}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.badge{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 6px;text-align:center;font-size:22px;}
+.badge.earned{background:linear-gradient(135deg,rgba(212,160,23,.1),rgba(240,200,66,.07));border-color:var(--border2);}
+.badge-l{display:block;font-size:10px;color:var(--text3);margin-top:5px;}
+.streak-center{text-align:center;padding:20px;}
+.streak-big{font-size:80px;line-height:1;display:block;}
+.streak-num{font-family:"Cormorant Garamond",serif;font-size:52px;font-weight:700;background:linear-gradient(135deg,#FF6B35,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-top:6px;}
+.sdays{display:flex;gap:6px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.sd{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);font-weight:600;}
+.sd.done{background:linear-gradient(135deg,#FF6B35,#F59E0B);border-color:transparent;color:#fff;}
+.sup-qr{width:180px;height:180px;margin:14px auto;display:block;border-radius:var(--r);border:2px solid var(--border2);box-shadow:var(--s2);}
+.upi-id{text-align:center;font-family:"DM Mono",monospace;font-size:13px;color:var(--text2);margin-top:6px;}
+.amt-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.amt{padding:7px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-full);font-size:12.5px;cursor:pointer;font-family:"DM Sans",sans-serif;font-weight:700;color:var(--text2);transition:all .15s;}
+.amt:hover{border-color:var(--border2);color:var(--gold);}
+.theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.tho{padding:11px;background:var(--bg2);border:1.5px solid var(--border);color:var(--text2);cursor:pointer;text-align:center;font-size:12.5px;font-family:"DM Sans",sans-serif;font-weight:600;border-radius:var(--r-sm);transition:all .15s;}
+.tho:hover,.tho.on{border-color:var(--navy3);color:var(--navy);}
+[data-theme="dark"] .tho:hover,[data-theme="dark"] .tho.on{border-color:var(--gold2);color:var(--gold2);}
+.img-gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.gi{aspect-ratio:1;border-radius:var(--r-sm);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .15s;}
+.gi img{width:100%;height:100%;object-fit:cover;}
+.gi:hover{transform:scale(1.04);}
+.ge{text-align:center;color:var(--text3);font-size:13px;padding:30px;grid-column:span 3;}
+.prof-top{text-align:center;padding:16px 0;}
+.prof-av{width:78px;height:78px;border-radius:50%;background:var(--gold-gs);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;margin:0 auto 12px;overflow:hidden;box-shadow:0 4px 16px var(--gold-glow);}
+.prof-av img{width:100%;height:100%;object-fit:cover;}
+.prof-nm{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;}
+.prof-em{font-size:13px;color:var(--text3);margin-top:3px;}
+.pro-up{background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;padding:14px;border-radius:var(--r);text-align:center;margin-top:16px;cursor:pointer;border:1px solid var(--navy3);}
+.pro-up::after{content:'';display:block;height:2px;background:var(--gold-g);border-radius:99px;margin-top:12px;}
+.pro-up h4{font-family:"Cormorant Garamond",serif;font-size:17px;font-weight:600;margin-bottom:3px;}
+.pro-up p{font-size:12px;opacity:.8;}
+.signout{width:100%;padding:11px;background:transparent;border:1.5px solid var(--danger);color:var(--danger);border-radius:var(--r-sm);font-size:13.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:12px;}
+.hl{max-height:300px;overflow-y:auto;}
+.hi{padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.hi:hover{border-color:var(--border2);}
+.hit{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.hid{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;}
+.he{text-align:center;color:var(--text3);font-size:13px;padding:24px;}
+
+/* FOCUS */
+body.focus header .hright{display:none;}
+body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!important;}
+
+/* RESPONSIVE */
+@media(max-width:600px){:root{--pad:16px;}.welcome h1{font-size:26px;}.sugs{grid-template-columns:1fr;}.ltag{display:none;}}
+
+/* ONBOARDING */
+#onboard{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;}
+#onboard.show{display:flex;}
+.ob-bg{position:absolute;inset:0;background:rgba(13,27,62,.6);backdrop-filter:blur(10px);}
+.ob-card{position:relative;z-index:2;background:var(--white);border:2px solid var(--border2);border-radius:var(--r-xl);padding:36px 32px;max-width:400px;width:92%;text-align:center;animation:popIn .3s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .ob-card{background:var(--bg2);}
+.ob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.ob-icon{font-size:48px;margin-bottom:16px;display:block;}
+.ob-step{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;margin-bottom:12px;text-transform:uppercase;letter-spacing:1.5px;}
+.ob-title{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.2;}
+[data-theme="dark"] .ob-title{color:var(--text);}
+.ob-desc{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:28px;}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.ob-dot.on{background:var(--gold2);width:24px;border-radius:4px;}
+.ob-next{width:100%;padding:14px;background:var(--navy-g);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;box-shadow:0 4px 14px rgba(13,27,62,.3);transition:all .2s;}
+.ob-next:hover{transform:translateY(-2px);}
+.ob-skip{font-size:12px;color:var(--text3);cursor:pointer;margin-top:14px;display:block;transition:color .15s;}
+.ob-skip:hover{color:var(--gold);}
+
+/* SHARE CARD */
+#shareCard{position:fixed;inset:0;z-index:9001;display:none;align-items:center;justify-content:center;}
+#shareCard.show{display:flex;}
+.sc-bg{position:absolute;inset:0;background:rgba(13,27,62,.7);backdrop-filter:blur(12px);}
+.sc-box{position:relative;z-index:2;background:var(--white);border:2px solid var(--border2);border-radius:var(--r-xl);padding:28px;max-width:420px;width:92%;animation:popIn .3s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .sc-box{background:var(--bg2);}
+.sc-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-g);border-radius:var(--r-xl) var(--r-xl) 0 0;}
+.sc-preview{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:24px;margin-bottom:16px;position:relative;overflow:hidden;}
+.sc-preview::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(212,160,23,.15);}
+.sc-q-logo{font-family:"Cormorant Garamond",serif;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sc-q-text{font-size:14px;color:#EEF2FF;line-height:1.6;font-style:italic;}
+.sc-q-url{font-size:11px;color:rgba(240,200,66,.7);margin-top:12px;font-family:"DM Mono",monospace;}
+.sc-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.sc-btn{flex:1;padding:12px;border:none;border-radius:var(--r-sm);font-size:13px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .18s;min-width:80px;}
+.sc-btn.copy{background:var(--navy-g);color:#fff;box-shadow:0 3px 10px rgba(13,27,62,.25);}
+.sc-btn.wa{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;}
+.sc-btn.cl{background:var(--surface);border:1px solid var(--border);color:var(--text2);}
+.sc-btn:hover{transform:translateY(-1px);}
+
+/* PRO MODAL */
+#m_pro .pro-feat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;}
+.pf{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;font-size:12.5px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+.pf-icon{font-size:18px;}
+.pro-price{text-align:center;margin:16px 0;}
+.pro-price .price{font-family:"Cormorant Garamond",serif;font-size:44px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pro-price .per{font-size:14px;color:var(--text3);}
+.err-bubble{background:linear-gradient(135deg,rgba(185,28,28,.06),rgba(185,28,28,.03));border:1px solid rgba(185,28,28,.2);border-left:3px solid var(--danger)!important;}
+.sec-warn{background:linear-gradient(135deg,rgba(185,28,28,.08),rgba(185,28,28,.04));border:1px solid rgba(185,28,28,.2);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--danger);display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:500;}
+
+/* ════ 20 NEW FEATURES CSS ════ */
+.weather-card{background:linear-gradient(135deg,#0D1B3E,#1E336A);color:#fff;border-radius:var(--r);padding:18px;margin-top:10px;display:flex;align-items:center;gap:16px;box-shadow:var(--s3);}
+.wc-icon{font-size:52px;}
+.wc-temp{font-family:"Cormorant Garamond",serif;font-size:52px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.wc-info{font-size:13px;opacity:.85;line-height:1.7;}
+.poll-wrap{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px;margin-top:10px;}
+.poll-q{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;}
+[data-theme="dark"] .poll-q{color:var(--text);}
+.poll-opt{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;}
+.poll-bar-bg{flex:1;height:30px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;position:relative;}
+.poll-bar{height:100%;background:var(--gold-gs);border-radius:var(--r-sm);transition:width .6s cubic-bezier(.22,1,.36,1);min-width:30px;display:flex;align-items:center;padding:0 10px;}
+.poll-pct{font-size:11px;color:#fff;font-weight:700;}
+.poll-lbl{font-size:13px;font-weight:600;color:var(--text);min-width:80px;}
+.todo-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:7px;cursor:pointer;transition:all .15s;user-select:none;}
+.todo-item.done .todo-txt{text-decoration:line-through;opacity:.5;}
+.todo-cb{width:18px;height:18px;border-radius:5px;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.todo-item.done .todo-cb{background:var(--success);border-color:var(--success);color:#fff;}
+.todo-txt{font-size:13.5px;flex:1;color:var(--text);}
+.word-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r-lg);padding:24px;margin-top:10px;text-align:center;box-shadow:var(--s3);}
+.word-main{font-family:"Cormorant Garamond",serif;font-size:42px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.word-pron{font-size:13px;color:rgba(255,255,255,.5);margin:4px 0;font-family:"DM Mono",monospace;}
+.word-type{font-size:11px;color:rgba(240,200,66,.7);text-transform:uppercase;letter-spacing:1.5px;}
+.word-def{font-size:14px;color:rgba(255,255,255,.85);line-height:1.6;margin-top:10px;}
+.word-eg{font-size:12px;color:rgba(240,200,66,.7);font-style:italic;margin-top:6px;}
+.word-hi{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px;}
+.qotd-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r-lg);padding:28px;text-align:center;position:relative;overflow:hidden;margin-top:10px;box-shadow:var(--s3);}
+.qotd-bg{position:absolute;top:-15px;left:10px;font-size:140px;color:rgba(212,160,23,.08);font-family:"Cormorant Garamond",serif;line-height:1;pointer-events:none;}
+.qotd-text{font-family:"Cormorant Garamond",serif;font-size:19px;font-style:italic;color:#EEF2FF;line-height:1.65;position:relative;z-index:1;}
+.qotd-author{font-size:12px;color:rgba(240,200,66,.7);margin-top:14px;font-family:"DM Mono",monospace;}
+.qotd-share{margin-top:12px;padding:8px 20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:var(--r-full);font-size:12px;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.qotd-share:hover{background:rgba(255,255,255,.2);}
+.timer-display{font-family:"DM Mono",monospace;font-size:72px;font-weight:700;text-align:center;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:20px 0;letter-spacing:2px;}
+.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.tbtn{padding:10px 24px;border:none;border-radius:var(--r-sm);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .17s;}
+.tbtn.start{background:var(--gold-gs);color:#fff;box-shadow:0 3px 10px var(--gold-glow);}
+.tbtn.stop{background:var(--danger);color:#fff;}
+.tbtn.reset{background:var(--surface);border:1px solid var(--border);color:var(--text2);}
+.tbtn.mode-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:12px;}
+.tbtn.mode-btn.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.timer-laps{max-height:120px;overflow-y:auto;margin-top:12px;}
+.lap-item{display:flex;justify-content:space-between;padding:6px 10px;font-family:"DM Mono",monospace;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);}
+.currency-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px;transition:all .15s;}
+.currency-row:hover{border-color:var(--border2);}
+.curr-flag{font-size:24px;}
+.curr-name{font-size:13px;font-weight:600;flex:1;color:var(--text);}
+.curr-val{font-family:"DM Mono",monospace;font-size:14px;color:var(--gold);font-weight:700;}
+.curr-inp{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:18px;font-family:"DM Mono",monospace;color:var(--text);outline:none;text-align:center;margin-bottom:12px;}
+.curr-inp:focus{border-color:var(--gold2);box-shadow:0 0 0 3px var(--gold-glow);}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0;}
+.mood-btn{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.mood-btn:hover,.mood-btn.sel{border-color:var(--gold2);background:rgba(212,160,23,.08);transform:scale(1.08);}
+.mood-emoji{font-size:30px;display:block;}
+.mood-lbl{font-size:10px;color:var(--text3);margin-top:5px;display:block;font-weight:600;}
+.mood-hist{margin-top:14px;}
+.mood-entry{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:var(--r-sm);margin-bottom:5px;font-size:12px;color:var(--text3);}
+.wpm-text-area{font-size:16px;line-height:1.9;padding:16px;background:var(--bg2);border-radius:var(--r-sm);border:1.5px solid var(--border);margin:12px 0;letter-spacing:.4px;font-family:"DM Mono",monospace;position:relative;}
+.wpm-inp{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;font-family:"DM Mono",monospace;color:var(--text);outline:none;margin-top:8px;}
+.wpm-inp:focus{border-color:var(--gold2);}
+.wpm-stats{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.wpm-stat{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 18px;}
+.wpm-stat-n{font-family:"Cormorant Garamond",serif;font-size:32px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.wpm-stat-l{font-size:11px;color:var(--text3);margin-top:2px;font-weight:600;}
+.news-card{background:var(--white);border:1px solid var(--border);border-left:3px solid var(--gold2);border-radius:var(--r-sm);padding:13px 15px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+[data-theme="dark"] .news-card{background:var(--bg2);}
+.news-card:hover{border-color:var(--border2);transform:translateX(3px);}
+.news-hl{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.4;}
+.news-src{font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;}
+.emoji-search{width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:12px;}
+.emoji-search:focus{border-color:var(--gold2);}
+.emoji-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.emoji-cat{padding:4px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-full);font-size:12px;cursor:pointer;transition:all .15s;}
+.emoji-cat.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-height:220px;overflow-y:auto;}
+.eg{font-size:26px;cursor:pointer;text-align:center;padding:6px;border-radius:var(--r-xs);transition:background .12s;}
+.eg:hover{background:var(--navy-soft);}
+.cv-form .cv-inp{width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;margin-bottom:7px;}
+.cv-form .cv-inp:focus{border-color:var(--gold2);}
+.cv-form textarea{resize:vertical;min-height:60px;}
+.cv-section-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin:12px 0 6px;}
+.note-item{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold3);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;}
+.note-item:hover{border-color:var(--border2);}
+.note-txt{font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;}
+.note-del{position:absolute;top:8px;right:8px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;opacity:0;transition:opacity .15s;}
+.note-item:hover .note-del{opacity:1;}
+.note-date{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;margin-top:5px;}
+.age-result{text-align:center;padding:16px 0;}
+.age-big{font-family:"Cormorant Garamond",serif;font-size:64px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.age-detail{font-size:13px;color:var(--text3);margin-top:8px;line-height:1.8;}
+.bmi-result{text-align:center;padding:16px 0;}
+.bmi-num{font-family:"Cormorant Garamond",serif;font-size:64px;font-weight:700;display:block;}
+.bmi-cat{font-size:16px;font-weight:700;margin-top:4px;display:block;}
+.bmi-bar-wrap{height:12px;background:linear-gradient(90deg,#3B82F6,#22C55E,#F59E0B,#EF4444);border-radius:99px;margin:16px 0;position:relative;}
+.bmi-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s cubic-bezier(.22,1,.36,1);}
+[data-theme="dark"] .bmi-needle{background:var(--gold2);}
+
+/* ─── AI COMPARISON TABLE ─── */
+.cmp-wrap{width:100%;max-width:680px;margin-top:8px;}
+.cmp-title{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:var(--navy);text-align:center;margin-bottom:4px;}
+[data-theme="dark"] .cmp-title{color:var(--text);}
+.cmp-sub{font-size:12px;color:var(--text3);text-align:center;margin-bottom:14px;}
+.cmp-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--s3);font-size:12.5px;}
+.cmp-table thead tr{background:var(--navy-g);}
+.cmp-table thead th{padding:11px 10px;color:#fff;font-weight:700;text-align:center;font-family:"DM Sans",sans-serif;font-size:11.5px;letter-spacing:.3px;}
+.cmp-table thead th:first-child{text-align:left;padding-left:14px;}
+.cmp-table thead th.qvio-col{background:var(--gold-gs);color:#fff;font-size:12px;}
+.cmp-table tbody tr{background:var(--white);transition:background .15s;}
+[data-theme="dark"] .cmp-table tbody tr{background:var(--surface);}
+.cmp-table tbody tr:hover{background:var(--bg2);}
+.cmp-table tbody tr:nth-child(even){background:var(--surface);}
+[data-theme="dark"] .cmp-table tbody tr:nth-child(even){background:var(--bg2);}
+.cmp-table td{padding:10px 10px;border-bottom:1px solid var(--border);text-align:center;color:var(--text2);vertical-align:middle;}
+.cmp-table td:first-child{text-align:left;font-weight:600;color:var(--text);padding-left:14px;font-size:12px;}
+.cmp-table td.qvio-col{background:rgba(212,160,23,.06);font-weight:700;color:var(--navy);}
+[data-theme="dark"] .cmp-table td.qvio-col{background:rgba(212,160,23,.08);color:var(--gold2);}
+.cmp-table tbody tr:last-child td{border-bottom:none;}
+.cmp-yes{color:#15803D;font-size:16px;}
+.cmp-no{color:#B91C1C;font-size:15px;opacity:.7;}
+.cmp-part{color:#D97706;font-size:13px;font-weight:700;}
+.cmp-badge{display:inline-block;background:var(--gold-gs);color:#fff;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:var(--r-full);margin-left:4px;vertical-align:middle;}
+.cmp-footer{text-align:center;font-size:11px;color:var(--text3);margin-top:10px;font-style:italic;}
+.lens-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+.ltab{padding:6px 13px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;transition:all .15s;font-family:"DM Sans",sans-serif;}
+.ltab:hover{background:var(--navy-soft);border-color:var(--navy3);}
+.ltab.on{background:var(--navy-g);color:#fff;border-color:transparent;}
+.lens-drop{border:2px dashed var(--border2);border-radius:var(--r-lg);min-height:140px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:all .2s;background:var(--surface);}
+.lens-drop:hover,.lens-drop.drag{border-color:var(--gold2);background:rgba(212,160,23,.04);}
+.lens-drop-inner{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px;}
+.lens-drop-ico{font-size:36px;}
+.lens-drop-txt{font-size:14px;font-weight:600;color:var(--text2);}
+.lens-drop-sub{font-size:11px;color:var(--text3);}
+.lens-preview{width:100%;max-height:280px;object-fit:contain;border-radius:var(--r-sm);}
+.lens-cam-btn{flex:1;padding:9px;border-radius:var(--r-sm);background:var(--navy-soft);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:13px;font-weight:600;font-family:"DM Sans",sans-serif;transition:all .15s;}
+.lens-cam-btn:hover{background:var(--navy-g);color:#fff;border-color:transparent;}
+.lens-result{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);padding:18px;font-size:14px;line-height:1.7;color:var(--text);margin-top:14px;position:relative;}
+.lens-result::before{content:'🔍 QVIO Lens';position:absolute;top:-10px;left:16px;background:var(--gold-gs);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:var(--r-full);letter-spacing:.5px;}
+.lens-loading{display:flex;align-items:center;gap:10px;padding:20px;justify-content:center;color:var(--text3);font-size:14px;}
+.lens-scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);animation:lenscan 1.8s ease-in-out infinite;top:0;}
+@keyframes lenscan{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
+.lens-tag{display:inline-flex;align-items:center;gap:4px;background:var(--navy-soft);border:1px solid var(--border);border-radius:var(--r-full);padding:3px 10px;font-size:11.5px;font-weight:600;color:var(--navy);margin:2px;}
+[data-theme="dark"] .lens-tag{color:var(--gold2);}
+.lens-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;}
+.lens-act{padding:7px 14px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;}
+.lens-act:hover{background:var(--navy-g);color:#fff;border-color:transparent;}
+
+/* ─── VOICE BUTTON STATES ─── */
+.mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
+@keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* Language search */
+.lang-search-wrap{position:relative;margin-bottom:16px;}
+.lang-search{width:100%;padding:10px 16px 10px 36px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;}
+.lang-search:focus{border-color:var(--gold2);}
+.lang-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;}
+.lang-pill.hidden{display:none!important;}
+.lang-section{margin-bottom:16px;}
+.lang-no-results{text-align:center;color:var(--text3);padding:20px;display:none;}
+
+
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.6);}70%{box-shadow:0 0 0 12px rgba(231,76,60,0);}100%{box-shadow:0 0 0 0 rgba(231,76,60,0);}}
+#micBtn.rec{animation:micPulse 1s ease infinite;}
+
+/* 3D EARTH BUTTON */
+.earth-btn{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#1a6b9a,#2ecc71,#1a6b9a);
+  font-size:20px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4);
+  animation:earthSpin 8s linear infinite;
+  transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.earth-btn:hover{transform:scale(1.15);box-shadow:0 0 0 3px rgba(46,204,113,.5),0 4px 20px rgba(26,107,154,.6);}
+.earth-btn::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 60%);
+}
+@keyframes earthSpin{
+  0%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),-4px 0 8px rgba(46,204,113,.2);}
+  50%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),4px 0 8px rgba(26,107,154,.3);}
+  100%{box-shadow:0 0 0 2px rgba(46,204,113,.3),0 2px 12px rgba(26,107,154,.4),-4px 0 8px rgba(46,204,113,.2);}
+}
+
+/* LANGUAGE SELECTOR MODAL */
+#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9990;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#langSelectOverlay.show{display:flex!important;}
+#langSelectOverlay.show{display:flex;}
+#langSelectModal{
+  background:var(--bg);border-radius:20px;width:92%;max-width:500px;max-height:80vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);border:1px solid var(--border2);
+}
+.lsm-head{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.lsm-head h3{margin:0;font-size:1.1rem;color:var(--text);}
+.lsm-sub{padding:8px 20px;font-size:12px;color:var(--text3);background:var(--bg2);flex-shrink:0;}
+.lsm-search-wrap{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;}
+.lsm-search{width:100%;padding:10px 16px 10px 38px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;}
+.lsm-search:focus{border-color:var(--gold2);}
+.lsm-search-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);font-size:14px;}
+.lsm-body{overflow-y:auto;padding:12px 16px;flex:1;}
+.lsm-section-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:12px 0 8px;padding:0 4px;}
+.lsm-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.lsm-pill{
+  padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--bg2);color:var(--text);font-size:13px;cursor:pointer;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.lsm-pill:hover{border-color:var(--gold2);background:var(--navy-soft);color:var(--navy);}
+.lsm-pill.active{background:var(--navy-g);color:#fff;border-color:var(--navy);box-shadow:0 2px 8px rgba(13,27,62,.3);}
+.lsm-pill.hidden{display:none!important;}
+.lsm-no-results{text-align:center;color:var(--text3);padding:30px;display:none;}
+.lsm-footer{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.lsm-confirm{flex:1;padding:11px;background:var(--navy-g);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+
+/* ── Professional Clean UI ── */
+header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-filter:blur(20px);background:rgba(var(--bg-rgb,0,0,0),0.85);}
+.logo{gap:8px;}
+.lname{font-size:18px;font-weight:700;letter-spacing:-0.5px;}
+.ltag{display:none;}
+.h-mode-pill{padding:6px 14px;font-size:12px;font-weight:600;border-radius:99px;border:1px solid var(--bdr);background:var(--card);}
+.hico{width:34px;height:34px;border-radius:8px;border:1px solid var(--bdr);background:transparent;font-size:15px;}
+.pro-hbtn{padding:6px 14px;font-size:12px;font-weight:700;border-radius:8px;}
+.streak-pill{padding:5px 10px;font-size:12px;font-weight:700;border-radius:8px;}
+.welcome{padding:48px 20px 32px;text-align:center;max-width:600px;margin:0 auto;}
+.w-crown{font-size:28px;margin-bottom:8px;}
+.w-icon{width:56px;height:56px;border-radius:16px;font-size:20px;font-weight:800;margin:0 auto 16px;}
+.welcome h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1px;margin-bottom:8px;}
+.welcome h1 em{font-style:italic;}
+.wsub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px;}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+/* Greeting and memory bars */
+.greeting-bar{padding:8px 16px;font-size:13px;border-bottom:1px solid var(--bdr);}
+.sub-bar{padding:6px 16px;font-size:12px;border-bottom:1px solid var(--bdr);}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+
+<div id="namasteScreen">
+  <div class="ns-bg-canvas" id="nsBgCanvas"></div>
+  <div class="ns-bracket ns-br-tl"></div>
+  <div class="ns-bracket ns-br-tr"></div>
+  <div class="ns-bracket ns-br-bl"></div>
+  <div class="ns-bracket ns-br-br"></div>
+
+  
+  <div class="ns-namaste-wrap" id="nsNamasteWrap">
+    <div class="ns-emoji-hi">👋</div>
+  </div>
+  
+  <div class="ns-text-wrap">
+    <div class="ns-greeting" id="nsGreeting"></div>
+    <div class="ns-username" id="nsUsername"></div>
+    <div class="ns-divider"></div>
+    <div class="ns-status"><span class="ns-status-dot"></span><span id="nsStatusTxt">Initialising QVIO...</span></div>
+    <div class="ns-progress-wrap"><div class="ns-progress-fill"></div></div>
+    <div class="ns-percent" id="nsPercent">0%</div>
+  </div>
+  <div class="ns-flash"></div>
+</div>
+
+
+<div id="loginScreen">
+  <div class="lwrap">
+    <div class="l-crown">👑</div>
+    <div class="l-mark">QV</div>
+    <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
+    <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
+    <button class="gbtn" onclick="signInGoogle()">
+      <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <div class="l-or"><span>or</span></div>
+    <input class="lf" id="loginEmail" type="email" placeholder="Email address"/>
+    <input class="lf" id="loginPass" type="password" placeholder="Password"/>
+    <button class="lbtn main" onclick="signInEmail()">Sign In</button>
+    <button class="lbtn ghost" onclick="signUpEmail()">Create Account</button>
+    <span class="l-skip" onclick="skipLogin()">Continue as guest →</span>
+    <div class="l-badges">
+      <div class="l-badge">⚡ India's Fastest AI</div>
+      <div class="l-badge">🌍 150+ Languages</div>
+      <div class="l-badge">🇮🇳 Made in India</div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
+
+
+<div class="calc-w" id="calcW">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);">Calculator</span>
+    <button onclick="toggleCalc()" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:18px;">✕</button>
+  </div>
+  <div class="calc-disp" id="calcDisp">0</div>
+  <div class="calc-btns">
+    <button class="cb op" onclick="ci('C')">C</button><button class="cb op" onclick="ci('±')">±</button><button class="cb op" onclick="ci('%')">%</button><button class="cb op" onclick="ci('/')">÷</button>
+    <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button><button class="cb" onclick="ci('9')">9</button><button class="cb op" onclick="ci('*')">×</button>
+    <button class="cb" onclick="ci('4')">4</button><button class="cb" onclick="ci('5')">5</button><button class="cb" onclick="ci('6')">6</button><button class="cb op" onclick="ci('-')">−</button>
+    <button class="cb" onclick="ci('1')">1</button><button class="cb" onclick="ci('2')">2</button><button class="cb" onclick="ci('3')">3</button><button class="cb op" onclick="ci('+')">+</button>
+    <button class="cb" onclick="ci('0')" style="grid-column:span 2;">0</button><button class="cb" onclick="ci('.')">.</button><button class="cb eq" onclick="ci('=')">=</button>
+  </div>
+</div>
+
+
+<div class="overlay" id="o_lang" onclick="closeM('lang')"></div>
+<div class="overlay" id="o_mem" onclick="closeM('mem')"></div>
+<div class="overlay" id="o_sup" onclick="closeM('sup')"></div>
+<div class="overlay" id="o_stats" onclick="closeM('stats')"></div>
+<div class="overlay" id="o_streak" onclick="closeM('streak')"></div>
+<div class="overlay" id="o_theme" onclick="closeM('theme')"></div>
+<div class="overlay" id="o_gal" onclick="closeM('gal')"></div>
+<div class="overlay" id="o_prof" onclick="closeM('prof')"></div>
+<div class="overlay" id="o_hist" onclick="closeM('hist')"></div>
+<div class="overlay" id="o_imgv" onclick="closeM('imgv')"></div>
+<div class="overlay" id="o_pro" onclick="closeM('pro')"></div>
+
+
+<div class="modal" id="m_lang">
+  <div class="mhd"><h3>🌍 Choose Language</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
+  <div class="msub">Search or scroll 150+ languages</div>
+  <div class="lang-search-wrap" style="position:relative;margin:12px 0;">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;">🔍</span>
+    <input id="langSearch" type="text" placeholder="Search any language..." oninput="filterLangs(this.value)" autocomplete="off"
+      style="width:100%;padding:10px 16px 10px 36px;border:1.5px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--text);font-size:14px;outline:none;box-sizing:border-box;"/>
+  </div>
+  <div id="langNoResults" style="text-align:center;color:var(--text3);padding:20px;display:none;">😕 No language found</div>
+
+  <div class="lang-section-title">🇮🇳 Indian Languages</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('Hindi')">Hindi</button>
+    <button class="lang-pill" onclick="learnLang('Kannada')">Kannada</button>
+    <button class="lang-pill" onclick="learnLang('Tamil')">Tamil</button>
+    <button class="lang-pill" onclick="learnLang('Telugu')">Telugu</button>
+    <button class="lang-pill" onclick="learnLang('Bengali')">Bengali</button>
+    <button class="lang-pill" onclick="learnLang('Marathi')">Marathi</button>
+    <button class="lang-pill" onclick="learnLang('Gujarati')">Gujarati</button>
+    <button class="lang-pill" onclick="learnLang('Punjabi')">Punjabi</button>
+    <button class="lang-pill" onclick="learnLang('Malayalam')">Malayalam</button>
+    <button class="lang-pill" onclick="learnLang('Odia')">Odia</button>
+    <button class="lang-pill" onclick="learnLang('Urdu')">Urdu</button>
+    <button class="lang-pill" onclick="learnLang('Assamese')">Assamese</button>
+    <button class="lang-pill" onclick="learnLang('Sanskrit')">Sanskrit</button>
+    <button class="lang-pill" onclick="learnLang('Kashmiri')">Kashmiri</button>
+    <button class="lang-pill" onclick="learnLang('Nepali')">Nepali</button>
+    <button class="lang-pill" onclick="learnLang('Sindhi')">Sindhi</button>
+    <button class="lang-pill" onclick="learnLang('Manipuri')">Manipuri</button>
+    <button class="lang-pill" onclick="learnLang('Dogri')">Dogri</button>
+    <button class="lang-pill" onclick="learnLang('Santali')">Santali</button>
+    <button class="lang-pill" onclick="learnLang('Bodo')">Bodo</button>
+    <button class="lang-pill" onclick="learnLang('Konkani')">Konkani</button>
+    <button class="lang-pill" onclick="learnLang('Tulu')">Tulu</button>
+    <button class="lang-pill" onclick="learnLang('Bhojpuri')">Bhojpuri</button>
+    <button class="lang-pill" onclick="learnLang('Maithili')">Maithili</button>
+    <button class="lang-pill" onclick="learnLang('Rajasthani')">Rajasthani</button>
+    <button class="lang-pill" onclick="learnLang('Chhattisgarhi')">Chhattisgarhi</button>
+    <button class="lang-pill" onclick="learnLang('Haryanvi')">Haryanvi</button>
+    <button class="lang-pill" onclick="learnLang('Awadhi')">Awadhi</button>
+    <button class="lang-pill" onclick="learnLang('Kumaoni')">Kumaoni</button>
+    <button class="lang-pill" onclick="learnLang('Kodava')">Kodava</button>
+  
+    <button class="lang-pill" onclick="learnLang('Saurashtra')">Saurashtra</button>
+    <button class="lang-pill" onclick="learnLang('Gondi')">Gondi</button>
+    <button class="lang-pill" onclick="learnLang('Mundari')">Mundari</button>
+    <button class="lang-pill" onclick="learnLang('Kokborok')">Kokborok</button>
+    <button class="lang-pill" onclick="learnLang('Ladakhi')">Ladakhi</button>
+    <button class="lang-pill" onclick="learnLang('Kurukh')">Kurukh</button>
+    <button class="lang-pill" onclick="learnLang('Ho')">Ho</button>
+    <button class="lang-pill" onclick="learnLang('Mizo')">Mizo</button>
+    <button class="lang-pill" onclick="learnLang('Nagamese')">Nagamese</button>
+    <button class="lang-pill" onclick="learnLang('Thadou')">Thadou</button>
+  </div>
+
+  <div class="lang-section-title">🌏 East &amp; Southeast Asia</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('Mandarin')">Mandarin</button>
+    <button class="lang-pill" onclick="learnLang('Japanese')">Japanese</button>
+    <button class="lang-pill" onclick="learnLang('Korean')">Korean</button>
+    <button class="lang-pill" onclick="learnLang('Vietnamese')">Vietnamese</button>
+    <button class="lang-pill" onclick="learnLang('Thai')">Thai</button>
+    <button class="lang-pill" onclick="learnLang('Indonesian')">Indonesian</button>
+    <button class="lang-pill" onclick="learnLang('Malay')">Malay</button>
+    <button class="lang-pill" onclick="learnLang('Tagalog')">Tagalog</button>
+    <button class="lang-pill" onclick="learnLang('Burmese')">Burmese</button>
+    <button class="lang-pill" onclick="learnLang('Khmer')">Khmer</button>
+    <button class="lang-pill" onclick="learnLang('Lao')">Lao</button>
+    <button class="lang-pill" onclick="learnLang('Sinhalese')">Sinhalese</button>
+    <button class="lang-pill" onclick="learnLang('Tibetan')">Tibetan</button>
+    <button class="lang-pill" onclick="learnLang('Mongolian')">Mongolian</button>
+    <button class="lang-pill" onclick="learnLang('Cantonese')">Cantonese</button>
+    <button class="lang-pill" onclick="learnLang('Javanese')">Javanese</button>
+    <button class="lang-pill" onclick="learnLang('Sundanese')">Sundanese</button>
+    <button class="lang-pill" onclick="learnLang('Cebuano')">Cebuano</button>
+  
+    <button class="lang-pill" onclick="learnLang('Uyghur')">Uyghur</button>
+    <button class="lang-pill" onclick="learnLang('Kazakh')">Kazakh</button>
+    <button class="lang-pill" onclick="learnLang('Uzbek')">Uzbek</button>
+    <button class="lang-pill" onclick="learnLang('Kyrgyz')">Kyrgyz</button>
+    <button class="lang-pill" onclick="learnLang('Tajik')">Tajik</button>
+    <button class="lang-pill" onclick="learnLang('Taiwanese')">Taiwanese</button>
+  </div>
+
+  <div class="lang-section-title">🌍 Middle East &amp; Central Asia</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('Arabic')">Arabic</button>
+    <button class="lang-pill" onclick="learnLang('Persian')">Persian</button>
+    <button class="lang-pill" onclick="learnLang('Hebrew')">Hebrew</button>
+    <button class="lang-pill" onclick="learnLang('Turkish')">Turkish</button>
+    <button class="lang-pill" onclick="learnLang('Pashto')">Pashto</button>
+    <button class="lang-pill" onclick="learnLang('Kurdish')">Kurdish</button>
+    <button class="lang-pill" onclick="learnLang('Azerbaijani')">Azerbaijani</button>
+    <button class="lang-pill" onclick="learnLang('Armenian')">Armenian</button>
+    <button class="lang-pill" onclick="learnLang('Georgian')">Georgian</button>
+  
+    <button class="lang-pill" onclick="learnLang('Sorani')">Sorani</button>
+    <button class="lang-pill" onclick="learnLang('Turkmen')">Turkmen</button>
+    <button class="lang-pill" onclick="learnLang('Dari')">Dari</button>
+  </div>
+
+  <div class="lang-section-title">🌍 Africa</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('Swahili')">Swahili</button>
+    <button class="lang-pill" onclick="learnLang('Amharic')">Amharic</button>
+    <button class="lang-pill" onclick="learnLang('Hausa')">Hausa</button>
+    <button class="lang-pill" onclick="learnLang('Yoruba')">Yoruba</button>
+    <button class="lang-pill" onclick="learnLang('Igbo')">Igbo</button>
+    <button class="lang-pill" onclick="learnLang('Zulu')">Zulu</button>
+    <button class="lang-pill" onclick="learnLang('Xhosa')">Xhosa</button>
+    <button class="lang-pill" onclick="learnLang('Somali')">Somali</button>
+    <button class="lang-pill" onclick="learnLang('Oromo')">Oromo</button>
+    <button class="lang-pill" onclick="learnLang('Afrikaans')">Afrikaans</button>
+    <button class="lang-pill" onclick="learnLang('Wolof')">Wolof</button>
+    <button class="lang-pill" onclick="learnLang('Shona')">Shona</button>
+  
+    <button class="lang-pill" onclick="learnLang('Tigrinya')">Tigrinya</button>
+    <button class="lang-pill" onclick="learnLang('Kinyarwanda')">Kinyarwanda</button>
+    <button class="lang-pill" onclick="learnLang('Luganda')">Luganda</button>
+    <button class="lang-pill" onclick="learnLang('Twi')">Twi</button>
+    <button class="lang-pill" onclick="learnLang('Fula')">Fula</button>
+    <button class="lang-pill" onclick="learnLang('Lingala')">Lingala</button>
+  </div>
+
+  <div class="lang-section-title">🌎 Europe</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('Spanish')">Spanish</button>
+    <button class="lang-pill" onclick="learnLang('French')">French</button>
+    <button class="lang-pill" onclick="learnLang('German')">German</button>
+    <button class="lang-pill" onclick="learnLang('Portuguese')">Portuguese</button>
+    <button class="lang-pill" onclick="learnLang('Russian')">Russian</button>
+    <button class="lang-pill" onclick="learnLang('Italian')">Italian</button>
+    <button class="lang-pill" onclick="learnLang('Dutch')">Dutch</button>
+    <button class="lang-pill" onclick="learnLang('Polish')">Polish</button>
+    <button class="lang-pill" onclick="learnLang('Greek')">Greek</button>
+    <button class="lang-pill" onclick="learnLang('Swedish')">Swedish</button>
+    <button class="lang-pill" onclick="learnLang('Norwegian')">Norwegian</button>
+    <button class="lang-pill" onclick="learnLang('Danish')">Danish</button>
+    <button class="lang-pill" onclick="learnLang('Finnish')">Finnish</button>
+    <button class="lang-pill" onclick="learnLang('Czech')">Czech</button>
+    <button class="lang-pill" onclick="learnLang('Romanian')">Romanian</button>
+    <button class="lang-pill" onclick="learnLang('Hungarian')">Hungarian</button>
+    <button class="lang-pill" onclick="learnLang('Ukrainian')">Ukrainian</button>
+    <button class="lang-pill" onclick="learnLang('Catalan')">Catalan</button>
+    <button class="lang-pill" onclick="learnLang('Serbian')">Serbian</button>
+    <button class="lang-pill" onclick="learnLang('Croatian')">Croatian</button>
+    <button class="lang-pill" onclick="learnLang('Slovak')">Slovak</button>
+    <button class="lang-pill" onclick="learnLang('Bulgarian')">Bulgarian</button>
+    <button class="lang-pill" onclick="learnLang('Lithuanian')">Lithuanian</button>
+    <button class="lang-pill" onclick="learnLang('Latvian')">Latvian</button>
+  
+    <button class="lang-pill" onclick="learnLang('Albanian')">Albanian</button>
+    <button class="lang-pill" onclick="learnLang('Macedonian')">Macedonian</button>
+    <button class="lang-pill" onclick="learnLang('Slovenian')">Slovenian</button>
+    <button class="lang-pill" onclick="learnLang('Estonian')">Estonian</button>
+    <button class="lang-pill" onclick="learnLang('Belarusian')">Belarusian</button>
+    <button class="lang-pill" onclick="learnLang('Welsh')">Welsh</button>
+    <button class="lang-pill" onclick="learnLang('Irish')">Irish</button>
+    <button class="lang-pill" onclick="learnLang('Basque')">Basque</button>
+    <button class="lang-pill" onclick="learnLang('Maltese')">Maltese</button>
+  </div>
+
+  <div class="lang-section-title">🌎 Americas &amp; Pacific</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('English')">English</button>
+    <button class="lang-pill" onclick="learnLang('Brazilian Portuguese')">Brazilian</button>
+    <button class="lang-pill" onclick="learnLang('Mexican Spanish')">Mexican Spanish</button>
+    <button class="lang-pill" onclick="learnLang('Quechua')">Quechua</button>
+    <button class="lang-pill" onclick="learnLang('Guarani')">Guarani</button>
+    <button class="lang-pill" onclick="learnLang('Hawaiian')">Hawaiian</button>
+    <button class="lang-pill" onclick="learnLang('Maori')">Maori</button>
+    <button class="lang-pill" onclick="learnLang('Samoan')">Samoan</button>
+    <button class="lang-pill" onclick="learnLang('Tongan')">Tongan</button>
+  
+    <button class="lang-pill" onclick="learnLang('Haitian Creole')">Haitian Creole</button>
+    <button class="lang-pill" onclick="learnLang('Jamaican Patois')">Jamaican Patois</button>
+    <button class="lang-pill" onclick="learnLang('Nahuatl')">Nahuatl</button>
+    <button class="lang-pill" onclick="learnLang('Aymara')">Aymara</button>
+
+  <div class="lang-section-title">🤟 Sign and Special</div>
+  <div class="lang-scroll-row">
+    <button class="lang-pill" onclick="learnLang('ISL Indian Sign')">ISL Indian Sign</button>
+    <button class="lang-pill" onclick="learnLang('ASL American Sign')">ASL American Sign</button>
+    <button class="lang-pill" onclick="learnLang('BSL British Sign')">BSL British Sign</button>
+    <button class="lang-pill" onclick="learnLang('Esperanto')">Esperanto</button>
+    <button class="lang-pill" onclick="learnLang('Latin')">Latin</button>
+    <button class="lang-pill" onclick="learnLang('Pali')">Pali</button>
+    <button class="lang-pill" onclick="learnLang('Prakrit')">Prakrit</button>
+    <button class="lang-pill" onclick="learnLang('Old Tamil')">Old Tamil</button>
+    <button class="lang-pill" onclick="learnLang('Morse Code')">Morse Code</button>
+    <button class="lang-pill" onclick="learnLang('Braille')">Braille</button>
+    <button class="lang-pill" onclick="learnLang('Zarma')">Zarma</button>
+    <button class="lang-pill" onclick="learnLang('Ewe')">Ewe</button>
+    <button class="lang-pill" onclick="learnLang('Bambara')">Bambara</button>
+    <button class="lang-pill" onclick="learnLang('Dinka')">Dinka</button>
+  </div>
+  </div>
+</div>
+
+
+<div id="onboard">
+  <div class="ob-bg" onclick="skipOnboard()"></div>
+  <div class="ob-card">
+    <span class="ob-step" id="obStep">Step 1 of 3</span>
+    <span class="ob-icon" id="obIcon">⚡</span>
+    <div class="ob-title" id="obTitle">QVIO — India's #1 AI</div>
+    <div class="ob-desc" id="obDesc">Get answers in under 2 seconds. No waiting. No limits. Just instant intelligence for every Indian.</div>
+    <div class="ob-dots">
+      <div class="ob-dot on" id="dot0"></div><div class="ob-dot" id="dot1"></div><div class="ob-dot" id="dot2"></div>
+    </div>
+    <button class="ob-next" onclick="nextOnboard()">Next →</button>
+    <span class="ob-skip" onclick="skipOnboard()">Skip tour</span>
+  </div>
+</div>
+
+
+<div id="shareCard">
+  <div class="sc-bg" onclick="closeShare()"></div>
+  <div class="sc-box">
+    <div class="mhd" style="margin-bottom:14px;"><h3>📤 Share this answer</h3><button class="mx" onclick="closeShare()">✕</button></div>
+    <div class="sc-preview">
+      <div class="sc-q-logo"><span style="background:var(--gold-gs);padding:2px 8px;border-radius:4px;font-size:11px;color:#fff;font-family:'DM Mono',monospace;">QV</span>QVIO says</div>
+      <div class="sc-q-text" id="shareText">Loading...</div>
+      <div class="sc-q-url">qvio.in — India's Premium AI</div>
+    </div>
+    <div class="sc-actions">
+      <button class="sc-btn copy" onclick="copyShareText()">📋 Copy</button>
+      <button class="sc-btn wa" onclick="shareWhatsApp()">📱 Share</button>
+      <button class="sc-btn cl" onclick="closeShare()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="off-bar" id="offBar">No internet connection — QVIO is offline</div>
+<div class="inst-bar" id="instBar">
+  <div>📱 Add QVIO to your home screen!</div>
+  <div style="display:flex;gap:6px;"><button onclick="installPWA()">Install</button><button class="idism" onclick="dismissInstall()">✕</button></div>
+</div>
+
+
+<div class="tp-overlay" id="tpOverlay" onclick="closeToolsPanel()"></div>
+
+
+
+<div class="md-overlay" id="mdOverlay" onclick="closeModesDrawer()"></div>
+
+<div class="modes-drawer" id="modesDrawer">
+  <div class="md-title">Choose AI Mode</div>
+  <div class="md-pills">
+    <button class="md-pill on" onclick="setModeD('casual','⚡ Auto')">⚡ Auto</button>
+    <button class="md-pill" onclick="setModeD('student','📚 Student')">📚 Student</button>
+  </div>
+</div>
+
+
+<header>
+  <a class="logo" onclick="scrollToTop()">
+    <div class="lmark">QV</div>
+    <span class="lname">QV<em>IO</em></span>
+  </a>
+  <div class="h-mode-wrap">
+    <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
+      <span class="sdot"></span>
+      <span class="mlabel" id="modeLabel">Auto Detect</span>
+      <span style="color:var(--text3);font-size:10px;margin-left:4px;">▾</span>
+    </div>
+  </div>
+  <div class="h-actions">
+    <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
+    <button class="hico" onclick="openLangSelect()" title="Language">🌍</button>
+    <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
+    
+    <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
+    <div class="uchip" onclick="openM('prof')">
+      <div class="uav" id="uAv">?</div>
+      <span class="unm" id="uNm">Guest</span>
+    </div>
+  </div>
+</header>
+
+<div class="greeting-bar" id="greetBar">👋 <span id="greetTxt">Good morning!</span></div>
+<div class="sub-bar mem" id="memBar"></div>
+<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
+<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
+
+<div class="modes">
+  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
+  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
+  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
+  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
+  <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
+  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
+  <button class="mbtn" onclick="setMode('business',this,'Business')">🏢 Business</button>
+  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
+  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
+  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
+  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
+  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
+  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
+  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
+  <button class="mbtn" onclick="setMode('career',this,'Career')">💼 Career</button>
+  <button class="mbtn" onclick="setMode('health',this,'Health')">🏥 Health</button>
+  <button class="mbtn" onclick="setMode('legal',this,'Legal')">⚖️ Legal</button>
+  <button class="mbtn" onclick="setMode('recipe',this,'Recipe')">🍳 Recipe</button>
+  <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
+</div>
+
+<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
+
+<div class="chat" id="chat">
+  <div class="welcome" id="welcome">
+    <div class="w-crown">👑</div>
+    <div class="w-icon">QV</div>
+    <h1>Hello, I am <em>QVIO</em></h1>
+    <p class="wsub">India's most intelligent AI · 150+ Languages · Built for every Indian</p>
+    <div class="mem-banner" id="memBanner"></div>
+    
+      
+      
+      
+      
+      
+    </div>
+
+    
+    
+
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="char-cnt" id="charCnt"></div>
+  <div class="ibox">
+    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+    <div class="ibtns">
+      <button id="heyQvioBtn" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
+      <button class="sendbtn" id="sendBtn" onclick="sendMsg()">↑</button>
+    </div>
+  </div>
+  <div class="qrs">
+    <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
+    <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
+    <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
+    <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
+    <div class="qr" onclick="openM('timer')">⏱ Timer</div>
+    <div class="qr" onclick="openM('mood')">😊 Mood</div>
+  </div>
+  
+</div>
+
+
+<div class="overlay" id="o_lens" onclick="closeLens()"></div>
+<div class="modal" id="m_lens" style="max-width:560px;">
+  <div class="mhd">
+    <h3>🔍 QVIO Lens</h3>
+    <button class="mx" onclick="closeLens()">✕</button>
+  </div>
+  <div class="msub">Scan anything — text, objects, math, plants, food, QR codes and more</div>
+
+  
+  <div class="lens-tabs">
+    <button class="ltab on" onclick="setLensMode('identify',this)">🔍 Identify</button>
+    <button class="ltab" onclick="setLensMode('text',this)">📝 Read Text</button>
+    <button class="ltab" onclick="setLensMode('translate',this)">🌍 Translate</button>
+    <button class="ltab" onclick="setLensMode('math',this)">🔢 Solve Math</button>
+    <button class="ltab" onclick="setLensMode('food',this)">🍛 Food/Plant</button>
+    <button class="ltab" onclick="setLensMode('qr',this)">📷 QR / URL</button>
+  </div>
+
+  
+  <div class="lens-drop" id="lensDrop" onclick="document.getElementById('lensFile').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="lensDropFile(event)">
+    <div class="lens-drop-inner" id="lensDropInner">
+      <span class="lens-drop-ico">📸</span>
+      <span class="lens-drop-txt">Tap to upload photo or drag & drop</span>
+      <span class="lens-drop-sub">JPG · PNG · WEBP · up to 10 MB</span>
+    </div>
+    <img id="lensPreview" class="lens-preview" style="display:none;" alt="preview"/>
+  </div>
+  <input type="file" id="lensFile" accept="image/*" style="display:none;" onchange="lensLoadFile(this)">
+
+  
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="lens-cam-btn" onclick="startLensCamera()" id="lensCamBtn">📷 Use Camera</button>
+    <button class="lens-cam-btn" id="lensSnapBtn" onclick="snapLens()" style="display:none;background:var(--danger);">⚡ Snap!</button>
+  </div>
+  <video id="lensVideo" style="display:none;width:100%;border-radius:var(--r-sm);margin-top:8px;border:1.5px solid var(--border2);" playsinline autoplay muted></video>
+  <canvas id="lensCanvas" style="display:none;"></canvas>
+
+  
+  <button class="mclose" id="lensAnalyseBtn" onclick="analyseLens()" style="margin-top:14px;" disabled>🔍 Analyse with QVIO</button>
+
+  
+  <div id="lensResult" class="lens-result" style="display:none;"></div>
+
+  
+  <div id="lensAskWrap" style="display:none;margin-top:10px;">
+    <div class="mrow">
+      <input class="minp" id="lensAskInp" placeholder="Ask something about this image..."/>
+      <button class="madd" onclick="lensAskMore()">Ask</button>
+    </div>
+  </div>
+
+  <button class="mclose" style="margin-top:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeLens()">Close</button>
+</div>
+
+
+<div id="langSelectOverlay" onclick="if(event.target===this)closeLangSelect()">
+  <div id="langSelectModal">
+    <div class="lsm-head">
+      <h3>🌍 AI Response Language</h3>
+      <button class="mx" onclick="closeLangSelect()">✕</button>
+    </div>
+    <div class="lsm-sub">Choose which language QVIO responds in</div>
+    <div class="lsm-search-wrap">
+      <span class="lsm-search-icon">🔍</span>
+      <input class="lsm-search" id="lsmSearch" type="text" placeholder="Search 150+ languages..." oninput="filterLSM(this.value)" autocomplete="off"/>
+    </div>
+    <div class="lsm-body" id="lsmBody">
+      
+          <div class="lsm-section-title">🇮🇳 Indian Languages</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Hindi')">Hindi</button>
+            <button class="lsm-pill" onclick="selectAILang('Kannada')">Kannada</button>
+            <button class="lsm-pill" onclick="selectAILang('Tamil')">Tamil</button>
+            <button class="lsm-pill" onclick="selectAILang('Telugu')">Telugu</button>
+            <button class="lsm-pill" onclick="selectAILang('Bengali')">Bengali</button>
+            <button class="lsm-pill" onclick="selectAILang('Marathi')">Marathi</button>
+            <button class="lsm-pill" onclick="selectAILang('Gujarati')">Gujarati</button>
+            <button class="lsm-pill" onclick="selectAILang('Punjabi')">Punjabi</button>
+            <button class="lsm-pill" onclick="selectAILang('Malayalam')">Malayalam</button>
+            <button class="lsm-pill" onclick="selectAILang('Odia')">Odia</button>
+            <button class="lsm-pill" onclick="selectAILang('Urdu')">Urdu</button>
+            <button class="lsm-pill" onclick="selectAILang('Assamese')">Assamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Sanskrit')">Sanskrit</button>
+            <button class="lsm-pill" onclick="selectAILang('Kashmiri')">Kashmiri</button>
+            <button class="lsm-pill" onclick="selectAILang('Nepali')">Nepali</button>
+            <button class="lsm-pill" onclick="selectAILang('Sindhi')">Sindhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Manipuri')">Manipuri</button>
+            <button class="lsm-pill" onclick="selectAILang('Dogri')">Dogri</button>
+            <button class="lsm-pill" onclick="selectAILang('Santali')">Santali</button>
+            <button class="lsm-pill" onclick="selectAILang('Bodo')">Bodo</button>
+            <button class="lsm-pill" onclick="selectAILang('Konkani')">Konkani</button>
+            <button class="lsm-pill" onclick="selectAILang('Tulu')">Tulu</button>
+            <button class="lsm-pill" onclick="selectAILang('Bhojpuri')">Bhojpuri</button>
+            <button class="lsm-pill" onclick="selectAILang('Maithili')">Maithili</button>
+            <button class="lsm-pill" onclick="selectAILang('Rajasthani')">Rajasthani</button>
+            <button class="lsm-pill" onclick="selectAILang('Chhattisgarhi')">Chhattisgarhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Haryanvi')">Haryanvi</button>
+            <button class="lsm-pill" onclick="selectAILang('Awadhi')">Awadhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Kumaoni')">Kumaoni</button>
+            <button class="lsm-pill" onclick="selectAILang('Kodava')">Kodava</button>
+            <button class="lsm-pill" onclick="selectAILang('Mizo')">Mizo</button>
+            <button class="lsm-pill" onclick="selectAILang('Nagamese')">Nagamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Ladakhi')">Ladakhi</button>
+            <button class="lsm-pill" onclick="selectAILang('Saurashtra')">Saurashtra</button>
+            <button class="lsm-pill" onclick="selectAILang('Gondi')">Gondi</button>
+          </div>
+
+          <div class="lsm-section-title">🌏 East & Southeast Asia</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Mandarin')">Mandarin</button>
+            <button class="lsm-pill" onclick="selectAILang('Japanese')">Japanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Korean')">Korean</button>
+            <button class="lsm-pill" onclick="selectAILang('Vietnamese')">Vietnamese</button>
+            <button class="lsm-pill" onclick="selectAILang('Thai')">Thai</button>
+            <button class="lsm-pill" onclick="selectAILang('Indonesian')">Indonesian</button>
+            <button class="lsm-pill" onclick="selectAILang('Malay')">Malay</button>
+            <button class="lsm-pill" onclick="selectAILang('Tagalog')">Tagalog</button>
+            <button class="lsm-pill" onclick="selectAILang('Burmese')">Burmese</button>
+            <button class="lsm-pill" onclick="selectAILang('Khmer')">Khmer</button>
+            <button class="lsm-pill" onclick="selectAILang('Lao')">Lao</button>
+            <button class="lsm-pill" onclick="selectAILang('Sinhalese')">Sinhalese</button>
+            <button class="lsm-pill" onclick="selectAILang('Tibetan')">Tibetan</button>
+            <button class="lsm-pill" onclick="selectAILang('Mongolian')">Mongolian</button>
+            <button class="lsm-pill" onclick="selectAILang('Cantonese')">Cantonese</button>
+            <button class="lsm-pill" onclick="selectAILang('Javanese')">Javanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Sundanese')">Sundanese</button>
+            <button class="lsm-pill" onclick="selectAILang('Cebuano')">Cebuano</button>
+            <button class="lsm-pill" onclick="selectAILang('Uyghur')">Uyghur</button>
+            <button class="lsm-pill" onclick="selectAILang('Kazakh')">Kazakh</button>
+            <button class="lsm-pill" onclick="selectAILang('Uzbek')">Uzbek</button>
+            <button class="lsm-pill" onclick="selectAILang('Taiwanese')">Taiwanese</button>
+          </div>
+
+          <div class="lsm-section-title">🌍 Middle East & Central Asia</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Arabic')">Arabic</button>
+            <button class="lsm-pill" onclick="selectAILang('Persian')">Persian</button>
+            <button class="lsm-pill" onclick="selectAILang('Hebrew')">Hebrew</button>
+            <button class="lsm-pill" onclick="selectAILang('Turkish')">Turkish</button>
+            <button class="lsm-pill" onclick="selectAILang('Pashto')">Pashto</button>
+            <button class="lsm-pill" onclick="selectAILang('Kurdish')">Kurdish</button>
+            <button class="lsm-pill" onclick="selectAILang('Azerbaijani')">Azerbaijani</button>
+            <button class="lsm-pill" onclick="selectAILang('Armenian')">Armenian</button>
+            <button class="lsm-pill" onclick="selectAILang('Georgian')">Georgian</button>
+            <button class="lsm-pill" onclick="selectAILang('Turkmen')">Turkmen</button>
+            <button class="lsm-pill" onclick="selectAILang('Dari')">Dari</button>
+          </div>
+
+          <div class="lsm-section-title">🌍 Africa</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Swahili')">Swahili</button>
+            <button class="lsm-pill" onclick="selectAILang('Amharic')">Amharic</button>
+            <button class="lsm-pill" onclick="selectAILang('Hausa')">Hausa</button>
+            <button class="lsm-pill" onclick="selectAILang('Yoruba')">Yoruba</button>
+            <button class="lsm-pill" onclick="selectAILang('Igbo')">Igbo</button>
+            <button class="lsm-pill" onclick="selectAILang('Zulu')">Zulu</button>
+            <button class="lsm-pill" onclick="selectAILang('Xhosa')">Xhosa</button>
+            <button class="lsm-pill" onclick="selectAILang('Somali')">Somali</button>
+            <button class="lsm-pill" onclick="selectAILang('Oromo')">Oromo</button>
+            <button class="lsm-pill" onclick="selectAILang('Afrikaans')">Afrikaans</button>
+            <button class="lsm-pill" onclick="selectAILang('Wolof')">Wolof</button>
+            <button class="lsm-pill" onclick="selectAILang('Shona')">Shona</button>
+            <button class="lsm-pill" onclick="selectAILang('Tigrinya')">Tigrinya</button>
+            <button class="lsm-pill" onclick="selectAILang('Kinyarwanda')">Kinyarwanda</button>
+            <button class="lsm-pill" onclick="selectAILang('Luganda')">Luganda</button>
+            <button class="lsm-pill" onclick="selectAILang('Twi')">Twi</button>
+            <button class="lsm-pill" onclick="selectAILang('Fula')">Fula</button>
+            <button class="lsm-pill" onclick="selectAILang('Lingala')">Lingala</button>
+          </div>
+
+          <div class="lsm-section-title">🌎 Europe</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('English')">English</button>
+            <button class="lsm-pill" onclick="selectAILang('Spanish')">Spanish</button>
+            <button class="lsm-pill" onclick="selectAILang('French')">French</button>
+            <button class="lsm-pill" onclick="selectAILang('German')">German</button>
+            <button class="lsm-pill" onclick="selectAILang('Portuguese')">Portuguese</button>
+            <button class="lsm-pill" onclick="selectAILang('Russian')">Russian</button>
+            <button class="lsm-pill" onclick="selectAILang('Italian')">Italian</button>
+            <button class="lsm-pill" onclick="selectAILang('Dutch')">Dutch</button>
+            <button class="lsm-pill" onclick="selectAILang('Polish')">Polish</button>
+            <button class="lsm-pill" onclick="selectAILang('Greek')">Greek</button>
+            <button class="lsm-pill" onclick="selectAILang('Swedish')">Swedish</button>
+            <button class="lsm-pill" onclick="selectAILang('Norwegian')">Norwegian</button>
+            <button class="lsm-pill" onclick="selectAILang('Danish')">Danish</button>
+            <button class="lsm-pill" onclick="selectAILang('Finnish')">Finnish</button>
+            <button class="lsm-pill" onclick="selectAILang('Czech')">Czech</button>
+            <button class="lsm-pill" onclick="selectAILang('Romanian')">Romanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Hungarian')">Hungarian</button>
+            <button class="lsm-pill" onclick="selectAILang('Ukrainian')">Ukrainian</button>
+            <button class="lsm-pill" onclick="selectAILang('Catalan')">Catalan</button>
+            <button class="lsm-pill" onclick="selectAILang('Serbian')">Serbian</button>
+            <button class="lsm-pill" onclick="selectAILang('Croatian')">Croatian</button>
+            <button class="lsm-pill" onclick="selectAILang('Slovak')">Slovak</button>
+            <button class="lsm-pill" onclick="selectAILang('Bulgarian')">Bulgarian</button>
+            <button class="lsm-pill" onclick="selectAILang('Lithuanian')">Lithuanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Latvian')">Latvian</button>
+            <button class="lsm-pill" onclick="selectAILang('Albanian')">Albanian</button>
+            <button class="lsm-pill" onclick="selectAILang('Macedonian')">Macedonian</button>
+            <button class="lsm-pill" onclick="selectAILang('Slovenian')">Slovenian</button>
+            <button class="lsm-pill" onclick="selectAILang('Estonian')">Estonian</button>
+            <button class="lsm-pill" onclick="selectAILang('Belarusian')">Belarusian</button>
+            <button class="lsm-pill" onclick="selectAILang('Welsh')">Welsh</button>
+            <button class="lsm-pill" onclick="selectAILang('Irish')">Irish</button>
+            <button class="lsm-pill" onclick="selectAILang('Basque')">Basque</button>
+            <button class="lsm-pill" onclick="selectAILang('Maltese')">Maltese</button>
+          </div>
+
+          <div class="lsm-section-title">🌎 Americas & Pacific</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('Brazilian Portuguese')">Brazilian Portuguese</button>
+            <button class="lsm-pill" onclick="selectAILang('Mexican Spanish')">Mexican Spanish</button>
+            <button class="lsm-pill" onclick="selectAILang('Quechua')">Quechua</button>
+            <button class="lsm-pill" onclick="selectAILang('Guarani')">Guarani</button>
+            <button class="lsm-pill" onclick="selectAILang('Hawaiian')">Hawaiian</button>
+            <button class="lsm-pill" onclick="selectAILang('Maori')">Maori</button>
+            <button class="lsm-pill" onclick="selectAILang('Samoan')">Samoan</button>
+            <button class="lsm-pill" onclick="selectAILang('Tongan')">Tongan</button>
+            <button class="lsm-pill" onclick="selectAILang('Haitian Creole')">Haitian Creole</button>
+            <button class="lsm-pill" onclick="selectAILang('Nahuatl')">Nahuatl</button>
+            <button class="lsm-pill" onclick="selectAILang('Aymara')">Aymara</button>
+          </div>
+
+          <div class="lsm-section-title">🤟 Sign & Special</div>
+          <div class="lsm-pills">
+            <button class="lsm-pill" onclick="selectAILang('ISL Indian Sign')">ISL Indian Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('ASL American Sign')">ASL American Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('BSL British Sign')">BSL British Sign</button>
+            <button class="lsm-pill" onclick="selectAILang('Esperanto')">Esperanto</button>
+            <button class="lsm-pill" onclick="selectAILang('Latin')">Latin</button>
+            <button class="lsm-pill" onclick="selectAILang('Pali')">Pali</button>
+            <button class="lsm-pill" onclick="selectAILang('Sanskrit')">Sanskrit</button>
+            <button class="lsm-pill" onclick="selectAILang('Morse Code')">Morse Code</button>
+          </div>
+
+      <div class="lsm-no-results" id="lsmNoResults">😕 No language found</div>
+    </div>
+    <div class="lsm-footer">
+      <button class="lsm-cancel" onclick="closeLangSelect()">Cancel</button>
+      <button class="lsm-confirm" onclick="confirmAILang()">✅ Set Language</button>
+    </div>
+  </div>
+</div>
+
+</body>)
+══════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════════════
+// QVIO PROTECTION SYSTEM
+// (c) 2025 QVIO by VARUN. All Rights Reserved.
+// Indian Copyright Act 1957 + IT Act 2000
+// ═══════════════════════════════════════════════════
+(function(){
+  // Console warning
+  var _w=false;
+  function _cw(){
+    if(_w)return; _w=true;
+    console.log('%c\u26a0\ufe0f STOP \u2014 QVIO Protected','font-size:22px;font-weight:900;color:#D4A017;background:#0D1B3E;padding:10px 18px;border-radius:8px;');
+    console.log('%c\ud83d\udea8 Private property of VARUN. Unauthorized access is a criminal offence.','font-size:13px;color:#DC2626;font-weight:700;');
+    console.log('%c\u2192 Indian Copyright Act 1957 | IT Act 2000 | IPC Section 66','font-size:12px;color:#374151;');
+    console.log('%c(c) 2025 QVIO AI by VARUN. All Rights Reserved.','font-size:11px;color:#6B7280;');
+  }
+  Object.defineProperty(console,'_qg',{get:function(){_cw();return '';}});
+  console.log(console._qg);
+
+  // Block F12, Ctrl+U, Ctrl+Shift+I/J
+  document.addEventListener('keydown',function(e){
+    if(e.key==='F12'||(e.ctrlKey&&e.key==='u')||(e.ctrlKey&&e.shiftKey&&'ijcIJC'.indexOf(e.key)>-1)){
+      e.preventDefault();
+      if(typeof showToast==='function')showToast('\ud83d\udd12 QVIO is protected. (c) VARUN 2025','error');
+      return false;
+    }
+  });
+
+  // Right-click disable
+  document.addEventListener('contextmenu',function(e){
+    e.preventDefault();
+    if(typeof showToast==='function')showToast('\ud83d\udd12 QVIO is protected. (c) VARUN 2025','error');
+    return false;
+  });
+
+  // DevTools size detection
+  var _dOpen=false;
+  setInterval(function(){
+    var _w2=window.outerWidth-window.innerWidth;
+    var _h=window.outerHeight-window.innerHeight;
+    if(_w2>160||_h>160){if(!_dOpen){_dOpen=true;_showWarn();}}else{_dOpen=false;}
+  },1200);
+
+  function _showWarn(){
+    if(document.getElementById('_qvPM'))return;
+    var d=document.createElement('div');
+    d.id='_qvPM';
+    d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;';
+    d.innerHTML='<div style="background:#0D1B3E;border:2px solid #D4A017;border-radius:20px;padding:32px;max-width:400px;text-align:center;color:#fff;">'
+      +'<div style="font-size:44px;margin-bottom:14px;">\u26a0\ufe0f</div>'
+      +'<div style="font-size:19px;font-weight:900;color:#F5C030;margin-bottom:10px;">QVIO Protected</div>'
+      +'<div style="font-size:13px;line-height:1.8;color:#CBD5E1;margin-bottom:18px;">Intellectual property of <strong style="color:#F5C030">VARUN</strong>.<br>Unauthorized inspection or copying is a criminal offence under the <strong>Indian Copyright Act 1957</strong> and <strong>IT Act 2000</strong>.</div>'
+      +'<div style="font-size:11px;color:#64748B;margin-bottom:18px;">(c) 2025 QVIO AI by VARUN. All Rights Reserved.</div>'
+      +'<button onclick="document.getElementById(\'_qvPM\').remove()" style="background:linear-gradient(135deg,#D4A017,#F5C030);color:#0D1B3E;border:none;padding:11px 26px;border-radius:10px;font-weight:800;cursor:pointer;">I Understand</button>'
+      +'</div>';
+    document.body.appendChild(d);
+  }
+
+  // Domain lock
+  var _ok=['localhost','127.0.0.1','qvio.in','qvioai.web.app','qvioai.firebaseapp.com',
+           'qvioai-f7659.web.app','qvioai-f7659.firebaseapp.com','github.io','vercel.app','netlify.app',''];
+  var _h=window.location.hostname||'';
+  var _pass=_ok.some(function(d){return d===''?_h==='':_h===d||_h.endsWith('.'+d)||_h.endsWith(d);});
+  if(!_pass){
+    document.body.innerHTML='<div style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#0D1B3E;color:#fff;text-align:center;padding:20px;"><div>'
+      +'<div style="font-size:56px;margin-bottom:18px;">\ud83d\udd12</div>'
+      +'<h1 style="color:#F5C030;font-size:26px;margin-bottom:10px;">Unauthorized Domain</h1>'
+      +'<p style="color:#CBD5E1;font-size:14px;line-height:1.8;">QVIO is not authorized on this domain.<br>(c) 2025 QVIO AI by VARUN. All rights reserved.</p>'
+      +'<p style="color:#64748B;font-size:12px;margin-top:18px;">Visit official QVIO at qvioai.web.app</p>'
+      +'</div></div>';
+    throw new Error('QVIO: Unauthorized domain');
+  }
+})();
+
+// ═══════════════════════════════
+// FIREBASE INIT
+// ═══════════════════════════════
+var firebaseConfig={
+  apiKey:(function(){var _e=atob('EBgrMAIoEBcYEwEFMBArKTM+JDtnYwZpNRNnEiFpJx47NCMjHGJh'),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
+  authDomain:"qvioai-f7659.firebaseapp.com",
+  projectId:"qvioai-f7659",
+  storageBucket:"qvioai-f7659.firebasestorage.app",
+  messagingSenderId:"556429565888",
+  appId:"1:556429565888:web:e10b98f37c099602d6b225"
+};
+var fbAuth=null;
+
+function initFirebase(){
+  try{
+    if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    fbAuth=firebase.auth();
+    fbAuth.onAuthStateChanged(function(u){
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);}
+    });
+    console.log('✅ Firebase ready!');
+  }catch(e){console.warn('Firebase error:',e);}
+}
+// Init immediately — Firebase SDK already loaded in <head>
+initFirebase();
+
+// ═══════════════════════════════
+// GLOBALS
+// ═══════════════════════════════
+// 🔑 API Key Rotation — auto-switches when one hits rate limit
+var _qk=[(function(){var _e=atob('NiI6DjY3EDo/aRRgNggmJmM3AhY2AQZgBhY1KDNiFwgJAGkEMhY+IhQ4OhspNT4IZjswMGQEFRM='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
+var _keyIdx=0;
+var _qc=_qk[0];
+function rotateKey(){
+  _keyIdx=(_keyIdx+1)%_qk.length;
+  _qc=_qk[_keyIdx];
+  return _keyIdx!==0; // returns false if we've looped back to start
+}
+var MODEL=(function(){var _e=atob('PT0wPDB8Yn9ifGZhM3wnNCMiMCU4PTQ='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})();
+var mode='casual',chatHistory=[],currentUser=null,isRec=false,recog=null;
+var isFocus=false,pinnedEl=null,deferredPrompt=null,calcExpr='',lastMsg='';
+var shareContent='';
+
+var S={
+  g:function(k){try{return JSON.parse(localStorage.getItem('qvio_'+k));}catch(e){return null;}},
+  s:function(k,v){try{localStorage.setItem('qvio_'+k,JSON.stringify(v));}catch(e){}}
+};
+var memory=S.g('memory')||{facts:[],name:''};
+var stats=S.g('stats')||{msgs:0,sessions:0,images:0,streak:0,lastDay:'',longest:0,words:0,chars:0};
+var imgGal=S.g('gallery')||[];
+var savedChats=S.g('chats')||[];
+function saveMem(){S.s('memory',memory);}
+function saveStats(){S.s('stats',stats);}
+function saveGal(){S.s('gallery',imgGal.slice(-50));}
+
+// ═══════════════════════════════
+// PARTICLES
+// ═══════════════════════════════
+function initParticles(){
+  var p=document.getElementById('particles');
+  var configs=[{color:'rgba(212,160,23,.5)',size:3},{color:'rgba(212,160,23,.3)',size:5},{color:'rgba(13,27,62,.2)',size:4},{color:'rgba(240,200,66,.4)',size:2}];
+  for(var i=0;i<18;i++){
+    var cfg=configs[i%configs.length];
+    var d=document.createElement('div');d.className='ptc';
+    var sz=Math.random()*cfg.size+2;
+    d.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;background:'+cfg.color+';animation-duration:'+(Math.random()*25+18)+'s;animation-delay:'+(-Math.random()*25)+'s;';
+    p.appendChild(d);
+  }
+}
+
+// ═══════════════════════════════
+// NAMASTE ANIMATION
+// ═══════════════════════════════
+function showNamaste(user){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  var ns=document.getElementById('namasteScreen');
+  ns.classList.add('show');
+  var nm=user.displayName||user.email||'Friend';
+  var first=nm.split(' ')[0].toUpperCase();
+  // Trigger text
+  setTimeout(function(){ revealNamasteText(first); }, 600);
+  // Dismiss after 4.5s
+  setTimeout(function(){
+    ns.classList.add('exiting');
+    setTimeout(function(){
+      ns.style.opacity='0';ns.style.transition='opacity .5s';
+      setTimeout(function(){
+        ns.classList.remove('show','exiting');ns.style.opacity='';
+        var g=document.getElementById('nsGreeting');
+        var u=document.getElementById('nsUsername');
+        var p=document.getElementById('nsPercent');
+        if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
+        // Show the app!
+        try{setSmartGreeting();}catch(e){}
+        try{showOnboard();}catch(e){}
+      },500);
+    },300);
+  },4500);
+}
+
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+function signInGoogle(){
+  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(e){
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      else showToast('Error: '+e.message);
+    });
+}
+function signInEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.signInWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function signUpEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.createUserWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function doSignOut(){
+  if(fbAuth)fbAuth.signOut();
+  currentUser=null;
+  var ls=document.getElementById('loginScreen');
+  ls.style.cssText='display:flex;opacity:1;';
+  closeM('prof');
+  showToast('Signed out');
+}
+function skipLogin(){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  showToast('👑 Welcome to QVIO Premium!');
+}
+function updateUserUI(user){
+  var nm=user.displayName||user.email||'User';
+  document.getElementById('uNm').textContent=nm.split(' ')[0];
+  document.getElementById('profName').textContent=nm;
+  document.getElementById('profEmail').textContent=user.email||'';
+  if(user.photoURL){
+    document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';
+    document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';
+  }else{
+    document.getElementById('uAv').textContent=nm[0].toUpperCase();
+    document.getElementById('profAv').textContent=nm[0].toUpperCase();
+  }
+  if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
+  updateMemUI();
+}
+
+// ═══════════════════════════════
+// STREAK
+// ═══════════════════════════════
+function updateStreak(){
+  var today=new Date().toDateString();
+  if(stats.lastDay!==today){
+    var yest=new Date();yest.setDate(yest.getDate()-1);
+    stats.streak=(stats.lastDay===yest.toDateString())?stats.streak+1:1;
+    if(stats.streak>stats.longest)stats.longest=stats.streak;
+    stats.lastDay=today;stats.sessions++;saveStats();
+    if(stats.streak>1&&stats.streak%7===0){setTimeout(fireConfetti,500);showToast('🔥 '+stats.streak+' day streak!');}
+  }
+  var sn=document.getElementById('streakNum');if(sn)sn.textContent=stats.streak;
+  var sb=document.getElementById('streakBig');if(sb)sb.textContent=stats.streak;
+  renderStreakDays();
+}
+function renderStreakDays(){
+  var el=document.getElementById('streakDays');if(!el)return;
+  var h='';
+  for(var i=6;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);
+    var done=i===0&&stats.lastDay===new Date().toDateString();
+    h+='<div class="sd'+(done?' done':'')+'">'+d.toLocaleDateString('en',{weekday:'short'}).slice(0,2)+'</div>';
+  }
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════
+// CONFETTI
+// ═══════════════════════════════
+function fireConfetti(){
+  var cols=['#D4A017','#F0C842','#0D1B3E','#162554','#FFFFFF','#FFD966','#B8860B'];
+  for(var i=0;i<90;i++){
+    (function(i){setTimeout(function(){
+      var c=document.createElement('div');c.className='confetti';
+      var sz=Math.random()*9+3;
+      c.style.cssText='left:'+Math.random()*100+'vw;background:'+cols[~~(Math.random()*cols.length)]+';width:'+sz+'px;height:'+sz+'px;border-radius:'+(Math.random()>.5?'50%':'3px')+';animation-duration:'+(Math.random()*2+2)+'s;';
+      document.body.appendChild(c);setTimeout(function(){c.remove();},4000);
+    },i*22);})(i);
+  }
+}
+
+// ═══════════════════════════════
+// THEMES
+// ═══════════════════════════════
+function autoTheme(){
+  var h=new Date().getHours(),dark=h<6||h>=20;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
+}
+function setTh(t){
+  S.s('theme',t);
+  if(t==='auto')autoTheme();
+  else{document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}
+  closeM('theme');
+}
+function cycleTh(){setTh(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+function setFont(s){
+  var m={small:'13px',normal:'14.5px',large:'16.5px'};
+  document.querySelectorAll('.bubble,#inp').forEach(function(el){el.style.fontSize=m[s];});
+  document.querySelectorAll('.tho').forEach(function(t){t.classList.remove('on');});
+  event.target.classList.add('on');
+}
+
+// ═══════════════════════════════
+// TIPS
+// ═══════════════════════════════
+var TIPS=['💡 Type "create image:" to generate 4K AI art','🎯 Exam Mode — deep JEE NEET UPSC CBSE knowledge','🧠 Say "my name is [name]" — QVIO remembers you forever','⌨️ Enter to send · Shift+Enter for new line','🔊 Click 🔊 on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar','💾 Export button saves your full conversation','🔥 Use QVIO every day to build your streak!','🌍 QVIO understands Hinglish, Tanglish and all slang','🔢 Built-in calculator — click 🔢 anytime','🌙 Auto theme switches to dark mode after 8PM','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides buttons for pure conversation','💬 Chat History saves your last 20 conversations','🎨 Image Gallery stores all 50 AI-generated images','📱 Install QVIO on your phone for full app experience','⚡ QVIO responds in under 2 seconds worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws simply','✈️ Travel Mode plans trips and suggests hidden gems'];
+var tipI=0;
+function rotateTip(){
+  var b=document.getElementById('tipBox');if(!b)return;
+  b.style.opacity='0';
+  setTimeout(function(){b.textContent=TIPS[tipI%TIPS.length];tipI++;b.style.opacity='1';},400);
+}
+
+// ═══════════════════════════════
+// PROMPTS
+// ═══════════════════════════════
+var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
+
+1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
+
+2. EMOTIONAL INTELLIGENCE 2.0: Detect emotions instantly — sadness, excitement, stress, loneliness, anger, anxiety. Respond with REAL empathy not robotic sympathy. Mirror emotional tone. Validate feelings first then help. Say things like "I hear you yaar, that sounds really tough". Special sensitivity to exam stress, family pressure, loneliness — common in Indian youth.
+
+3. CONTEXTUAL UNDERSTANDING: Remember EVERYTHING in this conversation. Build on previous messages naturally. Connect dots — if they mentioned JEE earlier reference it later. Understand implicit meaning. Detect mood changes and adapt. Never give generic responses — always personalized.
+
+4. INDIAN CULTURE EXPERTISE: Deep knowledge of all Indian festivals, Vedic traditions, mythology, Ramayana, Mahabharata. Regional customs across all 28 states. Indian family dynamics — joint families, parent pressure, arranged marriages. Indian food, fashion, modern lifestyle across urban rural tier-1 tier-2 tier-3 cities.
+
+5. BOLLYWOOD AND CRICKET: Complete Bollywood knowledge — movies, directors, actors, OTT releases, gossip, awards. Cricket fanatic — IPL all teams, Test ODI T20, player stats, historic matches. Sachin Dhoni Kohli Rohit era. React with genuine emotion to cricket results.
+
+6. PERSONALIZED LEARNING: Adapt teaching style automatically. For JEE/NEET give exam tricks and shortcuts. For CBSE/ICSE follow syllabus patterns. Create study plans. Use Indian daily life analogies for difficult concepts. Gamify with quizzes and memory tricks.
+
+7. MENTAL HEALTH SUPPORT: Be a safe non-judgmental space. Recognize depression, anxiety, burnout, loneliness. Respond with warmth and empathy. Suggest healthy coping — breathing, journaling. Know when to gently recommend professional help. Never minimize problems. Crisis awareness — if someone seems in danger respond with care and helpline info (iCall: 9152987821).
+
+8. CREATIVE WRITING: Write poetry, prose, screenplay, song lyrics, stories. Master Shayari, Dohe, Ghazal in Hindi and Urdu. Indian settings and cultural nuances. Viral social media captions, threads, bios. College essays, application letters. Any tone — romantic, humorous, serious, inspirational.
+
+9. INDIAN LANGUAGE ACCESSIBILITY: Transliterate between scripts. Help users learn their mother tongue. Explain concepts in pure Hindi, Kannada, Tamil when needed. Never make users feel inferior for not knowing English. Every Indian language is equally respected.
+
+10. CONTINUOUS IMPROVEMENT: Learn user preferences within conversation and adapt. Get smarter with each message. Ask smart follow-up questions. Admit when you do not know something — never make up facts. Stay humble and curious.
+
+AUTO MODE DETECTION: Automatically detect the right mode from message:
+- Mentions JEE/NEET/UPSC/exam/study/marks → switch to exam/student mode
+- Asks for code/programming/debug → switch to code mode  
+- Math problem/equation/solve → switch to math mode
+- Creative writing/story/poem → switch to creative mode
+- Business/startup/pitch → switch to business mode
+- Just chatting/casual → stay casual and friendly
+- Never ask the user to select a mode — just adapt automatically
+
+
+CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
+- If they ask about studies/exams → switch to Student/Exam mode automatically  
+- If they send code → switch to Code mode automatically
+- If they ask about business → switch to Business mode
+- If they seem sad/stressed → switch to supportive mode
+- NEVER tell the user you switched modes — just do it naturally
+
+PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
+
+WEB SEARCH: When you receive [LIVE WEB DATA], use it. Always mention the date/time of the info. Be honest if results seem old. For very recent events like live scores, say you have info up to a certain point.`;
+var PROMPTS={
+  casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
+  student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
+  exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
+  pro:'You are QVIO Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. No fluff ever.',
+  business:'You are QVIO Business, senior business advisor for Indian SMEs and startups. '+RULES+'Business plans pitch decks GST growth hacks.',
+  spiritual:'You are QVIO Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism.',
+  code:'You are QVIO Code, an elite full-stack engineer. '+RULES+'Always use code blocks. Explain every line.',
+  math:'You are QVIO Math, a brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level.',
+  hindi:'Aap QVIO hain, India ka number one premium AI dost! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do.',
+  kannada:'Neevu QVIO, India mattu  pura premium smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi naturally.',
+  quiz:'You are QVIO Quiz Master, the most exciting quiz host in India! '+RULES+'ONE question at a time with 4 options A B C D. Keep score.',
+  translate:'You are QVIO Translator, the worlds most precise multilingual expert. '+RULES+'100+ languages. Show: Translation, Pronunciation, Cultural note.',
+  write:'You are QVIO Writer, a world class author and copywriter. '+RULES+'Stories poems emails essays captions CVs scripts speeches.',
+  news:'You are QVIO News, a sharp balanced news analyst. '+RULES+'Clear simple language. Balanced perspectives always.',
+  career:'You are QVIO Career Coach for Indian professionals and students. '+RULES+'Resume writing interview prep salary negotiation LinkedIn.',
+  health:'You are QVIO Health Advisor providing general wellness information. '+RULES+'ALWAYS recommend seeing a real doctor for medical issues.',
+  legal:'You are QVIO Legal Guide explaining Indian laws simply. '+RULES+'Always recommend consulting a qualified lawyer for serious matters.',
+  recipe:'You are QVIO Chef with mastery of all Indian and world cuisines. '+RULES+'Clear recipes with ingredients steps timing chef tips.',
+  travel:'You are QVIO Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places local food transport budgets.',
+};
+
+// ═══════════════════════════════
+// MEMORY
+// ═══════════════════════════════
+function getMemCtx(){
+  var f=memory.facts||[],n=memory.name||'';
+  if(!f.length&&!n)return '';
+  return '\n\n[USER MEMORY: '+(n?'Name: '+n+'. ':'')+f.join('. ')+']';
+}
+function updateMemUI(){
+  var bar=document.getElementById('memBar'),ban=document.getElementById('memBanner');
+  var n=memory.name||'',f=memory.facts||[];
+  if(n||f.length){
+    var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';
+    if(bar){bar.textContent=t;bar.classList.add('show');}
+    if(ban){ban.textContent=t;ban.classList.add('show');}
+  }else{
+    if(bar)bar.classList.remove('show');
+    if(ban)ban.classList.remove('show');
+  }
+}
+function renderMemList(){
+  var el=document.getElementById('memList'),f=memory.facts||[],n=memory.name||'',h='';
+  if(n)h+='<div class="mi">👤 Name: '+n+'<button class="mdel" onclick="delMem(\'name\')">✕</button></div>';
+  if(!f.length&&!n)h='<div class="mmt">No memories yet! Chat and QVIO learns about you 🧠</div>';
+  f.forEach(function(x,i){h+='<div class="mi">💭 '+x+'<button class="mdel" onclick="delMem('+i+')">✕</button></div>';});
+  el.innerHTML=h;
+}
+function addMem(){
+  var v=document.getElementById('memInp').value.trim();if(!v)return;
+  if(!memory.facts)memory.facts=[];
+  memory.facts.push(v);document.getElementById('memInp').value='';
+  saveMem();renderMemList();updateMemUI();showToast('✨ Memory saved!');
+}
+function delMem(k){
+  if(k==='name')delete memory.name;else memory.facts.splice(k,1);
+  saveMem();renderMemList();updateMemUI();
+}
+function extractMem(t){
+  var n=t.match(/my name is ([A-Za-z]+)/i);
+  if(n&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('✨ Nice to meet you, '+n[1]+'!');}
+  var f=t.match(/i(?:'m| am) from ([A-Za-z ,]+)/i);
+  if(f){
+    if(!memory.facts)memory.facts=[];
+    if(!memory.facts.some(function(x){return x.indexOf('from')>-1;})){
+      memory.facts.push('From '+f[1].trim());saveMem();updateMemUI();
+    }
+  }
+}
+
+// ═══════════════════════════════
+// STATS & BADGES
+// ═══════════════════════════════
+function renderStats(){
+  document.getElementById('statGrid').innerHTML=
+    '<div class="stat-card"><div class="stn">'+stats.msgs+'</div><div class="stl">Messages Sent</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.streak+'</div><div class="stl">Day Streak 🔥</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.images+'</div><div class="stl">Images Created</div></div>'+
+    '<div class="stat-card"><div class="stn">'+stats.longest+'</div><div class="stl">Best Streak 🏆</div></div>';
+  var B=[
+    {e:'👑',l:'First Chat',got:stats.msgs>=1},{e:'🔥',l:'7-Day Streak',got:stats.longest>=7},
+    {e:'💬',l:'100 Messages',got:stats.msgs>=100},{e:'🎨',l:'AI Artist',got:stats.images>=5},
+    {e:'🧠',l:'Memory Pro',got:(memory.facts||[]).length>=5},{e:'🌍',l:'Polyglot',got:false},
+    {e:'🏆',l:'30-Day Streak',got:stats.longest>=30},{e:'🚀',l:'Power User',got:stats.msgs>=500},
+    {e:'💎',l:'Premium User',got:true}
+  ];
+  document.getElementById('badgeGrid').innerHTML=B.map(function(b){
+    return '<div class="badge'+(b.got?' earned':'')+'">'+b.e+'<span class="badge-l">'+(b.got?b.l:'???')+'</span></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════
+// GALLERY
+// ═══════════════════════════════
+function renderGal(){
+  var el=document.getElementById('galGrid');
+  if(!imgGal.length){el.innerHTML='<div class="ge">No images yet! Type "create image:" to generate 4K art 🎨</div>';return;}
+  el.innerHTML=imgGal.slice().reverse().map(function(u){
+    return '<div class="gi" onclick="viewImg(\''+u+'\')"><img src="'+u+'" loading="lazy"></div>';
+  }).join('');
+}
+function viewImg(u){document.getElementById('imgVSrc').src=u;document.getElementById('imgVDl').href=u;openM('imgv');}
+
+// ═══════════════════════════════
+// HISTORY
+// ═══════════════════════════════
+function renderHist(){
+  var el=document.getElementById('histList');
+  if(!savedChats.length){el.innerHTML='<div class="he">No saved chats yet.</div>';return;}
+  el.innerHTML=savedChats.map(function(c,i){
+    return '<div class="hi" onclick="loadChat('+i+')"><div class="hit">'+c.title+'</div><div class="hid">'+c.date+'</div></div>';
+  }).join('');
+}
+function loadChat(i){
+  var c=savedChats[i];clearChat();
+  chatHistory=c.history.slice();
+  chatHistory.forEach(function(m){if(m.role!=='system')addMsg(m.content,m.role==='assistant'?'ai':'user');});
+  closeM('hist');showToast('Chat loaded!');
+}
+function saveChat(){
+  if(!chatHistory.length)return;
+  savedChats.unshift({title:chatHistory[0].content.substring(0,55),history:chatHistory.slice(),date:new Date().toLocaleDateString()});
+  if(savedChats.length>20)savedChats=savedChats.slice(0,20);
+  S.s('chats',savedChats);
+}
+
+// ═══════════════════════════════
+// MODE
+// ═══════════════════════════════
+function setMode(m,btn,label){
+  mode=m;
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  document.getElementById('modeLabel').textContent=label;
+  document.getElementById('examBar').classList.toggle('show',m==='exam');
+}
+
+// ═══════════════════════════════
+// MODALS
+// ═══════════════════════════════
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
+function openM(t){
+  var ids=MAP[t];if(!ids)return;
+  document.getElementById(ids[0]).classList.add('show');
+  document.getElementById(ids[1]).classList.add('show');
+  if(t==='mem')renderMemList();
+  if(t==='stats')renderStats();
+  if(t==='gal')renderGal();
+  if(t==='hist')renderHist();
+}
+function closeM(t){
+  var ids=MAP[t];if(!ids)return;
+  document.getElementById(ids[0]).classList.remove('show');
+  document.getElementById(ids[1]).classList.remove('show');
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')Object.keys(MAP).forEach(closeM);
+  if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('inp').focus();}
+  if(e.ctrlKey&&e.key==='l'){e.preventDefault();clearChat();}
+});
+function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
+
+// ═══════════════════════════════
+// CHAT CORE
+// ═══════════════════════════════
+function hideWelcome(){
+  var w=document.getElementById('welcome');
+  if(w){w.style.opacity='0';w.style.transition='opacity .25s';setTimeout(function(){w&&w.remove();},250);}
+}
+function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
+function scrollToTop(){document.getElementById('chat').scrollTop=0;}
+
+function renderText(t){
+  return t
+    .replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,code){return '<pre><button class="code-copy" onclick="copyCode(this)">Copy</button><code>'+escH(code.trim())+'</code></pre>';})
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^### (.*)/gm,'<h4 style="margin:8px 0 4px;font-size:15px;color:var(--navy);">$1</h4>')
+    .replace(/^## (.*)/gm,'<h3 style="margin:8px 0 4px;font-size:17px;font-family:\'Cormorant Garamond\',serif;color:var(--navy);">$1</h3>')
+    .replace(/\n/g,'<br>');
+}
+function escH(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyCode(btn){
+  navigator.clipboard.writeText(btn.nextElementSibling.textContent);
+  btn.textContent='Copied!';btn.style.background='rgba(21,128,61,.3)';
+  setTimeout(function(){btn.textContent='Copy';btn.style.background='';},2000);
+}
+
+function addMsg(content,role,isImg,speed){
+  hideWelcome();
+  var c=document.getElementById('chat');
+  var div=document.createElement('div');div.className='msg '+role;
+  var av=document.createElement('div');av.className='av '+(role==='ai'?'ai':'usr');
+  if(role==='user'&&currentUser&&currentUser.photoURL)av.innerHTML='<img src="'+currentUser.photoURL+'">';
+  else av.textContent=role==='ai'?'QV':'You';
+  var wrap=document.createElement('div');wrap.className='mwrap';
+  var bub=document.createElement('div');bub.className='bubble';
+
+  if(isImg){
+    var img=document.createElement('img');img.src=content;img.className='gen-img';img.alt='QVIO Art';
+    img.onclick=function(){viewImg(content);};
+    img.onerror=function(){bub.innerHTML='Image generation failed. Try a different prompt!';};
+    bub.appendChild(img);
+    var dl=document.createElement('a');dl.href=content;dl.download='qvio-'+Date.now()+'.jpg';dl.className='img-dl';dl.textContent='⬇ Download';
+    bub.appendChild(dl);
+    wrap.appendChild(bub);
+  }else{
+    bub.innerHTML=renderText(content);
+    if(role==='ai'){
+      var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
+      cb.onclick=function(){navigator.clipboard.writeText(content);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
+      bub.appendChild(cb);
+
+      var meta=document.createElement('div');meta.className='mmeta';
+      function makeAct(icon,tip,fn){
+        var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
+      }
+      makeAct('🔊','Listen',function(){speakText(content,this);});
+      var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
+      var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
+      var pin=makeAct('📌','Pin',function(){
+        pin.classList.toggle('active');
+        if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');document.getElementById('pinnedBar').classList.add('show');document.getElementById('pinnedTxt').textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
+        else{bub.classList.remove('pinned-msg');document.getElementById('pinnedBar').classList.remove('show');}
+      });
+      // Share button — inline, no override needed
+      (function(msgContent){
+        makeAct('📤','Share',function(){openShare(msgContent);});
+      })(content);
+      makeAct('🔄','Regenerate',function(){if(lastMsg)send(lastMsg);});
+      if(speed){var sp=document.createElement('span');sp.className='speed-tag';sp.textContent='⚡'+(speed/1000).toFixed(1)+'s';meta.appendChild(sp);}
+      wrap.appendChild(bub);wrap.appendChild(meta);
+    }else{
+      wrap.appendChild(bub);
+    }
+  }
+  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
+  div.appendChild(av);div.appendChild(wrap);
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+  checkScroll();
+}
+
+function checkScroll(){
+  var c=document.getElementById('chat'),btn=document.getElementById('scrollBtn');
+  btn.classList.toggle('show',c.scrollHeight-c.scrollTop-c.clientHeight>160);
+}
+var _chatEl=document.getElementById('chat');if(_chatEl)_chatEl.addEventListener('scroll',checkScroll);
+function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
+
+// ═══════════════════════════════
+// TTS
+// ═══════════════════════════════
+// ═══════════════════════════════
+// VOICE ENGINE — 150+ LANGUAGES
+// ═══════════════════════════════
+var cachedVoices=[];
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){cachedVoices=window.speechSynthesis.getVoices();};}
+var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['hi-IN'],'manipuri':['hi-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['hi-IN'],'konkani':['hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['zh-CN'],'mongolian':['mn-MN'],'javanese':['id-ID'],'sundanese':['id-ID'],'cebuano':['fil-PH'],'arabic':['ar-SA','ar-EG'],'persian':['fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF'],'kurdish':['ku-TR'],'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],'swahili':['sw-KE'],'amharic':['am-ET'],'hausa':['ha-NG'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'spanish':['es-ES','es-MX'],'french':['fr-FR'],'german':['de-DE'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'english':['en-IN','en-US','en-GB'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX']};
+function detectSpeakLang(text){
+  var sc={hindi:/[ऀ-ॿ]/,arabic:/[؀-ۿ]/,chinese:/[一-鿿]/,japanese:/[぀-ヿ]/,korean:/[가-힯]/,thai:/[฀-๿]/,telugu:/[ఀ-౿]/,tamil:/[஀-௿]/,kannada:/[ಀ-೿]/,bengali:/[ঀ-৿]/,malayalam:/[ഀ-ൿ]/,gujarati:/[઀-૿]/,punjabi:/[਀-੿]/,odia:/[଀-୿]/};
+  for(var lang in sc){if(sc[lang].test(text))return {lang:lang,tags:LANG_TAGS[lang]||['en-IN']};}
+  if(LANG_TAGS[mode])return {lang:mode,tags:LANG_TAGS[mode]};
+  return {lang:'english',tags:['en-IN','en-US']};
+}
+function findBestVoice(tags){
+  var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
+  if(!voices.length)return null;
+  function s(v,tag){var n=v.name.toLowerCase(),sc=0;if(v.lang===tag)sc+=100;else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;else return -1;if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1)sc+=30;if(v.localService===false)sc+=15;if(n.indexOf('zira')>-1||n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('hazel')>-1)sc-=60;return sc;}
+  var best=null,bs=-999;
+  for(var ti=0;ti<tags.length;ti++){for(var vi=0;vi<voices.length;vi++){var sc2=s(voices[vi],tags[ti]);if(sc2>bs){bs=sc2;best=voices[vi];}}if(best&&bs>=50)break;}
+  return best;
+}
+var curU=null;
+function speakText(t,btn){
+  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;return;}
+  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'');
+  clean=clean.substring(0,2000);
+  var u=new SpeechSynthesisUtterance(clean);
+  var detected=detectSpeakLang(clean);
+  var voice=findBestVoice(detected.tags);
+  if(voice)u.voice=voice;
+  u.lang=detected.tags[0];
+  u.rate=0.93;u.pitch=1.0;u.volume=1.0;
+  showToast('🔊 Speaking in '+detected.lang+'...');
+  if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
+  u.onend=u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
+  curU=u;window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════
+// TYPING / SKELETON
+// ═══════════════════════════════
+function showTyping(){
+  hideWelcome();
+  document.getElementById('typeBar').classList.add('show');
+  var c=document.getElementById('chat');
+  var d=document.createElement('div');d.className='tywrap';d.id='typer';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var sk=document.createElement('div');sk.className='skel';
+  sk.innerHTML='<div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line"></div>';
+  d.appendChild(av);d.appendChild(sk);
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function hideTyping(){
+  document.getElementById('typeBar').classList.remove('show');
+  var t=document.getElementById('typer');if(t)t.remove();
+}
+
+// ═══════════════════════════════
+// SEND & API
+// ═══════════════════════════════
+var funnyErrors=["QVIO took a quick chai break ☕ — tap retry!","The AI sneezed 🤧 — try again!","QVIO is thinking too hard 🧠 — one more try?","Signal lost in space 🛸 — retry please!","QVIO blinked 😅 — send again!"];
+function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
+
+async function sendMsg(){
+  var inp=document.getElementById('inp');
+  var text=inp.value.trim();if(!text)return;
+  inp.value='';inp.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('charCnt').textContent='';
+  lastMsg=text;
+  addMsg(text,'user');
+  chatHistory.push({role:'user',content:text});
+  extractMem(text);
+  stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
+
+  // IMAGE GENERATION
+  if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
+    var prompt=text.replace(/^[^:]+:/i,'').trim();
+    showTyping();stats.images++;saveStats();
+
+    var seed=Date.now();
+    var enhancedPrompt=prompt+', ultra photorealistic, 4K, 8K masterpiece, cinematic lighting, sharp focus, highly detailed, award winning photography';
+    var imageUrls=[
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&enhance=true&seed='+seed,
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&seed='+(seed+1),
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&nologo=true&seed='+(seed+2)
+    ];
+
+    function tryLoadImage(urlIndex){
+      if(urlIndex>=imageUrls.length){
+        hideTyping();
+        addMsg('⚠️ Image generation is temporarily unavailable. Please try again in a moment! The AI art servers might be busy.','ai');
+        document.getElementById('sendBtn').disabled=false;
+        return;
+      }
+      var testImg=new Image();
+      var currentUrl=imageUrls[urlIndex];
+      var timeout=setTimeout(function(){
+        testImg.src='';
+        tryLoadImage(urlIndex+1);
+      },15000);
+      testImg.onload=function(){
+        clearTimeout(timeout);
+        hideTyping();
+        addMsg(currentUrl,'ai',true);
+        imgGal.push(currentUrl);saveGal();
+        document.getElementById('sendBtn').disabled=false;
+      };
+      testImg.onerror=function(){
+        clearTimeout(timeout);
+        tryLoadImage(urlIndex+1);
+      };
+      testImg.src=currentUrl;
+    }
+
+    // Show generating message after 1s
+    setTimeout(function(){
+      var tb=document.getElementById('typeBar');
+      if(tb)tb.querySelector('span:last-child').textContent='✨ Generating your 4K image...';
+    },1000);
+
+    tryLoadImage(0);
+    return;
+  }
+
+  showTyping();
+  var t0=Date.now();
+  try{
+    // Web search for current info
+    var searchCtx='';
+    if(needsWebSearch(text)){
+      try{
+        var sr=await webSearch(text);
+        if(sr)searchCtx='\n\n[LIVE WEB DATA]\n'+sr+'\n[/LIVE WEB DATA]\n\nUse this live data to answer accurately about current events.';
+      }catch(e){}
+    }
+    var finalMsg = searchCtx ? text + searchCtx : text;
+    var langInstr=getAILangInstruction();var reply=await callGroq(finalMsg+(langInstr||""));
+    var spd=Date.now()-t0;
+    hideTyping();
+    addMsg(reply,'ai',false,spd);
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
+    saveChat();
+  }catch(e){
+    hideTyping();
+    var em=e.message||'';
+    if(em.indexOf('rate')>-1||em.indexOf('429')>-1){
+      var wait=30;var m2=em.match(/(\d+)s/);if(m2)wait=parseInt(m2[1]);
+      var tid='t'+Date.now();
+      addMsg('<span id="'+tid+'">⏳ Rate limited — wait <strong>'+wait+'s</strong> then retry.</span>','ai');
+      var cd=wait;
+      var itv=setInterval(function(){
+        cd--;var el=document.getElementById(tid);
+        if(cd<=0){clearInterval(itv);if(el)el.innerHTML='✅ Ready! Send again.';document.getElementById('sendBtn').disabled=false;}
+        else if(el)el.innerHTML='⏳ Rate limited — wait <strong>'+cd+'s</strong> then retry.';
+      },1000);
+    }else{
+      // Show real error so we can debug
+      var errMsg='❌ Error: '+em;
+      if(em.indexOf('401')>-1||em.indexOf('invalid_api_key')>-1||em.indexOf('Unauthorized')>-1){
+        errMsg='🔑 QVIO Brain is temporarily unavailable. Please try again.';
+      } else if(em.indexOf('402')>-1||em.indexOf('quota')>-1||em.indexOf('billing')>-1){
+        errMsg='💳 QVIO Brain is at capacity. Please try again shortly.';
+      } else if(em.indexOf('model')>-1||em.indexOf('404')>-1){
+        errMsg='🤖 Model not found. Try a different model name.';
+      } else if(em.indexOf('fetch')>-1||em.indexOf('network')>-1||em.indexOf('Failed')>-1){
+        errMsg='📡 Network error — check your internet connection.';
+      } else if(em===''){
+        errMsg='⚠️ Unknown error — check browser console (F12) for details.';
+      }
+      addMsg(errMsg,'ai');
+      console.error('QVIO API Error:',em);
+    }
+  }
+  document.getElementById('sendBtn').disabled=false;
+}
+
+async function callGroq(msg){
+  var sys=PROMPTS[mode]+getMemCtx();
+  var msgs=[{role:'system',content:sys}];
+  chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
+  msgs.push({role:'user',content:msg});
+  var res=await fetch('/api/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',},
+    body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
+  });
+  var data=await res.json();
+  console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
+  if(data.error){
+    var msg2=data.error.message||JSON.stringify(data.error);
+    // Auto-rotate key on rate limit (429) and retry once
+    if((res.status===429||msg2.indexOf('rate')>-1)&&GROQ_KEYS.length>1){
+      if(rotateKey()){
+        console.log('Key rotated to index',_keyIdx,', retrying...');
+        return callGroq(msg);
+      }
+    }
+    throw new Error('API '+res.status+': '+msg2);
+  }
+  if(!data.choices||!data.choices[0])throw new Error('Empty response: '+JSON.stringify(data).substring(0,100));
+  return data.choices[0].message.content;
+}
+
+function send(t){document.getElementById('inp').value=t;sendMsg();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function onInp(el){
+  el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
+  var n=el.value.length;
+  document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
+  document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';
+}
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+function clearChat(){
+  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
+  chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
+}
+function toggleFocus(){
+  isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);
+  document.getElementById('focusBtn').classList.toggle('on',isFocus);
+  showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');
+}
+function exportChat(){
+  if(!chatHistory.length){showToast('Nothing to export!');return;}
+  var txt='QVIO Premium Chat\n'+new Date().toLocaleString()+'\n'+'═'.repeat(50)+'\n\n';
+  chatHistory.forEach(function(m){txt+=(m.role==='user'?'YOU':'QVIO')+': '+m.content+'\n\n';});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='qvio-chat-'+Date.now()+'.txt';a.click();
+  showToast('💾 Chat exported!');
+}
+
+// ═══════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════
+function toggleCalc(){document.getElementById('calcW').classList.toggle('show');}
+function ci(v){
+  var d=document.getElementById('calcDisp');
+  if(v==='C'){calcExpr='';d.textContent='0';return;}
+  if(v==='±'){try{calcExpr=String(-parseFloat(calcExpr));}catch(e){}d.textContent=calcExpr||'0';return;}
+  if(v==='%'){try{calcExpr=String(Function('"use strict";return('+calcExpr+')')())/100;}catch(e){calcExpr='';}d.textContent=calcExpr||'0';return;}
+  if(v==='='){try{calcExpr=String(Function('"use strict";return('+calcExpr+')')());}catch(e){calcExpr='Error';}d.textContent=calcExpr;calcExpr='';return;}
+  calcExpr+=v;d.textContent=calcExpr;
+}
+
+// ═══════════════════════════════
+// MIC
+// ═══════════════════════════════
+function toggleMic(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    showToast('🎤 Voice needs Chrome or Edge browser!');
+    return;
+  }
+  // If already recording, stop it
+  if(isRec){
+    if(recog){
+      try{recog.stop();}catch(e){}
+    }
+    isRec=false;
+    resetMicBtns();return;
+  }
+  // Request mic permission explicitly first
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop();}); // release stream, just needed permission
+      startRecognition();
+    }).catch(function(err){
+      if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){
+        showToast('🎤 Mic permission denied — allow it in browser settings!');
+      }else{
+        showToast('🎤 Mic error: '+err.message);
+      }
+    });
+  }else{
+    startRecognition();
+  }
+}
+
+function startRecognition(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  try{
+    recog=new SR();
+    recog.continuous=true;
+    recog.interimResults=true;
+    recog.maxAlternatives=1;
+    // Auto-detect language based on current mode
+    var langMap={
+      'hindi':'hi-IN','kannada':'kn-IN','tamil':'ta-IN','telugu':'te-IN',
+      'bengali':'bn-IN','marathi':'mr-IN','gujarati':'gu-IN','punjabi':'pa-IN',
+      'malayalam':'ml-IN','urdu':'ur-IN','odia':'or-IN'
+    };
+    recog.lang=langMap[curLang]||'en-IN';
+
+    var finalTranscript='';
+    var interimTranscript='';
+
+    recog.onstart=function(){
+      isRec=true;
+      finalTranscript='';
+      var mb=document.getElementById('micBtn');
+      var fb=document.getElementById('floatMicBtn');
+      if(mb){mb.classList.add('rec');mb.textContent='⏹';}
+      if(fb){fb.classList.add('rec');fb.textContent='⏹';}
+      showToast('🎤 QVIO Voice is listening...');
+      // Show live indicator
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='🎤 Listening... speak now';
+    };
+
+    recog.onresult=function(e){
+      interimTranscript='';
+      finalTranscript='';
+      for(var i=0;i<e.results.length;i++){
+        if(e.results[i].isFinal){
+          finalTranscript+=e.results[i][0].transcript;
+        } else {
+          interimTranscript+=e.results[i][0].transcript;
+        }
+      }
+      var inp=document.getElementById('inp');
+      if(inp){
+        inp.value=finalTranscript||interimTranscript;
+        onInp(inp);
+      }
+    };
+
+    recog.onerror=function(e){
+      isRec=false;
+      resetMicBtns();
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='Ask anything...';
+      if(e.error==='not-allowed'){showToast('🎤 Mic blocked — allow mic in browser!');}
+      else if(e.error==='no-speech'){showToast('🎤 No speech — try again!');}
+      else if(e.error==='network'){showToast('🎤 Network error!');}
+      else{showToast('🎤 Mic error: '+e.error);}
+    };
+
+    recog.onend=function(){
+      isRec=false;
+      resetMicBtns();
+      var inp=document.getElementById('inp');
+      if(inp)inp.placeholder='Ask anything...';
+      var val=(inp&&inp.value)||'';
+      if(!val)return;
+
+      // VOICE COMMANDS
+      var cmd=val.toLowerCase().trim();
+      if(cmd==='clear chat'||cmd==='clear'){clearChat();showToast('🗑 Chat cleared!');if(inp)inp.value='';return;}
+      if(cmd==='send'||cmd==='go'){sendMsg();if(inp)inp.value='';return;}
+      if(cmd.startsWith('change mode to ')){
+        var m=cmd.replace('change mode to ','').trim();
+        showToast('Mode: '+m);if(inp)inp.value='';return;
+      }
+
+      // AI GRAMMAR CLEANUP then auto-send
+      cleanAndSend(val);
+    };
+
+    recog.start();
+  }catch(e){
+    showToast('🎤 Could not start: '+e.message);
+    isRec=false;
+  }
+}
+
+function resetMicBtns(){
+  var mb=document.getElementById('micBtn');
+  var fb=document.getElementById('floatMicBtn');
+  if(mb){mb.classList.remove('rec');mb.textContent='🎤';}
+  if(fb){fb.classList.remove('rec');fb.textContent='🎤';}
+}
+
+function cleanAndSend(text){
+  // AI grammar cleanup via Groq
+  var inp=document.getElementById('inp');
+  showToast('✨ Cleaning up...');
+  var headers={'Content-Type':'application/json',};
+  fetch('/api/chat',{
+    method:'POST',
+    headers:headers,
+    body:JSON.stringify({
+      model:(function(){var _e=atob('PT0wPDB8Yn9ifGZhM3wnNCMiMCU4PTQ='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
+      max_tokens:500,
+      messages:[
+        {role:'system',content:'Fix grammar and punctuation of the spoken text. Keep the same language and meaning. Return ONLY the fixed text, nothing else.'},
+        {role:'user',content:text}
+      ]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    var cleaned=(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||text;
+    if(inp)inp.value=cleaned.trim();
+    sendMsg();
+  }).catch(function(){
+    if(inp)inp.value=text;
+    sendMsg();
+  });
+}
+
+// ═══════════════════════════════
+// PWA
+// ═══════════════════════════════
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!S.g('noPWA'))document.getElementById('instBar').classList.add('show');});
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;dismissInstall();});}}
+function dismissInstall(){document.getElementById('instBar').classList.remove('show');S.s('noPWA',true);}
+window.addEventListener('online',function(){document.getElementById('offBar').classList.remove('show');showToast('✅ Back online!');});
+window.addEventListener('offline',function(){document.getElementById('offBar').classList.add('show');});
+if(!navigator.onLine)document.getElementById('offBar').classList.add('show');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
+
+// ═══════════════════════════════
+// SHARE
+// ═══════════════════════════════
+function openShare(text){
+  shareContent=text;
+  var preview=text.replace(/<[^>]*>/g,'').substring(0,220);
+  if(preview.length===220)preview+='...';
+  document.getElementById('shareText').textContent=preview;
+  document.getElementById('shareCard').classList.add('show');
+}
+function closeShare(){document.getElementById('shareCard').classList.remove('show');}
+function copyShareText(){
+  var txt='QVIO says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry QVIO free at qvio.in 🇮🇳';
+  navigator.clipboard.writeText(txt);showToast('📋 Copied!');closeShare();
+}
+function shareWhatsApp(){
+  var txt='Check this from QVIO AI 🤖\n\n'+shareContent.replace(/<[^>]*>/g,'').substring(0,300)+'\n\nTry free at qvio.in 🇮🇳';
+  window.open('https://wa.me/?text='+encodeURIComponent(txt));closeShare();
+}
+
+// ═══════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════
+var obSteps=[
+  {icon:'⚡',title:'QVIO is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence for every Indian.',step:'Step 1 of 3'},
+  {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — QVIO understands everything.',step:'Step 2 of 3'},
+  {icon:'🎨',title:'Type "create image:" for 4K AI art',desc:'Type "create image: golden temple sunset" and get a stunning 4K image in seconds!',step:'Step 3 of 3'},
+];
+var obCur=0;
+function showOnboard(){
+  if(localStorage.getItem('qvio_toured'))return;
+  setTimeout(function(){document.getElementById('onboard').classList.add('show');},1200);
+}
+function nextOnboard(){
+  obCur++;
+  if(obCur>=obSteps.length){skipOnboard();return;}
+  var s=obSteps[obCur];
+  document.getElementById('obIcon').textContent=s.icon;
+  document.getElementById('obTitle').textContent=s.title;
+  document.getElementById('obDesc').textContent=s.desc;
+  document.getElementById('obStep').textContent=s.step;
+  for(var i=0;i<3;i++)document.getElementById('dot'+i).classList.toggle('on',i===obCur);
+  if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using QVIO!';
+}
+function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
+
+// ═══════════════════════════════
+// SMART GREETING
+// ═══════════════════════════════
+function setSmartGreeting(){
+  var h=new Date().getHours();
+  var nm=memory.name?', '+memory.name:'';
+  var greets=[[5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],[12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],[17,20,'🌇 Good evening'+nm+'! How can QVIO help?'],[20,24,'🌙 Good night'+nm+'! Still grinding? QVIO is here!'],[0,5,'🦉 Late night'+nm+'? QVIO never sleeps!']];
+  var msg='👋 Welcome'+nm+'!';
+  greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
+  document.getElementById('greetTxt').textContent=msg;
+  document.getElementById('greetBar').classList.add('show');
+}
+
+// ═══════════════════════════════
+// CHALLENGES
+// ═══════════════════════════════
+var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask QVIO to explain something you always wondered 🧠','Get QVIO to write a poem about your day ✍️','Ask for a 90-day study plan for your next exam 🎯'];
+function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨🧠✍️🎯]/g,'').trim());}
+
+// ═══════════════════════════════
+// INIT — runs everything on load
+// ═══════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
+(function init(){
+  // Apply saved theme immediately
+  var th=S.g('theme')||'auto';
+  if(th==='auto')autoTheme();else{document.documentElement.setAttribute('data-theme',th);document.getElementById('themeBtn').textContent=th==='dark'?'☀️':'🌙';}
+  // Core inits
+  updateStreak();
+  updateMemUI();
+  initParticles();
+  rotateTip();setInterval(rotateTip,8000);
+  var _ct=document.getElementById('challengeTxt');if(_ct)_ct.textContent=CH[new Date().getDay()%CH.length];
+  setInterval(function(){if((S.g('theme')||'auto')==='auto')autoTheme();},60000);
+  // Delayed inits
+  setTimeout(function(){
+    setSmartGreeting();
+    showOnboard();
+    showToast('👑 Welcome to QVIO Premium!');
+  },600);
+})();
+}); // DOMContentLoaded
+// ═══════════════════════════════════════════════════
+
+// Extend MAP for new modals
+Object.assign(MAP, {
+  todo:['o_todo','m_todo'],timer:['o_timer','m_timer'],currency:['o_currency','m_currency'],
+  mood:['o_mood','m_mood'],wpm:['o_wpm','m_wpm'],news:['o_news','m_news'],
+  emoji:['o_emoji','m_emoji'],cv:['o_cv','m_cv'],notes:['o_notes','m_notes'],
+  age:['o_age','m_age'],bmi:['o_bmi','m_bmi'],qotd:['o_qotd','m_qotd'],
+  word:['o_word','m_word'],poll:['o_poll','m_poll']
+});
+
+// ── FEATURE 1: TODO LIST ──────────────────────────────
+var todos = S.g('todos') || [];
+function saveTodos(){S.s('todos',todos);}
+function addTodo(){
+  var v=document.getElementById('todoInp').value.trim();if(!v)return;
+  todos.unshift({id:Date.now(),text:v,done:false});
+  document.getElementById('todoInp').value='';
+  saveTodos();renderTodos();showToast('✅ Task added!');
+}
+function toggleTodo(id){
+  var t=todos.find(function(x){return x.id===id;});
+  if(t)t.done=!t.done;saveTodos();renderTodos();
+}
+function deleteTodo(id){
+  todos=todos.filter(function(x){return x.id!==id;});saveTodos();renderTodos();
+}
+function clearDoneTodos(){
+  todos=todos.filter(function(x){return !x.done;});saveTodos();renderTodos();showToast('Cleared done tasks!');
+}
+function renderTodos(){
+  var el=document.getElementById('todoList');if(!el)return;
+  if(!todos.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px;">No tasks yet! Add one above 🎯</div>';return;}
+  el.innerHTML=todos.map(function(t){
+    return '<div class="todo-item'+(t.done?' done':'')+'" onclick="toggleTodo('+t.id+')"><div class="todo-cb">'+(t.done?'✓':'')+'</div><span class="todo-txt">'+t.text+'</span><button onclick="event.stopPropagation();deleteTodo('+t.id+')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;">✕</button></div>';
+  }).join('');
+}
+
+// ── FEATURE 2: TIMER / STOPWATCH / POMODORO ──────────
+var timerInterval=null,timerMs=0,timerRunning=false,timerMode='stopwatch';
+var pomodoroPhase=0,pomodoroPhases=['Focus 🍅','Short Break ☕','Focus 🍅','Short Break ☕','Focus 🍅','Long Break 🌙'];
+var pomodoroDurations=[25*60,5*60,25*60,5*60,25*60,15*60];
+var lapCount=0,lapTimes=[];
+function switchTimerMode(m){
+  timerMode=m;timerAction('reset');
+  document.querySelectorAll('[id^=timerMode]').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('timerMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.add('on');
+  document.getElementById('countdownSet').style.display=m==='countdown'?'block':'none';
+  document.getElementById('pomodoroLabel').style.display=m==='pomodoro'?'block':'none';
+  document.getElementById('lapBtn').style.display=m==='stopwatch'?'':'none';
+  if(m==='pomodoro'){pomodoroPhase=0;timerMs=pomodoroDurations[0]*1000;updateTimerDisplay();}
+}
+function timerAction(a){
+  if(a==='start'){
+    if(timerMode==='countdown'&&!timerRunning&&timerMs===0){
+      var m=parseInt(document.getElementById('cdMin').value)||0,s=parseInt(document.getElementById('cdSec').value)||0;
+      timerMs=(m*60+s)*1000;if(!timerMs)return;
+    }
+    timerRunning=true;
+    var last=Date.now();
+    timerInterval=setInterval(function(){
+      var now=Date.now(),diff=now-last;last=now;
+      if(timerMode==='countdown'||timerMode==='pomodoro'){
+        timerMs-=diff;
+        if(timerMs<=0){
+          timerMs=0;clearInterval(timerInterval);timerRunning=false;
+          showToast('⏰ Time is up!');
+          document.getElementById('timerStartBtn').style.display='';
+          document.getElementById('timerStopBtn').style.display='none';
+          if(timerMode==='pomodoro'){
+            pomodoroPhase=(pomodoroPhase+1)%pomodoroPhases.length;
+            timerMs=pomodoroDurations[pomodoroPhase]*1000;
+            document.getElementById('pomodoroLabel').textContent=pomodoroPhases[pomodoroPhase];
+            showToast('🍅 '+pomodoroPhases[pomodoroPhase]+' time!');
+          }
+        }
+      }else{timerMs+=diff;}
+      updateTimerDisplay();
+    },50);
+    document.getElementById('timerStartBtn').style.display='none';
+    document.getElementById('timerStopBtn').style.display='';
+  }else if(a==='stop'){
+    clearInterval(timerInterval);timerRunning=false;
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+  }else if(a==='reset'){
+    clearInterval(timerInterval);timerRunning=false;timerMs=0;lapCount=0;lapTimes=[];
+    document.getElementById('timerStartBtn').style.display='';
+    document.getElementById('timerStopBtn').style.display='none';
+    if(timerMode==='pomodoro'){timerMs=pomodoroDurations[0]*1000;}
+    updateTimerDisplay();
+    var el=document.getElementById('timerLaps');if(el)el.innerHTML='';
+  }else if(a==='lap'){
+    lapCount++;lapTimes.push({n:lapCount,t:timerMs});
+    var el=document.getElementById('timerLaps');
+    if(el)el.innerHTML='<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>'+lapTimes.slice().reverse().map(function(l){return '<div class="lap-item"><span>Lap '+l.n+'</span><span>'+fmtTime(l.t)+'</span></div>';}).join('')+el.innerHTML.replace('<div class="lap-item" style="font-weight:700;color:var(--gold);">Latest lap at top</div>','');
+  }
+}
+function fmtTime(ms){
+  var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
+  return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function updateTimerDisplay(){
+  var el=document.getElementById('timerDisplay');
+  if(el)el.textContent=fmtTime(timerMs);
+  if(timerMode==='pomodoro'){var pl=document.getElementById('pomodoroLabel');if(pl)pl.textContent=pomodoroPhases[pomodoroPhase];}
+}
+
+// ── FEATURE 3: CURRENCY CONVERTER ────────────────────
+var RATES={USD:0.012,EUR:0.011,GBP:0.0094,AED:0.044,SGD:0.016,JPY:1.78,CAD:0.016,AUD:0.018,CNY:0.087,SAR:0.045,KWD:0.0037,QAR:0.044,MYR:0.056,THB:0.42};
+var CURR_INFO={USD:{flag:'🇺🇸',name:'US Dollar'},EUR:{flag:'🇪🇺',name:'Euro'},GBP:{flag:'🇬🇧',name:'British Pound'},AED:{flag:'🇦🇪',name:'UAE Dirham'},SGD:{flag:'🇸🇬',name:'Singapore Dollar'},JPY:{flag:'🇯🇵',name:'Japanese Yen'},CAD:{flag:'🇨🇦',name:'Canadian Dollar'},AUD:{flag:'🇦🇺',name:'Australian Dollar'},CNY:{flag:'🇨🇳',name:'Chinese Yuan'},SAR:{flag:'🇸🇦',name:'Saudi Riyal'},KWD:{flag:'🇰🇼',name:'Kuwaiti Dinar'},QAR:{flag:'🇶🇦',name:'Qatari Riyal'},MYR:{flag:'🇲🇾',name:'Malaysian Ringgit'},THB:{flag:'🇹🇭',name:'Thai Baht'}};
+function convertCurrency(amt){
+  var a=parseFloat(amt)||1;
+  var el=document.getElementById('currList');if(!el)return;
+  el.innerHTML=Object.keys(RATES).map(function(c){
+    var info=CURR_INFO[c];
+    var val=(a*RATES[c]).toFixed(c==='KWD'?4:2);
+    return '<div class="currency-row"><span class="curr-flag">'+info.flag+'</span><span class="curr-name">'+c+' — '+info.name+'</span><span class="curr-val">'+val+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 4: MOOD TRACKER ───────────────────────────
+var moodLog=S.g('moods')||[];
+function logMood(emoji,label){
+  var entry={emoji:emoji,label:label,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  moodLog.unshift(entry);if(moodLog.length>30)moodLog=moodLog.slice(0,30);
+  S.s('moods',moodLog);renderMoodHist();
+  showToast(emoji+' Mood logged!');
+  send('I am feeling '+label+' right now. Give me a short warm personalised message and one practical tip to make my day better.');
+  closeM('mood');
+}
+function renderMoodHist(){
+  var el=document.getElementById('moodHist');if(!el)return;
+  if(!moodLog.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:16px;">No moods logged yet!</div>';return;}
+  el.innerHTML=moodLog.slice(0,7).map(function(m){
+    return '<div class="mood-entry"><span style="font-size:20px;">'+m.emoji+'</span><span style="font-weight:600;">'+m.label+'</span><span style="margin-left:auto;">'+m.date+' '+m.time+'</span></div>';
+  }).join('');
+}
+
+// ── FEATURE 5: TYPING SPEED TEST ─────────────────────
+var WPM_TEXTS=["The quick brown fox jumps over the lazy dog near the river bank on a sunny morning in the forest","QVIO is India's most premium AI built by Varun the seventeen year old founder from  who dreams big","Artificial intelligence is changing the world in ways we never imagined and India is leading this revolution","Practice makes perfect and every day you type faster you become more efficient and productive in your work","Technology is best when it brings people together and QVIO was built to connect every Indian to world class AI"];
+var wpmStart=0,wpmDone=false,wpmCurrentText='';
+function startWPM(){
+  wpmCurrentText=WPM_TEXTS[Math.floor(Math.random()*WPM_TEXTS.length)];
+  var tw=document.getElementById('wpmText');
+  var inp=document.getElementById('wpmInp');
+  if(!tw||!inp)return;
+  tw.innerHTML=wpmCurrentText.split('').map(function(c){return '<span>'+c+'</span>';}).join('');
+  inp.value='';inp.disabled=false;inp.focus();
+  wpmStart=0;wpmDone=false;
+  document.getElementById('wpmStats').innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;">Start typing to begin the test!</div>';
+}
+function wpmCheck(inp){
+  if(wpmDone)return;
+  if(!wpmStart)wpmStart=Date.now();
+  var typed=inp.value;
+  var spans=document.querySelectorAll('#wpmText span');
+  var correct=0;
+  spans.forEach(function(sp,i){
+    sp.style.color='';sp.style.background='';
+    if(i<typed.length){
+      if(typed[i]===wpmCurrentText[i]){sp.style.color='var(--success)';correct++;}
+      else{sp.style.color='var(--danger)';sp.style.background='rgba(185,28,28,.1)';}
+    }
+  });
+  if(typed.length>=wpmCurrentText.length){
+    wpmDone=true;inp.disabled=true;
+    var elapsed=(Date.now()-wpmStart)/60000;
+    var words=wpmCurrentText.split(' ').length;
+    var wpm=Math.round(words/elapsed);
+    var acc=Math.round((correct/wpmCurrentText.length)*100);
+    var el=document.getElementById('wpmStats');
+    el.innerHTML='<div class="wpm-stat"><div class="wpm-stat-n">'+wpm+'</div><div class="wpm-stat-l">WPM</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+acc+'%</div><div class="wpm-stat-l">Accuracy</div></div><div class="wpm-stat"><div class="wpm-stat-n">'+correct+'</div><div class="wpm-stat-l">Correct</div></div>';
+    showToast('🎉 '+wpm+' WPM with '+acc+'% accuracy!');
+  }
+}
+
+// ── FEATURE 6: QUICK NEWS ─────────────────────────────
+var NEWS_TOPICS=[
+  {hl:"QVIO AI surpasses 1 million users in India — Built by 17-year-old Varun from ",src:"QVIO Official · Just now"},
+  {hl:"India GDP growth accelerates — Economy on track for 7%+ expansion this year",src:"Economic Times · Today"},
+  {hl:"ISRO announces new moon mission with advanced lunar rover technology",src:"NDTV · Today"},
+  {hl:"IIT admissions 2025 — JEE Advanced cutoffs and counselling schedule released",src:"Times of India · Today"},
+  {hl:"India vs Australia — T20 series final preview and squad analysis",src:"Cricbuzz · Today"},
+  {hl:"Top 10 highest paying IT jobs in India for freshers in 2025",src:"Naukri.com · Today"},
+  {hl:"Supreme Court ruling on data privacy — What it means for every Indian",src:"The Hindu · Today"},
+  {hl:"AI startups in Bangalore raise record 2 billion dollars in latest funding round",src:"Inc42 · Today"},
+  {hl:"CBSE Class 12 results declared — Check your scores at cbseresults.nic.in",src:"Hindustan Times · Today"},
+  {hl:"Reliance Jio announces 5G expansion to 1000 new cities across India",src:"Business Standard · Today"},
+  {hl:"Budget 2025 — Tax relief for middle class, education funding doubled",src:"Mint · Today"},
+  {hl:"Virat Kohli scores another century — India wins series 3-1",src:"ESPN Cricinfo · Today"}
+];
+function askNews(i){
+  var topic=NEWS_TOPICS[i];if(!topic)return;
+  send('Tell me more about: '+topic.hl+'?');
+  closeM('news');
+}
+function renderNews(){
+  var el=document.getElementById('newsList');if(!el)return;
+  el.innerHTML=NEWS_TOPICS.map(function(n){
+    return '<div class="news-card" onclick="askNews('+i+');"><div class="news-hl">'+n.hl+'</div><div class="news-src">'+n.src+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 7: EMOJI PICKER ───────────────────────────
+var EMOJI_DATA={
+  'Smileys':['😀','😃','😄','😁','😅','😂','🤣','😊','😇','🙂','🙃','😉','😍','🥰','😘','😋','😛','😜','🤩','🥳','😎','🤓','🧐','😏','😒','😞','😔','😟','😕','🙁','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓'],
+  'Hands':['👋','🤚','🖐','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','🤲','🤝','🙏'],
+  'Hearts':['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','❤️‍🩹','💕','💞','💓','💗','💖','💘','💝','💟','♥️','🫀'],
+  'Animals':['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦅','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🦋','🐛','🐞'],
+  'Food':['🍎','🍊','🍋','🍇','🍓','🫐','🍈','🍉','🍑','🍒','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥕','🌽','🌶️','🫑','🥒','🧅','🧄','🥔','🍠','🌰','🍞','🥐','🍕','🍔','🍟','🌮','🌯','🍜','🍛','🍣','🍱','🍦','🎂','🍰','🧁','🍩','🍪','🍫','🍬','🍭','☕','🧋'],
+  'Travel':['🚀','✈️','🛸','🚂','🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚐','🛻','🛵','🏍','🚲','🛴','🛹','🚁','🛶','⛵','🚢','🗺️','🧳','🏖️','🏝️','⛰️','🏔️','🌋','🗼','🗽','🏰','🎡','🎢','🎠'],
+  'Sports':['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🏒','🥍','🏑','🏏','🎯','🥅','⛳','🏹','🎣','🤿','🎽','🛷','🥌','🛼','🛹'],
+  'Flags':['🇮🇳','🇺🇸','🇬🇧','🇯🇵','🇰🇷','🇨🇳','🇫🇷','🇩🇪','🇮🇹','🇪🇸','🇵🇹','🇧🇷','🇦🇺','🇨🇦','🇦🇪','🇸🇦','🇰🇼','🇸🇬','🇲🇾','🇹🇭','🇮🇩','🇵🇰','🇧🇩','🇳🇵','🇱🇰']
+};
+var curEmojiCat='Smileys';
+function initEmoji(){
+  var cats=document.getElementById('emojiCats');if(!cats)return;
+  cats.innerHTML=Object.keys(EMOJI_DATA).map(function(c){
+    return '<div class="emoji-cat'+(c===curEmojiCat?' on':'')+'" data-cat="'+c+'" onclick="showEmojiCat(this.dataset.cat)">'+c+'</div>';
+  }).join('');
+  renderEmoji(EMOJI_DATA[curEmojiCat]);
+}
+function showEmojiCat(cat){
+  curEmojiCat=cat;
+  document.querySelectorAll('.emoji-cat').forEach(function(el){el.classList.toggle('on',el.textContent===cat);});
+  renderEmoji(EMOJI_DATA[cat]);
+}
+function renderEmoji(arr){
+  var el=document.getElementById('emojiGrid');if(!el)return;
+  el.innerHTML=arr.map(function(e){return '<div class="eg" onclick="insertEmoji(this.dataset.e)" data-e="'+e+'">'+e+'</div>';}).join('');
+}
+function searchEmoji(q){
+  if(!q){renderEmoji(EMOJI_DATA[curEmojiCat]);return;}
+  var all=[];Object.values(EMOJI_DATA).forEach(function(arr){all=all.concat(arr);});
+  renderEmoji(all.slice(0,48));
+}
+function insertEmoji(e){
+  var inp=document.getElementById('inp');inp.value+=e;onInp(inp);inp.focus();
+  showToast(e+' Added!');
+}
+
+// ── FEATURE 8: CV / RESUME BUILDER ───────────────────
+function buildCV(){
+  var name=document.getElementById('cvName').value.trim();
+  var role=document.getElementById('cvRole').value.trim();
+  var email=document.getElementById('cvEmail').value.trim();
+  var phone=document.getElementById('cvPhone').value.trim();
+  var city=document.getElementById('cvCity').value.trim();
+  var edu=document.getElementById('cvEdu').value.trim();
+  var exp=document.getElementById('cvExp').value.trim();
+  var skills=document.getElementById('cvSkills').value.trim();
+  if(!name||!role){showToast('Please fill in name and target role!');return;}
+  closeM('cv');
+  send('Write a complete professional CV/resume for: Name: '+name+', Target Role: '+role+', Email: '+email+', Phone: '+phone+', City: '+city+', Education: '+edu+', Experience: '+exp+', Skills: '+skills+'. Make it ATS-friendly, professional, and impressive. Format it clearly with sections.');
+}
+
+// ── FEATURE 9: QUICK NOTES ────────────────────────────
+var notes=S.g('notes')||[];
+function saveNotes(){S.s('notes',notes);}
+function addNote(){
+  var v=document.getElementById('noteInp').value.trim();if(!v)return;
+  notes.unshift({id:Date.now(),text:v,date:new Date().toLocaleDateString()+' '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(notes.length>50)notes=notes.slice(0,50);
+  document.getElementById('noteInp').value='';saveNotes();renderNotes();showToast('📝 Note saved!');
+}
+function deleteNote(id){notes=notes.filter(function(n){return n.id!==id;});saveNotes();renderNotes();}
+function renderNotes(){
+  var el=document.getElementById('noteList');if(!el)return;
+  if(!notes.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px;">No notes yet! Write something above 📝</div>';return;}
+  el.innerHTML=notes.map(function(n){
+    return '<div class="note-item"><button class="note-del" onclick="deleteNote('+n.id+')">✕</button><div class="note-txt">'+n.text+'</div><div class="note-date">'+n.date+'</div></div>';
+  }).join('');
+}
+
+// ── FEATURE 10: AGE CALCULATOR ───────────────────────
+function calcAge(){
+  var dob=new Date(document.getElementById('ageDate').value);
+  if(isNaN(dob))return;
+  var now=new Date();
+  var y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  var totalDays=Math.floor((now-dob)/86400000);
+  var totalHours=Math.floor((now-dob)/3600000);
+  var weeks=Math.floor(totalDays/7);
+  var nextBday=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
+  if(nextBday<now)nextBday.setFullYear(now.getFullYear()+1);
+  var daysToNext=Math.ceil((nextBday-now)/86400000);
+  document.getElementById('ageResult').innerHTML=
+    '<div class="age-big">'+y+'</div><div style="font-size:15px;font-weight:700;color:var(--text2);margin-top:4px;">years old</div>'+
+    '<div class="age-detail">'+y+' years · '+m+' months · '+d+' days<br>'+totalDays.toLocaleString()+' total days lived<br>'+weeks.toLocaleString()+' weeks · '+totalHours.toLocaleString()+' hours<br>🎂 Next birthday in <strong>'+daysToNext+' days</strong></div>';
+}
+
+// ── FEATURE 11: BMI CALCULATOR ───────────────────────
+function calcBMI(){
+  var w=parseFloat(document.getElementById('bmiW').value),h=parseFloat(document.getElementById('bmiH').value)/100;
+  if(!w||!h||h<=0)return;
+  var bmi=w/(h*h),cat,col,pos;
+  if(bmi<18.5){cat='Underweight';col='#3B82F6';pos=10;}
+  else if(bmi<25){cat='Normal ✅';col='#22C55E';pos=35;}
+  else if(bmi<30){cat='Overweight';col='#F59E0B';pos=62;}
+  else{cat='Obese';col='#EF4444';pos=85;}
+  document.getElementById('bmiResult').innerHTML=
+    '<div class="bmi-num" style="background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">'+bmi.toFixed(1)+'</div>'+
+    '<div class="bmi-cat" style="color:'+col+';">'+cat+'</div>'+
+    '<div class="bmi-bar-wrap" style="margin:16px 0;"><div class="bmi-needle" style="left:'+pos+'%;"></div></div>'+
+    '<div style="font-size:12px;color:var(--text3);">Ideal BMI: 18.5 – 24.9</div>';
+  send('My BMI is '+bmi.toFixed(1)+' which is '+cat.replace(' ✅','')+'. Weight: '+w+'kg, Height: '+(h*100)+'cm. Give me 5 specific health tips to maintain or improve my BMI.');
+}
+
+// ── FEATURE 12: QUOTE OF THE DAY ─────────────────────
+var QUOTES=[
+  {q:"The best way to predict the future is to create it.",a:"Peter Drucker"},
+  {q:"If you are working on something exciting that you really care about, you don't have to be pushed. The vision pulls you.",a:"Steve Jobs"},
+  {q:"A person who never made a mistake never tried anything new.",a:"Albert Einstein"},
+  {q:"You miss 100% of the shots you don't take.",a:"Wayne Gretzky"},
+  {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {q:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {q:"Don't watch the clock; do what it does — keep going.",a:"Sam Levenson"},
+  {q:"Arise, awake, and stop not until the goal is achieved.",a:"Swami Vivekananda"},
+  {q:"Be the change you wish to see in the world.",a:"Mahatma Gandhi"},
+  {q:"In the middle of every difficulty lies opportunity.",a:"Albert Einstein"},
+  {q:"Your time is limited, so don't waste it living someone else's life.",a:"Steve Jobs"},
+  {q:"The harder I work, the luckier I get.",a:"Samuel Goldwyn"},
+  {q:"Dream big, start small, but most of all — start.",a:"Simon Sinek"},
+  {q:"Success is not final; failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
+  {q:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
+  {q:"A young man who does not fight today will never fight — the fire of youth fades fast.",a:"Chanakya"},
+  {q:"Before you are a leader, success is all about growing yourself. When you become a leader, success is all about growing others.",a:"Jack Welch"},
+  {q:"The roots of education are bitter, but the fruit is sweet.",a:"Aristotle"},
+  {q:"Education is the most powerful weapon which you can use to change the world.",a:"Nelson Mandela"},
+  {q:"Where there is a will, there is a way.",a:"English Proverb"}
+];
+var qotdIdx=new Date().getDay()%QUOTES.length;
+function newQotd(){qotdIdx=(qotdIdx+1)%QUOTES.length;renderQotd();}
+function renderQotd(){
+  var el=document.getElementById('qotdWrap');if(!el)return;
+  var q=QUOTES[qotdIdx];
+  var shareText=q.q+' — '+q.a;
+  var card=document.createElement('div');card.className='qotd-card';
+  card.innerHTML='<div class="qotd-bg">&#8220;</div><div class="qotd-text">'+q.q+'</div><div class="qotd-author">— '+q.a+'</div>';
+  var btn=document.createElement('button');btn.className='qotd-share';btn.textContent='📤 Share';
+  btn.onclick=function(){openShare(shareText);};
+  card.appendChild(btn);
+  el.innerHTML='';el.appendChild(card);
+}
+
+// ── FEATURE 13: WORD OF THE DAY ──────────────────────
+var WORDS=[
+  {w:"Perspicacious",p:"/ˌpɜːspɪˈkeɪʃəs/",t:"adjective",d:"Having a ready insight into things; shrewd and clear-sighted.",e:"Her perspicacious analysis solved the problem instantly.",h:"तीक्ष्ण बुद्धि वाला"},
+  {w:"Ephemeral",p:"/ɪˈfem(ə)r(ə)l/",t:"adjective",d:"Lasting for a very short time; transitory.",e:"Fame is ephemeral — only your work lasts forever.",h:"क्षणिक / अल्पकालीन"},
+  {w:"Serendipity",p:"/ˌserənˈdɪpɪti/",t:"noun",d:"The occurrence of events by chance in a happy or beneficial way.",e:"Finding QVIO was pure serendipity.",h:"सुखद संयोग"},
+  {w:"Tenacious",p:"/tɪˈneɪʃəs/",t:"adjective",d:"Holding firmly to something; not giving up easily.",e:"Be tenacious in your dreams — never quit.",h:"दृढ़निश्चयी"},
+  {w:"Ubiquitous",p:"/juːˈbɪkwɪtəs/",t:"adjective",d:"Present, appearing, or found everywhere.",e:"Smartphones have become ubiquitous in modern life.",h:"सर्वव्यापी"},
+  {w:"Luminous",p:"/ˈluːmɪnəs/",t:"adjective",d:"Full of or shedding light; bright or shining.",e:"Her luminous smile lit up the entire room.",h:"चमकदार / प्रकाशमान"},
+  {w:"Resilient",p:"/rɪˈzɪlɪənt/",t:"adjective",d:"Able to recover quickly from difficulties; tough.",e:"Resilient people rise every time they fall.",h:"लचीला / दृढ़"},
+  {w:"Magnanimous",p:"/maɡˈnanɪməs/",t:"adjective",d:"Very generous or forgiving, especially towards rivals.",e:"The magnanimous leader forgave his fiercest opponent.",h:"उदार / महानुभाव"},
+  {w:"Cogent",p:"/ˈkəʊdʒ(ə)nt/",t:"adjective",d:"Clear, logical, and convincing in argument.",e:"She made a cogent case for the new policy.",h:"तर्कसंगत"},
+  {w:"Zenith",p:"/ˈzɛnɪθ/",t:"noun",d:"The highest point reached by a celestial or other object; the peak.",e:"QVIO is at the zenith of Indian AI innovation.",h:"शिखर / उत्कर्ष"}
+];
+var wordIdx=new Date().getDate()%WORDS.length;
+function newWord(){wordIdx=(wordIdx+1)%WORDS.length;renderWord();}
+function renderWord(){
+  var el=document.getElementById('wordWrap');if(!el)return;
+  var w=WORDS[wordIdx];
+  el.innerHTML='<div class="word-card"><div class="word-main">'+w.w+'</div><div class="word-pron">'+w.p+'</div><div class="word-type">'+w.t+'</div><div class="word-def">'+w.d+'</div><div class="word-eg">"'+w.e+'"</div><div class="word-hi">🇮🇳 '+w.h+'</div></div>';
+}
+
+// ── FEATURE 14: LIVE POLL ─────────────────────────────
+var activePoll=null;
+function createPoll(){
+  var q=document.getElementById('pollQ').value.trim();
+  var o1=document.getElementById('pollO1').value.trim();
+  var o2=document.getElementById('pollO2').value.trim();
+  if(!q||!o1||!o2){showToast('Add a question and at least 2 options!');return;}
+  var opts=[o1,o2];
+  var o3=document.getElementById('pollO3').value.trim(),o4=document.getElementById('pollO4').value.trim();
+  if(o3)opts.push(o3);if(o4)opts.push(o4);
+  activePoll={q:q,opts:opts,votes:opts.map(function(){return 0;}),voted:false};
+  renderPoll();
+  document.getElementById('pollResult').style.display='block';
+}
+function votePoll(i){
+  if(!activePoll||activePoll.voted)return;
+  activePoll.votes[i]++;activePoll.voted=true;
+  renderPoll();showToast('🗳 Vote cast!');
+}
+function renderPoll(){
+  var el=document.getElementById('pollResult');if(!el||!activePoll)return;
+  var total=activePoll.votes.reduce(function(a,b){return a+b;},0)||1;
+  el.innerHTML='<div class="poll-wrap"><div class="poll-q">'+activePoll.q+'</div>'+
+    activePoll.opts.map(function(o,i){
+      var pct=Math.round((activePoll.votes[i]/total)*100);
+      return '<div class="poll-opt" onclick="votePoll('+i+')"><span class="poll-lbl">'+o+'</span><div class="poll-bar-bg"><div class="poll-bar" style="width:'+pct+'%"><span class="poll-pct">'+pct+'%</span></div></div></div>';
+    }).join('')+
+    (activePoll.voted?'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Thanks for voting!</div>':'<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center;">Click an option to vote!</div>')+
+    '</div>';
+  // Share the poll
+  send('I created a poll: "'+activePoll.q+'" with options: '+activePoll.opts.join(', ')+'. Can you suggest 3 more interesting poll questions on this topic?');
+  closeM('poll');
+}
+
+// ── FEATURE 15: WORD COUNT TOOL (in chat) ────────────
+function wordCount(text){
+  var words=(text.match(/\S+/g)||[]).length;
+  var chars=text.length;
+  var sentences=(text.match(/[.!?]+/g)||[]).length;
+  var readTime=Math.ceil(words/200);
+  return words+' words · '+chars+' chars · '+sentences+' sentences · ~'+readTime+' min read';
+}
+
+// ── FEATURE 16: DARK MODE SCHEDULED ─────────────────
+// Already handled in autoTheme — extended to user preference memory
+
+// ── FEATURE 17: KEYBOARD SHORTCUTS PANEL ────────────
+function showShortcuts(){
+  var shortcuts=[
+    ['Enter','Send message'],['Shift+Enter','New line'],['Ctrl+K','Focus input'],
+    ['Ctrl+L','Clear chat'],['Escape','Close modal'],['Ctrl+D','Toggle dark mode']
+  ];
+  send('Show me all QVIO keyboard shortcuts and hidden features');
+}
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey&&e.key==='d'){e.preventDefault();cycleTh();}
+});
+
+// ── FEATURE 18: AUTO SAVE DRAFT ──────────────────────
+setInterval(function(){
+  var v=document.getElementById('inp').value.trim();
+  if(v)S.s('draft',v);
+},3000);
+// Restore draft on load
+setTimeout(function(){
+  var d=S.g('draft');
+  if(d){document.getElementById('inp').value=d;onInp(document.getElementById('inp'));showToast('📝 Draft restored!');}
+},1500);
+var _inpEl=document.getElementById('inp');if(_inpEl)_inpEl.addEventListener('blur',function(){S.s('draft','');});
+
+// ── FEATURE 19: MESSAGE REACTIONS ────────────────────
+// Already have like/dislike — extended version handled in addMsg
+
+// ── FEATURE 20: UNIT CONVERTER (via AI) ──────────────
+function quickConvert(text){
+  send('Convert: '+text+'. Show result clearly with formula used.');
+}
+
+// ── OVERRIDE openM to init new features ──────────────
+var _baseOpenM = window.openM;
+window.openM = function(t){
+  _baseOpenM(t);
+  if(t==='todo')renderTodos();
+  if(t==='mood')renderMoodHist();
+  if(t==='wpm')startWPM();
+  if(t==='news')renderNews();
+  if(t==='emoji')initEmoji();
+  if(t==='notes')renderNotes();
+  if(t==='qotd')renderQotd();
+  if(t==='word')renderWord();
+  if(t==='currency')convertCurrency(1);
+  if(t==='timer'){
+    document.getElementById('timerStopBtn').style.display='none';
+    document.getElementById('lapBtn').style.display='';
+  }
+};
+
+
+
+// ═══ V5 FEATURES ═══
+
+var LENS_PROMPTS={
+  identify:"You are QVIO Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
+  text:"You are QVIO Lens OCR. Extract ALL text visible in this image:\n- Preserve the exact text, formatting and layout as closely as possible\n- Identify the document type (receipt, book, sign, form, label, etc.)\n- Detect and name the language(s) — you recognise all 150+ world languages including all Indian scripts (Hindi, Kannada, Tamil, Telugu, Bengali, Gujarati, Punjabi, Malayalam, Odia, Urdu, Sanskrit, Assamese, Manipuri, Dogri, Maithili, Santali, Bodo, Konkani, Kashmiri, Sindhi), Arabic, Hebrew, Chinese, Japanese, Korean, Thai, Burmese, Khmer, Georgian, Armenian, and all European scripts\n- Flag any unclear or partial text with [unclear]\nThen summarise what the text is about in 2 sentences.",
+  translate:"You are QVIO Lens Translator. You recognise and translate ALL 150+ world languages. In this image:\n1. Extract all visible text\n2. Detect the exact language and script\n3. Translate everything to English AND Hindi\n4. Add pronunciation guide for Indian users\n5. Explain any cultural context if relevant\nFormat: Original → English → Hindi",
+  math:"You are QVIO Lens Math Solver. In this image:\n1. Identify all mathematical expressions, equations or problems\n2. Write them out in plain text\n3. Solve EACH step by step with full working\n4. Show the final answer clearly\n5. Explain the concept being tested\n6. Note which class/exam level this is (Class 8-12, JEE, NEET, etc.)",
+  food:"You are QVIO Lens Food & Nature expert. Analyse this image:\nIf FOOD: Name the dish, cuisine, estimated calories, main ingredients, how it's made, allergens, regional origin, nutrition highlights\nIf PLANT/FLOWER: Species name, common name in India, whether edible/medicinal, care tips, interesting facts\nIf ANIMAL: Species, habitat, diet, whether endangered, interesting behaviour\nBe comprehensive and accurate.",
+  qr:"You are QVIO Lens QR & Document Scanner. In this image:\n1. If there is a QR code — describe what type it is and decode its content if visible\n2. If it's a barcode — identify the product type\n3. If it's a document/form — extract key fields and data\n4. If it's a business card — extract all contact info\n5. Flag any suspicious URLs or scam indicators\n6. Suggest what action the user should take"
+};
+var lensMode='identify';
+var lensImageB64=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
+var lensMimeType='image/jpeg';
+var lensStream=null;
+
+
+function openLens(){
+  // Register if not already
+  if(typeof MAP!=='undefined'&&!MAP.lens)MAP.lens=['o_lens','m_lens'];
+  document.getElementById('o_lens').classList.add('show');
+  document.getElementById('m_lens').classList.add('show');
+}
+
+
+function closeLens(){
+  document.getElementById('o_lens').classList.remove('show');
+  document.getElementById('m_lens').classList.remove('show');
+  stopLensCamera();
+  // Reset
+  lensImageB64=null;
+  var prev=document.getElementById('lensPreview');
+  prev.style.display='none';prev.src='';
+  document.getElementById('lensDropInner').style.display='flex';
+  document.getElementById('lensResult').style.display='none';
+  document.getElementById('lensAskWrap').style.display='none';
+  document.getElementById('lensAnalyseBtn').disabled=true;
+  document.getElementById('lensFile').value='';
+}
+
+
+function setLensMode(m,btn){
+  lensMode=m;
+  document.querySelectorAll('.ltab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+
+function startLensCamera(){
+  var camBtn=document.getElementById('lensCamBtn');
+  var snapBtn=document.getElementById('lensSnapBtn');
+  var video=document.getElementById('lensVideo');
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+    .then(function(stream){
+      lensStream=stream;
+      video.srcObject=stream;
+      video.style.display='block';
+      camBtn.style.display='none';
+      snapBtn.style.display='flex';
+      showToast('📷 Camera ready — point and snap!');
+    })
+    .catch(function(){showToast('📷 Camera permission denied — upload a photo instead');});
+}
+
+
+function stopLensCamera(){
+  if(lensStream){lensStream.getTracks().forEach(function(t){t.stop();});lensStream=null;}
+  document.getElementById('lensVideo').style.display='none';
+  document.getElementById('lensVideo').srcObject=null;
+}
+
+
+function snapLens(){
+  var video=document.getElementById('lensVideo');
+  var canvas=document.getElementById('lensCanvas');
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  var dataUrl=canvas.toDataURL('image/jpeg',0.9);
+  lensImageB64=dataUrl.split(',')[1];
+  lensMimeType='image/jpeg';
+  var prev=document.getElementById('lensPreview');
+  prev.src=dataUrl;prev.style.display='block';
+  document.getElementById('lensDropInner').style.display='none';
+  stopLensCamera();
+  document.getElementById('lensCamBtn').style.display='flex';
+  document.getElementById('lensSnapBtn').style.display='none';
+  document.getElementById('lensAnalyseBtn').disabled=false;
+  showToast('📸 Photo captured!');
+}
+
+
+function lensDropFile(ev){
+  ev.preventDefault();
+  document.getElementById('lensDrop').classList.remove('drag');
+  var file=ev.dataTransfer.files[0];
+  if(!file||!file.type.startsWith('image/'))return showToast('Please drop an image file!');
+  var dt=new DataTransfer();dt.items.add(file);
+  var inp=document.getElementById('lensFile');inp.files=dt.files;
+  lensLoadFile(inp);
+}
+
+
+function lensLoadFile(inp){
+  var file=inp.files[0];
+  if(!file)return;
+  lensMimeType=file.type||'image/jpeg';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    lensImageB64=e.target.result.split(',')[1];
+    var prev=document.getElementById('lensPreview');
+    prev.src=e.target.result;
+    prev.style.display='block';
+    document.getElementById('lensDropInner').style.display='none';
+    document.getElementById('lensAnalyseBtn').disabled=false;
+    document.getElementById('lensResult').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+
+async function analyseLens(){
+  if(!lensImageB64){showToast('Please upload or capture an image first!');return;}
+  var resEl=document.getElementById('lensResult');
+  var askWrap=document.getElementById('lensAskWrap');
+  resEl.style.display='block';
+  resEl.innerHTML='<div class="lens-loading"><div class="lens-scan-line"></div>🔍 Analysing with QVIO AI...<span class="tdots"><span></span><span></span><span></span></span></div>';
+  document.getElementById('lensAnalyseBtn').disabled=true;
+
+  var prompt=LENS_PROMPTS[lensMode]||LENS_PROMPTS.identify;
+  try{
+    var res=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',},
+      body:JSON.stringify({
+        model:(function(){var _e=atob('PT0wPDB8Yn9jfGBgM3wnOCI4Pj98ISM0Jzg0Jg=='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
+        max_tokens:1200,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:'data:'+lensMimeType+';base64,'+lensImageB64}},
+            {type:'text',text:prompt}
+          ]
+        }]
+      })
+    });
+    var data=await res.json();
+    if(data.choices&&data.choices[0]){
+      var reply=data.choices[0].message.content;
+      // Format the result nicely
+      var formatted=reply
+        .replace(/\n\n/g,'<br><br>')
+        .replace(/\n/g,'<br>')
+        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+        .replace(/^(\d+\.\s)/gm,'<br><strong>$1</strong>');
+      resEl.innerHTML='<div style="position:relative;">'+formatted+'</div>'
+        +'<div class="lens-actions">'
+        +'<div class="lens-act" onclick="sendLensToChat()">💬 Chat about this</div>'
+        +'<div class="lens-act" onclick="speakLensResult()">🔊 Listen</div>'
+        +'<div class="lens-act" onclick="copyLensResult()">📋 Copy</div>'
+        +'</div>';
+      askWrap.style.display='block';
+      // Store result for follow-ups
+      window._lensLastResult=reply;
+    }else{
+      resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
+    }
+  }catch(e){
+    // Vision model not available on all Groq tiers — fallback to text description
+    resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
+  }
+  document.getElementById('lensAnalyseBtn').disabled=false;
+}
+
+
+async function lensAskMore(){
+  var inp=document.getElementById('lensAskInp');
+  var q=inp.value.trim();if(!q)return;
+  if(!lensImageB64){showToast('No image loaded');return;}
+  inp.value='';
+  var resEl=document.getElementById('lensResult');
+  var prev=resEl.innerHTML;
+  resEl.innerHTML+='<hr style="margin:12px 0;border:none;border-top:1px solid var(--border);"><div class="lens-loading">🔍 Thinking...<span class="tdots"><span></span><span></span><span></span></span></div>';
+  try{
+    var context=window._lensLastResult?'Previous analysis:\n'+window._lensLastResult+'\n\nUser question: '+q:'User question about image: '+q;
+    var res=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',},
+      body:JSON.stringify({
+        model:(function(){var _e=atob('PT0wPDB8Yn9jfGBgM3wnOCI4Pj98ISM0Jzg0Jg=='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
+        max_tokens:600,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:'data:'+lensMimeType+';base64,'+lensImageB64}},
+            {type:'text',text:context}
+          ]
+        }]
+      })
+    });
+    var data=await res.json();
+    var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Could not get answer.';
+    resEl.innerHTML=prev+'<hr style="margin:12px 0;border:none;border-top:1px solid var(--border);">'
+      +'<strong style="color:var(--text3);font-size:12px;">You asked:</strong> <em>'+q+'</em><br><br>'
+      +reply.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    window._lensLastResult=reply;
+  }catch(e){
+    resEl.innerHTML=prev+'<div style="color:var(--danger)">⚠️ Error</div>';
+  }
+}
+
+
+function sendLensToChat(){
+  if(!window._lensLastResult)return;
+  closeLens();
+  addMsg('[QVIO Lens Result]\n\n'+window._lensLastResult,'ai');
+  showToast('✅ Lens result added to chat!');
+}
+
+
+function speakLensResult(){
+  speakText(window._lensLastResult||'No result yet',null);
+}
+
+
+function copyLensResult(){
+  if(navigator.clipboard&&window._lensLastResult){
+    navigator.clipboard.writeText(window._lensLastResult).then(function(){showToast('📋 Copied!');});
+  }
+}
+
+
+function setModeD(m,label){
+  mode=m;
+  // Update pill
+  var lbl=document.getElementById('modeLabel');
+  if(lbl)lbl.textContent=label;
+  // Update drawer pills
+  document.querySelectorAll('.md-pill').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'"+m+"'")>-1);
+  });
+  // Sync old hidden mbtn for JS compatibility
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
+  var mbtns=document.querySelectorAll('.mbtn');
+  mbtns.forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+m+"'")>-1)b.classList.add('on');});
+  // Exam bar
+  var eb=document.getElementById('examBar');
+  if(eb)eb.style.display=m==='exam'?'flex':'none';
+  if(typeof S!=='undefined')S.s('mode',m);
+  closeModesDrawer();
+  showToast(label.replace(/^[^\w]*/,'')+' mode ✓');
+}
+
+
+function toggleModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d.classList.contains('show')){closeModesDrawer();}
+  else{d.classList.add('show');o.classList.add('show');}
+}
+
+
+function closeModesDrawer(){
+  var d=document.getElementById('modesDrawer');
+  var o=document.getElementById('mdOverlay');
+  if(d)d.classList.remove('show');
+  if(o)o.classList.remove('show');
+}
+
+
+function toggleToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p.classList.contains('show')){closeToolsPanel();}
+  else{p.classList.add('show');o.classList.add('show');b.classList.add('active');}
+}
+
+
+function closeToolsPanel(){
+  var p=document.getElementById('toolsPanel');
+  var o=document.getElementById('tpOverlay');
+  var b=document.getElementById('toolsBtn');
+  if(p)p.classList.remove('show');
+  if(o)o.classList.remove('show');
+  if(b)b.classList.remove('active');
+}
+
+
+function revealNamasteText(name){
+  var greetEl=document.getElementById('nsGreeting');
+  if(greetEl){
+    greetEl.innerHTML='';
+
+    var eng=document.createElement('div');
+    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
+    'WELCOME'.split('').forEach(function(ch,i){
+      var s=document.createElement('span');
+      s.className='ns-char';s.textContent=ch;
+      s.style.animationDelay=(.05+i*.07)+'s';
+      if(i===0){
+        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
+        s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
+      }
+      eng.appendChild(s);
+    });
+    greetEl.appendChild(eng);
+  }
+  var unEl=document.getElementById('nsUsername');
+  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
+  var pctEl=document.getElementById('nsPercent');
+  var pct=0;
+  var pTimer=setInterval(function(){
+    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
+    if(pctEl)pctEl.textContent=pct+'%';
+    if(pct>=100)clearInterval(pTimer);
+  },32);
+  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
+  var mi=0,stEl=document.getElementById('nsStatusTxt');
+  var sTimer=setInterval(function(){
+    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
+    if(mi>=msgs.length-1)clearInterval(sTimer);
+  },600);
+  fireConfetti();
+}
+
+// ── API Key Health Check ──
+// Runs once on load — shows a warning toast if key is invalid/expired
+setTimeout(function(){
+  fetch('/api/chat'.replace('/chat/completions','/models'),{
+    headers:{}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error){
+      var code=d.error.code||'';
+      var msg=d.error.message||'';
+      if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
+        showToast('⚠️ QVIO Brain needs a restart. Please refresh the page.');
+        console.error('QVIO KEY EXPIRED:',msg);
+      }
+    }else{
+      console.log('✅ Groq API key is valid');
+    }
+  }).catch(function(){
+    // Network error or CORS — can't check, ignore silently
+  });
+},3000);
+// QVIO WEB SEARCH
+// ═══════════════════════════════
+var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
+  'war','match','score','ipl','election','price','stock','weather','who won','what happened',
+  'recently','this week','yesterday','trending','live','breaking'];
+
+function needsWebSearch(text){
+  var t = text.toLowerCase();
+  for(var i=0;i<SEARCH_KEYWORDS.length;i++){
+    if(t.indexOf(SEARCH_KEYWORDS[i])>-1) return true;
+  }
+  return false;
+}
+
+function webSearch(query){
+  var q = encodeURIComponent(query);
+  var results = [];
+  var today = new Date().toDateString();
+
+  // 1. Wikipedia - facts
+  var wikiSearch = fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+q+'&format=json&origin=*&srlimit=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.query&&d.query.search){
+        d.query.search.slice(0,2).forEach(function(item){
+          var s=item.snippet.replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&#039;/g,"'");
+          results.push('📖 '+item.title+': '+s);
+        });
+      }
+    }).catch(function(){});
+
+  // 2. Reddit - fresh discussions (sorted by new)
+  var redditSearch = fetch('https://www.reddit.com/search.json?q='+q+'&sort=new&limit=3&t=week')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.data&&d.data.children){
+        d.data.children.slice(0,3).forEach(function(p){
+          var post=p.data;
+          var age=Math.floor((Date.now()-post.created_utc*1000)/3600000);
+          if(post.title)results.push('💬 Reddit ('+age+'h ago): '+post.title);
+        });
+      }
+    }).catch(function(){});
+
+  // 3. HackerNews - tech news
+  var hnSearch = fetch('https://hn.algolia.com/api/v1/search_by_date?query='+q+'&hitsPerPage=2')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.hits){
+        d.hits.slice(0,2).forEach(function(h){
+          if(h.title){
+            var age=Math.floor((Date.now()-new Date(h.created_at).getTime())/3600000);
+            results.push('💻 HackerNews ('+age+'h ago): '+h.title);
+          }
+        });
+      }
+    }).catch(function(){});
+
+  return Promise.all([wikiSearch, redditSearch, hnSearch]).then(function(){
+    if(results.length===0) return null;
+    return '[As of '+today+']\n'+results.join('\n\n');
+  });
+}
+
+async function callGroqWithSearch(text){
+  var searchContext = '';
+  
+  if(needsWebSearch(text)){
+    try{
+      var searchResult = await webSearch(text);
+      if(searchResult){
+        searchContext = '\n\n[WEB SEARCH RESULTS for: "'+text+'"]\n'+searchResult+'\n[END SEARCH RESULTS]\n\nUse these search results to give accurate current information. If search results are relevant, use them. Always be honest about what you know vs what you found online.';
+      }
+    }catch(e){
+      console.log('Search failed, continuing without it');
+    }
+  }
+  
+  return searchContext;
+}
+
+
+// ═══════════════════════════════
+// 3D EARTH LANGUAGE SELECTOR
+// ═══════════════════════════════
+var selectedAILang = localStorage.getItem('aiLang') || '';
+
+function openLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.add('show');
+  // Highlight current language
+  if(selectedAILang){
+    document.querySelectorAll('.lsm-pill').forEach(function(p){
+      p.classList.toggle('active', p.textContent.trim()===selectedAILang);
+    });
+  }
+  // Clear search
+  var s = document.getElementById('lsmSearch');
+  if(s){s.value='';filterLSM('');}
+}
+
+function closeLangSelect(){
+  var overlay = document.getElementById('langSelectOverlay');
+  if(overlay) overlay.classList.remove('show');
+}
+
+function selectAILang(lang){
+  // Toggle selection
+  document.querySelectorAll('.lsm-pill').forEach(function(p){
+    p.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  selectedAILang = lang;
+}
+
+function confirmAILang(){
+  if(!selectedAILang){closeLangSelect();return;}
+  localStorage.setItem('aiLang', selectedAILang);
+  closeLangSelect();
+  showToast('🌍 QVIO will now respond in '+selectedAILang+'!');
+  // Update earth button tooltip
+  var eb = document.querySelector('.earth-btn');
+  if(eb) eb.title = 'Language: '+selectedAILang;
+}
+
+function filterLSM(q){
+  q=(q||'').toLowerCase().trim();
+  var pills=document.querySelectorAll('#langSelectModal .lsm-pill');
+  var sections=document.querySelectorAll('#langSelectModal .lsm-section-title');
+  var pillWraps=document.querySelectorAll('#langSelectModal .lsm-pills');
+  var noRes=document.getElementById('lsmNoResults');
+  var any=false;
+  pills.forEach(function(p){
+    var match=!q||p.textContent.toLowerCase().indexOf(q)>-1;
+    p.classList.toggle('hidden',!match);
+    if(match)any=true;
+  });
+  // Hide empty sections
+  pillWraps.forEach(function(pw,i){
+    var vis=pw.querySelectorAll('.lsm-pill:not(.hidden)').length>0;
+    pw.style.display=vis||!q?'':'none';
+    if(sections[i])sections[i].style.display=vis||!q?'':'none';
+  });
+  if(noRes)noRes.style.display=(q&&!any)?'block':'none';
+}
+
+// Inject selected language into RULES at runtime
+function getAILangInstruction(){
+  var lang = localStorage.getItem('aiLang');
+  if(!lang||lang==='') return '';
+  return '\n\nIMPORTANT: The user has selected '+lang+' as their preferred language. ALWAYS respond in '+lang+' regardless of what language they write in.';
+}
+
+</script>
+
+<div class="modal" id="m_mem">
+  <div class="mhd"><h3>🧠 Memory</h3><button class="mx" onclick="closeM('mem')">✕</button></div>
+  <div class="msub">QVIO remembers you across every session</div>
+  <div id="memList"></div>
+  <div class="mrow"><input class="minp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/><button class="madd" onclick="addMem()">Save</button></div>
+  <button class="mclose" onclick="closeM('mem')">Done</button>
+</div>
+
+
+
+
+<div class="modal" id="m_stats">
+  <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
+  <div class="msub">Your QVIO journey at a glance</div>
+  <div class="stat-grid" id="statGrid"></div>
+  <div class="slabel">Achievements</div>
+  <div class="badge-grid" id="badgeGrid"></div>
+  <button class="mclose" onclick="closeM('stats')">Close</button>
+</div>
+
+
+<div class="modal" id="m_streak">
+  <div class="mhd"><h3>🔥 Daily Streak</h3><button class="mx" onclick="closeM('streak')">✕</button></div>
+  <div class="streak-center">
+    <span class="streak-big">🔥</span>
+    <span class="streak-num" id="streakBig">0</span>
+    <div style="font-size:14px;color:var(--text2);margin-top:8px;">day streak — keep it going!</div>
+    <div class="sdays" id="streakDays"></div>
+  </div>
+  <button class="mclose" onclick="closeM('streak')">Close</button>
+</div>
+
+
+<div class="modal" id="m_theme">
+  <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
+  <div class="msub">Customize QVIO to your taste</div>
+  <div class="slabel">Theme</div>
+  <div class="theme-row">
+    <div class="tho" onclick="setTh('light')">☀️ Light</div>
+    <div class="tho" onclick="setTh('dark')">🌙 Dark</div>
+    <div class="tho" onclick="setTh('auto')">🌓 Auto</div>
+  </div>
+  <div class="slabel">Font Size</div>
+  <div class="theme-row">
+    <div class="tho" onclick="setFont('small')">A− Small</div>
+    <div class="tho on" onclick="setFont('normal')">A Normal</div>
+    <div class="tho" onclick="setFont('large')">A+ Large</div>
+  </div>
+  <button class="mclose" onclick="closeM('theme')">Done</button>
+</div>
+
+
+<div class="modal" id="m_gal">
+  <div class="mhd"><h3>🎨 Image Gallery</h3><button class="mx" onclick="closeM('gal')">✕</button></div>
+  <div class="msub">All your AI-generated masterpieces</div>
+  <div class="img-gal" id="galGrid"></div>
+  <button class="mclose" onclick="closeM('gal')">Close</button>
+</div>
+
+
+<div class="modal" id="m_prof">
+  <div class="mhd"><h3>My Profile</h3><button class="mx" onclick="closeM('prof')">✕</button></div>
+  <div class="prof-top">
+    <div class="prof-av" id="profAv">?</div>
+    <div class="prof-nm" id="profName">Guest</div>
+    <div class="prof-em" id="profEmail">Not signed in</div>
+  </div>
+  <div class="pro-up" onclick="openM('pro')">
+    <h4>⭐ Upgrade to QVIO Pro</h4>
+    <p>₹199/month — Unlimited messages & priority AI</p>
+  </div>
+  <button class="signout" onclick="doSignOut()">Sign Out</button>
+  <button class="mclose" onclick="closeM('prof')">Close</button>
+</div>
+
+
+<div class="modal" id="m_hist">
+  <div class="mhd"><h3>💬 Chat History</h3><button class="mx" onclick="closeM('hist')">✕</button></div>
+  <div class="msub">Your saved conversations</div>
+  <div class="hl" id="histList"></div>
+  <button class="mclose" onclick="closeM('hist')">Close</button>
+</div>
+
+
+<div class="modal" id="m_imgv" style="max-width:600px;">
+  <div class="mhd"><h3>🖼 Image</h3><button class="mx" onclick="closeM('imgv')">✕</button></div>
+  <img id="imgVSrc" style="width:100%;border-radius:var(--r);border:2px solid var(--border2);margin-top:10px;"/>
+  <a id="imgVDl" download="qvio.jpg" class="img-dl" style="margin-top:12px;">⬇ Download</a>
+  <button class="mclose" onclick="closeM('imgv')">Close</button>
+</div>
+
+
+<div class="modal" id="m_pro">
+  <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
+  <div class="msub">Unlock the full power of QVIO</div>
+  <div class="pro-feat">
+    <div class="pf"><span class="pf-icon">♾️</span>Unlimited messages</div>
+    <div class="pf"><span class="pf-icon">⚡</span>Priority AI speed</div>
+    <div class="pf"><span class="pf-icon">🧠</span>Unlimited memory</div>
+    <div class="pf"><span class="pf-icon">🎨</span>4K image generation</div>
+    <div class="pf"><span class="pf-icon">💬</span>Unlimited chat history</div>
+    <div class="pf"><span class="pf-icon">🔒</span>Private & secure</div>
+    <div class="pf"><span class="pf-icon">🌍</span>All 100+ languages</div>
+    <div class="pf"><span class="pf-icon">🚫</span>No rate limits ever</div>
+  </div>
+  <div class="pro-price"><div class="price">₹199</div><div class="per">per month · Cancel anytime</div></div>
+  <div class="sec-warn">🔒 Payments coming soon via Razorpay · UPI · Cards</div>
+  <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
+</div>
+
+
+
+<div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
+<div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
+<div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
+<div class="overlay" id="o_mood" onclick="closeM('mood')"></div>
+<div class="overlay" id="o_wpm" onclick="closeM('wpm')"></div>
+<div class="overlay" id="o_news" onclick="closeM('news')"></div>
+<div class="overlay" id="o_emoji" onclick="closeM('emoji')"></div>
+<div class="overlay" id="o_cv" onclick="closeM('cv')"></div>
+<div class="overlay" id="o_notes" onclick="closeM('notes')"></div>
+<div class="overlay" id="o_age" onclick="closeM('age')"></div>
+<div class="overlay" id="o_bmi" onclick="closeM('bmi')"></div>
+<div class="overlay" id="o_qotd" onclick="closeM('qotd')"></div>
+<div class="overlay" id="o_word" onclick="closeM('word')"></div>
+<div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
+
+
+<div class="modal" id="m_todo">
+  <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
+  <div class="msub">Your personal task manager</div>
+  <div class="mrow"><input class="minp" id="todoInp" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"/><button class="madd" onclick="addTodo()">Add</button></div>
+  <div id="todoList" style="margin-top:12px;max-height:320px;overflow-y:auto;"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="mclose" style="margin-top:0;" onclick="clearDoneTodos()">Clear Done</button>
+    <button class="mclose" style="margin-top:0;" onclick="closeM('todo')">Done</button>
+  </div>
+</div>
+
+
+<div class="modal" id="m_timer">
+  <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
+  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
+    <button class="tbtn mode-btn on" id="timerModeStop" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
+    <button class="tbtn mode-btn" id="timerModeTimer" onclick="switchTimerMode('countdown')">Countdown</button>
+    <button class="tbtn mode-btn" id="timerModePomodoro" onclick="switchTimerMode('pomodoro')">🍅 Pomodoro</button>
+  </div>
+  <div class="timer-display" id="timerDisplay">00:00:00</div>
+  <div id="pomodoroLabel" style="text-align:center;font-size:13px;color:var(--text3);margin-top:-8px;display:none;"></div>
+  <div id="countdownSet" style="display:none;text-align:center;margin-bottom:8px;">
+    <input type="number" id="cdMin" placeholder="Min" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="99">
+    <span style="font-size:20px;color:var(--text3);margin:0 4px;">:</span>
+    <input type="number" id="cdSec" placeholder="Sec" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="59">
+  </div>
+  <div class="timer-btns">
+    <button class="tbtn start" id="timerStartBtn" onclick="timerAction('start')">▶ Start</button>
+    <button class="tbtn stop" id="timerStopBtn" onclick="timerAction('stop')" style="display:none;">⏸ Pause</button>
+    <button class="tbtn reset" onclick="timerAction('reset')">↺ Reset</button>
+    <button class="tbtn mode-btn" onclick="timerAction('lap')" id="lapBtn">🏁 Lap</button>
+  </div>
+  <div class="timer-laps" id="timerLaps"></div>
+  <button class="mclose" onclick="closeM('timer')">Close</button>
+</div>
+
+
+<div class="modal" id="m_currency">
+  <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
+  <div class="msub">Live INR rates (approximate)</div>
+  <input type="number" class="curr-inp" id="currAmt" placeholder="Enter amount in ₹ INR" oninput="convertCurrency(this.value)">
+  <div id="currList"></div>
+  <button class="mclose" onclick="closeM('currency')">Close</button>
+</div>
+
+
+<div class="modal" id="m_mood">
+  <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
+  <div class="msub">How are you feeling today?</div>
+  <div class="mood-grid">
+    <div class="mood-btn" onclick="logMood('😄','Amazing')"><span class="mood-emoji">😄</span><span class="mood-lbl">Amazing</span></div>
+    <div class="mood-btn" onclick="logMood('😊','Happy')"><span class="mood-emoji">😊</span><span class="mood-lbl">Happy</span></div>
+    <div class="mood-btn" onclick="logMood('😐','Okay')"><span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span></div>
+    <div class="mood-btn" onclick="logMood('😔','Sad')"><span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span></div>
+    <div class="mood-btn" onclick="logMood('😤','Stressed')"><span class="mood-emoji">😤</span><span class="mood-lbl">Stressed</span></div>
+  </div>
+  <div class="slabel">Recent Moods</div>
+  <div class="mood-hist" id="moodHist"></div>
+  <button class="mclose" onclick="closeM('mood')">Close</button>
+</div>
+
+
+<div class="modal" id="m_wpm">
+  <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
+  <div class="msub">Test your WPM — how fast do you type?</div>
+  <div class="wpm-text-area" id="wpmText"></div>
+  <input class="wpm-inp" id="wpmInp" placeholder="Start typing here..." oninput="wpmCheck(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
+  <div class="wpm-stats" id="wpmStats"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <button class="mclose" style="margin-top:0;" onclick="startWPM()">New Test</button>
+    <button class="mclose" style="margin-top:0;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('wpm')">Close</button>
+  </div>
+</div>
+
+
+<div class="modal" id="m_news">
+  <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
+  <div class="msub">Ask QVIO about any of these stories</div>
+  <div id="newsList"></div>
+  <button class="mclose" onclick="closeM('news')">Close</button>
+</div>
+
+
+<div class="modal" id="m_emoji">
+  <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
+  <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
+  <div class="emoji-cats" id="emojiCats"></div>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <button class="mclose" onclick="closeM('emoji')">Close</button>
+</div>
+
+
+<div class="modal" id="m_cv">
+  <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
+  <div class="msub">Fill in your details and AI will write your CV</div>
+  <div class="cv-form">
+    <div class="cv-section-title">Personal Info</div>
+    <input class="cv-inp" id="cvName" placeholder="Full Name">
+    <input class="cv-inp" id="cvRole" placeholder="Target Role (e.g. Software Engineer)">
+    <input class="cv-inp" id="cvEmail" placeholder="Email">
+    <input class="cv-inp" id="cvPhone" placeholder="Phone">
+    <input class="cv-inp" id="cvCity" placeholder="City">
+    <div class="cv-section-title">Education</div>
+    <textarea class="cv-inp" id="cvEdu" placeholder="e.g. B.Tech Computer Science, IIT Delhi, 2024" rows="2"></textarea>
+    <div class="cv-section-title">Experience</div>
+    <textarea class="cv-inp" id="cvExp" placeholder="e.g. Intern at TCS, built payment gateway, 2023" rows="2"></textarea>
+    <div class="cv-section-title">Skills</div>
+    <input class="cv-inp" id="cvSkills" placeholder="e.g. Python, React, SQL, Leadership">
+  </div>
+  <button class="mclose" onclick="buildCV()">✨ Generate My CV with AI →</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
+</div>
+
+
+<div class="modal" id="m_notes">
+  <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
+  <div class="msub">Jot down anything instantly</div>
+  <div class="mrow">
+    <textarea class="minp" id="noteInp" placeholder="Write your note here..." style="resize:none;height:70px;"></textarea>
+    <button class="madd" onclick="addNote()">Save</button>
+  </div>
+  <div id="noteList" style="margin-top:12px;max-height:300px;overflow-y:auto;"></div>
+  <button class="mclose" onclick="closeM('notes')">Done</button>
+</div>
+
+
+<div class="modal" id="m_age">
+  <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
+  <div class="msub">Find exact age in years, months and days</div>
+  <div class="slabel">Date of Birth</div>
+  <input type="date" class="cv-inp" id="ageDate" onchange="calcAge()" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+  <div class="age-result" id="ageResult"></div>
+  <button class="mclose" onclick="closeM('age')">Close</button>
+</div>
+
+
+<div class="modal" id="m_bmi">
+  <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
+  <div class="msub">Body Mass Index — quick health check</div>
+  <div style="display:flex;gap:10px;margin-bottom:10px;">
+    <div style="flex:1;">
+      <div class="cv-section-title">Weight (kg)</div>
+      <input type="number" id="bmiW" class="curr-inp" placeholder="70" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+    <div style="flex:1;">
+      <div class="cv-section-title">Height (cm)</div>
+      <input type="number" id="bmiH" class="curr-inp" placeholder="175" oninput="calcBMI()" style="margin-bottom:0;">
+    </div>
+  </div>
+  <div class="bmi-result" id="bmiResult"></div>
+  <button class="mclose" onclick="closeM('bmi')">Close</button>
+</div>
+
+
+<div class="modal" id="m_qotd">
+  <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
+  <div class="msub">Daily wisdom to inspire your journey</div>
+  <div id="qotdWrap"></div>
+  <button class="mclose" onclick="newQotd()">Next Quote ✨</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
+</div>
+
+
+<div class="modal" id="m_word">
+  <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
+  <div class="msub">Expand your vocabulary daily</div>
+  <div id="wordWrap"></div>
+  <button class="mclose" onclick="newWord()">Next Word 🔄</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
+</div>
+
+
+<div class="modal" id="m_poll">
+  <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
+  <div class="msub">Create a poll and share with friends</div>
+  <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
+  <input class="cv-inp" id="pollO1" placeholder="Option 1" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO2" placeholder="Option 2" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO3" placeholder="Option 3 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
+  <input class="cv-inp" id="pollO4" placeholder="Option 4 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:10px;">
+  <div id="pollResult" style="display:none;"></div>
+  <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
+  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
+</div>
+
+</body>
+</html>
