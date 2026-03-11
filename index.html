@@ -2764,8 +2764,8 @@ function cleanAndSend(text){
   // AI grammar cleanup via Groq
   var inp=document.getElementById('inp');
   showToast('✨ Cleaning up...');
-  var headers={'Content-Type':'application/json','Authorization':'Bearer '+_qcS[_keyIdx]};
-  fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),{
+  var headers={'Content-Type':'application/json',};
+  fetch('/api/chat',{
     method:'POST',
     headers:headers,
     body:JSON.stringify({
@@ -3485,9 +3485,9 @@ async function analyseLens(){
 
   var prompt=LENS_PROMPTS[lensMode]||LENS_PROMPTS.identify;
   try{
-    var res=await fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),{
+    var res=await fetch('/api/vision',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_qc},
+      headers:{'Content-Type':'application/json',},
       body:JSON.stringify({
         model:(function(){var _e=atob('PT0wPDB8Yn9jfGBgM3wnOCI4Pj98ISM0Jzg0Jg=='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
         max_tokens:1200,
@@ -3539,9 +3539,9 @@ async function lensAskMore(){
   resEl.innerHTML+='<hr style="margin:12px 0;border:none;border-top:1px solid var(--border);"><div class="lens-loading">🔍 Thinking...<span class="tdots"><span></span><span></span><span></span></span></div>';
   try{
     var context=window._lensLastResult?'Previous analysis:\n'+window._lensLastResult+'\n\nUser question: '+q:'User question about image: '+q;
-    var res=await fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),{
+    var res=await fetch('/api/chat',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_qc},
+      headers:{'Content-Type':'application/json',},
       body:JSON.stringify({
         model:(function(){var _e=atob('PT0wPDB8Yn9jfGBgM3wnOCI4Pj98ISM0Jzg0Jg=='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
         max_tokens:600,
@@ -3684,7 +3684,7 @@ function revealNamasteText(name){
 // Runs once on load — shows a warning toast if key is invalid/expired
 setTimeout(function(){
   fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})().replace('/chat/completions','/models'),{
-    headers:{'Authorization':'Bearer '+_qc}
+    headers:{}
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error){
       var code=d.error.code||'';
