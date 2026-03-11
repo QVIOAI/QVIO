@@ -1658,8 +1658,7 @@ header{
 
 <div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
 
-<div class="chat" id="chat">
-  <div class="welcome" id="welcome">
+<div class="welcome" id="welcome">
     <div class="w-icon-wrap">
       <div class="w-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -1670,8 +1669,7 @@ header{
     <h1>Hello, I am <em>QVIO</em></h1>
     <p class="wsub">What can I help you with today?</p>
 </div>
-    <h1>Hello, I am <em>QVIO</em></h1>
-    <p class="wsub">What can I help you with today?</p>
+<div class="chat" id="chat">
     
 </div>
 
@@ -2735,7 +2733,7 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');},2800);
 }
 function clearChat(){
-  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome2"><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
+  document.getElementById('chat').innerHTML=''; document.getElementById('welcome') && (document.getElementById('welcome').style.display='flex'); var _x='<div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
   chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
 }
 function toggleFocus(){
