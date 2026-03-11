@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<!-- Firebase FIRST before anything else -->
+
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script>
 function filterLangs(q){
@@ -531,7 +531,7 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 .sendbtn{padding:9px 18px;background:var(--navy-g);border:none;color:#fff;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);transition:all .2s;white-space:nowrap;box-shadow:0 3px 12px rgba(13,27,62,.3);}
 .sendbtn:hover{transform:scale(1.05);box-shadow:0 5px 18px rgba(13,27,62,.4);}
 .sendbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
-.qrs{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;max-width:var(--max);margin-left:auto;margin-right:auto;}
+.qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:8px 16px;width:100%;}
 .qr{padding:5px 12px;background:var(--white);border:1px solid var(--border);color:var(--text3);font-size:12px;cursor:pointer;border-radius:var(--r-full);transition:all .17s;font-family:"DM Sans",sans-serif;font-weight:500;}
 [data-theme="dark"] .qr{background:var(--bg2);}
 .qr:hover{border-color:var(--border2);color:var(--navy);background:var(--surface);}
@@ -932,13 +932,33 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lsm-confirm{flex:1;padding:11px;background:var(--navy-g);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 
+
+/* ── Professional Clean UI ── */
+header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-filter:blur(20px);background:rgba(var(--bg-rgb,0,0,0),0.85);}
+.logo{gap:8px;}
+.lname{font-size:18px;font-weight:700;letter-spacing:-0.5px;}
+.ltag{display:none;}
+.h-mode-pill{padding:6px 14px;font-size:12px;font-weight:600;border-radius:99px;border:1px solid var(--bdr);background:var(--card);}
+.hico{width:34px;height:34px;border-radius:8px;border:1px solid var(--bdr);background:transparent;font-size:15px;}
+.pro-hbtn{padding:6px 14px;font-size:12px;font-weight:700;border-radius:8px;}
+.streak-pill{padding:5px 10px;font-size:12px;font-weight:700;border-radius:8px;}
+.welcome{padding:48px 20px 32px;text-align:center;max-width:600px;margin:0 auto;}
+.w-crown{font-size:28px;margin-bottom:8px;}
+.w-icon{width:56px;height:56px;border-radius:16px;font-size:20px;font-weight:800;margin:0 auto 16px;}
+.welcome h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1px;margin-bottom:8px;}
+.welcome h1 em{font-style:italic;}
+.wsub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px;}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+/* Greeting and memory bars */
+.greeting-bar{padding:8px 16px;font-size:13px;border-bottom:1px solid var(--bdr);}
+.sub-bar{padding:6px 16px;font-size:12px;border-bottom:1px solid var(--bdr);}
 </style>
 </head>
 <body>
 
 <div id="particles"></div>
 
-<!-- NAMASTE SCREEN — BRICS STYLE -->
+
 <div id="namasteScreen">
   <div class="ns-bg-canvas" id="nsBgCanvas"></div>
   <div class="ns-bracket ns-br-tl"></div>
@@ -946,11 +966,11 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="ns-bracket ns-br-bl"></div>
   <div class="ns-bracket ns-br-br"></div>
 
-  <!-- BRICS Namaste SVG — clean, flat, official style -->
+  
   <div class="ns-namaste-wrap" id="nsNamasteWrap">
     <div class="ns-emoji-hi">👋</div>
   </div>
-  <!-- Text -->
+  
   <div class="ns-text-wrap">
     <div class="ns-greeting" id="nsGreeting"></div>
     <div class="ns-username" id="nsUsername"></div>
@@ -962,7 +982,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="ns-flash"></div>
 </div>
 
-<!-- LOGIN SCREEN -->
+
 <div id="loginScreen">
   <div class="lwrap">
     <div class="l-crown">👑</div>
@@ -991,7 +1011,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 <div class="toast" id="toast"></div>
 <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
 
-<!-- CALCULATOR -->
+
 <div class="calc-w" id="calcW">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
     <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);">Calculator</span>
@@ -1007,7 +1027,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
 </div>
 
-<!-- OVERLAYS -->
+
 <div class="overlay" id="o_lang" onclick="closeM('lang')"></div>
 <div class="overlay" id="o_mem" onclick="closeM('mem')"></div>
 <div class="overlay" id="o_sup" onclick="closeM('sup')"></div>
@@ -1020,7 +1040,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 <div class="overlay" id="o_imgv" onclick="closeM('imgv')"></div>
 <div class="overlay" id="o_pro" onclick="closeM('pro')"></div>
 
-<!-- LANGUAGE MODAL -->
+
 <div class="modal" id="m_lang">
   <div class="mhd"><h3>🌍 Choose Language</h3><button class="mx" onclick="closeM('lang')">✕</button></div>
   <div class="msub">Search or scroll 150+ languages</div>
@@ -1220,7 +1240,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
 </div>
 
-<!-- ONBOARDING -->
+
 <div id="onboard">
   <div class="ob-bg" onclick="skipOnboard()"></div>
   <div class="ob-card">
@@ -1236,7 +1256,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
 </div>
 
-<!-- SHARE CARD -->
+
 <div id="shareCard">
   <div class="sc-bg" onclick="closeShare()"></div>
   <div class="sc-box">
@@ -1260,44 +1280,13 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div style="display:flex;gap:6px;"><button onclick="installPWA()">Install</button><button class="idism" onclick="dismissInstall()">✕</button></div>
 </div>
 
-<!-- TOOLS PANEL OVERLAY -->
+
 <div class="tp-overlay" id="tpOverlay" onclick="closeToolsPanel()"></div>
-<!-- TOOLS PANEL -->
-<div class="tools-panel" id="toolsPanel">
-  <div class="tp-sect">⚡ Quick Tools</div>
-  <div class="tp-grid">
-    <div class="tp-btn" onclick="openM('todo');closeToolsPanel()"><span class="tp-ico">✅</span><span class="tp-lbl">Tasks</span></div>
-    <div class="tp-btn" onclick="openM('timer');closeToolsPanel()"><span class="tp-ico">⏱</span><span class="tp-lbl">Timer</span></div>
-    <div class="tp-btn" onclick="openM('notes');closeToolsPanel()"><span class="tp-ico">📝</span><span class="tp-lbl">Notes</span></div>
-    <div class="tp-btn" onclick="openM('mood');closeToolsPanel()"><span class="tp-ico">😊</span><span class="tp-lbl">Mood</span></div>
-    <div class="tp-btn" onclick="openM('currency');closeToolsPanel()"><span class="tp-ico">💱</span><span class="tp-lbl">Currency</span></div>
-    <div class="tp-btn" onclick="openM('wpm');closeToolsPanel()"><span class="tp-ico">⌨️</span><span class="tp-lbl">Typing</span></div>
-    <div class="tp-btn" onclick="openM('news');closeToolsPanel()"><span class="tp-ico">📰</span><span class="tp-lbl">News</span></div>
-    <div class="tp-btn" onclick="openM('emoji');closeToolsPanel()"><span class="tp-ico">😄</span><span class="tp-lbl">Emoji</span></div>
-    <div class="tp-btn" onclick="openM('cv');closeToolsPanel()"><span class="tp-ico">📄</span><span class="tp-lbl">CV</span></div>
-    <div class="tp-btn" onclick="openM('age');closeToolsPanel()"><span class="tp-ico">🎂</span><span class="tp-lbl">Age</span></div>
-    <div class="tp-btn" onclick="openM('bmi');closeToolsPanel()"><span class="tp-ico">⚖️</span><span class="tp-lbl">BMI</span></div>
-    <div class="tp-btn" onclick="openM('qotd');closeToolsPanel()"><span class="tp-ico">💬</span><span class="tp-lbl">Quote</span></div>
-    <div class="tp-btn" onclick="openM('word');closeToolsPanel()"><span class="tp-ico">📖</span><span class="tp-lbl">Word</span></div>
-    <div class="tp-btn" onclick="openM('poll');closeToolsPanel()"><span class="tp-ico">🗳</span><span class="tp-lbl">Poll</span></div>
-    <div class="tp-btn" onclick="toggleCalc();closeToolsPanel()"><span class="tp-ico">🔢</span><span class="tp-lbl">Calc</span></div>
-    <div class="tp-btn" onclick="openM('lang');closeToolsPanel()"><span class="tp-ico">🌍</span><span class="tp-lbl">Learn</span></div>
-  </div>
-  <div class="tp-sect" style="margin-top:6px;">⚙️ Settings</div>
-  <div class="tp-row">
-    <div class="tp-act" onclick="openM('gal');closeToolsPanel()">🖼 Gallery</div>
-    <div class="tp-act" onclick="openM('hist');closeToolsPanel()">💬 History</div>
-    <div class="tp-act" onclick="openM('stats');closeToolsPanel()">📊 Stats</div>
-    <div class="tp-act" onclick="openM('mem');closeToolsPanel()">🧠 Memory</div>
-    <div class="tp-act" onclick="openM('theme');closeToolsPanel()">🎨 Theme</div>
-    <div class="tp-act" onclick="exportChat();closeToolsPanel()">💾 Export</div>
-    <div class="tp-act" onclick="toggleFocus();closeToolsPanel()">⛶ Focus</div>
-    <div class="tp-act" onclick="clearChat();closeToolsPanel()">🗑 Clear</div>
-  </div>
-</div>
-<!-- MODES DRAWER OVERLAY -->
+
+
+
 <div class="md-overlay" id="mdOverlay" onclick="closeModesDrawer()"></div>
-<!-- MODES DRAWER -->
+
 <div class="modes-drawer" id="modesDrawer">
   <div class="md-title">Choose AI Mode</div>
   <div class="md-pills">
@@ -1306,26 +1295,24 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
 </div>
 
-<!-- HEADER -->
+
 <header>
   <a class="logo" onclick="scrollToTop()">
     <div class="lmark">QV</div>
     <span class="lname">QV<em>IO</em></span>
-    <span class="ltag">Premium AI</span>
   </a>
   <div class="h-mode-wrap">
     <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
       <span class="sdot"></span>
-      <span class="mlabel" id="modeLabel">🤖 Auto Detect</span>
-      <span style="color:var(--text3);font-size:10px;margin-left:2px;">▾</span>
+      <span class="mlabel" id="modeLabel">Auto Detect</span>
+      <span style="color:var(--text3);font-size:10px;margin-left:4px;">▾</span>
     </div>
   </div>
   <div class="h-actions">
     <div class="streak-pill" onclick="openM('streak')">🔥<span id="streakNum">0</span></div>
-    <button class="earth-btn" onclick="openLangSelect()" title="Choose AI language">🌍</button>
+    <button class="hico" onclick="openLangSelect()" title="Language">🌍</button>
     <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
-    <button class="hico" id="focusBtn" onclick="toggleFocus()" title="Focus" style="display:none;">⛶</button>
-    <button class="hico" onclick="toggleToolsPanel()" id="toolsBtn" title="Tools">⚡</button>
+    
     <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
     <div class="uchip" onclick="openM('prof')">
       <div class="uav" id="uAv">?</div>
@@ -1367,143 +1354,19 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="welcome" id="welcome">
     <div class="w-crown">👑</div>
     <div class="w-icon">QV</div>
-    <div class="w-badge">✨ India's Most Premium AI</div>
     <h1>Hello, I am <em>QVIO</em></h1>
-    <p class="wsub">India's most intelligent AI. Built for every Indian. 150+ languages.</p>
-    <div class="challenge" id="challengeCard" onclick="doChallenge()">🎯 <span><strong>Today's Challenge:</strong> <span id="challengeTxt">Loading...</span></span></div>
-    <div class="tip-box" id="tipBox">💡 Loading tip...</div>
+    <p class="wsub">India's most intelligent AI · 150+ Languages · Built for every Indian</p>
     <div class="mem-banner" id="memBanner"></div>
-    <div class="sugs">
-      <div class="sug" onclick="send('Explain quantum computing like I am 15 years old')"><span class="si">⚡</span><span class="st">Explain Anything</span><span class="sd2">Simple. Fun. Clear.</span></div>
-      <div class="sug" onclick="send('create image: golden temple amritsar at sunset ultra 4K')"><span class="si">🎨</span><span class="st">Generate 4K Art</span><span class="sd2">Type create image: anything</span></div>
-      <div class="sug" onclick="send('Help me crack JEE 2025 with a 90-day master strategy')"><span class="si">🎯</span><span class="st">Exam Strategy</span><span class="sd2">JEE NEET UPSC CBSE</span></div>
-      <div class="sug" onclick="send('Teach me 10 essential Japanese phrases with pronunciation')"><span class="si">🌍</span><span class="st">Learn a Language</span><span class="sd2">150+ languages supported</span></div>
-      <div class="sug" onclick="send('Write a Python web scraper with full explanation')"><span class="si">💻</span><span class="st">Code Anything</span><span class="sd2">Any language any level</span></div>
-      <div class="sug" onclick="send('Write a powerful investor pitch for my startup idea')"><span class="si">💼</span><span class="st">Business Help</span><span class="sd2">Pitches plans strategies</span></div>
+    
+      
+      
+      
+      
+      
     </div>
 
-    <!-- AI COMPARISON TABLE -->
-    <div class="cmp-wrap">
-      <div class="cmp-title">⚔️ QVIO vs Every AI in the World</div>
-      <div class="cmp-sub">See why QVIO is built different — for every Indian</div>
-      <div style="overflow-x:auto;">
-      <table class="cmp-table">
-        <thead>
-          <tr>
-            <th>Feature</th>
-            <th class="qvio-col">👑 QVIO</th>
-            <th>Copilot</th>
-            <th>Gemini</th>
-            <th>DeepSeek</th>
-            <th>Grok</th>
-            <th>Perplexity</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Indian Languages <span class="cmp-badge">150+</span></td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> 150+</td>
-            <td><span class="cmp-part">⚠️</span> ~10</td>
-            <td><span class="cmp-part">⚠️</span> ~20</td>
-            <td><span class="cmp-no">❌</span> Few</td>
-            <td><span class="cmp-no">❌</span> Few</td>
-            <td><span class="cmp-part">⚠️</span> ~15</td>
-          </tr>
-          <tr>
-            <td>Hinglish / Slang</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> Native</td>
-            <td><span class="cmp-part">⚠️</span> Partial</td>
-            <td><span class="cmp-part">⚠️</span> Partial</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Visual Lens / Image Scan</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> 6 modes</td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-yes">✅</span></td>
-          </tr>
-          <tr>
-            <td>AI Image Generation</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> Free</td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-part">⚠️</span> Pro</td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Mother-Tongue Voice</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> All langs</td>
-            <td><span class="cmp-part">⚠️</span> Limited</td>
-            <td><span class="cmp-part">⚠️</span> Limited</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Built-in Tools (20+)</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> 20+ tools</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Indian Exam Mode</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> JEE/NEET</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-part">⚠️</span> Basic</td>
-            <td><span class="cmp-part">⚠️</span> Basic</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Memory (Remembers You)</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> Always</td>
-            <td><span class="cmp-yes">✅</span></td>
-            <td><span class="cmp-part">⚠️</span> Limited</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Daily Streak &amp; Gamification</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> Full</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-          <tr>
-            <td>Made in India 🇮🇳</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> 100%</td>
-            <td><span class="cmp-no">❌</span> USA</td>
-            <td><span class="cmp-no">❌</span> USA</td>
-            <td><span class="cmp-no">❌</span> China</td>
-            <td><span class="cmp-no">❌</span> USA</td>
-            <td><span class="cmp-no">❌</span> USA</td>
-          </tr>
-          <tr>
-            <td>Built by a Teen 👑</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> Varun, 17</td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
-      <div class="cmp-footer">⚡ QVIO — the only AI built specifically for India, by India</div>
-    </div>
+    
+    
 
   </div>
 </div>
@@ -1520,18 +1383,17 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     </div>
   </div>
   <div class="qrs">
-    <div class="qr" onclick="send('Surprise me with something amazing')">✨ Surprise</div>
     <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
     <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
     <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
     <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
-    <div class="qr" onclick="openM('todo')">✅ Tasks</div>
     <div class="qr" onclick="openM('timer')">⏱ Timer</div>
     <div class="qr" onclick="openM('mood')">😊 Mood</div>
   </div>
+  
 </div>
 
-<!-- QVIO LENS -->
+
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
 <div class="modal" id="m_lens" style="max-width:560px;">
   <div class="mhd">
@@ -1540,7 +1402,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
   <div class="msub">Scan anything — text, objects, math, plants, food, QR codes and more</div>
 
-  <!-- Mode tabs -->
+  
   <div class="lens-tabs">
     <button class="ltab on" onclick="setLensMode('identify',this)">🔍 Identify</button>
     <button class="ltab" onclick="setLensMode('text',this)">📝 Read Text</button>
@@ -1550,7 +1412,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
     <button class="ltab" onclick="setLensMode('qr',this)">📷 QR / URL</button>
   </div>
 
-  <!-- Upload zone -->
+  
   <div class="lens-drop" id="lensDrop" onclick="document.getElementById('lensFile').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="lensDropFile(event)">
     <div class="lens-drop-inner" id="lensDropInner">
       <span class="lens-drop-ico">📸</span>
@@ -1561,7 +1423,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   </div>
   <input type="file" id="lensFile" accept="image/*" style="display:none;" onchange="lensLoadFile(this)">
 
-  <!-- Camera capture -->
+  
   <div style="display:flex;gap:8px;margin-top:10px;">
     <button class="lens-cam-btn" onclick="startLensCamera()" id="lensCamBtn">📷 Use Camera</button>
     <button class="lens-cam-btn" id="lensSnapBtn" onclick="snapLens()" style="display:none;background:var(--danger);">⚡ Snap!</button>
@@ -1569,13 +1431,13 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <video id="lensVideo" style="display:none;width:100%;border-radius:var(--r-sm);margin-top:8px;border:1.5px solid var(--border2);" playsinline autoplay muted></video>
   <canvas id="lensCanvas" style="display:none;"></canvas>
 
-  <!-- Analyse button -->
+  
   <button class="mclose" id="lensAnalyseBtn" onclick="analyseLens()" style="margin-top:14px;" disabled>🔍 Analyse with QVIO</button>
 
-  <!-- Result -->
+  
   <div id="lensResult" class="lens-result" style="display:none;"></div>
 
-  <!-- Ask follow-up -->
+  
   <div id="lensAskWrap" style="display:none;margin-top:10px;">
     <div class="mrow">
       <input class="minp" id="lensAskInp" placeholder="Ask something about this image..."/>
@@ -1586,10 +1448,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <button class="mclose" style="margin-top:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeLens()">Close</button>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     ALL JAVASCRIPT — SINGLE CONSOLIDATED BLOCK
-     (No duplicate scripts, no scripts outside 
-<!-- LANGUAGE SELECTOR MODAL -->
+
 <div id="langSelectOverlay" onclick="if(event.target===this)closeLangSelect()">
   <div id="langSelectModal">
     <div class="lsm-head">
@@ -3868,9 +3727,9 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('mem')">Done</button>
 </div>
 
-<!-- SUPPORT -->
 
-<!-- MODALS FROM V4 -->
+
+
 <div class="modal" id="m_stats">
   <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
   <div class="msub">Your QVIO journey at a glance</div>
@@ -3880,7 +3739,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('stats')">Close</button>
 </div>
 
-<!-- STREAK -->
+
 <div class="modal" id="m_streak">
   <div class="mhd"><h3>🔥 Daily Streak</h3><button class="mx" onclick="closeM('streak')">✕</button></div>
   <div class="streak-center">
@@ -3892,7 +3751,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('streak')">Close</button>
 </div>
 
-<!-- THEME -->
+
 <div class="modal" id="m_theme">
   <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
   <div class="msub">Customize QVIO to your taste</div>
@@ -3911,7 +3770,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('theme')">Done</button>
 </div>
 
-<!-- GALLERY -->
+
 <div class="modal" id="m_gal">
   <div class="mhd"><h3>🎨 Image Gallery</h3><button class="mx" onclick="closeM('gal')">✕</button></div>
   <div class="msub">All your AI-generated masterpieces</div>
@@ -3919,7 +3778,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('gal')">Close</button>
 </div>
 
-<!-- PROFILE -->
+
 <div class="modal" id="m_prof">
   <div class="mhd"><h3>My Profile</h3><button class="mx" onclick="closeM('prof')">✕</button></div>
   <div class="prof-top">
@@ -3935,7 +3794,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('prof')">Close</button>
 </div>
 
-<!-- HISTORY -->
+
 <div class="modal" id="m_hist">
   <div class="mhd"><h3>💬 Chat History</h3><button class="mx" onclick="closeM('hist')">✕</button></div>
   <div class="msub">Your saved conversations</div>
@@ -3943,7 +3802,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('hist')">Close</button>
 </div>
 
-<!-- IMAGE VIEWER -->
+
 <div class="modal" id="m_imgv" style="max-width:600px;">
   <div class="mhd"><h3>🖼 Image</h3><button class="mx" onclick="closeM('imgv')">✕</button></div>
   <img id="imgVSrc" style="width:100%;border-radius:var(--r);border:2px solid var(--border2);margin-top:10px;"/>
@@ -3951,7 +3810,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('imgv')">Close</button>
 </div>
 
-<!-- PRO MODAL -->
+
 <div class="modal" id="m_pro">
   <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
   <div class="msub">Unlock the full power of QVIO</div>
@@ -3971,7 +3830,7 @@ function getAILangInstruction(){
 </div>
 
 
-<!-- NEW FEATURE OVERLAYS -->
+
 <div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
 <div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
 <div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
@@ -3987,7 +3846,7 @@ function getAILangInstruction(){
 <div class="overlay" id="o_word" onclick="closeM('word')"></div>
 <div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
 
-<!-- TODO LIST -->
+
 <div class="modal" id="m_todo">
   <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
   <div class="msub">Your personal task manager</div>
@@ -3999,7 +3858,7 @@ function getAILangInstruction(){
   </div>
 </div>
 
-<!-- TIMER / STOPWATCH -->
+
 <div class="modal" id="m_timer">
   <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
   <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
@@ -4024,7 +3883,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('timer')">Close</button>
 </div>
 
-<!-- CURRENCY CONVERTER -->
+
 <div class="modal" id="m_currency">
   <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
   <div class="msub">Live INR rates (approximate)</div>
@@ -4033,7 +3892,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('currency')">Close</button>
 </div>
 
-<!-- MOOD TRACKER -->
+
 <div class="modal" id="m_mood">
   <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
   <div class="msub">How are you feeling today?</div>
@@ -4049,7 +3908,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('mood')">Close</button>
 </div>
 
-<!-- TYPING SPEED TEST -->
+
 <div class="modal" id="m_wpm">
   <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
   <div class="msub">Test your WPM — how fast do you type?</div>
@@ -4062,7 +3921,7 @@ function getAILangInstruction(){
   </div>
 </div>
 
-<!-- QUICK NEWS -->
+
 <div class="modal" id="m_news">
   <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
   <div class="msub">Ask QVIO about any of these stories</div>
@@ -4070,7 +3929,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('news')">Close</button>
 </div>
 
-<!-- EMOJI PICKER -->
+
 <div class="modal" id="m_emoji">
   <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
   <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
@@ -4079,7 +3938,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('emoji')">Close</button>
 </div>
 
-<!-- CV / RESUME BUILDER -->
+
 <div class="modal" id="m_cv">
   <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
   <div class="msub">Fill in your details and AI will write your CV</div>
@@ -4101,7 +3960,7 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
 </div>
 
-<!-- QUICK NOTES -->
+
 <div class="modal" id="m_notes">
   <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
   <div class="msub">Jot down anything instantly</div>
@@ -4113,7 +3972,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('notes')">Done</button>
 </div>
 
-<!-- AGE CALCULATOR -->
+
 <div class="modal" id="m_age">
   <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
   <div class="msub">Find exact age in years, months and days</div>
@@ -4123,7 +3982,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('age')">Close</button>
 </div>
 
-<!-- BMI CALCULATOR -->
+
 <div class="modal" id="m_bmi">
   <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
   <div class="msub">Body Mass Index — quick health check</div>
@@ -4141,7 +4000,7 @@ function getAILangInstruction(){
   <button class="mclose" onclick="closeM('bmi')">Close</button>
 </div>
 
-<!-- QUOTE OF THE DAY -->
+
 <div class="modal" id="m_qotd">
   <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
   <div class="msub">Daily wisdom to inspire your journey</div>
@@ -4150,7 +4009,7 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
 </div>
 
-<!-- WORD OF THE DAY -->
+
 <div class="modal" id="m_word">
   <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
   <div class="msub">Expand your vocabulary daily</div>
@@ -4159,7 +4018,7 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
 </div>
 
-<!-- LIVE POLL -->
+
 <div class="modal" id="m_poll">
   <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
   <div class="msub">Create a poll and share with friends</div>
