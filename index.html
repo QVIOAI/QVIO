@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>QVIO — India's Premium AI</title>
 <meta name="description" content="QVIO - India's most premium AI. 150+ languages. Built for every Indian.">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <!-- Firebase FIRST before anything else -->
@@ -1221,7 +1221,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 </div>
 
 <!-- ONBOARDING -->
-<div id="onboard" style="display:none!important">
+<div id="onboard">
   <div class="ob-bg" onclick="skipOnboard()"></div>
   <div class="ob-card">
     <span class="ob-step" id="obStep">Step 1 of 3</span>
@@ -1316,7 +1316,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
   <div class="h-mode-wrap">
     <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()">
       <span class="sdot"></span>
-      <span class="mlabel" id="modeLabel">Auto Detect</span>
+      <span class="mlabel" id="modeLabel">🤖 Auto Detect</span>
       <span style="color:var(--text3);font-size:10px;margin-left:2px;">▾</span>
     </div>
   </div>
@@ -1394,7 +1394,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <th class="qvio-col">👑 QVIO</th>
             <th>Copilot</th>
             <th>Gemini</th>
-            <th>Claude</th>
             <th>DeepSeek</th>
             <th>Grok</th>
             <th>Perplexity</th>
@@ -1402,21 +1401,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
         </thead>
         <tbody>
           <tr>
-            <td>Languages Supported</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> 150+</td>
-            <td><span class="cmp-part">⚠️</span> ~50</td>
-            <td><span class="cmp-part">⚠️</span> ~40</td>
-            <td><span class="cmp-part">⚠️</span> ~30</td>
-            <td><span class="cmp-part">⚠️</span> ~20</td>
-            <td><span class="cmp-part">⚠️</span> ~20</td>
-            <td><span class="cmp-part">⚠️</span> ~30</td>
-          </tr>
-          <tr>
-            <td>Indian Languages</td>
+            <td>Indian Languages <span class="cmp-badge">150+</span></td>
             <td class="qvio-col"><span class="cmp-yes">✅</span> 150+</td>
             <td><span class="cmp-part">⚠️</span> ~10</td>
             <td><span class="cmp-part">⚠️</span> ~20</td>
-            <td><span class="cmp-part">⚠️</span> ~12</td>
             <td><span class="cmp-no">❌</span> Few</td>
             <td><span class="cmp-no">❌</span> Few</td>
             <td><span class="cmp-part">⚠️</span> ~15</td>
@@ -1429,12 +1417,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
           </tr>
           <tr>
             <td>Visual Lens / Image Scan</td>
             <td class="qvio-col"><span class="cmp-yes">✅</span> 6 modes</td>
-            <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-no">❌</span></td>
@@ -1447,7 +1433,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-part">⚠️</span> Pro</td>
             <td><span class="cmp-no">❌</span></td>
           </tr>
@@ -1456,7 +1441,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td class="qvio-col"><span class="cmp-yes">✅</span> All langs</td>
             <td><span class="cmp-part">⚠️</span> Limited</td>
             <td><span class="cmp-part">⚠️</span> Limited</td>
-            <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
@@ -1469,14 +1453,12 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
           </tr>
           <tr>
             <td>Indian Exam Mode</td>
             <td class="qvio-col"><span class="cmp-yes">✅</span> JEE/NEET</td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-part">⚠️</span> Basic</td>
-            <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-part">⚠️</span> Basic</td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
@@ -1486,7 +1468,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td class="qvio-col"><span class="cmp-yes">✅</span> Always</td>
             <td><span class="cmp-yes">✅</span></td>
             <td><span class="cmp-part">⚠️</span> Limited</td>
-            <td><span class="cmp-yes">✅</span> Pro</td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
@@ -1499,12 +1480,10 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
-            <td><span class="cmp-no">❌</span></td>
           </tr>
           <tr>
             <td>Made in India 🇮🇳</td>
             <td class="qvio-col"><span class="cmp-yes">✅</span> 100%</td>
-            <td><span class="cmp-no">❌</span> USA</td>
             <td><span class="cmp-no">❌</span> USA</td>
             <td><span class="cmp-no">❌</span> USA</td>
             <td><span class="cmp-no">❌</span> China</td>
@@ -1513,8 +1492,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
           </tr>
           <tr>
             <td>Built by a Teen 👑</td>
-            <td class="qvio-col"><span class="cmp-yes">✅</span> VARUN, 17</td>
-            <td><span class="cmp-no">❌</span></td>
+            <td class="qvio-col"><span class="cmp-yes">✅</span> Varun, 17</td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
             <td><span class="cmp-no">❌</span></td>
@@ -1908,9 +1886,9 @@ initFirebase();
 // GLOBALS
 // ═══════════════════════════════
 // 🔑 API Key Rotation — auto-switches when one hits rate limit
-// API key moved to backend server — secure ✅
+// Key secured on backend ✅
 var _qk=[];var _keyIdx=0;var _qc="";function rotateKey(){return false;}
-var MODEL=(function(){var _e=atob('PT0wPDBifGZhM3xpYGhj'),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})();
+var MODEL=(function(){var _e=atob('PT0wPDB8Yn9ifGZhM3wnNCMiMCU4PTQ='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})();
 var mode='casual',chatHistory=[],currentUser=null,isRec=false,recog=null;
 var isFocus=false,pinnedEl=null,deferredPrompt=null,calcExpr='',lastMsg='';
 var shareContent='';
@@ -1968,7 +1946,7 @@ function showNamaste(user){
         if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
         // Show the app!
         try{setSmartGreeting();}catch(e){}
-        /* onboarding disabled */
+        try{showOnboard();}catch(e){}
       },500);
     },300);
   },4500);
@@ -2293,7 +2271,7 @@ function setMode(m,btn,label){
 // ═══════════════════════════════
 // MODALS
 // ═══════════════════════════════
-var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],cv:['o_cv','m_cv'],word:['o_word','m_word'],emoji:['o_emoji','m_emoji'],age:['o_age','m_age'],currency:['o_currency','m_currency'],todo:['o_todo','m_todo'],poll:['o_poll','m_poll'],wpm:['o_wpm','m_wpm'],mood:['o_mood','m_mood'],timer:['o_timer','m_timer'],notes:['o_notes','m_notes'],qotd:['o_qotd','m_qotd'],news:['o_news','m_news'],bmi:['o_bmi','m_bmi']};
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.add('show');
@@ -2412,114 +2390,19 @@ function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth'
 // ═══════════════════════════════
 var cachedVoices=[];
 if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){cachedVoices=window.speechSynthesis.getVoices();};}
-var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN','pa-Guru-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-IN','ur-PK'],'assamese':['as-IN'],'nepali':['ne-NP','ne-IN'],'sindhi':['sd-IN','sd-PK'],'sanskrit':['sa-IN','hi-IN'],'kashmiri':['ks-IN','hi-IN'],'manipuri':['mni-IN','hi-IN'],'dogri':['doi-IN','hi-IN'],'santali':['sat-IN','hi-IN'],'bodo':['brx-IN','hi-IN'],'konkani':['kok-IN','hi-IN'],'maithili':['mai-IN','hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'magahi':['hi-IN'],'bundeli':['hi-IN'],'mandarin':['zh-CN','zh-TW'],'chinese':['zh-CN','zh-TW'],'cantonese':['zh-HK','zh-TW'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY','ms-BN'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['bo-CN','zh-CN'],'mongolian':['mn-MN'],'javanese':['jv-ID','id-ID'],'sundanese':['su-ID','id-ID'],'cebuano':['ceb-PH','fil-PH'],'uyghur':['ug-CN','zh-CN'],'arabic':['ar-SA','ar-EG','ar-AE','ar-IQ','ar-MA'],'persian':['fa-IR','fa-AF'],'dari':['fa-AF','fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF','ps-PK'],'kurdish':['ckb-IQ','ku-TR','kmr-TR'],'azerbaijani':['az-AZ','az-IR'],'armenian':['hy-AM'],'georgian':['ka-GE'],'uzbek':['uz-UZ'],'kazakh':['kk-KZ'],'tajik':['tg-TJ','ru-RU'],'turkmen':['tk-TM'],'kyrgyz':['ky-KG'],'swahili':['sw-KE','sw-TZ'],'amharic':['am-ET'],'hausa':['ha-NG','ha-GH'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET','om-KE'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'kinyarwanda':['rw-RW'],'tigrinya':['ti-ET','ti-ER'],'luganda':['lg-UG'],'sesotho':['st-ZA'],'spanish':['es-ES','es-MX','es-US','es-AR','es-CO'],'french':['fr-FR','fr-CA','fr-BE'],'german':['de-DE','de-AT','de-CH'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL','nl-BE'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO','nn-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'estonian':['et-EE'],'slovenian':['sl-SI'],'macedonian':['mk-MK'],'albanian':['sq-AL'],'belarusian':['be-BY'],'maltese':['mt-MT'],'welsh':['cy-GB'],'irish':['ga-IE'],'icelandic':['is-IS'],'basque':['eu-ES'],'galician':['gl-ES'],'english':['en-IN','en-US','en-GB','en-AU'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX'],'maori':['mi-NZ'],'haitian creole':['ht-HT']};
+var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['hi-IN'],'manipuri':['hi-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['hi-IN'],'konkani':['hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['zh-CN'],'mongolian':['mn-MN'],'javanese':['id-ID'],'sundanese':['id-ID'],'cebuano':['fil-PH'],'arabic':['ar-SA','ar-EG'],'persian':['fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF'],'kurdish':['ku-TR'],'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],'swahili':['sw-KE'],'amharic':['am-ET'],'hausa':['ha-NG'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'spanish':['es-ES','es-MX'],'french':['fr-FR'],'german':['de-DE'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'english':['en-IN','en-US','en-GB'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX']};
 function detectSpeakLang(text){
-  // Script-based detection (most reliable)
-  var sc={
-    hindi:/[\u0900-\u097F]/,         // Devanagari → also Marathi,Nepali,Sanskrit,Konkani
-    telugu:/[\u0C00-\u0C7F]/,
-    tamil:/[\u0B80-\u0BFF]/,
-    kannada:/[\u0C80-\u0CFF]/,
-    bengali:/[\u0980-\u09FF]/,       // also Assamese
-    malayalam:/[\u0D00-\u0D7F]/,
-    gujarati:/[\u0A80-\u0AFF]/,
-    punjabi:/[\u0A00-\u0A7F]/,       // Gurmukhi
-    odia:/[\u0B00-\u0B7F]/,
-    urdu:/[\u0600-\u06FF]/,          // Arabic script (also Arabic, Persian, Pashto)
-    arabic:/[\u0600-\u06FF\u0750-\u077F]/,
-    chinese:/[\u4E00-\u9FFF\u3400-\u4DBF]/,
-    japanese:/[\u3040-\u30FF\u31F0-\u31FF]/,
-    korean:/[\uAC00-\uD7AF\u1100-\u11FF]/,
-    thai:/[\u0E00-\u0E7F]/,
-    khmer:/[\u1780-\u17FF]/,
-    myanmar:/[\u1000-\u109F]/,
-    georgian:/[\u10A0-\u10FF]/,
-    armenian:/[\u0530-\u058F]/,
-    tibetan:/[\u0F00-\u0FFF]/,
-    sinhala:/[\u0D80-\u0DFF]/,
-    ethiopic:/[\u1200-\u137F]/,      // Amharic, Tigrinya
-    hebrew:/[\u0590-\u05FF]/,
-    greek:/[\u0370-\u03FF]/,
-    cyrillic:/[\u0400-\u04FF]/       // Russian, Ukrainian, Bulgarian etc
-  };
-  // Check script
-  for(var lang in sc){if(sc[lang].test(text)){
-    // Distinguish same-script languages
-    if(lang==='hindi'){
-      // Devanagari: check for Marathi-specific chars
-      if(/[ळ]/.test(text)&&mode==='marathi')return{lang:'marathi',tags:LANG_TAGS['marathi']};
-      if(mode&&LANG_TAGS[mode]&&LANG_TAGS[mode][0].startsWith('hi'))return{lang:mode,tags:LANG_TAGS[mode]};
-      return{lang:'hindi',tags:LANG_TAGS['hindi']};
-    }
-    if(lang==='urdu'){
-      // Arabic script: distinguish Arabic, Urdu, Persian, Pashto by mode
-      if(mode==='arabic')return{lang:'arabic',tags:LANG_TAGS['arabic']};
-      if(mode==='persian'||mode==='dari')return{lang:mode,tags:LANG_TAGS[mode]};
-      if(mode==='pashto')return{lang:'pashto',tags:LANG_TAGS['pashto']};
-      return{lang:'urdu',tags:LANG_TAGS['urdu']};
-    }
-    if(lang==='arabic'){
-      if(mode==='persian')return{lang:'persian',tags:LANG_TAGS['persian']};
-      if(mode==='urdu')return{lang:'urdu',tags:LANG_TAGS['urdu']};
-      return{lang:'arabic',tags:LANG_TAGS['arabic']};
-    }
-    if(lang==='cyrillic'){
-      if(mode==='ukrainian')return{lang:'ukrainian',tags:LANG_TAGS['ukrainian']};
-      if(mode==='bulgarian')return{lang:'bulgarian',tags:LANG_TAGS['bulgarian']};
-      if(mode==='serbian')return{lang:'serbian',tags:LANG_TAGS['serbian']};
-      return{lang:'russian',tags:LANG_TAGS['russian']};
-    }
-    if(lang==='bengali'){
-      if(mode==='assamese')return{lang:'assamese',tags:LANG_TAGS['assamese']};
-      return{lang:'bengali',tags:LANG_TAGS['bengali']};
-    }
-    if(lang==='ethiopic'){
-      if(mode==='tigrinya')return{lang:'tigrinya',tags:LANG_TAGS['tigrinya']};
-      return{lang:'amharic',tags:LANG_TAGS['amharic']};
-    }
-    if(lang==='myanmar')return{lang:'burmese',tags:LANG_TAGS['burmese']};
-    if(lang==='sinhala')return{lang:'sinhalese',tags:LANG_TAGS['sinhalese']};
-    var tag=LANG_TAGS[lang];
-    return{lang:lang,tags:tag||['en-IN']};
-  }}
-  // Fallback: use selected mode language
-  if(mode&&LANG_TAGS[mode])return{lang:mode,tags:LANG_TAGS[mode]};
-  return{lang:'english',tags:['en-IN','en-US']};
+  var sc={hindi:/[ऀ-ॿ]/,arabic:/[؀-ۿ]/,chinese:/[一-鿿]/,japanese:/[぀-ヿ]/,korean:/[가-힯]/,thai:/[฀-๿]/,telugu:/[ఀ-౿]/,tamil:/[஀-௿]/,kannada:/[ಀ-೿]/,bengali:/[ঀ-৿]/,malayalam:/[ഀ-ൿ]/,gujarati:/[઀-૿]/,punjabi:/[਀-੿]/,odia:/[଀-୿]/};
+  for(var lang in sc){if(sc[lang].test(text))return {lang:lang,tags:LANG_TAGS[lang]||['en-IN']};}
+  if(LANG_TAGS[mode])return {lang:mode,tags:LANG_TAGS[mode]};
+  return {lang:'english',tags:['en-IN','en-US']};
 }
 function findBestVoice(tags){
   var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
   if(!voices.length)return null;
-  // Bad voices to avoid (robotic/old Windows TTS)
-  var BAD=['zira','david','mark','hazel','george','susan','ravi','heera','hemant'];
-  // Good native/neural voice keywords
-  var GOOD=['neural','wavenet','natural','premium','enhanced','online','network','google'];
-  function score(v,tag){
-    var n=v.name.toLowerCase(),sc=0;
-    var langBase=tag.split('-')[0];
-    var tagLower=tag.toLowerCase();
-    // Exact lang match = highest priority
-    if(v.lang.toLowerCase()===tagLower)sc+=100;
-    else if(v.lang.toLowerCase().startsWith(langBase))sc+=50;
-    else return -999;
-    // Boost quality voices
-    for(var g=0;g<GOOD.length;g++){if(n.indexOf(GOOD[g])>-1){sc+=35;break;}}
-    // Penalise known bad voices hard
-    for(var b=0;b<BAD.length;b++){if(n.indexOf(BAD[b])>-1){sc-=80;}}
-    // Prefer online/remote voices (better quality)
-    if(v.localService===false)sc+=20;
-    // Prefer female voices for Indian langs (more natural TTS coverage)
-    var indLangs=['hi','kn','ta','te','ml','bn','gu','mr','pa','or','ur','as'];
-    if(indLangs.indexOf(langBase)>-1&&(n.indexOf('female')>-1||n.indexOf('woman')>-1||n.indexOf('priya')>-1||n.indexOf('aditi')>-1||n.indexOf('divya')>-1))sc+=25;
-    return sc;
-  }
+  function s(v,tag){var n=v.name.toLowerCase(),sc=0;if(v.lang===tag)sc+=100;else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;else return -1;if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1)sc+=30;if(v.localService===false)sc+=15;if(n.indexOf('zira')>-1||n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('hazel')>-1)sc-=60;return sc;}
   var best=null,bs=-999;
-  for(var ti=0;ti<tags.length;ti++){
-    for(var vi=0;vi<voices.length;vi++){
-      var sc2=score(voices[vi],tags[ti]);
-      if(sc2>bs){bs=sc2;best=voices[vi];}
-    }
-    if(best&&bs>=80)break; // found a great match, stop early
-  }
+  for(var ti=0;ti<tags.length;ti++){for(var vi=0;vi<voices.length;vi++){var sc2=s(voices[vi],tags[ti]);if(sc2>bs){bs=sc2;best=voices[vi];}}if(best&&bs>=50)break;}
   return best;
 }
 var curU=null;
@@ -2532,17 +2415,7 @@ function speakText(t,btn){
   var voice=findBestVoice(detected.tags);
   if(voice)u.voice=voice;
   u.lang=detected.tags[0];
-  // Tune rate+pitch per language family for natural feel
-  var lBase=(detected.tags[0]||'en').split('-')[0];
-  var rateMap={hi:0.9,kn:0.88,ta:0.88,te:0.9,ml:0.88,bn:0.9,gu:0.9,mr:0.9,
-               pa:0.9,or:0.88,ur:0.9,as:0.88,zh:0.85,ja:0.88,ko:0.9,
-               ar:0.87,fa:0.88,tr:0.9,ru:0.92,de:0.92,fr:0.93,es:0.95,
-               pt:0.93,it:0.93,en:0.93};
-  var pitchMap={hi:1.05,kn:1.0,ta:1.0,te:1.0,ml:1.0,bn:1.05,zh:1.0,ja:1.0,
-                ar:0.95,tr:0.98,en:1.0};
-  u.rate=rateMap[lBase]||0.92;
-  u.pitch=pitchMap[lBase]||1.0;
-  u.volume=1.0;
+  u.rate=0.93;u.pitch=1.0;u.volume=1.0;
   showToast('🔊 Speaking in '+detected.lang+'...');
   if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
   u.onend=u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
@@ -2694,10 +2567,7 @@ async function callGroq(msg){
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  // Use absolute URL so it works from any origin
-  var BACKEND=(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'||window.location.protocol==='file:')
-    ?'https://qvio-one.vercel.app/api/chat'
-    :'/api/chat';
+  var BACKEND='/api/chat';
   var res;
   try{
     res=await fetch(BACKEND,{
@@ -2706,18 +2576,17 @@ async function callGroq(msg){
       body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
     });
   }catch(fetchErr){
-    throw new Error('Cannot reach QVIO server. Check internet: '+fetchErr.message);
+    throw new Error('fetch failed: '+fetchErr.message);
   }
   var data;
-  try{data=await res.json();}catch(e){throw new Error('Server returned invalid response ('+res.status+')');}
+  try{data=await res.json();}catch(e){throw new Error('Bad server response '+res.status);}
   if(!res.ok){
-    var em=data.error||('API error '+res.status);
-    if(res.status===429||em.indexOf('rate')>-1)throw new Error('Too many requests — wait a moment and try again.');
-    if(res.status===401||res.status===403)throw new Error('API key error — contact QVIO support.');
-    if(res.status===500)throw new Error('Server error: '+em);
+    var em=data.error||('API '+res.status);
+    if(res.status===429)throw new Error('rate limit');
+    if(res.status===401||res.status===403)throw new Error('auth/unauthorized');
     throw new Error(em);
   }
-  if(!data.choices||!data.choices[0])throw new Error('Empty response from AI');
+  if(!data.choices||!data.choices[0])throw new Error('Empty response');
   return data.choices[0].message.content;
 }
 
@@ -3012,7 +2881,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // Delayed inits
   setTimeout(function(){
     setSmartGreeting();
-    /* onboarding disabled */
+    showOnboard();
     showToast('👑 Welcome to QVIO Premium!');
   },600);
 })();
