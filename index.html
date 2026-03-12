@@ -1385,7 +1385,7 @@ code,pre,textarea{font-family:monospace!important;}
 <div class="input-area">
   <div class="char-cnt" id="charCnt"></div>
   <div class="ibox">
-    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
     <div class="ibtns">
       <button id="heyQvioBtn" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
       <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
@@ -1653,7 +1653,7 @@ code,pre,textarea{font-family:monospace!important;}
   </div>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';});</script></body>
+<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
 
 <script>
 // QVIO PROTECTION SYSTEM
@@ -3975,5 +3975,5 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';});</script></body>
+<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
 </html>
