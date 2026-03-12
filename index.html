@@ -1385,7 +1385,7 @@ code,pre,textarea{font-family:monospace!important;}
 <div class="input-area">
   <div class="char-cnt" id="charCnt"></div>
   <div class="ibox">
-    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+    <textarea id="inp" name="no-restore-qvio" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
     <div class="ibtns">
       <button id="heyQvioBtn" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
       <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
@@ -2235,7 +2235,7 @@ function detectSpeakLang(text){
 function findBestVoice(tags){
   var voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
   if(!voices.length)return null;
-  function s(v,tag){var n=v.name.toLowerCase(),sc=0;if(v.lang===tag)sc+=100;else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;else return -1;if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1)sc+=30;if(v.localService===false)sc+=15;if(n.indexOf('zira')>-1||n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('hazel')>-1)sc-=60;return sc;}
+  function s(v,tag){var n=v.name.toLowerCase(),sc=0;if(v.lang===tag)sc+=100;else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;else return -1;if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;if(n.indexOf('premium')>-1||n.indexOf('enhanced')>-1)sc+=30;if(v.localService===false)sc+=15;if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1||n.indexOf('ralph')>-1)sc-=60;if(n.indexOf('zira')>-1||n.indexOf('aria')>-1||n.indexOf('jenny')>-1||n.indexOf('sonia')>-1||n.indexOf('libby')>-1)sc+=50;return sc;}
   var best=null,bs=-999;
   for(var ti=0;ti<tags.length;ti++){for(var vi=0;vi<voices.length;vi++){var sc2=s(voices[vi],tags[ti]);if(sc2>bs){bs=sc2;best=voices[vi];}}if(best&&bs>=50)break;}
   return best;
@@ -2243,18 +2243,31 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;return;}
-  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'');
-  clean=clean.substring(0,2000);
-  var u=new SpeechSynthesisUtterance(clean);
-  var detected=detectSpeakLang(clean);
-  var voice=findBestVoice(detected.tags);
-  if(voice)u.voice=voice;
-  u.lang=detected.tags[0];
-  u.rate=0.93;u.pitch=1.0;u.volume=1.0;
-  showToast('🔊 Speaking in '+detected.lang+'...');
+  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'').replace(/\[.*?\]/g,'').replace(/https?:\/\/\S+/g,'');
+  clean=clean.substring(0,3000);
+  // Split into sentences for smoother delivery
+  var sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean];
+  var idx=0;
+  function speakNext(){
+    if(idx>=sentences.length){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;return;}
+    var u=new SpeechSynthesisUtterance(sentences[idx++].trim());
+    var detected=detectSpeakLang(clean);
+    var voice=findBestVoice(detected.tags);
+    if(voice)u.voice=voice;
+    u.lang=detected.tags[0];
+    u.rate=0.88;   // slightly slower = more natural
+    u.pitch=1.05;  // slightly higher = warmer/melodious
+    u.volume=1.0;
+    u.onend=speakNext;
+    u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
+    curU=u;
+    window.speechSynthesis.speak(u);
+  }
+  showToast('🔊 Speaking...');
   if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
-  u.onend=u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
-  curU=u;window.speechSynthesis.speak(u);
+  // Chrome bug fix — resume if paused
+  window.speechSynthesis.cancel();
+  setTimeout(function(){speakNext();},120);
 }
 
 // TYPING / SKELETON
