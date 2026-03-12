@@ -2241,7 +2241,6 @@ function speakText(t,btn){
   try{
     // STOP
     if(window._qvIsSpeaking){
-      if(window._qvAudio){window._qvAudio.pause();window._qvAudio.src='';window._qvAudio=null;}
       window.speechSynthesis.cancel();
       clearInterval(window._qvResInt);
       window._qvIsSpeaking=false;
@@ -2250,68 +2249,55 @@ function speakText(t,btn){
       return;
     }
 
-    // Clean
     var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`~\[\]]/g,'')
-      .replace(/https?:\/\/[^\s]+/g,'').replace(/\s+/g,' ').trim().substring(0,200);
+      .replace(/https?:\/\/[^\s]+/g,'').replace(/\s+/g,' ').trim().substring(0,500);
     if(!txt){showToast('Nothing to speak!');return;}
 
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
     if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
-    showToast('🎵 Speaking...');
+    showToast('🎵 QVIO is speaking...');
 
     var done=function(){
-      window._qvIsSpeaking=false;window._qvBtn=null;window._qvAudio=null;
+      window._qvIsSpeaking=false;window._qvBtn=null;
       clearInterval(window._qvResInt);
       if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
     };
 
-    // Detect language
+    // Detect language from text content
     var detected=detectSpeakLang(txt);
-    var langCode=(detected.tags&&detected.tags[0]||'en-IN').split('-')[0];
+    var langTag=(detected.tags&&detected.tags[0])||'en-IN';
+    var langBase=langTag.split('-')[0];
 
     // selectedAILang override
-    var lo={
-      'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml',
+    var lo={'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml',
       'Bengali':'bn','Gujarati':'gu','Marathi':'mr','Punjabi':'pa','Urdu':'ur',
-      'Sanskrit':'sa','Odia':'or','Assamese':'as','Nepali':'ne',
       'Arabic':'ar','French':'fr','German':'de','Spanish':'es','Portuguese':'pt',
       'Russian':'ru','Japanese':'ja','Korean':'ko','Chinese':'zh-CN','Italian':'it',
-      'Turkish':'tr','Dutch':'nl','Polish':'pl','Swedish':'sv','Indonesian':'id',
-      'Malay':'ms','Thai':'th','Vietnamese':'vi','Filipino':'tl','Greek':'el',
-      'Hebrew':'he','Swahili':'sw'
-    };
-    if(selectedAILang&&lo[selectedAILang])langCode=lo[selectedAILang];
+      'Turkish':'tr','Dutch':'nl','Polish':'pl','Swedish':'sv','Indonesian':'id'};
+    if(selectedAILang&&lo[selectedAILang]){
+      langBase=lo[selectedAILang];
+      langTag=lo[selectedAILang];
+    }
 
-    // Use /api/tts - our Vercel proxy for Google TTS (supports ALL languages!)
-    var url='/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langCode);
-    var audio=new Audio(url);
-    window._qvAudio=audio;
-    audio.onended=done;
-    audio.onerror=function(){
-      // Fallback: StreamElements (good for EN, HI, etc)
-      window._qvAudio=null;
-      var sv={'en':'Joanna','hi':'Aditi','ar':'Zeina','fr':'Celine','de':'Marlene',
-              'it':'Carla','ja':'Mizuki','ko':'Seoyeon','ru':'Tatyana','es':'Conchita','tr':'Filiz'};
-      var sVoice=sv[langCode]||sv['en'];
-      var url2='https://api.streamelements.com/kappa/v2/speech?voice='+sVoice+'&text='+encodeURIComponent(txt);
-      var a2=new Audio(url2);
-      window._qvAudio=a2;
-      a2.onended=done;
-      a2.onerror=function(){
-        window._qvAudio=null;
-        // Last resort: Web Speech API
-        _qvWebSpeech(txt,detected.tags&&detected.tags[0]||'en-IN',done);
-      };
-      a2.play().catch(function(){
-        window._qvAudio=null;
-        _qvWebSpeech(txt,detected.tags&&detected.tags[0]||'en-IN',done);
+    // Try /api/tts first (Google TTS proxy - all Indian languages)
+    fetch('/api/tts?text='+encodeURIComponent(txt.substring(0,200))+'&lang='+encodeURIComponent(langBase))
+      .then(function(r){
+        if(!r.ok)throw new Error('TTS API error '+r.status);
+        return r.blob();
+      })
+      .then(function(blob){
+        var url=URL.createObjectURL(blob);
+        var audio=new Audio(url);
+        window._qvAudio=audio;
+        audio.onended=function(){URL.revokeObjectURL(url);done();};
+        audio.onerror=function(){URL.revokeObjectURL(url);_qvWebSpeech(txt,langTag,done);};
+        audio.play().catch(function(){_qvWebSpeech(txt,langTag,done);});
+      })
+      .catch(function(){
+        // Fallback to Web Speech API
+        _qvWebSpeech(txt,langTag,done);
       });
-    };
-    audio.play().catch(function(){
-      window._qvAudio=null;
-      audio.onerror();
-    });
 
   }catch(e){
     window._qvIsSpeaking=false;
@@ -2319,6 +2305,49 @@ function speakText(t,btn){
     showToast('Error: '+e.message);
   }
 }
+
+function _qvWebSpeech(txt,langTag,done){
+  try{
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      var u=new SpeechSynthesisUtterance(txt);
+      u.lang=langTag||'en-IN';u.rate=0.88;u.pitch=1.05;u.volume=1;
+      u.onend=done;
+      u.onerror=function(e){
+        if(e.error!=='interrupted'&&e.error!=='canceled'&&e.error!=='cancelled')showToast('🔊 Voice unavailable for this language');
+        done();
+      };
+      function go(vv){
+        var base=langTag.split('-')[0],pick=null,bs=-999;
+        vv.forEach(function(v){
+          var n=v.name.toLowerCase(),sc=0;
+          if(v.lang===langTag)sc+=100;
+          else if(v.lang.startsWith(base))sc+=50;
+          else return;
+          if(n.indexOf('neural')>-1||n.indexOf('natural')>-1||n.indexOf('premium')>-1)sc+=40;
+          ['aria','jenny','sonia','libby','samantha','zira','lekha','heera','kalpana'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
+          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
+          if(sc>bs){bs=sc;pick=v;}
+        });
+        if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+        if(pick){u.voice=pick;u.lang=pick.lang;}
+        window.speechSynthesis.speak(u);
+        clearInterval(window._qvResInt);
+        window._qvResInt=setInterval(function(){
+          if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
+          if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+        },2500);
+      }
+      var v=window.speechSynthesis.getVoices();
+      if(v&&v.length)go(v);
+      else{
+        window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};
+        setTimeout(function(){go(window.speechSynthesis.getVoices());},800);
+      }
+    },150);
+  }catch(e){done();}
+}
+
 function _qvWebSpeech(txt,lang,done){
   try{
     window.speechSynthesis.cancel();
