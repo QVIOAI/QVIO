@@ -975,6 +975,8 @@ code,pre,textarea{font-family:monospace!important;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 </style>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 </head>
 <body>
 
@@ -2243,85 +2245,141 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
+    // STOP if speaking
     if(window._qvIsSpeaking){
       window.speechSynthesis.cancel();
+      if(typeof responsiveVoice!=='undefined')responsiveVoice.cancel();
       clearInterval(window._qvResInt);
       window._qvIsSpeaking=false;
       if(window._qvBtn){window._qvBtn.textContent='🔊';window._qvBtn.classList.remove('speaking');}
       window._qvBtn=null;
       return;
     }
-    var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`_~\[\]]/g,'').replace(/https?:\/\/[^\s]+/g,'').replace(/\s+/g,' ').trim();
+
+    // Clean text
+    var txt=(t||'').replace(/<[^>]*>/g,' ')
+      .replace(/[*#`_~\[\]]/g,'')
+      .replace(/https?:\/\/[^\s]+/g,'')
+      .replace(/\s+/g,' ').trim();
     if(!txt){showToast('Nothing to speak!');return;}
+
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
     if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
+
+    var done=function(){
+      window._qvIsSpeaking=false;
+      window._qvBtn=null;
+      clearInterval(window._qvResInt);
+      if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    };
+
+    // Detect language
+    var detected=detectSpeakLang(txt);
+    var langTag=(detected.tags&&detected.tags[0])||'en-GB';
+    var langBase=langTag.split('-')[0];
+    showToast('🎵 Speaking in '+detected.lang+'...');
+
+    // ResponsiveVoice map
+    var rvMap={
+      'hi':'Hindi Female','ta':'Tamil Female','te':'Telugu Female',
+      'kn':'Kannada Female','ml':'Malayalam Female','bn':'Bengali Female',
+      'gu':'Gujarati Female','mr':'Marathi Female','pa':'Punjabi Female',
+      'ur':'Urdu Female','ar':'Arabic Female','fr':'French Female',
+      'de':'Deutsch Female','es':'Spanish Female','pt':'Portuguese Female',
+      'ru':'Russian Female','ja':'Japanese Female','ko':'Korean Female',
+      'zh':'Chinese Female','it':'Italian Female','tr':'Turkish Female',
+      'th':'Thai Female','vi':'Vietnamese Female','en':'UK English Female'
+    };
+    var rvVoice=rvMap[langBase]||rvMap['en'];
+
+    // Try ResponsiveVoice first (more language support)
+    if(typeof responsiveVoice!=='undefined'&&responsiveVoice.voiceSupport()){
+      responsiveVoice.speak(txt, rvVoice, {
+        rate:0.9, pitch:1, volume:1,
+        onstart:function(){},
+        onend:done,
+        onerror:function(){
+          // Fallback to Web Speech API
+          useWebSpeech(txt,langTag,done);
+        }
+      });
+      window._qvResInt=setInterval(function(){
+        if(!window._qvIsSpeaking){clearInterval(window._qvResInt);}
+      },1000);
+    } else {
+      // Use Web Speech API
+      useWebSpeech(txt,langTag,done);
+    }
+  }catch(err){
+    window._qvIsSpeaking=false;
+    if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    showToast('Voice error: '+err.message);
+  }
+}
+
+function useWebSpeech(txt,langTag,done){
+  try{
     window.speechSynthesis.cancel();
     setTimeout(function(){
-      try{
-        // Detect language from text
-        var detected=detectSpeakLang(txt);
-        var langTags=detected.tags||['en-GB'];
-        var u=new SpeechSynthesisUtterance(txt);
-        u.rate=0.88;u.pitch=1.05;u.volume=1.0;
-        u.lang=langTags[0];
-        var done=function(){
-          window._qvIsSpeaking=false;window._qvBtn=null;
-          clearInterval(window._qvResInt);
-          if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
-        };
-        u.onend=done;
-        u.onerror=function(e){
-          if(e.error==='interrupted'||e.error==='canceled'||e.error==='cancelled')return;
-          showToast('🔊 '+e.error);done();
-        };
-        function trySpeak(voices){
-          // Try each language tag
-          var pick=null;
-          langTags.forEach(function(tag){
-            if(pick)return;
-            // Score voices for this tag
-            var best=null,bs=-999;
-            voices.forEach(function(v){
-              var n=v.name.toLowerCase(),sc=0;
-              if(v.lang===tag)sc+=100;
-              else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;
-              else return;
-              if(n.indexOf('neural')>-1||n.indexOf('natural')>-1||n.indexOf('premium')>-1)sc+=40;
-              if(n.indexOf('enhanced')>-1)sc+=20;
-              // prefer female voices
-              ['aria','jenny','sonia','libby','samantha','zira','lekha','heera','kalpana'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
-              // avoid robotic
-              if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
-              if(sc>bs){bs=sc;best=v;}
-            });
-            if(best)pick=best;
-          });
-          // Fallback to any matching language
-          if(!pick){
-            var base=langTags[0].split('-')[0];
-            pick=voices.find(function(v){return v.lang.startsWith(base);});
-          }
-          // Last resort: English
-          if(!pick)pick=voices.find(function(v){return v.lang.startsWith('en');});
-          if(pick){u.voice=pick;u.lang=pick.lang;}
-          window.speechSynthesis.speak(u);
-          showToast('🎵 Speaking in '+detected.lang+'...');
-          clearInterval(window._qvResInt);
-          window._qvResInt=setInterval(function(){
-            if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
-            if(window.speechSynthesis.paused)window.speechSynthesis.resume();
-          },2500);
-        }
-        var vox=window.speechSynthesis.getVoices();
-        if(vox&&vox.length>0){trySpeak(vox);}
-        else{
-          window.speechSynthesis.onvoiceschanged=function(){trySpeak(window.speechSynthesis.getVoices());};
-          setTimeout(function(){var v=window.speechSynthesis.getVoices();if(v.length)trySpeak(v);},800);
-        }
-      }catch(e2){window._qvIsSpeaking=false;if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}showToast('Error: '+e2.message);}
+      var u=new SpeechSynthesisUtterance(txt);
+      u.rate=0.88;u.pitch=1.05;u.volume=1.0;u.lang=langTag;
+      u.onend=done;
+      u.onerror=function(e){
+        if(e.error==='interrupted'||e.error==='canceled'||e.error==='cancelled')return;
+        done();
+      };
+      function go(voices){
+        var base=langTag.split('-')[0];
+        var pick=null,bs=-999;
+        voices.forEach(function(v){
+          var n=v.name.toLowerCase(),sc=0;
+          if(v.lang===langTag)sc+=100;
+          else if(v.lang.startsWith(base))sc+=50;
+          else return;
+          if(n.indexOf('neural')>-1||n.indexOf('natural')>-1||n.indexOf('premium')>-1)sc+=40;
+          ['aria','jenny','sonia','libby','samantha','zira','lekha','heera'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
+          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
+          if(sc>bs){bs=sc;pick=v;}
+        });
+        if(!pick)pick=voices.find(function(v){return v.lang.startsWith('en');});
+        if(pick){u.voice=pick;u.lang=pick.lang;}
+        window.speechSynthesis.speak(u);
+        clearInterval(window._qvResInt);
+        window._qvResInt=setInterval(function(){
+          if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
+          if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+        },2500);
+      }
+      var v=window.speechSynthesis.getVoices();
+      if(v&&v.length)go(v);
+      else{
+        window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};
+        setTimeout(function(){go(window.speechSynthesis.getVoices());},800);
+      }
     },150);
-  }catch(err){showToast('Voice error: '+err.message);}
+  }catch(e){done();}
+}
+
+function browserSpeak(txt,done,btn){
+  window.speechSynthesis.cancel();
+  setTimeout(function(){
+    var u=new SpeechSynthesisUtterance(txt);
+    u.rate=0.88;u.pitch=1.05;u.volume=1.0;u.lang='en-GB';
+    var vox=window.speechSynthesis.getVoices();
+    var pick=vox.find(function(v){return v.name.toLowerCase().indexOf('aria')>-1;})||
+             vox.find(function(v){return v.name.toLowerCase().indexOf('jenny')>-1;})||
+             vox.find(function(v){return v.lang.startsWith('en');});
+    if(pick){u.voice=pick;u.lang=pick.lang;}
+    u.onend=done;
+    u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')showToast('🔊 '+e.error);done();};
+    window.speechSynthesis.speak(u);
+    clearInterval(window._qvResInt);
+    window._qvResInt=setInterval(function(){
+      if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
+      if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+    },2500);
+  },150);
 }
 
 function showTyping(){
