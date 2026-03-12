@@ -441,7 +441,6 @@ header::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;
 .chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
 /* WELCOME */
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;gap:16px;max-width:var(--max);margin:0 auto;padding:20px;}
 .w-crown{font-size:34px;animation:float 4.5s ease-in-out infinite;}
 .w-icon{width:64px;height:64px;background:var(--gold-gs);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:16px;color:#fff;font-weight:700;box-shadow:0 8px 28px var(--gold-glow);animation:float 5s ease-in-out infinite;}
 .w-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy-soft);border:1px solid var(--navy3);padding:5px 16px;border-radius:var(--r-full);font-size:11.5px;color:var(--navy);font-weight:600;}
@@ -914,18 +913,11 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 }
 
 /* LANGUAGE SELECTOR MODAL */
-#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9990;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-#langSelectOverlay.show{display:flex!important;}
-#langSelectOverlay.show{display:flex;}
-#langSelectModal{
-  background:var(--bg);border-radius:20px;width:92%;max-width:500px;max-height:80vh;
-  display:flex;flex-direction:column;overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);border:1px solid var(--border2);
-}
-.lsm-head{
-  padding:18px 20px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
+
+
+
+
+
 .lsm-head h3{margin:0;font-size:1.1rem;color:var(--text);}
 .lsm-sub{padding:8px 20px;font-size:12px;color:var(--text3);background:var(--bg2);flex-shrink:0;}
 .lsm-search-wrap{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;}
@@ -958,7 +950,6 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
 .hico{width:34px;height:34px;border-radius:8px;border:1px solid var(--bdr);background:transparent;font-size:15px;}
 .pro-hbtn{padding:6px 14px;font-size:12px;font-weight:700;border-radius:8px;}
 .streak-pill{padding:5px 10px;font-size:12px;font-weight:700;border-radius:8px;}
-.welcome{padding:48px 20px 32px;text-align:center;max-width:600px;margin:0 auto;}
 .w-crown{font-size:28px;margin-bottom:8px;}
 .w-icon{width:56px;height:56px;border-radius:16px;font-size:20px;font-weight:800;margin:0 auto 16px;}
 .welcome h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1px;margin-bottom:8px;}
@@ -974,7 +965,6 @@ header{padding:0 20px;height:56px;border-bottom:1px solid var(--bdr);backdrop-fi
 code,pre{font-family:'JetBrains Mono',monospace!important;}
 
 /* Welcome */
-.welcome{padding:60px 20px 32px;text-align:center;max-width:640px;margin:0 auto;}
 .w-logo-wrap{margin-bottom:20px;}
 .w-icon{
   width:64px;height:64px;border-radius:18px;
@@ -1071,7 +1061,6 @@ header{
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 
 /* Smooth animations */
-.welcome{animation:fadeUp .5s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 .msg{animation:msgIn .3s ease both;}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -1079,15 +1068,6 @@ header{
 /* ══ QVIO $100B DESIGN ══ */
 
 /* Welcome */
-.welcome{
-  display:flex;flex-direction:column;align-items:center;
-  justify-content:center;
-  padding:80px 24px 40px;
-  text-align:center;
-  max-width:680px;
-  margin:0 auto;
-  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both;
-}
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(24px);}
   to{opacity:1;transform:translateY(0);}
@@ -1257,8 +1237,60 @@ header{
   word-break:break-word;
 }
 
-#welcome{transition:none;}
 #welcome.hidden{display:none!important;}
+
+/* Language Sidebar Panel */
+
+/* ── WELCOME SCREEN ── */
+.welcome{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:80px 24px 40px;
+  max-width:680px;
+  margin:0 auto;
+  width:100%;
+  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both;
+}
+#welcome.hidden, #welcome[style*="display:none"]{display:none!important;}
+
+
+#langSelectOverlay{
+  position:fixed;
+  inset:0;
+  z-index:9990;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+#langSelectOverlay.show{
+  opacity:1;
+  pointer-events:all;
+}
+#langSelectModal{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:320px;
+  max-width:85vw;
+  background:var(--bg);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:8px 0 32px rgba(0,0,0,.4);
+  transform:translateX(-100%);
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+  z-index:9991;
+}
+#langSelectOverlay.show #langSelectModal{
+  transform:translateX(0);
+}
 </style>
 </head>
 <body>
@@ -3876,7 +3908,7 @@ var selectedAILang = localStorage.getItem('aiLang') || '';
 
 function openLangSelect(){
   var overlay = document.getElementById('langSelectOverlay');
-  if(overlay) overlay.classList.add('show');
+  if(overlay){overlay.classList.add('show');}
   // Highlight current language
   if(selectedAILang){
     document.querySelectorAll('.lsm-pill').forEach(function(p){
@@ -3914,7 +3946,7 @@ function confirmAILang(){
 
 function filterLSM(q){
   q=(q||'').toLowerCase().trim();
-  var pills=document.querySelectorAll('#langSelectModal .lsm-pill');
+  var pills=document.querySelectorAll('.lsm-pill');
   var sections=document.querySelectorAll('#langSelectModal .lsm-section-title');
   var pillWraps=document.querySelectorAll('#langSelectModal .lsm-pills');
   var noRes=document.getElementById('lsmNoResults');
