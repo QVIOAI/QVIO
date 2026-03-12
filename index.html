@@ -2243,7 +2243,6 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
-    // STOP if currently speaking
     if(window._qvIsSpeaking){
       window.speechSynthesis.cancel();
       clearInterval(window._qvResInt);
@@ -2252,19 +2251,20 @@ function speakText(t,btn){
       window._qvBtn=null;
       return;
     }
-    // Clean text
     var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`_~\[\]]/g,'').replace(/https?:\/\/[^\s]+/g,'').replace(/\s+/g,' ').trim();
     if(!txt){showToast('Nothing to speak!');return;}
-    // Set state BEFORE cancel so stop logic works
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
     if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
-    // Cancel any leftover speech, then wait for Chrome
     window.speechSynthesis.cancel();
     setTimeout(function(){
       try{
+        // Detect language from text
+        var detected=detectSpeakLang(txt);
+        var langTags=detected.tags||['en-GB'];
         var u=new SpeechSynthesisUtterance(txt);
-        u.rate=0.88;u.pitch=1.05;u.volume=1.0;u.lang='en-GB';
+        u.rate=0.88;u.pitch=1.05;u.volume=1.0;
+        u.lang=langTags[0];
         var done=function(){
           window._qvIsSpeaking=false;window._qvBtn=null;
           clearInterval(window._qvResInt);
@@ -2272,18 +2272,41 @@ function speakText(t,btn){
         };
         u.onend=done;
         u.onerror=function(e){
-          if(e.error==='interrupted'||e.error==='canceled'||e.error==='cancelled'){return;}
+          if(e.error==='interrupted'||e.error==='canceled'||e.error==='cancelled')return;
           showToast('🔊 '+e.error);done();
         };
         function trySpeak(voices){
-          var want=['aria','jenny','sonia','libby','samantha','zira','hazel','susan'];
+          // Try each language tag
           var pick=null;
-          want.forEach(function(w){if(pick)return;pick=voices.find(function(v){return v.lang.startsWith('en')&&v.name.toLowerCase().indexOf(w)>-1;});});
-          if(!pick)pick=voices.find(function(v){return v.lang.startsWith('en-GB');});
+          langTags.forEach(function(tag){
+            if(pick)return;
+            // Score voices for this tag
+            var best=null,bs=-999;
+            voices.forEach(function(v){
+              var n=v.name.toLowerCase(),sc=0;
+              if(v.lang===tag)sc+=100;
+              else if(v.lang.startsWith(tag.split('-')[0]))sc+=50;
+              else return;
+              if(n.indexOf('neural')>-1||n.indexOf('natural')>-1||n.indexOf('premium')>-1)sc+=40;
+              if(n.indexOf('enhanced')>-1)sc+=20;
+              // prefer female voices
+              ['aria','jenny','sonia','libby','samantha','zira','lekha','heera','kalpana'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
+              // avoid robotic
+              if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
+              if(sc>bs){bs=sc;best=v;}
+            });
+            if(best)pick=best;
+          });
+          // Fallback to any matching language
+          if(!pick){
+            var base=langTags[0].split('-')[0];
+            pick=voices.find(function(v){return v.lang.startsWith(base);});
+          }
+          // Last resort: English
           if(!pick)pick=voices.find(function(v){return v.lang.startsWith('en');});
           if(pick){u.voice=pick;u.lang=pick.lang;}
           window.speechSynthesis.speak(u);
-          showToast('🎵 Speaking...');
+          showToast('🎵 Speaking in '+detected.lang+'...');
           clearInterval(window._qvResInt);
           window._qvResInt=setInterval(function(){
             if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
