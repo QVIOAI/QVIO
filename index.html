@@ -2398,10 +2398,10 @@ async function callGroq(msg){
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  var res=await fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),{
+  var res=await fetch('/api/chat',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+_qc},
-    body:JSON.stringify({model:MODEL,messages:msgs,temperature:0.82,max_tokens:2048})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({messages:msgs})
   });
   var data=await res.json();
   console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
