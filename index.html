@@ -3678,6 +3678,11 @@ function openLangSelect(){
 }
 
 
+function closeLangSelect(){
+  var o=document.getElementById('langSelectOverlay');
+  if(o) o.classList.remove('show');
+}
+
 function selectAILang(lang){
   // Toggle selection
   document.querySelectorAll('.lsm-pill').forEach(function(p){
