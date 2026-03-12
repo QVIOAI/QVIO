@@ -30,9 +30,7 @@ function filterLangs(q){
 }
 
 
-// ═══════════════════════════════
 // QVIO VOICE — HEY QVIO WAKE WORD
-// ═══════════════════════════════
 var wakeRecog=null;
 var wakeActive=false;
 var heyQvioEnabled=false;
@@ -127,7 +125,6 @@ function activateQvioVoice(){
 }
 
 
-// ═══════════════════════════════
 
 
 
@@ -176,9 +173,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes cffall{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0);}10%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(105vh) rotate(720deg) scale(.5);}}
 
 /* NAMASTE */
-/* ═══════════════════════════════════════════════
-   NAMASTE SCREEN
-═══════════════════════════════════════════════ */
+
 #namasteScreen{
   position:fixed;inset:0;z-index:9500;
   background:#000;display:none;
@@ -335,7 +330,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .inst-bar button{background:var(--navy-g);color:#fff;border:none;padding:5px 14px;border-radius:var(--r-xs);font-size:11.5px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
 .idism{background:transparent!important;color:var(--text3)!important;font-size:18px!important;padding:0 4px!important;}
 
-/* ─── HEADER (clean 3-zone) ─── */
+
 header{
   display:grid;grid-template-columns:auto 1fr auto;
   align-items:center;padding:0 var(--pad);height:56px;
@@ -714,7 +709,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .err-bubble{background:linear-gradient(135deg,rgba(185,28,28,.06),rgba(185,28,28,.03));border:1px solid rgba(185,28,28,.2);border-left:3px solid var(--danger)!important;}
 .sec-warn{background:linear-gradient(135deg,rgba(185,28,28,.08),rgba(185,28,28,.04));border:1px solid rgba(185,28,28,.2);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--danger);display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:500;}
 
-/* ════ 20 NEW FEATURES CSS ════ */
+
 .weather-card{background:linear-gradient(135deg,#0D1B3E,#1E336A);color:#fff;border-radius:var(--r);padding:18px;margin-top:10px;display:flex;align-items:center;gap:16px;box-shadow:var(--s3);}
 .wc-icon{font-size:52px;}
 .wc-temp{font-family:"Cormorant Garamond",serif;font-size:52px;font-weight:700;background:var(--gold-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
@@ -809,7 +804,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .bmi-needle{position:absolute;top:-4px;width:4px;height:20px;background:var(--navy);border-radius:2px;transform:translateX(-50%);transition:left .6s cubic-bezier(.22,1,.36,1);}
 [data-theme="dark"] .bmi-needle{background:var(--gold2);}
 
-/* ─── AI COMPARISON TABLE ─── */
+
 .cmp-wrap{width:100%;max-width:680px;margin-top:8px;}
 .cmp-title{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:var(--navy);text-align:center;margin-bottom:4px;}
 [data-theme="dark"] .cmp-title{color:var(--text);}
@@ -858,7 +853,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lens-act{padding:7px 14px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;}
 .lens-act:hover{background:var(--navy-g);color:#fff;border-color:transparent;}
 
-/* ─── VOICE BUTTON STATES ─── */
+
 .mact.speaking{color:var(--gold);border-color:var(--gold2);animation:speakPulse 1s infinite;}
 @keyframes speakPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
@@ -1658,14 +1653,12 @@ code,pre,textarea{font-family:monospace!important;}
   </div>
 </div>
 
-</body>)
-══════════════════════════════════════════════════════ -->
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';});</script></body>
+
 <script>
-// ═══════════════════════════════════════════════════
 // QVIO PROTECTION SYSTEM
 // (c) 2025 QVIO by VARUN. All Rights Reserved.
 // Indian Copyright Act 1957 + IT Act 2000
-// ═══════════════════════════════════════════════════
 (function(){
   // Console warning
   var _w=false;
@@ -1734,9 +1727,7 @@ code,pre,textarea{font-family:monospace!important;}
   }
 })();
 
-// ═══════════════════════════════
 // FIREBASE INIT
-// ═══════════════════════════════
 var firebaseConfig={
   apiKey:(function(){var _e=atob('EBgrMAIoEBcYEwEFMBArKTM+JDtnYwZpNRNnEiFpJx47NCMjHGJh'),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})(),
   authDomain:"qvioai-f7659.firebaseapp.com",
@@ -1761,9 +1752,7 @@ function initFirebase(){
 // Init immediately — Firebase SDK already loaded in <head>
 initFirebase();
 
-// ═══════════════════════════════
 // GLOBALS
-// ═══════════════════════════════
 // 🔑 API Key Rotation — auto-switches when one hits rate limit
 var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAGQFJAgrPT0pPmMIJTUeKwQ7IT4BFgE='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
 var _keyIdx=0;
@@ -1790,9 +1779,7 @@ function saveMem(){S.s('memory',memory);}
 function saveStats(){S.s('stats',stats);}
 function saveGal(){S.s('gallery',imgGal.slice(-50));}
 
-// ═══════════════════════════════
 // PARTICLES
-// ═══════════════════════════════
 function initParticles(){
   var p=document.getElementById('particles');
   var configs=[{color:'rgba(212,160,23,.5)',size:3},{color:'rgba(212,160,23,.3)',size:5},{color:'rgba(13,27,62,.2)',size:4},{color:'rgba(240,200,66,.4)',size:2}];
@@ -1805,9 +1792,7 @@ function initParticles(){
   }
 }
 
-// ═══════════════════════════════
 // NAMASTE ANIMATION
-// ═══════════════════════════════
 function showNamaste(user){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
@@ -1837,9 +1822,7 @@ function showNamaste(user){
   },4500);
 }
 
-// ═══════════════════════════════
 // AUTH
-// ═══════════════════════════════
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -1895,9 +1878,7 @@ function updateUserUI(user){
   updateMemUI();
 }
 
-// ═══════════════════════════════
 // STREAK
-// ═══════════════════════════════
 function updateStreak(){
   var today=new Date().toDateString();
   if(stats.lastDay!==today){
@@ -1922,9 +1903,7 @@ function renderStreakDays(){
   el.innerHTML=h;
 }
 
-// ═══════════════════════════════
 // CONFETTI
-// ═══════════════════════════════
 function fireConfetti(){
   var cols=['#D4A017','#F0C842','#0D1B3E','#162554','#FFFFFF','#FFD966','#B8860B'];
   for(var i=0;i<90;i++){
@@ -1937,9 +1916,7 @@ function fireConfetti(){
   }
 }
 
-// ═══════════════════════════════
 // THEMES
-// ═══════════════════════════════
 function autoTheme(){
   var h=new Date().getHours(),dark=h<6||h>=20;
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
@@ -1959,9 +1936,7 @@ function setFont(s){
   event.target.classList.add('on');
 }
 
-// ═══════════════════════════════
 // TIPS
-// ═══════════════════════════════
 var TIPS=['💡 Type "create image:" to generate 4K AI art','🎯 Exam Mode — deep JEE NEET UPSC CBSE knowledge','🧠 Say "my name is [name]" — QVIO remembers you forever','⌨️ Enter to send · Shift+Enter for new line','🔊 Click 🔊 on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar','💾 Export button saves your full conversation','🔥 Use QVIO every day to build your streak!','🌍 QVIO understands Hinglish, Tanglish and all slang','🔢 Built-in calculator — click 🔢 anytime','🌙 Auto theme switches to dark mode after 8PM','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides buttons for pure conversation','💬 Chat History saves your last 20 conversations','🎨 Image Gallery stores all 50 AI-generated images','📱 Install QVIO on your phone for full app experience','⚡ QVIO responds in under 2 seconds worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws simply','✈️ Travel Mode plans trips and suggests hidden gems'];
 var tipI=0;
 function rotateTip(){
@@ -1970,9 +1945,7 @@ function rotateTip(){
   setTimeout(function(){b.textContent=TIPS[tipI%TIPS.length];tipI++;b.style.opacity='1';},400);
 }
 
-// ═══════════════════════════════
 // PROMPTS
-// ═══════════════════════════════
 var RULES=`You are QVIO — built by VARUN — CEO & MD of QVIO. If anyone asks who is the CEO/founder/owner of QVIO, say: VARUN — CEO & MD of QVIO. from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
 
 1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
@@ -2037,9 +2010,7 @@ var PROMPTS={
   travel:'You are QVIO Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places local food transport budgets.',
 };
 
-// ═══════════════════════════════
 // MEMORY
-// ═══════════════════════════════
 function getMemCtx(){
   var f=memory.facts||[],n=memory.name||'';
   if(!f.length&&!n)return '';
@@ -2084,9 +2055,7 @@ function extractMem(t){
   }
 }
 
-// ═══════════════════════════════
 // STATS & BADGES
-// ═══════════════════════════════
 function renderStats(){
   document.getElementById('statGrid').innerHTML=
     '<div class="stat-card"><div class="stn">'+stats.msgs+'</div><div class="stl">Messages Sent</div></div>'+
@@ -2105,9 +2074,7 @@ function renderStats(){
   }).join('');
 }
 
-// ═══════════════════════════════
 // GALLERY
-// ═══════════════════════════════
 function renderGal(){
   var el=document.getElementById('galGrid');
   if(!imgGal.length){el.innerHTML='<div class="ge">No images yet! Type "create image:" to generate 4K art 🎨</div>';return;}
@@ -2117,9 +2084,7 @@ function renderGal(){
 }
 function viewImg(u){document.getElementById('imgVSrc').src=u;document.getElementById('imgVDl').href=u;openM('imgv');}
 
-// ═══════════════════════════════
 // HISTORY
-// ═══════════════════════════════
 function renderHist(){
   var el=document.getElementById('histList');
   if(!savedChats.length){el.innerHTML='<div class="he">No saved chats yet.</div>';return;}
@@ -2140,9 +2105,7 @@ function saveChat(){
   S.s('chats',savedChats);
 }
 
-// ═══════════════════════════════
 // MODE
-// ═══════════════════════════════
 function setMode(m,btn,label){
   mode=m;
   document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});
@@ -2151,9 +2114,7 @@ function setMode(m,btn,label){
   document.getElementById('examBar').classList.toggle('show',m==='exam');
 }
 
-// ═══════════════════════════════
 // MODALS
-// ═══════════════════════════════
 var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
@@ -2176,9 +2137,7 @@ document.addEventListener('keydown',function(e){
 });
 function learnLang(l){closeM('lang');send('I want to learn '+l+'. Teach me 10 essential beginner phrases with pronunciation and one interesting cultural tip.');}
 
-// ═══════════════════════════════
 // CHAT CORE
-// ═══════════════════════════════
 function hideWelcome(){var w=document.getElementById('welcome');if(w)w.style.display='none';}
 function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function scrollToBottom(){document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;}
@@ -2262,12 +2221,8 @@ function checkScroll(){
 var _chatEl=document.getElementById('chat');if(_chatEl)_chatEl.addEventListener('scroll',checkScroll);
 function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth',block:'center'});}
 
-// ═══════════════════════════════
 // TTS
-// ═══════════════════════════════
-// ═══════════════════════════════
 // VOICE ENGINE — 150+ LANGUAGES
-// ═══════════════════════════════
 var cachedVoices=[];
 if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){cachedVoices=window.speechSynthesis.getVoices();};}
 var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['hi-IN'],'manipuri':['hi-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['hi-IN'],'konkani':['hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['zh-CN'],'mongolian':['mn-MN'],'javanese':['id-ID'],'sundanese':['id-ID'],'cebuano':['fil-PH'],'arabic':['ar-SA','ar-EG'],'persian':['fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF'],'kurdish':['ku-TR'],'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],'swahili':['sw-KE'],'amharic':['am-ET'],'hausa':['ha-NG'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'spanish':['es-ES','es-MX'],'french':['fr-FR'],'german':['de-DE'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'english':['en-IN','en-US','en-GB'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX']};
@@ -2302,9 +2257,7 @@ function speakText(t,btn){
   curU=u;window.speechSynthesis.speak(u);
 }
 
-// ═══════════════════════════════
 // TYPING / SKELETON
-// ═══════════════════════════════
 function showTyping(){
   hideWelcome();
   document.getElementById('typeBar').classList.add('show');
@@ -2321,9 +2274,7 @@ function hideTyping(){
   var t=document.getElementById('typer');if(t)t.remove();
 }
 
-// ═══════════════════════════════
 // SEND & API
-// ═══════════════════════════════
 var funnyErrors=["QVIO took a quick chai break ☕ — tap retry!","The AI sneezed 🤧 — try again!","QVIO is thinking too hard 🧠 — one more try?","Signal lost in space 🛸 — retry please!","QVIO blinked 😅 — send again!"];
 function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
 
@@ -2497,9 +2448,7 @@ function exportChat(){
   showToast('💾 Chat exported!');
 }
 
-// ═══════════════════════════════
 // CALCULATOR
-// ═══════════════════════════════
 function toggleCalc(){document.getElementById('calcW').classList.toggle('show');}
 function ci(v){
   var d=document.getElementById('calcDisp');
@@ -2510,9 +2459,7 @@ function ci(v){
   calcExpr+=v;d.textContent=calcExpr;
 }
 
-// ═══════════════════════════════
 // MIC
-// ═══════════════════════════════
 function toggleMic(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){
@@ -2665,9 +2612,7 @@ function cleanAndSend(text){
   });
 }
 
-// ═══════════════════════════════
 // PWA
-// ═══════════════════════════════
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!S.g('noPWA'))document.getElementById('instBar').classList.add('show');});
 function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;dismissInstall();});}}
 function dismissInstall(){document.getElementById('instBar').classList.remove('show');S.s('noPWA',true);}
@@ -2676,9 +2621,7 @@ window.addEventListener('offline',function(){document.getElementById('offBar').c
 if(!navigator.onLine)document.getElementById('offBar').classList.add('show');
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 
-// ═══════════════════════════════
 // SHARE
-// ═══════════════════════════════
 function openShare(text){
   shareContent=text;
   var preview=text.replace(/<[^>]*>/g,'').substring(0,220);
@@ -2696,9 +2639,7 @@ function shareWhatsApp(){
   window.open('https://wa.me/?text='+encodeURIComponent(txt));closeShare();
 }
 
-// ═══════════════════════════════
 // ONBOARDING
-// ═══════════════════════════════
 var obSteps=[
   {icon:'⚡',title:'QVIO is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence for every Indian.',step:'Step 1 of 3'},
   {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — QVIO understands everything.',step:'Step 2 of 3'},
@@ -2722,9 +2663,7 @@ function nextOnboard(){
 }
 function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
 
-// ═══════════════════════════════
 // SMART GREETING
-// ═══════════════════════════════
 function setSmartGreeting(){
   var h=new Date().getHours();
   var nm=memory.name?', '+memory.name:'';
@@ -2735,15 +2674,11 @@ function setSmartGreeting(){
   document.getElementById('greetBar').classList.add('show');
 }
 
-// ═══════════════════════════════
 // CHALLENGES
-// ═══════════════════════════════
 var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask QVIO to explain something you always wondered 🧠','Get QVIO to write a poem about your day ✍️','Ask for a 90-day study plan for your next exam 🎯'];
 function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨🧠✍️🎯]/g,'').trim());}
 
-// ═══════════════════════════════
 // INIT — runs everything on load
-// ═══════════════════════════════
 document.addEventListener('DOMContentLoaded',function(){
 (function init(){
   // Apply saved theme immediately
@@ -2764,7 +2699,6 @@ document.addEventListener('DOMContentLoaded',function(){
   },600);
 })();
 }); // DOMContentLoaded
-// ═══════════════════════════════════════════════════
 
 // Extend MAP for new modals
 Object.assign(MAP, {
@@ -3232,7 +3166,6 @@ window.openM = function(t){
 
 
 
-// ═══ V5 FEATURES ═══
 
 var LENS_PROMPTS={
   identify:"You are QVIO Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
@@ -3579,7 +3512,6 @@ setTimeout(function(){
   });
 },3000);
 // QVIO WEB SEARCH
-// ═══════════════════════════════
 var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
   'war','match','score','ipl','election','price','stock','weather','who won','what happened',
   'recently','this week','yesterday','trending','live','breaking'];
@@ -3660,9 +3592,7 @@ async function callGroqWithSearch(text){
 }
 
 
-// ═══════════════════════════════
 // 3D EARTH LANGUAGE SELECTOR
-// ═══════════════════════════════
 var selectedAILang = localStorage.getItem('aiLang') || '';
 
 function openLangSelect(){
@@ -4045,5 +3975,5 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-</body>
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';});</script></body>
 </html>
