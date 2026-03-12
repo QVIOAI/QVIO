@@ -1653,7 +1653,7 @@ code,pre,textarea{font-family:monospace!important;}
   </div>
 </div>
 
-<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
+<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvioSpeaking=false;window.speechSynthesis.cancel();});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvioSpeaking=false;setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
 
 <script>
 // QVIO PROTECTION SYSTEM
@@ -2189,7 +2189,7 @@ function addMsg(content,role,isImg,speed){
       function makeAct(icon,tip,fn){
         var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
       }
-      makeAct('🔊','Listen',function(){speakText(content,this);});
+      makeAct('🔊','Listen',function(){var raw=bub.innerText||bub.textContent||content;speakText(raw,this);});
       var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
       var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
       var pin=makeAct('📌','Pin',function(){
@@ -2243,7 +2243,7 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   // Stop if already speaking
-  if(window._qvioSpeaking){
+  if(window._qvioSpeaking && window.speechSynthesis.speaking){
     window.speechSynthesis.cancel();
     clearInterval(window._qvioResumeTimer);
     window._qvioSpeaking=false;
@@ -2251,6 +2251,9 @@ function speakText(t,btn){
     curU=null;
     return;
   }
+  // Reset stuck state
+  window._qvioSpeaking=false;
+  window.speechSynthesis.cancel();
 
   // Clean text
   var clean=t.replace(/<[^>]*>/g,' ')
@@ -4090,5 +4093,5 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
+<script>document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvioSpeaking=false;window.speechSynthesis.cancel();});window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvioSpeaking=false;setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);});</script></body>
 </html>
