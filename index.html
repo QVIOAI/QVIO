@@ -982,6 +982,15 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 
 #langSelectOverlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
 #langSelectOverlay.show{display:flex!important;}
+
+[data-theme="amoled"]{
+  --bg:#000000;--bg2:#0A0A0A;--surface:#111111;--border:#222222;--border2:#333333;
+  --text:#FFFFFF;--text2:#CCCCCC;--text3:#666666;--white:#111111;
+  --gold:#F5A623;--gold2:#FFB74D;--gold3:#1C1408;
+  --navy-soft:rgba(255,255,255,.04);
+  --s1:0 1px 4px rgba(0,0,0,.8);--s2:0 4px 16px rgba(0,0,0,.8);
+  --s3:0 8px 32px rgba(0,0,0,.9);--s4:0 20px 60px rgba(0,0,0,.95);
+}
 </style>
 </head>
 <body>
@@ -1707,7 +1716,24 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
   </div>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});
+<script>window.addEventListener('load',function(){
+  var i=document.getElementById('inp');if(i)i.value='';
+  window._qvIsSpeaking=false;window.speechSynthesis.cancel();
+  setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);
+  // Restore last session
+  try{
+    var saved=localStorage.getItem('qvio_autosave');
+    if(saved){
+      var data=JSON.parse(saved);
+      var age=(Date.now()-data.ts)/60000; // minutes
+      if(age<120&&data.msgs&&data.msgs.length>0){ // restore if < 2 hours old
+        chatHistory=data.msgs;
+        data.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+        showToast('💾 Last session restored!');
+      }
+    }
+  }catch(e){}
+});
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarOverlay').classList.toggle('show');
@@ -1778,6 +1804,21 @@ function newChat(){
   document.getElementById('charCnt').textContent='';
   showToast('✨ New chat started!');
 }
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e){
+  // Ctrl+K = New Chat
+  if(e.ctrlKey && e.key==='k'){e.preventDefault();newChat();showToast('✨ New chat! (Ctrl+K)');}
+  // Ctrl+/ = Show shortcuts
+  if(e.ctrlKey && e.key==='/'){e.preventDefault();showToast('⌨️ Ctrl+K: New Chat | Ctrl+Enter: Send | Esc: Close');}
+  // Esc = close any open modal
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal.show,.overlay.show').forEach(function(el){el.classList.remove('show');});
+    var lo=document.getElementById('langSelectOverlay');
+    if(lo&&lo.classList.contains('show'))closeLangSelect();
+    closeSidebar();
+  }
+});
 </script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
@@ -2069,7 +2110,15 @@ function setTh(t){
   else{document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}
   closeM('theme');
 }
-function cycleTh(){setTh(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+function cycleTh(){
+  var cur=document.documentElement.getAttribute('data-theme')||'dark';
+  var next=cur==='light'?'dark':cur==='dark'?'amoled':'light';
+  setTh(next);
+  var icons={'light':'☀️','dark':'🌙','amoled':'⚫'};
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.textContent=icons[next]||'🌙';
+  showToast(next.toUpperCase()+' mode activated!');
+}
 function setFont(s){
   var m={small:'13px',normal:'14.5px',large:'16.5px'};
   document.querySelectorAll('.bubble,#inp').forEach(function(el){el.style.fontSize=m[s];});
@@ -2338,6 +2387,15 @@ function addMsg(content,role,isImg,speed){
       (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(content);
       var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
       var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
+      // Reactions
+      ['❤️','🔥','😂','🤯','👏'].forEach(function(emoji){
+        makeAct(emoji,emoji,function(){
+          showToast(emoji+' reaction!');
+          this.style.transform='scale(1.5)';
+          var self=this;
+          setTimeout(function(){self.style.transform='';},300);
+        });
+      });
       var pin=makeAct('📌','Pin',function(){
         pin.classList.toggle('active');
         if(pin.classList.contains('active')){pinnedEl=bub;bub.classList.add('pinned-msg');document.getElementById('pinnedBar').classList.add('show');document.getElementById('pinnedTxt').textContent=content.substring(0,60)+'...';showToast('📌 Pinned!');}
@@ -2546,6 +2604,11 @@ async function sendMsg(){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
+    // Auto-save last 10 messages
+    try{localStorage.setItem('qvio_autosave',JSON.stringify({
+      ts:Date.now(),
+      msgs:chatHistory.slice(-10)
+    }));}catch(e){}
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
   }catch(e){
@@ -4178,7 +4241,24 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
+<script>window.addEventListener('load',function(){
+  var i=document.getElementById('inp');if(i)i.value='';
+  window._qvIsSpeaking=false;window.speechSynthesis.cancel();
+  setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);
+  // Restore last session
+  try{
+    var saved=localStorage.getItem('qvio_autosave');
+    if(saved){
+      var data=JSON.parse(saved);
+      var age=(Date.now()-data.ts)/60000; // minutes
+      if(age<120&&data.msgs&&data.msgs.length>0){ // restore if < 2 hours old
+        chatHistory=data.msgs;
+        data.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+        showToast('💾 Last session restored!');
+      }
+    }
+  }catch(e){}
+});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
@@ -4202,7 +4282,7 @@ function getAILangInstruction(){
   <div style="padding:20px;text-align:center;">
     <div style="font-size:40px;margin-bottom:12px;">🙏</div>
     <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Need help? Reach VARUN directly</p>
-    <a href="mailto:support@qvio.in" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 support@qvio.in</a>
+    <a href="/cdn-cgi/l/email-protection#fc8f898c8c938e88bc8d8a9593d29592" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 <span class="__cf_email__" data-cfemail="c5b6b0b5b5aab7b185b4b3acaaebacab">[email&#160;protected]</span></a>
     <button class="mclose" onclick="closeM('sup')">Close</button>
   </div>
 </div>
@@ -4213,8 +4293,4 @@ function getAILangInstruction(){
     <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Upload PDF or TXT and chat with it!</p>
     <button onclick="document.getElementById('pdfInput').click()" style="width:100%;padding:14px;border-radius:12px;border:2px dashed var(--border);background:var(--surface);color:var(--text2);font-size:14px;cursor:pointer;box-sizing:border-box;">📁 Upload PDF / TXT</button>
     <div id="pdfStatus" style="margin-top:12px;font-size:13px;color:#4F46E5;font-weight:600;"></div>
-    <button class="mclose" style="margin-top:12px;width:100%;box-sizing:border-box;" onclick="closeM('pdf')">Close</button>
-  </div>
-</div>
-</body>
-</html>
+    <button class="mclose" s
