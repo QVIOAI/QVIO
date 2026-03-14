@@ -151,7 +151,7 @@ function activateQvioVoice(){
   --pad:22px;--max:720px;
 }
 [data-theme="dark"]{
-  --bg:#05080F;--bg2:#080D18;--surface:#0D1424;--border:#162040;--border2:#2A3D6B;
+  --bg:#080C14;--bg2:#080D18;--surface:#0D1424;--border:#162040;--border2:#2A3D6B;
   --text:#EEF2FF;--text2:#8FA0CC;--text3:#3D5080;--white:#0D1424;
   --gold:#F0C842;--gold2:#FFD966;--gold3:#2A1E08;
   --navy-soft:rgba(238,242,255,.04);
@@ -895,9 +895,6 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 }
 
 /* LANGUAGE SELECTOR MODAL */
-#langSelectOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9990;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-#langSelectOverlay.show{display:flex!important;}
-#langSelectOverlay.show{display:flex;}
 #langSelectModal{
   background:var(--bg);border-radius:20px;width:92%;max-width:500px;max-height:80vh;
   display:flex;flex-direction:column;overflow:hidden;
@@ -942,8 +939,6 @@ code,pre,textarea{font-family:monospace!important;}
 .msg.user .bubble{background:linear-gradient(135deg,#4F46E5,#6366F1);color:#fff;border-radius:18px 18px 4px 18px;max-width:70%;width:fit-content;}
 .msg.ai .bubble{border-left:3px solid #4F46E5;}
 .qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 16px 16px;width:100%;}
-#langSelectOverlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
-#langSelectOverlay.show{display:flex;}
 #langSelectModal{background:var(--bg);border-radius:20px;width:92%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4);border:1px solid var(--border);}
 /* SIDEBAR - no layout push */
 #sidebar{position:fixed;top:0;left:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-260px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;}
@@ -984,6 +979,9 @@ header .logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-s
 header .h-mode-wrap{flex:1;}
 header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 #sbToggle{flex-shrink:0;}
+
+#langSelectOverlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+#langSelectOverlay.show{display:flex!important;}
 </style>
 </head>
 <body>
@@ -1766,7 +1764,22 @@ function updatePdfBtn(){
   if(pb)pb.style.display=mode==='student'?'inline-flex':'none';
 }
 
-</script><div class="modal" id="m_langlearn" style="max-width:540px;">
+
+function newChat(){
+  chatHistory=[];
+  var ch=document.getElementById('chat');
+  if(ch)ch.innerHTML='';
+  var w=document.getElementById('welcome');
+  if(w){w.style.display='flex';w.style.opacity='1';}
+  var i=document.getElementById('inp');
+  if(i){i.value='';i.style.height='auto';}
+  var sb=document.getElementById('sendBtn');
+  if(sb)sb.disabled=false;
+  document.getElementById('charCnt').textContent='';
+  showToast('✨ New chat started!');
+}
+</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
+<div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
     <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
@@ -1783,7 +1796,6 @@ function updatePdfBtn(){
     </div>
   </div>
 </div>
-</body>
 <script>
 // QVIO PROTECTION SYSTEM
 // (c) 2025 QVIO by VARUN. All Rights Reserved.
@@ -2246,7 +2258,7 @@ function setMode(m,btn,label){
 }
 
 // MODALS
-var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv']};
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],langlearn:['o_langlearn','m_langlearn'],pdf:['o_pdf','m_pdf']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.add('show');
@@ -2323,7 +2335,7 @@ function addMsg(content,role,isImg,speed){
       function makeAct(icon,tip,fn){
         var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
       }
-      makeAct('🔊','Listen',function(){speakText(content,this);});
+      (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(content);
       var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
       var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
       var pin=makeAct('📌','Pin',function(){
@@ -4166,7 +4178,8 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});</script><div class="modal" id="m_langlearn" style="max-width:540px;">
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
+<div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
     <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
@@ -4181,6 +4194,26 @@ function getAILangInstruction(){
       <button class="ll-lang" onclick="startLangLearn('Tamil')">🇮🇳 Tamil</button>
       <button class="ll-lang" onclick="startLangLearn('Mandarin')">🇨🇳 Mandarin</button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="m_sup" style="max-width:440px;">
+  <div class="mhd"><h3>💬 Support</h3><button class="mx" onclick="closeM('sup')">✕</button></div>
+  <div style="padding:20px;text-align:center;">
+    <div style="font-size:40px;margin-bottom:12px;">🙏</div>
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Need help? Reach VARUN directly</p>
+    <a href="mailto:support@qvio.in" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 support@qvio.in</a>
+    <button class="mclose" onclick="closeM('sup')">Close</button>
+  </div>
+</div>
+<div class="overlay" id="o_pdf" onclick="closeM('pdf')"></div>
+<div class="modal" id="m_pdf" style="max-width:460px;">
+  <div class="mhd"><h3>📄 Document Chat</h3><button class="mx" onclick="closeM('pdf')">✕</button></div>
+  <div style="padding:20px;">
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Upload PDF or TXT and chat with it!</p>
+    <button onclick="document.getElementById('pdfInput').click()" style="width:100%;padding:14px;border-radius:12px;border:2px dashed var(--border);background:var(--surface);color:var(--text2);font-size:14px;cursor:pointer;box-sizing:border-box;">📁 Upload PDF / TXT</button>
+    <div id="pdfStatus" style="margin-top:12px;font-size:13px;color:#4F46E5;font-weight:600;"></div>
+    <button class="mclose" style="margin-top:12px;width:100%;box-sizing:border-box;" onclick="closeM('pdf')">Close</button>
   </div>
 </div>
 </body>
