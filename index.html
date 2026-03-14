@@ -2897,8 +2897,8 @@ function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.le
 async function sendMsg(){
   var inp=document.getElementById('inp');
   var text=inp.value.trim();if(!text)return;
-  // YouTube URL detection
-  if(text.includes('youtube.com') || text.includes('youtu.be')){
+  // YouTube URL detection (skip if it's an image command)
+  if((text.includes('youtube.com') || text.includes('youtu.be')) && !/^(create image|draw|generate|paint)/i.test(text)){
     if(handleYouTubeUrl(text))return;
   }
   inp.value='';inp.style.height='auto';
@@ -2911,8 +2911,8 @@ async function sendMsg(){
   stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
 
   // IMAGE GENERATION
-  if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
-    var prompt=text.replace(/^[^:]+:/i,'').trim();
+  if(/^(create image|image|draw|generate|make image|paint|img|generate image)[: ]/i.test(text)||/^(create image|draw me|paint me|generate image of|make image of)/i.test(text)){
+    var prompt=text.replace(/^(create image|image|draw me|draw|generate image of|generate|make image of|make image|paint me|paint|img)[: ]*/i,'').trim();
     showTyping();stats.images++;saveStats();
 
     var seed=Date.now();
