@@ -991,7 +991,21 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
   --s1:0 1px 4px rgba(0,0,0,.8);--s2:0 4px 16px rgba(0,0,0,.8);
   --s3:0 8px 32px rgba(0,0,0,.9);--s4:0 20px 60px rgba(0,0,0,.95);
 }
+
+.code-block{background:#0D1117;border-radius:12px;overflow:hidden;margin:12px 0;border:1px solid #30363D;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#161B22;border-bottom:1px solid #30363D;}
+.code-lang{font-size:11px;font-weight:700;color:#8B949E;text-transform:uppercase;letter-spacing:1px;}
+.code-run{padding:4px 12px;border-radius:6px;border:none;background:#238636;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.code-run:hover{background:#2EA043;}
+.code-copy{padding:4px 12px;border-radius:6px;border:1px solid #30363D;background:transparent;color:#8B949E;font-size:12px;cursor:pointer;transition:all .2s;}
+.code-copy:hover{background:#21262D;color:#fff;}
+.code-block code{display:block;padding:16px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#E6EDF3;overflow-x:auto;white-space:pre;}
+.code-output{padding:12px 16px;background:#0A0E14;border-top:1px solid #30363D;font-family:monospace;font-size:13px;color:#7EE787;white-space:pre-wrap;}
+
+.math-block{background:var(--surface);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid #4F46E5;overflow-x:auto;font-size:15px;}
+.math-inline{color:#4F46E5;font-style:italic;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
 <body>
 
@@ -1452,6 +1466,7 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
       <input type="file" id="pdfInput" accept=".pdf,.txt" style="display:none" onchange="loadDoc(this)">
+      <button onclick="checkGrammar()" title="Check Grammar" style="padding:6px 10px;border:1.5px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--text2);font-size:13px;cursor:pointer;">✍️</button>
       <button id="pdfBtn" onclick="document.getElementById('pdfInput').click()" title="Upload doc">📄</button>
       <button id="heyQvioBtn" style="display:none!important;" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
       <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
@@ -1463,6 +1478,7 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     
     <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
     <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
+    <div class="qr" onclick="fetchNewsDigest()">📰 News</div>
     <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
     <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
     
@@ -1819,6 +1835,56 @@ document.addEventListener('keydown', function(e){
     closeSidebar();
   }
 });
+
+function runCode(btn){
+  var pre=btn.closest('pre');
+  var code=pre.querySelector('code').textContent;
+  var output=pre.querySelector('.code-output');
+  output.style.display='block';
+  output.textContent='Running...';
+  try{
+    var logs=[];
+    var fakeConsole={log:function(){logs.push(Array.from(arguments).join(' '));},error:function(){logs.push('ERROR: '+Array.from(arguments).join(' '));}};
+    var fn=new Function('console',code);
+    fn(fakeConsole);
+    output.textContent=logs.length>0?logs.join('\n'):'✅ Ran successfully (no output)';
+    output.style.color='#7EE787';
+  }catch(e){
+    output.textContent='❌ '+e.message;
+    output.style.color='#F85149';
+  }
+}
+
+function extractYouTubeId(url){
+  var m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  return m?m[1]:null;
+}
+function handleYouTubeUrl(text){
+  var ytId=extractYouTubeId(text);
+  if(!ytId)return false;
+  var msg="Summarize this YouTube video for me. The video ID is: "+ytId+". URL: https://www.youtube.com/watch?v="+ytId+". Please describe what this video is likely about based on the URL context, and if you know this video, give a detailed summary.";
+  document.getElementById('inp').value=msg;
+  sendMsg();
+  return true;
+}
+
+function fetchNewsDigest(){
+  showTyping();
+  var topics=['India','Technology','Business','Sports','World'];
+  var topic=topics[Math.floor(Math.random()*topics.length)];
+  var msg="Give me today's top 5 news headlines for "+topic+" in India. Format each as: 📰 [Headline] - [2 line summary]. Make it feel like a real news digest. Today is "+new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+".";
+  document.getElementById('inp').value=msg;
+  sendMsg();
+}
+
+function checkGrammar(){
+  var inp=document.getElementById('inp');
+  var text=inp.value.trim();
+  if(!text){showToast('Type something first!');return;}
+  var msg="Please check and correct the grammar, spelling and style of this text. Show the corrected version and explain what you changed:\n\n\""+text+"\"";
+  inp.value=msg;
+  sendMsg();
+}
 </script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
@@ -2340,7 +2406,14 @@ function scrollToTop(){document.getElementById('chat').scrollTop=0;}
 
 function renderText(t){
   return t
-    .replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,code){return '<pre><button class="code-copy" onclick="copyCode(this)">Copy</button><code>'+escH(code.trim())+'</code></pre>';})
+    .replace(/```(\w*)\n?([\s\S]*?)```/g,function(m,lang,code){
+      var cl=lang?'language-'+lang.toLowerCase():'';
+      var runBtn=(lang==='javascript'||lang==='js')?'<button class="code-run" onclick="runCode(this)">▶ Run</button>':'';
+      var pyBtn=(lang==='python'||lang==='py')?'<button class="code-run" onclick="showToast(\"🐍 Python runs on server — copy & paste to repl.it!\")">▶ Try</button>':'';
+      return '<pre class="code-block"><div class="code-header"><span class="code-lang">'+(lang||'code')+'</span><div style="display:flex;gap:6px;">'+runBtn+pyBtn+'<button class="code-copy" onclick="copyCode(this)">📋 Copy</button></div></div><code class="'+cl+'">'+escH(code.trim())+'</code><div class="code-output" style="display:none;"></div></pre>';
+    })
+    .replace(/\$\$([\s\S]+?)\$\$/g,'<div class="math-block">$$$$1$$</div>')
+    .replace(/\$([^$\n]+?)\$/g,'<span class="math-inline">$$$1$$</span>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.*?)\*/g,'<em>$1</em>')
@@ -2521,6 +2594,10 @@ function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.le
 async function sendMsg(){
   var inp=document.getElementById('inp');
   var text=inp.value.trim();if(!text)return;
+  // YouTube URL detection
+  if(text.includes('youtube.com') || text.includes('youtu.be')){
+    if(handleYouTubeUrl(text))return;
+  }
   inp.value='';inp.style.height='auto';
   document.getElementById('sendBtn').disabled=true;
   document.getElementById('charCnt').textContent='';
