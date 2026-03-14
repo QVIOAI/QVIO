@@ -1004,6 +1004,14 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 
 .math-block{background:var(--surface);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid #4F46E5;overflow-x:auto;font-size:15px;}
 .math-inline{color:#4F46E5;font-style:italic;}
+
+.tv-mode{font-size:18px !important;}
+.tv-mode .bubble{font-size:18px !important;line-height:1.9 !important;padding:20px 24px !important;}
+.tv-mode #inp{font-size:18px !important;padding:16px !important;}
+.tv-mode .qr{font-size:15px !important;padding:12px 20px !important;}
+.tv-mode header{height:70px !important;}
+.tv-mode .w-icon{width:90px !important;height:90px !important;font-size:28px !important;}
+.tv-mode .welcome h1{font-size:56px !important;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
@@ -1379,10 +1387,16 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     <button class="md-pill" onclick="closeModesDrawer();openM('langlearn')">🦉 Language</button>
     <button class="md-pill" onclick="closeModesDrawer();openNCERTMode()">📚 NCERT</button>
     <button class="md-pill" onclick="closeModesDrawer();openResumeBuilder()">📄 Resume</button>
+    <button class="md-pill" onclick="closeModesDrawer();openClassroomMode()">👨‍🏫 Classroom</button>
+    <button class="md-pill" onclick="closeModesDrawer();openVoiceClone()">🎤 Voice Clone</button>
+    <button class="md-pill" onclick="closeModesDrawer();enableTVMode()">📺 TV Mode</button>
   </div>
 </div>
 
 <!-- HEADER -->
+<div id="offlineBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#EF4444;color:#fff;padding:8px 16px;font-size:13px;font-weight:600;align-items:center;justify-content:center;gap:8px;">
+  🔌 No internet connection — Offline mode active
+</div>
 <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 <div id="sidebar">
   <div class="sb-header">
@@ -2014,6 +2028,139 @@ function openResumeBuilder(){
   document.getElementById('inp').value = msg;
   sendMsg();
 }
+
+// ══ OFFLINE MODE ══
+var _isOnline = navigator.onLine;
+var _offlineCache = {
+  "hello": "Hey! QVIO is in offline mode right now. Basic responses only! 🔌",
+  "hi": "Hi there! Currently offline — limited mode active.",
+  "who are you": "I am QVIO, India most premium AI! Currently running in offline mode.",
+  "help": "In offline mode, QVIO can answer basic questions from cache. Connect to internet for full AI power!"
+};
+
+window.addEventListener('online', function(){
+  _isOnline=true;
+  var banner=document.getElementById('offlineBanner');
+  if(banner)banner.style.display='none';
+  showToast('✅ Back online! Full QVIO power restored!');
+});
+
+window.addEventListener('offline', function(){
+  _isOnline=false;
+  var banner=document.getElementById('offlineBanner');
+  if(banner)banner.style.display='flex';
+  showToast('⚠️ Offline mode — limited responses');
+});
+
+function getOfflineResponse(text){
+  var t=text.toLowerCase().trim();
+  for(var key in _offlineCache){
+    if(t.includes(key))return _offlineCache[key];
+  }
+  return "QVIO needs internet for this! Please check your connection. 🔌";
+}
+
+// ══ CLASSROOM MODE ══
+var _classroomCode = null;
+var _classroomName = null;
+
+function openClassroomMode(){
+  var html = '<div style="padding:20px;">';
+  html += '<p style="color:var(--text2);font-size:14px;margin:0 0 16px;">👨‍🏫 Use QVIO as a classroom AI assistant!</p>';
+  html += '<div style="margin-bottom:12px;">';
+  html += '<input id="classNameInp" placeholder="Your name / Student name" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;margin-bottom:8px;box-sizing:border-box;">';
+  html += '<input id="classCodeInp" placeholder="Class code (e.g. MATH101)" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;box-sizing:border-box;">';
+  html += '</div>';
+  html += '<button onclick="joinClassroom()" style="width:100%;padding:12px;border-radius:12px;border:none;background:#4F46E5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;">👨‍🎓 Join Classroom</button>';
+  html += '<div style="margin-top:12px;padding:12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);">';
+  html += '<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;">HOW IT WORKS</div>';
+  html += '<div style="font-size:12px;color:var(--text2);line-height:1.8;">🏫 Teacher sets a class code<br>👨‍🎓 Students join with same code<br>📚 QVIO knows the context<br>✅ Shared learning experience</div>';
+  html += '</div></div>';
+  document.querySelector("#m_langlearn .mhd h3").textContent = "👨‍🏫 Classroom Mode";
+  document.querySelector("#m_langlearn div[style*='padding:20px']").innerHTML = html;
+  openM("langlearn");
+}
+
+function joinClassroom(){
+  var name = document.getElementById("classNameInp").value.trim();
+  var code = document.getElementById("classCodeInp").value.trim();
+  if(!name||!code){showToast("Enter your name and class code!");return;}
+  _classroomName = name;
+  _classroomCode = code;
+  closeM("langlearn");
+  setModeD("student","📚 Student");
+  showToast("✅ Joined classroom: "+code+"!");
+  addMsg("👨‍🏫 **Classroom Mode Active!**\n\nClass: **"+code+"**\nStudent: **"+name+"**\n\nHello "+name+"! I am QVIO, your classroom AI assistant for **"+code+"**. Ask me anything about your lessons, homework, or topics! 📚","ai");
+}
+
+// ══ VOICE CLONING ══
+var _elevenLabsKey = "";
+var _clonedVoiceId = "";
+
+function openVoiceClone(){
+  var html = "<div style=\"padding:20px;\">";
+  html += "<p style=\"color:var(--text2);font-size:14px;margin:0 0 16px;\">🎤 Make QVIO speak in your voice!</p>";
+  html += "<div style=\"background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px;\">";
+  html += "<div style=\"font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px;\">STEP 1: Get free API key</div>";
+  html += "<a href=\"https://elevenlabs.io\" target=\"_blank\" style=\"display:block;padding:10px;background:#4F46E5;color:#fff;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600;text-align:center;margin-bottom:8px;\">🔗 Sign up at ElevenLabs.io (Free)</a>";
+  html += "<input id=\"elKeyInp\" placeholder=\"Paste your ElevenLabs API key\" style=\"width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;box-sizing:border-box;\">";
+  html += "</div>";
+  html += "<div style=\"background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px;\">";
+  html += "<div style=\"font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px;\">STEP 2: Paste Voice ID</div>";
+  html += "<input id=\"elVoiceInp\" placeholder=\"Voice ID from ElevenLabs dashboard\" style=\"width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;box-sizing:border-box;\">";
+  html += "</div>";
+  html += "<button onclick=\"saveVoiceClone()\" style=\"width:100%;padding:12px;border-radius:12px;border:none;background:#4F46E5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;\">✅ Activate Voice Clone</button>";
+  html += "</div>";
+  document.querySelector("#m_langlearn .mhd h3").textContent = "🎤 Voice Clone";
+  document.querySelector("#m_langlearn div[style*='padding:20px']").innerHTML = html;
+  openM("langlearn");
+}
+
+function saveVoiceClone(){
+  var key = document.getElementById("elKeyInp").value.trim();
+  var vid = document.getElementById("elVoiceInp").value.trim();
+  if(!key||!vid){showToast("Enter both API key and Voice ID!");return;}
+  _elevenLabsKey = key;
+  _clonedVoiceId = vid;
+  localStorage.setItem("el_key", key);
+  localStorage.setItem("el_vid", vid);
+  closeM("langlearn");
+  showToast("🎤 Voice clone activated! QVIO will speak in your voice!");
+}
+
+// Load saved voice clone settings
+(function(){
+  var k=localStorage.getItem("el_key");
+  var v=localStorage.getItem("el_vid");
+  if(k&&v){_elevenLabsKey=k;_clonedVoiceId=v;}
+})();
+
+async function speakWithClonedVoice(text){
+  if(!_elevenLabsKey||!_clonedVoiceId) return false;
+  try{
+    var res = await fetch("https://api.elevenlabs.io/v1/text-to-speech/"+_clonedVoiceId, {
+      method:"POST",
+      headers:{"Content-Type":"application/json","xi-api-key":_elevenLabsKey},
+      body:JSON.stringify({text:text.substring(0,500),model_id:"eleven_monolingual_v1",voice_settings:{stability:0.5,similarity_boost:0.75}})
+    });
+    if(!res.ok) return false;
+    var blob = await res.blob();
+    var url = URL.createObjectURL(blob);
+    var audio = new Audio(url);
+    audio.play();
+    return true;
+  }catch(e){ return false; }
+}
+
+// ══ TV / LARGE SCREEN MODE ══
+function enableTVMode(){
+  document.body.classList.toggle("tv-mode");
+  var on = document.body.classList.contains("tv-mode");
+  localStorage.setItem("tvMode", on?"1":"0");
+  showToast(on ? "📺 TV Mode ON — Big screen optimized!" : "📺 TV Mode OFF");
+}
+// Restore TV mode
+if(localStorage.getItem("tvMode")==="1") document.body.classList.add("tv-mode");
 </script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
@@ -2819,6 +2966,12 @@ async function sendMsg(){
     return;
   }
 
+  // Offline check
+  if(!navigator.onLine){
+    addMsg(getOfflineResponse(text),'ai');
+    document.getElementById('sendBtn').disabled=false;
+    return;
+  }
   showTyping();
   var t0=Date.now();
   try{
@@ -2904,6 +3057,20 @@ async function callGroq(msg){
 function send(t){document.getElementById('inp').value=t;sendMsg();}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
 function onInp(el){
+  // Typing speed
+  if(!window._typingStart)window._typingStart=Date.now();
+  if(!window._typingChars)window._typingChars=0;
+  window._typingChars++;
+  clearTimeout(window._typingTimer);
+  window._typingTimer=setTimeout(function(){
+    var secs=(Date.now()-window._typingStart)/1000;
+    var wpm=Math.round((el.value.split(/\s+/).length/secs)*60);
+    if(wpm>0&&wpm<300&&el.value.length>10){
+      var cc=document.getElementById('charCnt');
+      if(cc)cc.textContent=el.value.length+'/2000 · '+wpm+' WPM';
+    }
+    window._typingStart=null;window._typingChars=0;
+  },1500);
   el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
   var n=el.value.length;
   document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
