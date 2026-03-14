@@ -1377,6 +1377,8 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     <button class="md-pill on" onclick="setModeD('casual','⚡ Auto')">⚡ Auto</button>
     <button class="md-pill" onclick="setModeD('student','📚 Student')">📚 Student</button>
     <button class="md-pill" onclick="closeModesDrawer();openM('langlearn')">🦉 Language</button>
+    <button class="md-pill" onclick="closeModesDrawer();openNCERTMode()">📚 NCERT</button>
+    <button class="md-pill" onclick="closeModesDrawer();openResumeBuilder()">📄 Resume</button>
   </div>
 </div>
 
@@ -1419,6 +1421,7 @@ header .h-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
   <div class="h-actions">
     <button class="earth-btn hico" onclick="openLangSelect()" title="Language">🌍</button>
     <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
+    <button id="voiceModeBtn" onclick="toggleVoiceMode()" style="padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .2s;">🎙️ Voice</button>
     <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
     <div class="uchip" onclick="openM('prof')">
       <div class="uav" id="uAv">?</div>
@@ -1885,6 +1888,132 @@ function checkGrammar(){
   inp.value=msg;
   sendMsg();
 }
+
+// ══ VOICE CONVERSATION MODE ══
+var _voiceMode = false;
+var _voiceRec = null;
+
+function toggleVoiceMode(){
+  _voiceMode = !_voiceMode;
+  var btn = document.getElementById('voiceModeBtn');
+  if(_voiceMode){
+    btn.style.background = 'linear-gradient(135deg,#EF4444,#DC2626)';
+    btn.textContent = '🔴 Voice ON';
+    btn.style.color = '#fff';
+    showToast('🎙️ Voice mode ON! Speak and QVIO will reply by voice!');
+    startVoiceConversation();
+  } else {
+    btn.style.background = '';
+    btn.textContent = '🎙️ Voice';
+    btn.style.color = '';
+    if(_voiceRec) _voiceRec.stop();
+    window.speechSynthesis.cancel();
+    showToast('🔇 Voice mode OFF');
+  }
+}
+
+function startVoiceConversation(){
+  if(!_voiceMode) return;
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    showToast('❌ Voice not supported in this browser');
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _voiceRec = new SR();
+  _voiceRec.continuous = false;
+  _voiceRec.interimResults = false;
+  _voiceRec.lang = selectedAILang ? ({"Hindi":"hi-IN","Tamil":"ta-IN","Telugu":"te-IN","Kannada":"kn-IN","English":"en-IN"}[selectedAILang]||"en-IN") : "en-IN";
+  _voiceRec.onstart = function(){ showToast('🎙️ Listening...'); };
+  _voiceRec.onresult = function(e){
+    var transcript = e.results[0][0].transcript;
+    showToast('You said: '+transcript);
+    var inp = document.getElementById('inp');
+    if(inp) inp.value = transcript;
+    // Auto send and auto speak response
+    sendMsgVoice();
+  };
+  _voiceRec.onerror = function(e){
+    if(e.error !== 'no-speech') showToast('Mic error: '+e.error);
+    if(_voiceMode) setTimeout(startVoiceConversation, 2000);
+  };
+  _voiceRec.onend = function(){
+    // Restart listening after QVIO speaks
+  };
+  _voiceRec.start();
+}
+
+async function sendMsgVoice(){
+  await sendMsg();
+  // After QVIO responds, speak it then listen again
+  setTimeout(function(){
+    if(!_voiceMode) return;
+    // Find last AI message and speak it
+    var bubbles = document.querySelectorAll('.msg.ai .bubble');
+    if(bubbles.length > 0){
+      var lastText = bubbles[bubbles.length-1].innerText;
+      // Create fake button for TTS
+      var fakeBtn = {textContent:'🔊', classList:{add:function(){},remove:function(){}}};
+      speakText(lastText, fakeBtn);
+      // After speaking, listen again
+      var checkInterval = setInterval(function(){
+        if(!window._qvIsSpeaking){
+          clearInterval(checkInterval);
+          if(_voiceMode) setTimeout(startVoiceConversation, 500);
+        }
+      }, 500);
+    }
+  }, 500);
+}
+
+// ══ NCERT EXAM MODE ══
+var NCERT_SUBJECTS = {
+  '10th': ['Maths','Science','Social Science','English','Hindi','Sanskrit'],
+  '11th': ['Physics','Chemistry','Maths','Biology','Economics','Accounts','Business Studies','English'],
+  '12th': ['Physics','Chemistry','Maths','Biology','Economics','Accounts','Business Studies','English','CS/IT']
+};
+
+function openNCERTMode(){
+  closeM('langlearn');
+  var html = '<div style="padding:20px;">';
+  html += '<p style="color:var(--text2);font-size:14px;margin:0 0 16px;">📚 QVIO becomes your NCERT tutor!</p>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
+  Object.keys(NCERT_SUBJECTS).forEach(function(cls){
+    html += '<button class="ll-lang" onclick="selectNCERTClass(\''+cls+'\')">📖 Class '+cls+'</button>';
+  });
+  html += '</div>';
+  html += '<div id="ncertSubjects" style="display:none;margin-top:12px;"></div>';
+  html += '</div>';
+  document.querySelector('#m_langlearn .mhd h3').textContent = '📚 NCERT Mode';
+  document.querySelector('#m_langlearn div[style*="padding:20px"]').innerHTML = html;
+  openM('langlearn');
+}
+
+function selectNCERTClass(cls){
+  var subjects = NCERT_SUBJECTS[cls];
+  var html = '<p style="font-size:13px;color:var(--text3);margin:0 0 10px;">Class '+cls+' — Choose subject:</p>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  subjects.forEach(function(sub){
+    html += '<button class="qr" onclick="startNCERT(\''+cls+'\',\''+sub+'\')">'+sub+'</button>';
+  });
+  html += '</div>';
+  document.getElementById('ncertSubjects').innerHTML = html;
+  document.getElementById('ncertSubjects').style.display = 'block';
+}
+
+function startNCERT(cls, subject){
+  closeM('langlearn');
+  setModeD('student','📚 Student');
+  var msg = 'I am a Class '+cls+' student studying '+subject+' (NCERT/CBSE). Be my personal tutor. Start by: 1) Asking which chapter/topic I need help with 2) Then explain concepts clearly with examples 3) Ask me practice questions to test understanding. Use simple language. Ready?';
+  document.getElementById('inp').value = msg;
+  sendMsg();
+}
+
+// ══ RESUME BUILDER ══
+function openResumeBuilder(){
+  var msg = "Help me build a professional resume/CV. Start by asking me:\n1) My full name and contact details\n2) My education (school/college, year, percentage/CGPA)\n3) Skills (technical + soft skills)\n4) Work experience or internships (if any)\n5) Projects and achievements\n6) Hobbies/interests\n\nAfter collecting all info, create a complete professional resume in a clean format I can copy. Start with question 1!";
+  document.getElementById('inp').value = msg;
+  sendMsg();
+}
 </script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
@@ -2302,15 +2431,42 @@ function delMem(k){
   saveMem();renderMemList();updateMemUI();
 }
 function extractMem(t){
-  var n=t.match(/my name is ([A-Za-z]+)/i);
-  if(n&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('✨ Nice to meet you, '+n[1]+'!');}
-  var f=t.match(/i(?:'m| am) from ([A-Za-z ,]+)/i);
-  if(f){
-    if(!memory.facts)memory.facts=[];
-    if(!memory.facts.some(function(x){return x.indexOf('from')>-1;})){
-      memory.facts.push('From '+f[1].trim());saveMem();updateMemUI();
+  if(!memory.facts)memory.facts=[];
+  var lower=t.toLowerCase();
+
+  // Name
+  var n=t.match(/my name is ([A-Za-z]+)/i)||t.match(/i(?:'m| am) ([A-Za-z]+)/i)||t.match(/call me ([A-Za-z]+)/i);
+  if(n&&n[1].length>1&&!memory.name){memory.name=n[1];saveMem();updateMemUI();showToast('✨ Got it! QVIO remembers you, '+n[1]+'!');}
+
+  // Age
+  var age=t.match(/i(?:'m| am) (\d+) years? old/i)||t.match(/my age is (\d+)/i);
+  if(age&&!memory.facts.some(function(x){return x.indexOf('Age')>-1;})){memory.facts.push('Age: '+age[1]);saveMem();}
+
+  // Location
+  var loc=t.match(/i(?:'m| am) from ([A-Za-z ,]+)/i)||t.match(/i live in ([A-Za-z ,]+)/i)||t.match(/my city is ([A-Za-z ]+)/i);
+  if(loc&&!memory.facts.some(function(x){return x.indexOf('From')>-1||x.indexOf('Lives')>-1;})){memory.facts.push('Lives in: '+loc[1].trim().substring(0,30));saveMem();}
+
+  // Job/Study
+  var job=t.match(/i(?:'m| am) a ([A-Za-z ]+)/i)||t.match(/i work as ([A-Za-z ]+)/i)||t.match(/i study ([A-Za-z ]+)/i);
+  if(job&&job[1].length>2&&job[1].length<30&&!memory.facts.some(function(x){return x.indexOf('Job')>-1||x.indexOf('Stud')>-1;})){memory.facts.push('Job/Study: '+job[1].trim());saveMem();}
+
+  // Interests/Hobbies
+  var hobby=t.match(/i (?:love|like|enjoy|hate) ([A-Za-z ]+)/i);
+  if(hobby&&hobby[1].length>2&&hobby[1].length<25&&memory.facts.length<15){
+    var hf='Likes: '+hobby[1].trim();
+    if(!memory.facts.some(function(x){return x===hf;})){memory.facts.push(hf);saveMem();}
+  }
+
+  // Language preference
+  var lang=t.match(/i(?:'m| am) ([A-Za-z]+)/i);
+  if(lower.includes('speak') || lower.includes('language')){
+    var langMatch=t.match(/(?:speak|language)[^.]*?([A-Za-z]+)/i);
+    if(langMatch&&langMatch[1].length>3&&!memory.facts.some(function(x){return x.indexOf('Speaks')>-1;})){
+      memory.facts.push('Speaks: '+langMatch[1]);saveMem();
     }
   }
+
+  if(memory.facts.length>0)updateMemUI();
 }
 
 // STATS & BADGES
