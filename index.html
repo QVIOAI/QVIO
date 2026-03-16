@@ -1752,7 +1752,7 @@ header{
   </div>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
@@ -2595,56 +2595,107 @@ function tryLoadImage_OLD(urlIndex){
 }
 
 async function callGroq(msg){
-  var sys=PROMPTS[mode]+getMemCtx();
+  var sys=PROMPTS[mode]+getMemCtx()+(typeof getDocContext==='function'?getDocContext():'');
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-  var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
-  var data=await res.json();
-  console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
-  if(data.error){
-    var msg2=data.error.message||JSON.stringify(data.error);
-    // Auto-rotate key on rate limit (429) and retry once
-    if((res.status===429||msg2.indexOf('rate')>-1)&&false){
-      if(rotateKey()){
-        console.log('Key rotated to index',_keyIdx,', retrying...');
-        return callGroq(msg);
-      }
+
+  // Try streaming first
+  try{
+    var res=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:msgs,stream:true})
+    });
+
+    if(res.ok && res.headers.get('content-type')&&res.headers.get('content-type').includes('text/event-stream')){
+      // STREAMING MODE
+      return await handleStream(res);
     }
-    throw new Error('API '+res.status+': '+msg2);
+    // Fallback to non-streaming
+    var data=await res.json();
+    if(data.error)throw new Error('API: '+JSON.stringify(data.error));
+    if(!data.choices||!data.choices[0])throw new Error('Empty response');
+    return data.choices[0].message.content;
+  }catch(e){
+    throw e;
   }
-  if(!data.choices||!data.choices[0])throw new Error('Empty response: '+JSON.stringify(data).substring(0,100));
-  return data.choices[0].message.content;
 }
 
-function send(t){document.getElementById('inp').value=t;sendMsg();}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
-function onInp(el){
-  el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
-  var n=el.value.length;
-  document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
-  document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';
+async function handleStream(res){
+  // Remove typing indicator and create streaming bubble
+  hideTyping();
+  var chat=document.getElementById('chat');
+  var div=document.createElement('div');div.className='msg ai';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var wrap=document.createElement('div');wrap.className='mwrap';
+  var bub=document.createElement('div');bub.className='bubble streaming-bubble';
+  var cursor=document.createElement('span');cursor.className='stream-cursor';cursor.textContent='▋';
+  bub.appendChild(cursor);
+  wrap.appendChild(bub);
+  div.appendChild(av);div.appendChild(wrap);
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+
+  var reader=res.body.getReader();
+  var decoder=new TextDecoder();
+  var fullText='';
+  var buffer='';
+
+  while(true){
+    var result=await reader.read();
+    if(result.done)break;
+    buffer+=decoder.decode(result.value,{stream:true});
+    var lines=buffer.split('\n');
+    buffer=lines.pop()||'';
+
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i].trim();
+      if(!line||line==='data: [DONE]')continue;
+      if(line.startsWith('data: ')){
+        try{
+          var json=JSON.parse(line.slice(6));
+          var delta=json.choices&&json.choices[0]&&json.choices[0].delta&&json.choices[0].delta.content;
+          if(delta){
+            fullText+=delta;
+            // Update bubble with rendered text
+            bub.innerHTML=renderText(fullText)+'<span class="stream-cursor">▋</span>';
+            chat.scrollTop=chat.scrollHeight;
+          }
+        }catch(e){}
+      }
+    }
+  }
+
+  // Final render without cursor
+  bub.classList.remove('streaming-bubble');
+  bub.innerHTML=renderText(fullText);
+  if(typeof onAIResponse==='function')onAIResponse(fullText);
+
+  // Add action buttons
+  var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
+  cb.onclick=function(){navigator.clipboard.writeText(fullText);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
+  bub.appendChild(cb);
+
+  var meta=document.createElement('div');meta.className='mmeta';
+  function makeAct(icon,tip,fn){
+    var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
+  }
+  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
+  var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
+  var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
+  ['❤️','🔥','😂','🤯','👏'].forEach(function(emoji){
+    makeAct(emoji,emoji,function(){showToast(emoji+' reaction!');this.style.transform='scale(1.5)';var self=this;setTimeout(function(){self.style.transform='';},300);});
+  });
+  (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('QVIO says:\n\n'+msgContent.substring(0,500)+'\n\n— via QVIO AI (qvio.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
+  makeAct('🔄','Regenerate',function(){if(lastMsg)sendMsg(lastMsg);});
+  wrap.appendChild(meta);
+
+  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
+
+  return fullText;
 }
-function showToast(msg){
-  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},2800);
-}
-function clearChat(){
-  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
-  chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
-}
-function toggleFocus(){
-  isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);
-  document.getElementById('focusBtn').classList.toggle('on',isFocus);
-  showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');
-}
-function exportChat(){
-  if(!chatHistory.length){showToast('Nothing to export!');return;}
-  var txt='QVIO Premium Chat\n'+new Date().toLocaleString()+'\n'+'═'.repeat(50)+'\n\n';
-  chatHistory.forEach(function(m){txt+=(m.role==='user'?'YOU':'QVIO')+': '+m.content+'\n\n';});
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='qvio-chat-'+Date.now()+'.txt';a.click();
-  showToast('💾 Chat exported!');
-}
+
 
 // ═══════════════════════════════
 // CALCULATOR
@@ -4195,7 +4246,7 @@ function getAILangInstruction(){
   <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},300);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
