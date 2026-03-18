@@ -1019,6 +1019,240 @@ header{
   z-index:400!important;
   flex-shrink:0!important;
 }
+
+/* ══ QVIO CINEMATIC ENTRY ══ */
+#qvio-entry{
+  position:fixed;inset:0;
+  background:#000;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:0;
+}
+#qvio-entry.fade-out{
+  animation:entryFadeOut .8s ease forwards;
+}
+@keyframes entryFadeOut{
+  to{opacity:0;pointer-events:none;}
+}
+
+/* Scanlines effect */
+#qvio-entry::before{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(79,70,229,0.03) 2px,
+    rgba(79,70,229,0.03) 4px
+  );
+  pointer-events:none;
+  z-index:1;
+}
+
+.entry-logo{
+  width:90px;height:90px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:900;color:#fff;
+  position:relative;z-index:2;
+  opacity:0;
+  animation:logoAppear .6s cubic-bezier(.16,1,.3,1) .3s forwards;
+  box-shadow:0 0 60px rgba(79,70,229,.8),0 0 120px rgba(79,70,229,.4);
+}
+@keyframes logoAppear{
+  from{opacity:0;transform:scale(.5);}
+  to{opacity:1;transform:scale(1);}
+}
+
+.entry-title{
+  font-family:'Inter',sans-serif;
+  font-size:52px;
+  font-weight:800;
+  letter-spacing:-2px;
+  color:#fff;
+  margin-top:20px;
+  position:relative;z-index:2;
+  opacity:0;
+  animation:titleAppear .6s ease .9s forwards;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.entry-title span{
+  background:linear-gradient(135deg,#4F46E5,#818CF8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+@keyframes titleAppear{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:none;}
+}
+
+.entry-sub{
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  color:rgba(255,255,255,.4);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  margin-top:12px;
+  position:relative;z-index:2;
+  opacity:0;
+  animation:subAppear .6s ease 1.4s forwards;
+}
+@keyframes subAppear{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+.entry-line{
+  width:0;height:1px;
+  background:linear-gradient(90deg,transparent,#4F46E5,transparent);
+  margin-top:32px;
+  position:relative;z-index:2;
+  animation:lineExpand .8s ease 1.8s forwards;
+}
+@keyframes lineExpand{
+  to{width:200px;}
+}
+
+.entry-loading{
+  display:flex;gap:6px;
+  margin-top:24px;
+  position:relative;z-index:2;
+  opacity:0;
+  animation:subAppear .4s ease 2.2s forwards;
+}
+.entry-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#4F46E5;
+  animation:entryDot 1s infinite;
+}
+.entry-dot:nth-child(2){animation-delay:.2s;}
+.entry-dot:nth-child(3){animation-delay:.4s;}
+@keyframes entryDot{
+  0%,60%,100%{transform:scale(1);opacity:.4;}
+  30%{transform:scale(1.5);opacity:1;}
+}
+
+/* Particle burst on entry */
+.entry-particle{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  animation:particleBurst 1.5s ease forwards;
+}
+@keyframes particleBurst{
+  from{opacity:1;transform:translate(0,0) scale(1);}
+  to{opacity:0;transform:var(--tx,translate(100px,-100px)) scale(0);}
+}
+
+/* ══ QVIO WISPR FLOW ══ */
+#wisprBtn{
+  position:fixed;
+  bottom:100px;right:20px;
+  width:52px;height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  border:none;
+  color:#fff;font-size:22px;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(79,70,229,.4);
+  z-index:888;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .3s;
+}
+#wisprBtn:hover{transform:scale(1.08);}
+#wisprBtn.listening{
+  background:linear-gradient(135deg,#EF4444,#DC2626);
+  animation:wisprPulse 1s infinite;
+  box-shadow:0 4px 30px rgba(239,68,68,.6);
+}
+@keyframes wisprPulse{
+  0%,100%{box-shadow:0 4px 30px rgba(239,68,68,.4);}
+  50%{box-shadow:0 4px 50px rgba(239,68,68,.8),0 0 0 10px rgba(239,68,68,.1);}
+}
+#wisprPanel{
+  position:fixed;
+  bottom:165px;right:20px;
+  width:300px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  z-index:888;
+  display:none;
+  flex-direction:column;
+  gap:10px;
+}
+#wisprPanel.show{display:flex;}
+.wispr-status{
+  font-size:13px;font-weight:600;
+  color:#4F46E5;
+  display:flex;align-items:center;gap:8px;
+}
+.wispr-wave{
+  display:flex;align-items:center;gap:3px;
+  height:20px;
+}
+.wispr-bar{
+  width:3px;border-radius:3px;
+  background:#4F46E5;
+  animation:wisprWave 1s infinite;
+}
+.wispr-bar:nth-child(1){animation-delay:0s;height:6px;}
+.wispr-bar:nth-child(2){animation-delay:.1s;height:12px;}
+.wispr-bar:nth-child(3){animation-delay:.2s;height:18px;}
+.wispr-bar:nth-child(4){animation-delay:.3s;height:12px;}
+.wispr-bar:nth-child(5){animation-delay:.4s;height:6px;}
+@keyframes wisprWave{
+  0%,100%{transform:scaleY(1);}
+  50%{transform:scaleY(1.8);}
+}
+#wisprTranscript{
+  font-size:13px;color:var(--text2);
+  min-height:40px;max-height:100px;
+  overflow-y:auto;
+  line-height:1.6;
+  padding:8px;
+  background:var(--surface);
+  border-radius:8px;
+  border:1px solid var(--border);
+}
+.wispr-actions{display:flex;gap:8px;}
+.wispr-action{
+  flex:1;padding:8px;border-radius:8px;
+  border:1px solid var(--border);
+  background:transparent;color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:all .15s;
+}
+.wispr-action:hover{background:var(--surface);color:var(--text);}
+.wispr-action.primary{
+  background:#4F46E5;color:#fff;border-color:#4F46E5;
+}
+.wispr-action.primary:hover{background:#4338CA;}
+.wispr-settings{
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.wispr-toggle{
+  padding:4px 10px;border-radius:20px;
+  border:1px solid var(--border);
+  background:transparent;color:var(--text3);
+  font-size:11px;font-weight:500;cursor:pointer;
+  transition:all .15s;
+}
+.wispr-toggle.on{
+  background:rgba(79,70,229,.1);
+  border-color:#4F46E5;color:#4F46E5;
+}
 </style>
 </head>
 <body>
@@ -1394,6 +1628,59 @@ header{
 </div>
 
 <!-- HEADER -->
+<script>
+
+// ══ CINEMATIC ENTRY ══
+(function(){
+  // Only show entry if not visited in last 10 mins
+  if(localStorage.getItem('qvio_entry_shown')) return;
+  localStorage.setItem('qvio_entry_shown','1');
+
+  var entry = document.createElement('div');
+  entry.id = 'qvio-entry';
+  entry.innerHTML = `
+    <div class="entry-logo">QV</div>
+    <div class="entry-title">QV<span>IO</span></div>
+    <div class="entry-sub">India's Most Premium AI</div>
+    <div class="entry-line"></div>
+    <div class="entry-loading">
+      <div class="entry-dot"></div>
+      <div class="entry-dot"></div>
+      <div class="entry-dot"></div>
+    </div>
+  `;
+  document.body.appendChild(entry);
+
+  // Create particle burst around logo
+  setTimeout(function(){
+    for(var i=0;i<20;i++){
+      var p=document.createElement('div');
+      p.className='entry-particle';
+      var angle=Math.random()*360;
+      var dist=80+Math.random()*120;
+      var tx='translate('+Math.cos(angle*Math.PI/180)*dist+'px,'+Math.sin(angle*Math.PI/180)*dist+'px)';
+      p.style.cssText='width:'+(3+Math.random()*4)+'px;height:'+(3+Math.random()*4)+'px;background:'+(Math.random()>0.5?'#4F46E5':'#818CF8')+';left:50%;top:50%;margin:-3px;--tx:'+tx+';animation-delay:'+(Math.random()*0.5)+'s;';
+      entry.appendChild(p);
+    }
+    if(typeof playSound==='function') playSound('levelup');
+  }, 800);
+
+  // Dismiss after 3s
+  setTimeout(function(){
+    entry.classList.add('fade-out');
+    setTimeout(function(){
+      entry.remove();
+    }, 800);
+  }, 3000);
+
+  // Click to skip
+  entry.addEventListener('click', function(){
+    entry.classList.add('fade-out');
+    setTimeout(function(){entry.remove();}, 800);
+  });
+})();
+
+</script>
 <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 <div id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
   <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
@@ -1752,7 +2039,265 @@ header{
   </div>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});
+// ══ SIDEBAR ══
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  sb.classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+function updateSidebarUser(user){
+  var av=document.getElementById('sbAvatar');
+  var un=document.getElementById('sbUname');
+  if(av&&user){
+    if(user.photoURL)av.innerHTML='<img src="'+user.photoURL+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">';
+    else av.textContent=(user.displayName||user.email||'U')[0].toUpperCase();
+  }
+  if(un&&user)un.textContent=user.displayName||user.email||'Guest';
+}
+
+// ══ CHAT HISTORY SAVE/RESTORE ══
+function saveChatHistory(){
+  try{
+    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    if(chatHistory.length>0){
+      var session={
+        id:Date.now(),
+        ts:Date.now(),
+        title:chatHistory[0]?chatHistory[0].content.substring(0,40):'New Chat',
+        msgs:chatHistory.slice(-20)
+      };
+      sessions.unshift(session);
+      sessions=sessions.slice(0,20); // keep last 20 sessions
+      localStorage.setItem('qvio_sessions',JSON.stringify(sessions));
+      localStorage.setItem('qvio_autosave',JSON.stringify({ts:Date.now(),msgs:chatHistory.slice(-10)}));
+      renderSidebarChats();
+    }
+  }catch(e){}
+}
+
+function renderSidebarChats(){
+  try{
+    var list=document.getElementById('sbChatList');
+    if(!list)return;
+    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    if(sessions.length===0){
+      list.innerHTML='<div style="padding:9px 12px;font-size:13px;color:var(--text3);">No saved chats yet</div>';
+      return;
+    }
+    list.innerHTML=sessions.slice(0,10).map(function(s,i){
+      var age=Math.floor((Date.now()-s.ts)/60000);
+      var timeStr=age<60?age+'m ago':Math.floor(age/60)+'h ago';
+      return '<div onclick="loadSession('+s.id+')" style="padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'\'"><div style="font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;">💬 '+s.title+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">'+timeStr+'</div></div>';
+    }).join('');
+  }catch(e){}
+}
+
+function loadSession(id){
+  try{
+    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    var session=sessions.find(function(s){return s.id==id;});
+    if(!session)return;
+    newChat();
+    chatHistory=session.msgs;
+    session.msgs.forEach(function(m){
+      addMsg(m.content,m.role==='assistant'?'ai':'user');
+    });
+    closeSidebar();
+    showToast('💬 Chat restored!');
+  }catch(e){}
+}
+
+// Restore last session on load
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    try{
+      var saved=localStorage.getItem('qvio_autosave');
+      if(saved){
+        var data=JSON.parse(saved);
+        var age=(Date.now()-data.ts)/60000;
+        if(age<120&&data.msgs&&data.msgs.length>0){
+          chatHistory=data.msgs;
+          data.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+          showToast('💾 Last session restored!');
+        }
+      }
+      renderSidebarChats();
+    }catch(e){}
+  },1500);
+});
+
+// ══ QVIO WISPR FLOW ══
+var _wispr = {
+  active: false,
+  rec: null,
+  transcript: '',
+  final: '',
+  autoClean: true,
+  autoPunct: true,
+  autoSend: true,
+  whisper: false,
+  panelOpen: false
+};
+
+function toggleWispr(){
+  var panel = document.getElementById('wisprPanel');
+  _wispr.panelOpen = !_wispr.panelOpen;
+  panel.classList.toggle('show', _wispr.panelOpen);
+  if(_wispr.panelOpen && !_wispr.active) startWispr();
+  else if(!_wispr.panelOpen) stopWispr();
+}
+
+function wisprToggle(btn, setting){
+  _wispr[setting] = !_wispr[setting];
+  btn.classList.toggle('on', _wispr[setting]);
+}
+
+function startWispr(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    showToast('Voice not supported in this browser!');
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _wispr.rec = new SR();
+  _wispr.rec.continuous = true;
+  _wispr.rec.interimResults = true;
+  _wispr.rec.lang = 'en-IN';
+
+  _wispr.rec.onstart = function(){
+    _wispr.active = true;
+    document.getElementById('wisprBtn').classList.add('listening');
+    document.getElementById('wisprWave').style.display = 'flex';
+    document.getElementById('wisprStatusText').textContent = 'Listening...';
+    showToast('🎙️ QVIO is listening!');
+  };
+
+  _wispr.rec.onresult = function(e){
+    var interim = '';
+    var final = '';
+    for(var i=e.resultIndex; i<e.results.length; i++){
+      var t = e.results[i][0].transcript;
+      if(e.results[i].isFinal){
+        final += t;
+      } else {
+        interim += t;
+      }
+    }
+    if(final){
+      _wispr.final += final + ' ';
+      processWispr(_wispr.final.trim());
+    }
+    var display = (_wispr.final + interim).trim();
+    document.getElementById('wisprTranscript').textContent = display || 'Listening...';
+  };
+
+  _wispr.rec.onerror = function(e){
+    if(e.error !== 'no-speech'){
+      showToast('Mic error: ' + e.error);
+      stopWispr();
+    }
+  };
+
+  _wispr.rec.onend = function(){
+    if(_wispr.active) _wispr.rec.start(); // keep listening
+  };
+
+  _wispr.rec.start();
+}
+
+function stopWispr(){
+  _wispr.active = false;
+  if(_wispr.rec){_wispr.rec.stop();_wispr.rec=null;}
+  document.getElementById('wisprBtn').classList.remove('listening');
+  document.getElementById('wisprWave').style.display = 'none';
+  document.getElementById('wisprStatusText').textContent = 'Ready to listen';
+}
+
+async function processWispr(text){
+  if(!text) return;
+
+  if(_wispr.autoClean || _wispr.autoPunct){
+    // Use Groq to clean up the transcript
+    try{
+      var prompt = 'Clean up this voice transcript. ';
+      if(_wispr.autoClean) prompt += 'Remove filler words (um, uh, like, you know, basically, literally). ';
+      if(_wispr.autoPunct) prompt += 'Add proper punctuation, capitalization. ';
+      prompt += 'Return ONLY the cleaned text, nothing else:\n\n' + text;
+
+      var res = await fetch('/api/chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({messages:[{role:'user',content:prompt}]})
+      });
+      var data = await res.json();
+      if(data.choices&&data.choices[0]){
+        var cleaned = data.choices[0].message.content.trim();
+        document.getElementById('wisprTranscript').textContent = cleaned;
+        _wispr.final = cleaned + ' ';
+
+        // Auto send if enabled
+        if(_wispr.autoSend && cleaned.length > 5){
+          setTimeout(function(){
+            wisprSendNow();
+          }, 1500);
+        }
+      }
+    }catch(e){}
+  }
+}
+
+function wisprInsert(){
+  var text = document.getElementById('wisprTranscript').textContent;
+  if(!text || text === 'Listening...' || text === 'Tap mic to start speaking...') return;
+  var inp = document.getElementById('inp');
+  if(inp) inp.value = text;
+  stopWispr();
+  document.getElementById('wisprPanel').classList.remove('show');
+  _wispr.panelOpen = false;
+  _wispr.final = '';
+  showToast('✅ Text inserted!');
+}
+
+function wisprSendNow(){
+  var text = document.getElementById('wisprTranscript').textContent;
+  if(!text || text === 'Listening...' || text === 'Tap mic to start speaking...') return;
+  var inp = document.getElementById('inp');
+  if(inp) inp.value = text;
+  stopWispr();
+  document.getElementById('wisprPanel').classList.remove('show');
+  _wispr.panelOpen = false;
+  _wispr.final = '';
+  sendMsg();
+}
+
+function wisprClear(){
+  _wispr.final = '';
+  document.getElementById('wisprTranscript').textContent = 'Tap mic to start speaking...';
+}
+
+// Keyboard shortcut - hold Space to activate Wispr
+var _spaceHeld = false;
+document.addEventListener('keydown', function(e){
+  if(e.code === 'Space' && e.ctrlKey && !_spaceHeld){
+    _spaceHeld = true;
+    if(!_wispr.panelOpen){
+      document.getElementById('wisprPanel').classList.add('show');
+      _wispr.panelOpen = true;
+      startWispr();
+      showToast('🎙️ Hold Ctrl+Space to dictate!');
+    }
+  }
+});
+document.addEventListener('keyup', function(e){
+  if(e.code === 'Space' && e.ctrlKey){
+    _spaceHeld = false;
+  }
+});
+</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
@@ -1781,6 +2326,98 @@ header{
   </div>
 </div>
 <div class="overlay" id="o_pdf" onclick="closeM('pdf')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+
+
+<!-- WISPR FLOW -->
+<div id="wisprPanel">
+  <div class="wispr-status">
+    <span id="wisprStatusText">Ready to listen</span>
+    <div class="wispr-wave" id="wisprWave" style="display:none;">
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+    </div>
+  </div>
+  <div id="wisprTranscript">Tap mic to start speaking...</div>
+  <div class="wispr-settings">
+    <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
+    <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
+    <button class="wispr-toggle on" id="wtAutoSend" onclick="wisprToggle(this,'autoSend')">⚡ Auto Send</button>
+    <button class="wispr-toggle" id="wtWhisper" onclick="wisprToggle(this,'whisper')">🤫 Whisper</button>
+  </div>
+  <div class="wispr-actions">
+    <button class="wispr-action" onclick="wisprClear()">Clear</button>
+    <button class="wispr-action" onclick="wisprInsert()">Insert</button>
+    <button class="wispr-action primary" onclick="wisprSendNow()">Send →</button>
+  </div>
+</div>
+<button id="wisprBtn" onclick="toggleWispr()" title="QVIO Voice (Wispr Flow)">🎙️</button>
+
+
+<!-- PRIVACY POLICY -->
+<div class="overlay" id="o_privacy" onclick="closeM('privacy')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_privacy" style="max-width:600px;max-height:85vh;overflow-y:auto;">
+  <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
+  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
+    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
+    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
+    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
+    • Account information (name, email via Google Sign-In)<br>
+    • Usage statistics (message count, features used)<br>
+    • Device information (browser type, language preference)</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
+    <p>• To provide and improve QVIO AI responses<br>
+    • To personalize your experience<br>
+    • To maintain your preferences and settings<br>
+    • To ensure platform security</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
+    <p>• Conversations are processed via Groq AI and are NOT permanently stored by QVIO<br>
+    • Your preferences are stored locally on your device<br>
+    • We use Firebase for authentication only</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
+    <p>• Groq AI — for processing AI responses<br>
+    • Firebase (Google) — for authentication<br>
+    • Pollinations AI — for image generation</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
+    <p>• You can delete your account at any time<br>
+    • You can request deletion of your data<br>
+    • You can opt out of any feature</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
+    <p>For privacy concerns: <a href="mailto:privacy@qvio.in" style="color:#4F46E5;">privacy@qvio.in</a></p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE -->
+<div class="overlay" id="o_terms" onclick="closeM('terms')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_terms" style="max-width:600px;max-height:85vh;overflow-y:auto;">
+  <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
+  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
+    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
+    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
+    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
+    <p>• QVIO is for lawful purposes only<br>
+    • You must be 13+ years old to use QVIO<br>
+    • Do not use QVIO for harmful, illegal or abusive content<br>
+    • Do not attempt to reverse engineer or copy QVIO</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
+    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
+    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
+    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
+    <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
+    <p>Questions: <a href="mailto:legal@qvio.in" style="color:#4F46E5;">legal@qvio.in</a></p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
+  </div>
+</div>
 
 </body>
 <script>
@@ -1818,7 +2455,30 @@ header{
     return false;
   });
 
-  // DevTools detection removed
+  // Smart DevTools detection
+  var _dOpen=false;
+  var _dCheckInterval=setInterval(function(){
+    var threshold=160;
+    var widthDiff=window.outerWidth-window.innerWidth;
+    var heightDiff=window.outerHeight-window.innerHeight;
+    if(widthDiff>threshold||heightDiff>threshold){
+      if(!_dOpen){
+        _dOpen=true;
+        // Just show warning, don't break the app
+        if(!document.getElementById('_qvDevWarn')){
+          var w=document.createElement('div');
+          w.id='_qvDevWarn';
+          w.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999999;background:#EF4444;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600;';
+          w.innerHTML='⚠️ QVIO Protected — Unauthorized inspection is monitored | © 2025 QVIO AI by VARUN <button onclick="this.parentElement.remove()" style="margin-left:12px;padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;cursor:pointer;">✕</button>';
+          document.body.prepend(w);
+        }
+      }
+    } else {
+      _dOpen=false;
+      var w=document.getElementById('_qvDevWarn');
+      if(w)w.remove();
+    }
+  },1500);
 
   function _showWarn(){
     if(document.getElementById('_qvPM'))return;
@@ -2273,7 +2933,7 @@ function setMode(m,btn,label){
 // ═══════════════════════════════
 // MODALS
 // ═══════════════════════════════
-var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],langlearn:['o_langlearn','m_langlearn'],pdf:['o_pdf','m_pdf']};
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],langlearn:['o_langlearn','m_langlearn'],pdf:['o_pdf','m_pdf'],privacy:['o_privacy','m_privacy'],terms:['o_terms','m_terms']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.add('show');
@@ -2462,16 +3122,16 @@ async function sendMsg(){
   stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
 
   // IMAGE GENERATION
-  if(/^(create image|image|draw|generate|make image|paint|img|generate image):/i.test(text)){
-    var prompt=text.replace(/^[^:]+:/i,'').trim();
+  if(/^(create image|draw|generate image|make image|paint me|draw me|generate me|img:)/i.test(text)||/^(create image|image:|draw:|generate:|paint:|img:)/i.test(text)){
+    var prompt=text.replace(/^(create image|draw me|draw|generate image of|generate image|generate me|generate|make image of|make image|paint me|paint|img)[:\s]*/i,'').trim();
     showTyping();stats.images++;saveStats();
 
     var seed=Date.now();
-    var enhancedPrompt=prompt+', ultra photorealistic, 4K, 8K masterpiece, cinematic lighting, sharp focus, highly detailed, award winning photography';
+    var enhancedPrompt=prompt+', masterpiece, best quality, ultra detailed, photorealistic, 8K UHD, sharp focus, professional photography, cinematic composition, beautiful lighting, trending on artstation';
     var imageUrls=[
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&enhance=true&seed='+seed,
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&seed='+(seed+1),
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&nologo=true&seed='+(seed+2)
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux-realism&enhance=true&seed='+seed,
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux&enhance=true&seed='+(seed+1),
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=turbo&seed='+(seed+2)
     ];
 
     function tryLoadImage(urlIndex){
@@ -2558,6 +3218,7 @@ function tryLoadImage_OLD(urlIndex){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
+    saveChatHistory();
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
   }catch(e){
@@ -4275,6 +4936,98 @@ function getAILangInstruction(){
   </div>
 </div>
 <div class="overlay" id="o_pdf" onclick="closeM('pdf')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+
+
+<!-- WISPR FLOW -->
+<div id="wisprPanel">
+  <div class="wispr-status">
+    <span id="wisprStatusText">Ready to listen</span>
+    <div class="wispr-wave" id="wisprWave" style="display:none;">
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+      <div class="wispr-bar"></div>
+    </div>
+  </div>
+  <div id="wisprTranscript">Tap mic to start speaking...</div>
+  <div class="wispr-settings">
+    <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
+    <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
+    <button class="wispr-toggle on" id="wtAutoSend" onclick="wisprToggle(this,'autoSend')">⚡ Auto Send</button>
+    <button class="wispr-toggle" id="wtWhisper" onclick="wisprToggle(this,'whisper')">🤫 Whisper</button>
+  </div>
+  <div class="wispr-actions">
+    <button class="wispr-action" onclick="wisprClear()">Clear</button>
+    <button class="wispr-action" onclick="wisprInsert()">Insert</button>
+    <button class="wispr-action primary" onclick="wisprSendNow()">Send →</button>
+  </div>
+</div>
+<button id="wisprBtn" onclick="toggleWispr()" title="QVIO Voice (Wispr Flow)">🎙️</button>
+
+
+<!-- PRIVACY POLICY -->
+<div class="overlay" id="o_privacy" onclick="closeM('privacy')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_privacy" style="max-width:600px;max-height:85vh;overflow-y:auto;">
+  <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
+  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
+    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
+    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
+    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
+    • Account information (name, email via Google Sign-In)<br>
+    • Usage statistics (message count, features used)<br>
+    • Device information (browser type, language preference)</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
+    <p>• To provide and improve QVIO AI responses<br>
+    • To personalize your experience<br>
+    • To maintain your preferences and settings<br>
+    • To ensure platform security</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
+    <p>• Conversations are processed via Groq AI and are NOT permanently stored by QVIO<br>
+    • Your preferences are stored locally on your device<br>
+    • We use Firebase for authentication only</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
+    <p>• Groq AI — for processing AI responses<br>
+    • Firebase (Google) — for authentication<br>
+    • Pollinations AI — for image generation</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
+    <p>• You can delete your account at any time<br>
+    • You can request deletion of your data<br>
+    • You can opt out of any feature</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
+    <p>For privacy concerns: <a href="mailto:privacy@qvio.in" style="color:#4F46E5;">privacy@qvio.in</a></p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE -->
+<div class="overlay" id="o_terms" onclick="closeM('terms')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_terms" style="max-width:600px;max-height:85vh;overflow-y:auto;">
+  <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
+  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
+    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
+    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
+    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
+    <p>• QVIO is for lawful purposes only<br>
+    • You must be 13+ years old to use QVIO<br>
+    • Do not use QVIO for harmful, illegal or abusive content<br>
+    • Do not attempt to reverse engineer or copy QVIO</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
+    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
+    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
+    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
+    <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
+    <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
+    <p>Questions: <a href="mailto:legal@qvio.in" style="color:#4F46E5;">legal@qvio.in</a></p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
+  </div>
+</div>
 
 </body>
 </html>
