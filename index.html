@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <!-- Firebase FIRST before anything else -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script>
+<script>we544
 function filterLangs(q){
   q=(q||'').toLowerCase().trim();
   var pills=document.querySelectorAll('#m_lang .lang-pill');
@@ -132,7 +132,87 @@ function activateQvioVoice(){
 
 
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js">
+var _sid=localStorage.getItem('qvio_sid')||'s'+Date.now();
+localStorage.setItem('qvio_sid',_sid);
+function getSess(){try{return JSON.parse(localStorage.getItem('qvio_s2')||'{}');}catch(e){return {};}}
+function saveSess(d){try{localStorage.setItem('qvio_s2',JSON.stringify(d));}catch(e){}}
+function saveNow(){
+  if(!chatHistory||!chatHistory.length)return;
+  var d=getSess();
+  d[_sid]={id:_sid,title:chatHistory[0].content.replace(/<[^>]*>/g,'').substring(0,40),msgs:chatHistory.slice(-50),ts:Date.now()};
+  var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
+  if(keys.length>40){keys.slice(40).forEach(function(k){delete d[k];});}
+  saveSess(d);renderSess();
+}
+function renderSess(){
+  var el=document.getElementById('sbList');if(!el)return;
+  var d=getSess();var q=(document.getElementById('sbSearch')||{}).value||'';
+  var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
+  if(q)keys=keys.filter(function(k){return d[k].title.toLowerCase().includes(q.toLowerCase());});
+  if(!keys.length){el.innerHTML='<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center;">No chats yet</div>';return;}
+  el.innerHTML=keys.map(function(id){
+    var s=d[id],active=id===_sid;
+    var ago=Math.floor((Date.now()-s.ts)/60000);
+    var t=ago<1?'Just now':ago<60?ago+'m ago':ago<1440?Math.floor(ago/60)+'h ago':Math.floor(ago/1440)+'d ago';
+    return '<div onclick="loadSess('+id+')" style="padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2px;background:'+(active?'rgba(79,70,229,.1)':'transparent')+'" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''+(active?'rgba(79,70,229,.1)':'transparent')+''"><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:'+(active?600:400)+';color:'+(active?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div><div style="font-size:11px;color:var(--text3);">'+t+'</div></div><span onclick="delSess('+id+',event)" style="opacity:0;font-size:11px;color:var(--text3);cursor:pointer;padding:2px 4px;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0">✕</span></div>';
+  }).join('');
+}
+function loadSess(id){id=String(id);
+  saveNow();var d=getSess();if(!d[id])return;
+  _sid=id;localStorage.setItem('qvio_sid',id);
+  chatHistory=d[id].msgs||[];
+  var chat=document.getElementById('chat');if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');if(w)w.style.display=chatHistory.length?'none':'';
+  chatHistory.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+  closeSidebar();showToast('💬 Chat loaded!');renderSess();
+}
+function delSess(id,e){
+  if(e)e.stopPropagation();
+  var d=getSess();delete d[id];saveSess(d);
+  if(id===_sid)newSess();else renderSess();
+}
+function newSess(){
+  saveNow();_sid='s'+Date.now();localStorage.setItem('qvio_sid',_sid);
+  chatHistory=[];
+  var chat=document.getElementById('chat');if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');if(w)w.style.display='';
+  var inp=document.getElementById('inp');if(inp){inp.value='';inp.style.height='auto';}
+  renderSess();showToast('✨ New chat!');closeSidebar();
+}
+function newChat(){newSess();}
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  var open=sb.style.transform==='translateX(0px)'||sb.style.transform==='translateX(0)';
+  sb.style.transform=open?'translateX(-260px)':'translateX(0)';
+  if(ov)ov.style.display=open?'none':'block';
+}
+function closeSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  if(sb)sb.style.transform='translateX(-260px)';
+  if(ov)ov.style.display='none';
+}
+function updateSidebarUser(user){
+  var av=document.getElementById('sbAv');
+  var nm=document.getElementById('sbNm');
+  if(av&&user){av.textContent=(user.displayName||user.email||'U')[0].toUpperCase();}
+  if(nm&&user){nm.textContent=user.displayName||user.email||'Guest';}
+}
+// Restore session on load
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    var d=getSess();var cur=d[_sid];
+    if(cur&&cur.msgs&&cur.msgs.length){
+      chatHistory=cur.msgs;
+      cur.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+      var w=document.getElementById('welcome');if(w)w.style.display='none';
+    }
+    renderSess();
+  },1000);
+});
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -933,515 +1013,40 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 
 
-/* ══ QVIO UI ══ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-*{font-family:'Inter',sans-serif!important;}
-code,pre{font-family:'JetBrains Mono',monospace!important;}
-
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px;max-width:600px;margin:0 auto;width:100%;}
 .w-icon{width:64px;height:64px;border-radius:18px;background:#4F46E5;color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px;max-width:600px;margin:0 auto;width:100%;}
 .welcome h1{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-1.5px;margin:0 0 12px;color:var(--text);}
 .welcome h1 em{font-style:normal;background:linear-gradient(135deg,#4F46E5,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.wsub{font-size:15px;color:var(--text3);margin:0;transition:opacity .4s;}
-
-.msg.user{flex-direction:row-reverse;}
-.msg.user .bubble{background:#4F46E5;color:#fff;border-radius:18px 18px 4px 18px;max-width:72%;width:fit-content;padding:12px 16px;font-size:14px;line-height:1.6;word-break:break-word;}
-.msg.ai .bubble{background:var(--surface);border:1px solid var(--border);border-left:2px solid #4F46E5;border-radius:4px 18px 18px 18px;padding:16px 18px;font-size:14.5px;line-height:1.8;word-break:break-word;}
+.wsub{font-size:15px;color:var(--text3);margin:0;}
 .msg{animation:msgIn .2s ease both;}
 @keyframes msgIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-
-.inp-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:10px 12px;transition:border-color .15s,box-shadow .15s;}
-.inp-wrap:focus-within{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.08);}
-.sendbtn{width:36px;height:36px;background:#4F46E5;color:#fff;border-radius:10px;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;flex-shrink:0;}
-.sendbtn:hover{background:#4338CA;transform:scale(1.04);}
-.sendbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
-
-.qrs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 16px 20px;}
-.qr{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;}
-.qr:hover{border-color:#4F46E5;color:#4F46E5;background:rgba(79,70,229,.04);}
-
-#langSelectOverlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;}
-#langSelectOverlay.show{display:flex;}
-#langSelectModal{background:var(--bg);border-radius:20px;width:92%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.2);}
-
-#sidebarOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499;display:none;}
-#sidebarOverlay.show{display:block;}
-#sidebar.open{transform:translateX(0)!important;}
-
-.hico{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;}
-.hico:hover{background:var(--surface);color:var(--text);}
-.pro-hbtn{padding:6px 12px;font-size:12px;font-weight:700;border-radius:8px;border:none;background:#F5A623;color:#fff;cursor:pointer;transition:background .15s;}
-.pro-hbtn:hover{background:#E08A00;}
-.lmark{width:28px;height:28px;border-radius:8px;background:#4F46E5;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
-.lname{font-size:16px;font-weight:700;letter-spacing:-.5px;}
-
+.stream-cursor{color:#4F46E5;animation:blink .7s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 .tydot{width:7px;height:7px;border-radius:50%;background:#4F46E5;animation:tyBounce 1.2s infinite;display:inline-block;margin:0 2px;}
 .tydot:nth-child(2){animation-delay:.2s;}.tydot:nth-child(3){animation-delay:.4s;}
 @keyframes tyBounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
 
-.stream-cursor{color:#4F46E5;animation:blink .7s infinite;font-weight:500;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
-
-.code-block{background:#0D1117;border-radius:12px;overflow:hidden;margin:10px 0;border:1px solid #21262D;}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#161B22;border-bottom:1px solid #21262D;}
-.code-lang{font-size:11px;font-weight:600;color:#8B949E;text-transform:uppercase;letter-spacing:.5px;}
-.code-run{padding:4px 10px;border-radius:5px;border:none;background:#238636;color:#fff;font-size:11px;font-weight:600;cursor:pointer;}
-.code-copy{padding:4px 10px;border-radius:5px;border:1px solid #30363D;background:transparent;color:#8B949E;font-size:11px;cursor:pointer;}
-.code-block code{display:block;padding:16px;font-size:13px;line-height:1.6;color:#E6EDF3;overflow-x:auto;white-space:pre;}
-.code-output{padding:10px 16px;background:#0A0E14;border-top:1px solid #21262D;font-family:monospace;font-size:12px;color:#7EE787;white-space:pre-wrap;}
-
-::-webkit-scrollbar{width:4px;}.:-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-
-.ll-lang{padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.ll-lang:hover{border-color:#4F46E5;color:#4F46E5;}
-#pdfBtn{display:none;}
-.lsm-pill.active{background:#4F46E5;color:#fff;border-color:#4F46E5;}
-.lsm-pill:hover{border-color:#4F46E5;color:#4F46E5;}
-
-@keyframes xpPop{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
-@keyframes levelUpPop{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
-@keyframes confettiFall{from{transform:translateY(0) rotate(0deg);opacity:1;}to{transform:translateY(100vh) rotate(720deg);opacity:0;}}
-@keyframes ftWelcome{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
-.tv-mode .bubble{font-size:18px!important;padding:20px!important;}
-.math-block{background:var(--surface);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid #4F46E5;overflow-x:auto;}
-
-/* ── HEADER FIX ── */
-header{
-  display:flex!important;
-  align-items:center!important;
-  gap:10px!important;
-  padding:0 16px!important;
-  height:52px!important;
-  background:var(--bg)!important;
-  border-bottom:1px solid var(--border)!important;
-  position:sticky!important;
-  top:0!important;
-  z-index:400!important;
-  flex-shrink:0!important;
-}
-
-/* ══ QVIO CINEMATIC ENTRY ══ */
-#qvio-entry{
-  position:fixed;inset:0;
-  background:#000;
-  z-index:999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:0;
-}
-#qvio-entry.fade-out{
-  animation:entryFadeOut .8s ease forwards;
-}
-@keyframes entryFadeOut{
-  to{opacity:0;pointer-events:none;}
-}
-
-/* Scanlines effect */
-#qvio-entry::before{
-  content:'';
-  position:absolute;inset:0;
-  background:repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(79,70,229,0.03) 2px,
-    rgba(79,70,229,0.03) 4px
-  );
-  pointer-events:none;
-  z-index:1;
-}
-
-.entry-logo{
-  width:90px;height:90px;
-  border-radius:24px;
-  background:linear-gradient(135deg,#4F46E5,#7C3AED);
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;font-weight:900;color:#fff;
-  position:relative;z-index:2;
-  opacity:0;
-  animation:logoAppear .6s cubic-bezier(.16,1,.3,1) .3s forwards;
-  box-shadow:0 0 60px rgba(79,70,229,.8),0 0 120px rgba(79,70,229,.4);
-}
-@keyframes logoAppear{
-  from{opacity:0;transform:scale(.5);}
-  to{opacity:1;transform:scale(1);}
-}
-
-.entry-title{
-  font-family:'Inter',sans-serif;
-  font-size:52px;
-  font-weight:800;
-  letter-spacing:-2px;
-  color:#fff;
-  margin-top:20px;
-  position:relative;z-index:2;
-  opacity:0;
-  animation:titleAppear .6s ease .9s forwards;
-  overflow:hidden;
-  white-space:nowrap;
-}
-.entry-title span{
-  background:linear-gradient(135deg,#4F46E5,#818CF8);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-@keyframes titleAppear{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:none;}
-}
-
-.entry-sub{
-  font-family:'Inter',sans-serif;
-  font-size:14px;
-  font-weight:500;
-  color:rgba(255,255,255,.4);
-  letter-spacing:4px;
-  text-transform:uppercase;
-  margin-top:12px;
-  position:relative;z-index:2;
-  opacity:0;
-  animation:subAppear .6s ease 1.4s forwards;
-}
-@keyframes subAppear{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-.entry-line{
-  width:0;height:1px;
-  background:linear-gradient(90deg,transparent,#4F46E5,transparent);
-  margin-top:32px;
-  position:relative;z-index:2;
-  animation:lineExpand .8s ease 1.8s forwards;
-}
-@keyframes lineExpand{
-  to{width:200px;}
-}
-
-.entry-loading{
-  display:flex;gap:6px;
-  margin-top:24px;
-  position:relative;z-index:2;
-  opacity:0;
-  animation:subAppear .4s ease 2.2s forwards;
-}
-.entry-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:#4F46E5;
-  animation:entryDot 1s infinite;
-}
-.entry-dot:nth-child(2){animation-delay:.2s;}
-.entry-dot:nth-child(3){animation-delay:.4s;}
-@keyframes entryDot{
-  0%,60%,100%{transform:scale(1);opacity:.4;}
-  30%{transform:scale(1.5);opacity:1;}
-}
-
-/* Particle burst on entry */
-.entry-particle{
-  position:absolute;
-  border-radius:50%;
-  pointer-events:none;
-  animation:particleBurst 1.5s ease forwards;
-}
-@keyframes particleBurst{
-  from{opacity:1;transform:translate(0,0) scale(1);}
-  to{opacity:0;transform:var(--tx,translate(100px,-100px)) scale(0);}
-}
-
-/* ══ QVIO WISPR FLOW ══ */
-#wisprBtn{
-  position:fixed;
-  bottom:100px;right:20px;
-  width:52px;height:52px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#4F46E5,#7C3AED);
-  border:none;
-  color:#fff;font-size:22px;
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(79,70,229,.4);
-  z-index:888;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .3s;
-}
-#wisprBtn:hover{transform:scale(1.08);}
-#wisprBtn.listening{
-  background:linear-gradient(135deg,#EF4444,#DC2626);
-  animation:wisprPulse 1s infinite;
-  box-shadow:0 4px 30px rgba(239,68,68,.6);
-}
-@keyframes wisprPulse{
-  0%,100%{box-shadow:0 4px 30px rgba(239,68,68,.4);}
-  50%{box-shadow:0 4px 50px rgba(239,68,68,.8),0 0 0 10px rgba(239,68,68,.1);}
-}
-#wisprPanel{
-  position:fixed;
-  bottom:165px;right:20px;
-  width:300px;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,.2);
-  z-index:888;
-  display:none;
-  flex-direction:column;
-  gap:10px;
-}
-#wisprPanel.show{display:flex;}
-.wispr-status{
-  font-size:13px;font-weight:600;
-  color:#4F46E5;
-  display:flex;align-items:center;gap:8px;
-}
-.wispr-wave{
-  display:flex;align-items:center;gap:3px;
-  height:20px;
-}
-.wispr-bar{
-  width:3px;border-radius:3px;
-  background:#4F46E5;
-  animation:wisprWave 1s infinite;
-}
-.wispr-bar:nth-child(1){animation-delay:0s;height:6px;}
-.wispr-bar:nth-child(2){animation-delay:.1s;height:12px;}
-.wispr-bar:nth-child(3){animation-delay:.2s;height:18px;}
-.wispr-bar:nth-child(4){animation-delay:.3s;height:12px;}
-.wispr-bar:nth-child(5){animation-delay:.4s;height:6px;}
-@keyframes wisprWave{
-  0%,100%{transform:scaleY(1);}
-  50%{transform:scaleY(1.8);}
-}
-#wisprTranscript{
-  font-size:13px;color:var(--text2);
-  min-height:40px;max-height:100px;
-  overflow-y:auto;
-  line-height:1.6;
-  padding:8px;
-  background:var(--surface);
-  border-radius:8px;
-  border:1px solid var(--border);
-}
-.wispr-actions{display:flex;gap:8px;}
-.wispr-action{
-  flex:1;padding:8px;border-radius:8px;
-  border:1px solid var(--border);
-  background:transparent;color:var(--text2);
-  font-size:12px;font-weight:600;cursor:pointer;
-  transition:all .15s;
-}
-.wispr-action:hover{background:var(--surface);color:var(--text);}
-.wispr-action.primary{
-  background:#4F46E5;color:#fff;border-color:#4F46E5;
-}
-.wispr-action.primary:hover{background:#4338CA;}
-.wispr-settings{
-  display:flex;flex-wrap:wrap;gap:6px;
-}
-.wispr-toggle{
-  padding:4px 10px;border-radius:20px;
-  border:1px solid var(--border);
-  background:transparent;color:var(--text3);
-  font-size:11px;font-weight:500;cursor:pointer;
-  transition:all .15s;
-}
-.wispr-toggle.on{
-  background:rgba(79,70,229,.1);
-  border-color:#4F46E5;color:#4F46E5;
-}
-
-/* ══ PREMIUM LOGIN ══ */
-#loginScreen{
-  background:linear-gradient(135deg,#080C14 0%,#0D1220 50%,#080C14 100%) !important;
-}
-.lwrap{
-  text-align:center;
-  padding:40px 32px;
-  max-width:400px;
-  width:90%;
-  animation:ftWelcome .8s ease both;
-}
-.l-crown{display:none !important;}
-.l-mark{
-  width:76px !important;height:76px !important;
-  border-radius:22px !important;
-  background:linear-gradient(135deg,#4F46E5,#7C3AED) !important;
-  font-size:24px !important;font-weight:900 !important;
-  color:#fff !important;
-  margin:0 auto 24px !important;
-  display:flex !important;align-items:center !important;justify-content:center !important;
-  box-shadow:0 0 40px rgba(79,70,229,.6) !important;
-  animation:quantumPulse 3s ease-in-out infinite !important;
-}
-@keyframes quantumPulse{
-  0%,100%{box-shadow:0 0 40px rgba(79,70,229,.4);}
-  50%{box-shadow:0 0 60px rgba(79,70,229,.8),0 0 100px rgba(79,70,229,.3);}
-}
-.l-h1{
-  font-size:38px !important;
-  font-weight:800 !important;
-  letter-spacing:-2px !important;
-  color:#fff !important;
-  margin:0 0 8px !important;
-}
-.l-h1 em{
-  font-style:normal !important;
-  background:linear-gradient(135deg,#818CF8,#A5B4FC) !important;
-  -webkit-background-clip:text !important;
-  -webkit-text-fill-color:transparent !important;
-}
-.l-p{
-  font-size:14px !important;
-  color:rgba(255,255,255,.45) !important;
-  margin:0 0 32px !important;
-  line-height:1.6 !important;
-}
-.gbtn{
-  background:rgba(255,255,255,.07) !important;
-  border:1px solid rgba(255,255,255,.12) !important;
-  color:#fff !important;
-  border-radius:14px !important;
-  padding:14px 20px !important;
-  font-size:14px !important;font-weight:600 !important;
-  width:100% !important;
-  transition:all .2s !important;
-  margin-bottom:12px !important;
-}
-.gbtn:hover{background:rgba(255,255,255,.12) !important;}
-.l-or{color:rgba(255,255,255,.25) !important;font-size:12px !important;margin:12px 0 !important;}
-.linp{
-  background:rgba(255,255,255,.06) !important;
-  border:1px solid rgba(255,255,255,.1) !important;
-  color:#fff !important;
-  border-radius:12px !important;
-  padding:12px 16px !important;
-  font-size:14px !important;
-  width:100% !important;
-  box-sizing:border-box !important;
-  margin-bottom:8px !important;
-  outline:none !important;
-}
-.linp:focus{border-color:rgba(79,70,229,.6) !important;}
-.linp::placeholder{color:rgba(255,255,255,.25) !important;}
-.lbtn{
-  padding:12px !important;
-  border-radius:12px !important;
-  font-size:14px !important;font-weight:600 !important;
-  cursor:pointer !important;
-  transition:all .15s !important;
-}
-.l-signin{background:#4F46E5 !important;border:none !important;color:#fff !important;}
-.l-signin:hover{background:#4338CA !important;}
-.l-signup{background:transparent !important;border:1px solid rgba(79,70,229,.4) !important;color:#818CF8 !important;}
-.l-signup:hover{background:rgba(79,70,229,.1) !important;}
-.l-guest{
-  background:transparent !important;border:none !important;
-  color:rgba(255,255,255,.25) !important;
-  font-size:13px !important;cursor:pointer !important;
-  margin-top:12px !important;
-  transition:color .15s !important;
-}
-.l-guest:hover{color:rgba(255,255,255,.5) !important;}
-.l-footer{font-size:11px !important;color:rgba(255,255,255,.2) !important;margin-top:20px !important;}
-.l-badge{
-  display:inline-block !important;
-  padding:4px 10px !important;
-  border-radius:20px !important;
-  background:rgba(79,70,229,.15) !important;
-  border:1px solid rgba(79,70,229,.3) !important;
-  color:#818CF8 !important;
-  font-size:11px !important;font-weight:600 !important;
-  margin:0 4px 8px !important;
-}
-
-/* ══ SIDEBAR LIKE CHATGPT/CLAUDE ══ */
-@media (min-width: 768px){
-  #sidebar{
-    transform: translateX(0) !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important; bottom: 0 !important;
-    width: 260px !important;
-    z-index: 100 !important;
-  }
-  #sidebarOverlay{display:none !important;}
-  #main, .main, #appWrap, body > div:not(#sidebar):not(#sidebarOverlay){
-    margin-left: 260px !important;
-  }
-  #sbToggle{display:none !important;}
-}
-@media (max-width: 767px){
-  #sidebar{transform:translateX(-260px);}
-  #sidebar.open{transform:translateX(0) !important;}
-  #sbToggle{display:flex !important;}
-}
-/* Sidebar styling */
-#sidebar{
-  background: var(--surface) !important;
-  border-right: 1px solid var(--border) !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-.sb-search{
-  margin: 8px 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 13px;
-  width: calc(100% - 20px);
-  box-sizing: border-box;
-  outline: none;
-}
-.sb-search::placeholder{color:var(--text3);}
-
-/* ══ LAYOUT FIX ══ */
-#qvio-app{
-  margin-left:260px;
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-  overflow:hidden;
-  transition:margin .3s;
-}
-@media(max-width:767px){
-  #qvio-app{margin-left:0 !important;}
-}
-/* Fix namaste screen */
-#namasteScreen{
-  position:fixed !important;
-  inset:0 !important;
-  z-index:8000 !important;
-  margin-left:0 !important;
-}
-/* Fix login screen */
-#loginScreen{
-  position:fixed !important;
-  inset:0 !important;
-  z-index:9000 !important;
-  margin-left:0 !important;
-}
-/* Fix particles */
-#particles{
-  position:fixed !important;
-  inset:0 !important;
-  z-index:0 !important;
-  pointer-events:none !important;
-  margin-left:0 !important;
-}
-/* Chat takes full height */
-.chat{
-  flex:1 !important;
-  overflow-y:auto !important;
-}
-
-/* Hide app until logged in */
-#qvio-app{opacity:0;pointer-events:none;transition:opacity .4s;}
-#qvio-app.ready{opacity:1;pointer-events:all;}
+/* ══ FINAL HEADER OVERRIDE ══ */
+header{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;padding:0 14px!important;height:52px!important;background:var(--bg)!important;border-bottom:1px solid var(--border)!important;position:sticky!important;top:0!important;z-index:400!important;flex-wrap:nowrap!important;overflow:hidden!important;}
+header>*{flex-shrink:0!important;}
+header .h-mode-wrap,header>div:nth-child(3){flex:1!important;flex-shrink:1!important;}
+.streak-pill{display:none!important;}
+.earth-btn,.hico{width:32px!important;height:32px!important;border-radius:8px!important;border:1px solid var(--border)!important;background:transparent!important;cursor:pointer!important;font-size:15px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+/* Input area */
+.inp-wrap{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:16px!important;padding:10px 12px!important;}
+.inp-wrap:focus-within{border-color:#4F46E5!important;box-shadow:0 0 0 3px rgba(79,70,229,.08)!important;}
+.sendbtn{width:36px!important;height:36px!important;background:#4F46E5!important;color:#fff!important;border-radius:10px!important;border:none!important;cursor:pointer!important;font-size:16px!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;}
+.sendbtn:hover{background:#4338CA!important;transform:scale(1.04)!important;}
+/* Chips */
+.qrs{display:flex!important;flex-wrap:wrap!important;gap:8px!important;justify-content:center!important;padding:10px 16px 20px!important;}
+.qr{padding:7px 14px!important;border-radius:20px!important;border:1px solid var(--border)!important;background:var(--surface)!important;font-size:12.5px!important;font-weight:500!important;color:var(--text2)!important;cursor:pointer!important;}
+.qr:hover{border-color:#4F46E5!important;color:#4F46E5!important;}
+/* Chat */
+.msg.ai .bubble{background:var(--surface)!important;border:1px solid var(--border)!important;border-left:2px solid #4F46E5!important;border-radius:4px 18px 18px 18px!important;padding:16px 18px!important;font-size:14.5px!important;line-height:1.8!important;}
+.msg.user .bubble{background:#4F46E5!important;color:#fff!important;border-radius:18px 18px 4px 18px!important;padding:12px 16px!important;font-size:14px!important;}
+/* Scrollbar */
+::-webkit-scrollbar{width:4px!important;}
+::-webkit-scrollbar-thumb{background:var(--border)!important;border-radius:4px!important;}
 </style>
 </head>
 <body>
@@ -1478,7 +1083,7 @@ header{
     <div class="l-crown">👑</div>
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
-    <p class="l-p">India's most premium AI for the world.<br>150+ languages · Built for everyone, everywhere 🌍🇮🇳</p>
+    <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
     <button class="gbtn" onclick="signInGoogle()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
@@ -1817,108 +1422,45 @@ header{
 </div>
 
 <!-- HEADER -->
-<script>
-
-// ══ CINEMATIC ENTRY ══
-(function(){
-  // Only show entry if not visited in last 10 mins
-  if(localStorage.getItem('qvio_entry_shown')) return;
-  localStorage.setItem('qvio_entry_shown','1');
-
-  var entry = document.createElement('div');
-  entry.id = 'qvio-entry';
-  entry.innerHTML = `
-    <div class="entry-logo">QV</div>
-    <div class="entry-title">QV<span>IO</span></div>
-    <div class="entry-sub">India's Most Premium AI</div>
-    <div class="entry-line"></div>
-    <div class="entry-loading">
-      <div class="entry-dot"></div>
-      <div class="entry-dot"></div>
-      <div class="entry-dot"></div>
-    </div>
-  `;
-  document.body.appendChild(entry);
-
-  // Create particle burst around logo
-  setTimeout(function(){
-    for(var i=0;i<20;i++){
-      var p=document.createElement('div');
-      p.className='entry-particle';
-      var angle=Math.random()*360;
-      var dist=80+Math.random()*120;
-      var tx='translate('+Math.cos(angle*Math.PI/180)*dist+'px,'+Math.sin(angle*Math.PI/180)*dist+'px)';
-      p.style.cssText='width:'+(3+Math.random()*4)+'px;height:'+(3+Math.random()*4)+'px;background:'+(Math.random()>0.5?'#4F46E5':'#818CF8')+';left:50%;top:50%;margin:-3px;--tx:'+tx+';animation-delay:'+(Math.random()*0.5)+'s;';
-      entry.appendChild(p);
-    }
-    if(typeof playSound==='function') playSound('levelup');
-  }, 800);
-
-  // Dismiss after 3s
-  setTimeout(function(){
-    entry.classList.add('fade-out');
-    setTimeout(function(){
-      entry.remove();
-    }, 800);
-  }, 3000);
-
-  // Click to skip
-  entry.addEventListener('click', function(){
-    entry.classList.add('fade-out');
-    setTimeout(function(){entry.remove();}, 800);
-  });
-})();
-
-</script>
-<div id="sidebarOverlay" onclick="closeSidebar()"></div>
-<div id="sidebar" style="display:none;" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499;"></div>
+<div id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:500;transform:translateX(-260px);transition:transform .3s;">
   <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-    <div style="width:30px;height:30px;border-radius:8px;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+    <div style="width:28px;height:28px;border-radius:8px;background:#4F46E5;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;">QV</div>
     <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
-    <button onclick="closeSidebar()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;">✕</button>
+    <button onclick="closeSidebar()" style="border:none;background:transparent;cursor:pointer;color:var(--text2);font-size:16px;">✕</button>
   </div>
-  <button onclick="createNewSession?createNewSession():newChat();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
-  <input class="sb-search" placeholder="🔍 Search chats..." oninput="filterSessions(this.value)" id="sbSearch">
-  <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
-  <div id="sbChatList" style="flex:1;overflow-y:auto;padding:4px 8px;">
-    <div style="padding:9px 12px;border-radius:8px;font-size:13px;color:#4F46E5;background:rgba(79,70,229,.08);font-weight:500;">💬 Current Chat</div>
-  </div>
+  <button onclick="newSess()" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;text-align:left;">✏️ New Chat</button>
+  <input id="sbSearch" placeholder="🔍 Search chats..." oninput="renderSess()" style="margin:0 10px 8px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none;">
+  <div style="padding:4px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
+  <div id="sbList" style="flex:1;overflow-y:auto;padding:4px 8px;"></div>
   <div style="padding:12px;border-top:1px solid var(--border);">
     <div onclick="openM('prof')" style="padding:9px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">
-      <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
-      <div>
-        <div id="sbUname" style="font-size:13px;font-weight:500;">Guest</div>
-        <div style="font-size:11px;color:var(--text3);">Free Plan</div>
-      </div>
+      <div id="sbAv" style="width:28px;height:28px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">QV</div>
+      <div><div id="sbNm" style="font-size:13px;font-weight:500;">Guest</div><div style="font-size:11px;color:var(--text3);">Free Plan</div></div>
     </div>
   </div>
 </div>
-<div id="qvio-app">
 <header>
-  <button id="sbToggle" onclick="toggleSidebar()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">☰</button>
-  <a class="logo" onclick="scrollToTop()">
+  <button id="sbBtn" onclick="toggleSidebar()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">☰</button>
+  <a class="logo" onclick="scrollToTop()" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;">
     <div class="lmark">QV</div>
     <span class="lname">QV<em>IO</em></span>
   </a>
-  <div class="h-mode-wrap" style="flex:1;">
-    <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;">
-      <span class="sdot" style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;"></span>
+  <div style="flex:1;display:flex;align-items:center;">
+    <div id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;flex-shrink:0;"></span>
       <span id="modeLabel">Auto Detect</span>
       <span style="color:var(--text3);font-size:10px;">▾</span>
     </div>
   </div>
-  <div class="h-actions" style="display:flex;align-items:center;gap:6px;">
-    <button class="hico earth-btn" onclick="openLangSelect()" title="Language">🌍</button>
-    <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
-    <button class="hico" id="soundBtn" onclick="toggleSound()" title="Sound">🔔</button>
-    <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
-    <div class="uchip" onclick="openM('prof')" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
-      <div class="uav" id="uAv" style="width:22px;height:22px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">?</div>
-      <span class="unm" id="uNm" style="font-size:13px;font-weight:500;">Guest</span>
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+    <button onclick="openLangSelect()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;">🌍</button>
+    <button id="themeBtn" onclick="cycleTh()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;">🌙</button>
+    <button onclick="openM('pro')" style="padding:6px 12px;border-radius:8px;border:none;background:#F5A623;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">⭐ Pro</button>
+    <div onclick="openM('prof')" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
+      <div id="uAv" style="width:22px;height:22px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">?</div>
+      <span id="uNm" style="font-size:13px;font-weight:500;">Guest</span>
     </div>
-  </div>
-  <div id="xpBarWrap" style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--border);">
-    <div id="xpBar" style="height:100%;background:#4F46E5;width:0%;transition:width .4s ease;"></div>
   </div>
 </header>
 
@@ -1952,17 +1494,13 @@ header{
 <div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
 
 <div class="chat" id="chat">
-  <div class="welcome" id="welcome">
-  <div class="w-icon">QV</div>
-  <h1>Hello, I am <em>QVIO</em></h1>
-  <p class="wsub" id="wsub">What can I help you with today?</p>
-</div>
+  <div class="welcome" id="welcome"><div class="w-icon">QV</div><h1>Hello, I am <em>QVIO</em></h1><p class="wsub">What can I help you with today?</p></div>
 </div>
 
 <div class="input-area">
   <div class="char-cnt" id="charCnt"></div>
   <div class="ibox">
-    <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+    <textarea id="inp" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
       <button id="heyQvioBtn" style="display:none!important;" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
       <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
@@ -2230,110 +1768,341 @@ header{
   </div>
 </div>
 
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});
-// ══ SIDEBAR ══
-function toggleSidebar(){
-  var sb=document.getElementById('sidebar');
-  sb.classList.toggle('open');
-  document.getElementById('sidebarOverlay').classList.toggle('show');
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
-}
-function updateSidebarUser(user){
-  var av=document.getElementById('sbAvatar');
-  var un=document.getElementById('sbUname');
-  if(av&&user){
-    if(user.photoURL)av.innerHTML='<img src="'+user.photoURL+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">';
-    else av.textContent=(user.displayName||user.email||'U')[0].toUpperCase();
-  }
-  if(un&&user)un.textContent=user.displayName||user.email||'Guest';
-}
+<div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_langlearn" style="max-width:540px;">
+  <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
+  <div style="padding:20px;">
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <button class="ll-lang" onclick="startLangLearn('Spanish')">🇪🇸 Spanish</button>
+      <button class="ll-lang" onclick="startLangLearn('French')">🇫🇷 French</button>
+      <button class="ll-lang" onclick="startLangLearn('Japanese')">🇯🇵 Japanese</button>
+      <button class="ll-lang" onclick="startLangLearn('Hindi')">🇮🇳 Hindi</button>
+      <button class="ll-lang" onclick="startLangLearn('German')">🇩🇪 German</button>
+      <button class="ll-lang" onclick="startLangLearn('Korean')">🇰🇷 Korean</button>
+      <button class="ll-lang" onclick="startLangLearn('Arabic')">🇸🇦 Arabic</button>
+      <button class="ll-lang" onclick="startLangLearn('Tamil')">🇮🇳 Tamil</button>
+      <button class="ll-lang" onclick="startLangLearn('Mandarin')">🇨🇳 Mandarin</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="o_sup" onclick="closeM('sup')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
+<div class="modal" id="m_sup" style="max-width:440px;">
+  <div class="mhd"><h3>💬 Support</h3><button class="mx" onclick="closeM('sup')">✕</button></div>
+  <div style="padding:20px;text-align:center;">
+    <div style="font-size:40px;margin-bottom:12px;">🙏</div>
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Need help? Reach VARUN directly</p>
+    <a href="/cdn-cgi/l/email-protection#fc8f898c8c938e88bc8d8a9593d29592" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 <span class="__cf_email__" data-cfemail="c5b6b0b5b5aab7b185b4b3acaaebacab">[email&#160;protected]</span></a>
+    <button class="mclose" onclick="closeM('sup')">Close</button>
+  </div>
+</div>
+<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window.speechSynthesis&&window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);});
+</script>
+<script>
+var _currentSessionId = localStorage.getItem('qvio_current_session') || ('session_'+Date.now());
+var _wispr = {active:false,rec:null,transcript:"",final:"",autoClean:true,autoPunct:true,autoSend:true,whisper:false,panelOpen:false};
+var _voiceMode = false;
+var _soundEnabled = localStorage.getItem('qvio_sound')!=='0';
+var BADGES_DEF = [
+  {id:'first_msg',name:'First Chat',desc:'Sent your first message',icon:'💬',xp:50},
+  {id:'msg_10',name:'Getting Started',desc:'10 messages sent',icon:'🚀',xp:100},
+  {id:'msg_50',name:'Power User',desc:'50 messages sent',icon:'⚡',xp:200},
+  {id:'msg_100',name:'Centurion',desc:'100 messages sent',icon:'💯',xp:500},
+  {id:'first_img',name:'AI Artist',desc:'Generated first image',icon:'🎨',xp:100},
+  {id:'streak_3',name:'On Fire',desc:'3 day streak',icon:'🔥',xp:200},
+  {id:'night_owl',name:'Night Owl',desc:'Chatted after midnight',icon:'🦉',xp:50},
+  {id:'early_bird',name:'Early Bird',desc:'Chatted before 6am',icon:'🌅',xp:50}
+];
+var LEVELS = [
+  {name:'Newcomer',min:0,icon:'🌱'},
+  {name:'Explorer',min:100,icon:'🗺️'},
+  {name:'Learner',min:300,icon:'📚'},
+  {name:'Thinker',min:600,icon:'🧠'},
+  {name:'Scholar',min:1000,icon:'🎓'},
+  {name:'Expert',min:2000,icon:'⚡'},
+  {name:'Master',min:3500,icon:'🏆'},
+  {name:'Genius',min:5000,icon:'💡'},
+  {name:'Legend',min:8000,icon:'👑'},
+  {name:'QVIO God',min:15000,icon:'🌟'}
+];
+var _badges = JSON.parse(localStorage.getItem('qvio_badges')||'[]');
+var _level = parseInt(localStorage.getItem('qvio_level')||'1');
+var _xp = parseInt(localStorage.getItem('qvio_xp')||'0');
+async function handleStream(res){
+  // Remove typing indicator and create streaming bubble
+  hideTyping();
+  var chat=document.getElementById('chat');
+  var div=document.createElement('div');div.className='msg ai';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var wrap=document.createElement('div');wrap.className='mwrap';
+  var bub=document.createElement('div');bub.className='bubble streaming-bubble';
+  var cursor=document.createElement('span');cursor.className='stream-cursor';cursor.textContent='▋';
+  bub.appendChild(cursor);
+  wrap.appendChild(bub);
+  div.appendChild(av);div.appendChild(wrap);
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 
-// ══ CHAT HISTORY SAVE/RESTORE ══
-function saveChatHistory(){
-  try{
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
-    if(chatHistory.length>0){
-      var session={
-        id:Date.now(),
-        ts:Date.now(),
-        title:chatHistory[0]?chatHistory[0].content.substring(0,40):'New Chat',
-        msgs:chatHistory.slice(-20)
-      };
-      sessions.unshift(session);
-      sessions=sessions.slice(0,20); // keep last 20 sessions
-      localStorage.setItem('qvio_sessions',JSON.stringify(sessions));
-      localStorage.setItem('qvio_autosave',JSON.stringify({ts:Date.now(),msgs:chatHistory.slice(-10)}));
-      renderSidebarChats();
-    }
-  }catch(e){}
-}
+  var reader=res.body.getReader();
+  var decoder=new TextDecoder();
+  var fullText='';
+  var buffer='';
 
-function renderSidebarChats(){
-  try{
-    var list=document.getElementById('sbChatList');
-    if(!list)return;
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
-    if(sessions.length===0){
-      list.innerHTML='<div style="padding:9px 12px;font-size:13px;color:var(--text3);">No saved chats yet</div>';
-      return;
-    }
-    list.innerHTML=sessions.slice(0,10).map(function(s,i){
-      var age=Math.floor((Date.now()-s.ts)/60000);
-      var timeStr=age<60?age+'m ago':Math.floor(age/60)+'h ago';
-      return '<div onclick="loadSession('+s.id+')" style="padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onmouseover="this.style.background=\'var(--bg)\'" onmouseout="this.style.background=\'\'"><div style="font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;">💬 '+s.title+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">'+timeStr+'</div></div>';
-    }).join('');
-  }catch(e){}
-}
+  while(true){
+    var result=await reader.read();
+    if(result.done)break;
+    buffer+=decoder.decode(result.value,{stream:true});
+    var lines=buffer.split('\n');
+    buffer=lines.pop()||'';
 
-function loadSession(id){
-  try{
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
-    var session=sessions.find(function(s){return s.id==id;});
-    if(!session)return;
-    newChat();
-    chatHistory=session.msgs;
-    session.msgs.forEach(function(m){
-      addMsg(m.content,m.role==='assistant'?'ai':'user');
-    });
-    closeSidebar();
-    showToast('💬 Chat restored!');
-  }catch(e){}
-}
-
-// Restore last session on load
-window.addEventListener('load',function(){
-  setTimeout(function(){
-    try{
-      var saved=localStorage.getItem('qvio_autosave');
-      if(saved){
-        var data=JSON.parse(saved);
-        var age=(Date.now()-data.ts)/60000;
-        if(age<120&&data.msgs&&data.msgs.length>0){
-          chatHistory=data.msgs;
-          data.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-          showToast('💾 Last session restored!');
-        }
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i].trim();
+      if(!line||line==='data: [DONE]')continue;
+      if(line.startsWith('data: ')){
+        try{
+          var json=JSON.parse(line.slice(6));
+          var delta=json.choices&&json.choices[0]&&json.choices[0].delta&&json.choices[0].delta.content;
+          if(delta){
+            fullText+=delta;
+            // Update bubble with rendered text
+            bub.innerHTML=renderText(fullText)+'<span class="stream-cursor">▋</span>';
+            chat.scrollTop=chat.scrollHeight;
+          }
+        }catch(e){}
       }
-      renderSidebarChats();
-    }catch(e){}
-  },1500);
-});
+    }
+  }
 
-// ══ QVIO WISPR FLOW ══
-var _wispr = {
-  active: false,
-  rec: null,
-  transcript: '',
-  final: '',
-  autoClean: true,
-  autoPunct: true,
-  autoSend: true,
-  whisper: false,
-  panelOpen: false
-};
+  // Final render without cursor
+  bub.classList.remove('streaming-bubble');
+  bub.innerHTML=renderText(fullText);
+  if(typeof onAIResponse==='function')onAIResponse(fullText);
+
+  // Add action buttons
+  var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
+  cb.onclick=function(){navigator.clipboard.writeText(fullText);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
+  bub.appendChild(cb);
+
+  var meta=document.createElement('div');meta.className='mmeta';
+  function makeAct(icon,tip,fn){
+    var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
+  }
+  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
+  var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
+  var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
+  ['❤️','🔥','😂','🤯','👏'].forEach(function(emoji){
+    makeAct(emoji,emoji,function(){showToast(emoji+' reaction!');this.style.transform='scale(1.5)';var self=this;setTimeout(function(){self.style.transform='';},300);});
+  });
+  // SPEAK BUTTON
+  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
+  (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('QVIO says:\n\n'+msgContent.substring(0,500)+'\n\n— via QVIO AI (qvio.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
+  makeAct('🔄','Regenerate',function(){if(lastMsg)sendMsg(lastMsg);});
+  wrap.appendChild(meta);
+
+  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
+
+  saveCurrentSession();
+  return fullText;
+}
+
+function addXP(amount, reason){
+  _xp += amount;
+  localStorage.setItem('qvio_xp', _xp);
+  var info = getLevelInfo(_xp);
+  var oldLevel = _level;
+  _level = LEVELS.indexOf(info.level)+1;
+  localStorage.setItem('qvio_level', _level);
+
+  // Show XP toast
+  showXPToast('+'+amount+' XP — '+reason);
+
+  // Level up!
+  if(_level > oldLevel){
+    setTimeout(function(){
+      showLevelUp(info.level);
+    }, 1000);
+  }
+  updateXPBar();
+}
+
+function checkBadge(id){
+  if(_badges.indexOf(id)>-1) return;
+  var badge = BADGES_DEF.find(function(b){return b.id===id;});
+  if(!badge) return;
+  _badges.push(id);
+  localStorage.setItem('qvio_badges', JSON.stringify(_badges));
+  addXP(badge.xp, 'Badge: '+badge.name);
+  // Show badge notification
+  setTimeout(function(){
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:140px;right:20px;background:var(--surface);border:2px solid #4F46E5;color:var(--text);padding:12px 16px;border-radius:16px;font-size:13px;z-index:9999;animation:xpPop .5s ease both;max-width:220px;box-shadow:0 8px 32px rgba(79,70,229,.3);';
+    t.innerHTML = '<div style="font-size:24px;margin-bottom:4px;">'+badge.icon+'</div>'
+      +'<div style="font-weight:700;color:#4F46E5;">Badge Unlocked!</div>'
+      +'<div style="font-weight:600;">'+badge.name+'</div>'
+      +'<div style="font-size:11px;color:var(--text3);">'+badge.desc+'</div>';
+    document.body.appendChild(t);
+    setTimeout(function(){t.remove();}, 4000);
+  }, 1500);
+}
+
+function showXPToast(msg){
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:100px;right:20px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;animation:xpPop .5s ease both;pointer-events:none;';
+  t.textContent = '⚡ '+msg;
+  document.body.appendChild(t);
+  setTimeout(function(){t.remove();}, 2000);
+}
+
+function showLevelUp(level){
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = '<div style="text-align:center;animation:levelUpPop .6s cubic-bezier(.16,1,.3,1) both;">'
+    +'<div style="font-size:72px;margin-bottom:8px;">'+level.icon+'</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#4F46E5;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">LEVEL UP!</div>'
+    +'<div style="font-size:32px;font-weight:800;color:#fff;margin-bottom:4px;">'+level.name+'</div>'
+    +'<div style="font-size:14px;color:#9CA3AF;">You are now a '+level.name+'!</div>'
+    +'</div>';
+  document.body.appendChild(overlay);
+  // Confetti!
+  launchConfetti();
+  setTimeout(function(){overlay.remove();}, 3000);
+  overlay.onclick = function(){overlay.remove();};
+}
+
+function updateXPBar(){
+  var info = getLevelInfo(_xp);
+  var bar = document.getElementById('xpBar');
+  var label = document.getElementById('xpLabel');
+  if(bar) bar.style.width = info.progress+'%';
+  if(label) label.textContent = info.level.icon+' '+info.level.name+' · '+_xp+' XP';
+}
+
+function launchConfetti(){
+  var colors=['#4F46E5','#7C3AED','#F5A623','#10B981','#EF4444','#F59E0B'];
+  for(var i=0;i<80;i++){
+    (function(i){
+      setTimeout(function(){
+        var p=document.createElement('div');
+        p.style.cssText='position:fixed;top:-10px;left:'+Math.random()*100+'vw;width:8px;height:8px;border-radius:'+(Math.random()>0.5?'50%':'2px')+';background:'+colors[Math.floor(Math.random()*colors.length)]+';z-index:99999;pointer-events:none;animation:confettiFall '+(1.5+Math.random()*2)+'s ease both;';
+        document.body.appendChild(p);
+        setTimeout(function(){p.remove();},3500);
+      },i*30);
+    })(i);
+  }
+}
+
+function extractYTId(url){
+  var m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  return m?m[1]:null;
+}
+
+async function handleYouTube(text){
+  var ytId=extractYTId(text);
+  if(!ytId)return false;
+  
+  showTyping();
+  var transcript=await getYTTranscript(ytId);
+  var videoUrl='https://youtube.com/watch?v='+ytId;
+  
+  var msg='';
+  if(transcript&&transcript.length>100){
+    msg='Analyze this YouTube video and give me: 1) Brief summary 2) Key points 3) Main takeaways\n\nVideo URL: '+videoUrl+'\n\nTranscript:\n'+transcript;
+  } else {
+    msg='Analyze this YouTube video: '+videoUrl+'\n\nGive me: 1) What this video is likely about based on the URL 2) Key topics it probably covers 3) Why someone should watch it.';
+  }
+  
+  hideTyping();
+  document.getElementById('inp').value=msg;
+  sendMsg();
+  return true;
+}
+
+function saveCurrentSession(){
+  if(chatHistory.length===0)return;
+  try{
+    var sessions=getSessions();
+    sessions[_currentSessionId]={
+      id:_currentSessionId,
+      title:chatHistory[0]?chatHistory[0].content.substring(0,40)+'...':'New Chat',
+      msgs:chatHistory,
+      ts:Date.now(),
+      updated:Date.now()
+    };
+    // Keep max 50 sessions
+    var keys=Object.keys(sessions).sort(function(a,b){return sessions[b].updated-sessions[a].updated;});
+    if(keys.length>50){
+      keys.slice(50).forEach(function(k){delete sessions[k];});
+    }
+    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
+    renderSessionList();
+  }catch(e){}
+}
+
+function renderSessions(){
+  var list=document.getElementById('sbList')||document.getElementById('sbChatList');
+  if(!list)return;
+  var d=typeof getSess==='function'?getSess():{};
+  var sid=typeof _sid!=='undefined'?_sid:'';
+  var q=(document.getElementById('sbSearch')||{}).value||'';
+  var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
+  if(q)keys=keys.filter(function(k){return d[k].title.toLowerCase().includes(q.toLowerCase());});
+  if(!keys.length){list.innerHTML="<div style=\"padding:12px;font-size:12px;color:#888;text-align:center;\">No chats yet</div>";return;}
+  var html="";
+  keys.slice(0,30).forEach(function(id){
+    var s=d[id];
+    var active=id===sid;
+    var ago=Math.floor((Date.now()-s.ts)/60000);
+    var t=ago<1?"Just now":ago<60?ago+"m ago":ago<1440?Math.floor(ago/60)+"h ago":Math.floor(ago/1440)+"d ago";
+    var bg=active?"rgba(79,70,229,.1)":"transparent";
+    html+="<div onclick=\"loadSess(\""+id+"\")\" style=\"padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;gap:6px;margin-bottom:2px;background:"+bg+"\">";
+    html+="<div style=\"flex:1;min-width:0;overflow:hidden;\">";
+    html+="<div style=\"font-size:12.5px;font-weight:"+(active?"600":"400")+";color:"+(active?"#4F46E5":"inherit")+";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\">"+s.title+"</div>";
+    html+="<div style=\"font-size:11px;color:#888;\">"+t+"</div>";
+    html+="</div>";
+    html+="<span onclick=\"event.stopPropagation();delSess('"+id+"',event)\" style=\"opacity:0.4;cursor:pointer;font-size:12px;\" onmouseover=\"this.style.opacity=1;this.style.color='red'\" onmouseout=\"this.style.opacity=0.4;this.style.color='inherit'\">✕</span>";
+    html+="</div>";
+  });
+  list.innerHTML=html;
+}
+function renderSess(){renderSessions();}
+
+
+function createNewSession(){
+  // Save current session first
+  saveCurrentSession();
+  
+  // Create new session
+  _currentSessionId='session_'+Date.now();
+  localStorage.setItem('qvio_current_session',_currentSessionId);
+  chatHistory=[];
+  
+  var chat=document.getElementById('chat');
+  if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');
+  if(w){w.style.display='flex';}
+  var inp=document.getElementById('inp');
+  if(inp){inp.value='';inp.style.height='auto';}
+  
+  renderSessionList();
+  showToast('✨ New chat!');
+  closeSidebar();
+}
+
+function awardImgXP(){
+  if(typeof addXP==='function') addXP(25,'Image created!');
+}
+
+function awardMsgXP(){
+  if(typeof addXP==='function') addXP(10,'Message sent!');
+  if(typeof checkBadge==='function'){
+    var mc=parseInt(localStorage.getItem('qvio_msgs')||'0')+1;
+    localStorage.setItem('qvio_msgs',mc);
+    if(mc===1)checkBadge('first_msg');
+    if(mc===10)checkBadge('msg_10');
+    if(mc===50)checkBadge('msg_50');
+    if(mc===100)checkBadge('msg_100');
+  }
+}
 
 function toggleWispr(){
   var panel = document.getElementById('wisprPanel');
@@ -2341,11 +2110,6 @@ function toggleWispr(){
   panel.classList.toggle('show', _wispr.panelOpen);
   if(_wispr.panelOpen && !_wispr.active) startWispr();
   else if(!_wispr.panelOpen) stopWispr();
-}
-
-function wisprToggle(btn, setting){
-  _wispr[setting] = !_wispr[setting];
-  btn.classList.toggle('on', _wispr[setting]);
 }
 
 function startWispr(){
@@ -2470,760 +2234,8 @@ function wisprClear(){
   document.getElementById('wisprTranscript').textContent = 'Tap mic to start speaking...';
 }
 
-// Keyboard shortcut - hold Space to activate Wispr
-var _spaceHeld = false;
-document.addEventListener('keydown', function(e){
-  if(e.code === 'Space' && e.ctrlKey && !_spaceHeld){
-    _spaceHeld = true;
-    if(!_wispr.panelOpen){
-      document.getElementById('wisprPanel').classList.add('show');
-      _wispr.panelOpen = true;
-      startWispr();
-      showToast('🎙️ Hold Ctrl+Space to dictate!');
-    }
-  }
-});
-document.addEventListener('keyup', function(e){
-  if(e.code === 'Space' && e.ctrlKey){
-    _spaceHeld = false;
-  }
-});
-</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_langlearn" style="max-width:540px;">
-  <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
-  <div style="padding:20px;">
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-      <button class="ll-lang" onclick="startLangLearn('Spanish')">🇪🇸 Spanish</button>
-      <button class="ll-lang" onclick="startLangLearn('French')">🇫🇷 French</button>
-      <button class="ll-lang" onclick="startLangLearn('Japanese')">🇯🇵 Japanese</button>
-      <button class="ll-lang" onclick="startLangLearn('Hindi')">🇮🇳 Hindi</button>
-      <button class="ll-lang" onclick="startLangLearn('German')">🇩🇪 German</button>
-      <button class="ll-lang" onclick="startLangLearn('Korean')">🇰🇷 Korean</button>
-      <button class="ll-lang" onclick="startLangLearn('Arabic')">🇸🇦 Arabic</button>
-      <button class="ll-lang" onclick="startLangLearn('Tamil')">🇮🇳 Tamil</button>
-      <button class="ll-lang" onclick="startLangLearn('Mandarin')">🇨🇳 Mandarin</button>
-    </div>
-  </div>
-</div>
-<div class="overlay" id="o_sup" onclick="closeM('sup')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_sup" style="max-width:440px;">
-  <div class="mhd"><h3>💬 Support</h3><button class="mx" onclick="closeM('sup')">✕</button></div>
-  <div style="padding:20px;text-align:center;">
-    <div style="font-size:40px;margin-bottom:12px;">🙏</div>
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Need help? Reach VARUN directly</p>
-    <a href="/cdn-cgi/l/email-protection#fc8f898c8c938e88bc8d8a9593d29592" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 <span class="__cf_email__" data-cfemail="c5b6b0b5b5aab7b185b4b3acaaebacab">[email&#160;protected]</span></a>
-    <button class="mclose" onclick="closeM('sup')">Close</button>
-  </div>
-</div>
-<div class="overlay" id="o_pdf" onclick="closeM('pdf')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
 
-
-</div>
-<!-- WISPR FLOW -->
-<div id="wisprPanel">
-  <div class="wispr-status">
-    <span id="wisprStatusText">Ready to listen</span>
-    <div class="wispr-wave" id="wisprWave" style="display:none;">
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-    </div>
-  </div>
-  <div id="wisprTranscript">Tap mic to start speaking...</div>
-  <div class="wispr-settings">
-    <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
-    <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
-    <button class="wispr-toggle on" id="wtAutoSend" onclick="wisprToggle(this,'autoSend')">⚡ Auto Send</button>
-    <button class="wispr-toggle" id="wtWhisper" onclick="wisprToggle(this,'whisper')">🤫 Whisper</button>
-  </div>
-  <div class="wispr-actions">
-    <button class="wispr-action" onclick="wisprClear()">Clear</button>
-    <button class="wispr-action" onclick="wisprInsert()">Insert</button>
-    <button class="wispr-action primary" onclick="wisprSendNow()">Send →</button>
-  </div>
-</div>
-<button id="wisprBtn" onclick="toggleWispr()" title="QVIO Voice (Wispr Flow)">🎙️</button>
-
-
-<!-- PRIVACY POLICY -->
-<div class="overlay" id="o_privacy" onclick="closeM('privacy')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_privacy" style="max-width:600px;max-height:85vh;overflow-y:auto;">
-  <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
-  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
-    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
-    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via Google)<br>
-    • Usage statistics (message count, features used)<br>
-    • Device information (browser type, language preference)</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
-    <p>• To provide and improve QVIO AI responses<br>
-    • To personalize your experience<br>
-    • To maintain your preferences and settings<br>
-    • To ensure platform security</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
-    • Your preferences are stored locally on your device<br>
-    • We use Firebase for authentication only</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• QVIO AI Engine — for processing AI responses<br>
-    • Firebase — for authentication<br>
-    • QVIO Image Engine — for image generation</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
-    <p>• You can delete your account at any time<br>
-    • You can request deletion of your data<br>
-    • You can opt out of any feature</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
-    <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#4737352e3126243e0736312e28692e29" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="5424263d2235372d1425223d3b7a3d3a">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
-  </div>
-</div>
-
-<!-- TERMS OF SERVICE -->
-<div class="overlay" id="o_terms" onclick="closeM('terms')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_terms" style="max-width:600px;max-height:85vh;overflow-y:auto;">
-  <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
-  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
-    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
-    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
-    <p>• QVIO is for lawful purposes only<br>
-    • You must be 13+ years old to use QVIO<br>
-    • Do not use QVIO for harmful, illegal or abusive content<br>
-    • Do not attempt to reverse engineer or copy QVIO</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
-    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
-    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
-    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
-    <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
-    <p>Questions: <a href="/cdn-cgi/l/email-protection#e38f8684828fa392958a8ccd8a8d" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="fc90999b9d90bc8d8a9593d29592">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
-  </div>
-</div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-function initFirebase(){
-  try{
-    if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
-    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-    fbAuth=firebase.auth();
-    fbAuth.onAuthStateChanged(function(u){
-      if(u){currentUser=u;updateUserUI(u);showNamaste(u);
-        var app=document.getElementById('qvio-app');
-        if(app)setTimeout(function(){app.classList.add('ready');},4500);
-        var sb=document.getElementById('sidebar');
-        if(sb)setTimeout(function(){sb.style.display='flex';},4500);
-        var sbo=document.getElementById('sidebarOverlay');var _ci=document.getElementById('inp');if(_ci)_ci.value='';updateSidebarUser(u);}
-    });
-    console.log('✅ Firebase ready!');
-  }catch(e){console.warn('Firebase error:',e);}
-}
-// Init immediately — Firebase SDK already loaded in <head>
-initFirebase();
-
-// GLOBALS
-// 🔑 API Key Rotation — auto-switches when one hits rate limit
-var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAGQFJAgrPT0pPmMIJTUeKwQ7IT4BFgE='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
-var _keyIdx=0;
-var _qc=_qk[0];
-function continueAsGuest(){
-  var app=document.getElementById('qvio-app');
-  if(app)setTimeout(function(){app.classList.add('ready');},500);
-  var sb=document.getElementById('sidebar');
-  if(sb)setTimeout(function(){sb.style.display='flex';},500);
-  var ls=document.getElementById('loginScreen');
-  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
-  currentUser=null;
-  showToast('👋 Welcome! Sign in to save chats.');
-}
-function signInGoogle(){
-  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
-  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
-    .catch(function(e){
-      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
-      else showToast('Error: '+e.message);
-    });
-}
-function signInEmail(){
-  if(!fbAuth){skipLogin();return;}
-  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
-  if(!e||!p){showToast('Enter email and password');return;}
-  fbAuth.signInWithEmailAndPassword(e,p)
-    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
-    .catch(function(er){showToast(er.message);});
-}
-function signUpEmail(){
-  if(!fbAuth){skipLogin();return;}
-  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
-  if(!e||!p){showToast('Enter email and password');return;}
-  fbAuth.createUserWithEmailAndPassword(e,p)
-    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
-    .catch(function(er){showToast(er.message);});
-}
-function showNamaste(user){
-  var ls=document.getElementById('loginScreen');
-  ls.style.opacity='0';ls.style.transition='opacity .4s';
-  setTimeout(function(){ls.style.display='none';},400);
-  var ns=document.getElementById('namasteScreen');
-  ns.classList.add('show');
-  var nm=user.displayName||user.email||'Friend';
-  var first=nm.split(' ')[0].toUpperCase();
-  // Trigger text
-  setTimeout(function(){ revealNamasteText(first); }, 600);
-  // Dismiss after 4.5s
-  setTimeout(function(){
-    ns.classList.add('exiting');
-    setTimeout(function(){
-      ns.style.opacity='0';ns.style.transition='opacity .5s';
-      setTimeout(function(){
-        ns.classList.remove('show','exiting');ns.style.opacity='';
-        var g=document.getElementById('nsGreeting');
-        var u=document.getElementById('nsUsername');
-        var p=document.getElementById('nsPercent');
-        if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
-        // Show the app!
-        try{setSmartGreeting();}catch(e){}
-        try{showOnboard();}catch(e){}
-      },500);
-    },300);
-  },4500);
-}
-
-// AUTH
-function revealNamasteText(name){
-  var greetEl=document.getElementById('nsGreeting');
-  if(greetEl){
-    greetEl.innerHTML='';
-
-    var eng=document.createElement('div');
-    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
-    'WELCOME'.split('').forEach(function(ch,i){
-      var s=document.createElement('span');
-      s.className='ns-char';s.textContent=ch;
-      s.style.animationDelay=(.05+i*.07)+'s';
-      if(i===0){
-        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
-        s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
-      }
-      eng.appendChild(s);
-    });
-    greetEl.appendChild(eng);
-  }
-  var unEl=document.getElementById('nsUsername');
-  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
-  var pctEl=document.getElementById('nsPercent');
-  var pct=0;
-  var pTimer=setInterval(function(){
-    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
-    if(pctEl)pctEl.textContent=pct+'%';
-    if(pct>=100)clearInterval(pTimer);
-  },32);
-  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
-  var mi=0,stEl=document.getElementById('nsStatusTxt');
-  var sTimer=setInterval(function(){
-    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
-    if(mi>=msgs.length-1)clearInterval(sTimer);
-  },600);
-  fireConfetti();
-}
-
-// ── API Key Health Check ──
-// Runs once on load — shows a warning toast if key is invalid/expired
-setTimeout(function(){
-  fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})().replace('/chat/completions','/models'),{
-    headers:{'Authorization':'Bearer '+_qc}
-  }).then(function(r){return r.json();}).then(function(d){
-    if(d.error){
-      var code=d.error.code||'';
-      var msg=d.error.message||'';
-      if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
-        showToast('⚠️ QVIO Brain needs a restart. Please refresh the page.');
-        console.error('QVIO KEY EXPIRED:',msg);
-      }
-    }else{
-      console.log('✅ Groq API key is valid');
-    }
-  }).catch(function(){
-    // Network error or CORS — can't check, ignore silently
-  });
-},3000);
-// QVIO WEB SEARCH
-var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
-  'war','match','score','ipl','election','price','stock','weather','who won','what happened',
-  'recently','this week','yesterday','trending','live','breaking'];
-
-function updateUserUI(user){
-  var nm=user.displayName||user.email||'User';
-  document.getElementById('uNm').textContent=nm.split(' ')[0];
-  document.getElementById('profName').textContent=nm;
-  document.getElementById('profEmail').textContent=user.email||'';
-  if(user.photoURL){
-    document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';
-    document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';
-  }else{
-    document.getElementById('uAv').textContent=nm[0].toUpperCase();
-    document.getElementById('profAv').textContent=nm[0].toUpperCase();
-  }
-  if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
-  updateMemUI();
-}
-
-// STREAK
-
-function awardImgXP(){
-  if(typeof addXP==='function') addXP(25,'Image created!');
-}
-function awardMsgXP(){
-  if(typeof addXP==='function') addXP(10,'Message sent!');
-  if(typeof checkBadge==='function'){
-    var mc=parseInt(localStorage.getItem('qvio_msgs')||'0')+1;
-    localStorage.setItem('qvio_msgs',mc);
-    if(mc===1)checkBadge('first_msg');
-    if(mc===10)checkBadge('msg_10');
-    if(mc===50)checkBadge('msg_50');
-    if(mc===100)checkBadge('msg_100');
-  }
-}
-function updatePdfBtn(){
-  var pb=document.getElementById('pdfBtn');
-  if(pb)pb.style.display=(typeof mode!=='undefined'&&mode==='student')?'inline-flex':'none';
-}
-
-// ══ YOUTUBE VIDEO UNDERSTANDING ══
-function extractYTId(url){
-  var m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
-  return m?m[1]:null;
-}
-
-async function getYTTranscript(videoId){
-  try{
-    // Use YouTube's timedtext API - completely free
-    var infoUrl='https://www.youtube.com/watch?v='+videoId;
-    showToast('📺 Fetching video transcript...');
-    
-    // Try to get transcript via a free proxy
-    var r=await fetch('https://yt-transcript-api.vercel.app/api/transcript?videoId='+videoId);
-    if(r.ok){
-      var data=await r.json();
-      if(data&&data.transcript){
-        return data.transcript.map(function(t){return t.text;}).join(' ').substring(0,8000);
-      }
-    }
-    
-    // Fallback: use video info from noembed
-    var r2=await fetch('https://noembed.com/embed?url=https://youtube.com/watch?v='+videoId);
-    if(r2.ok){
-      var info=await r2.json();
-      return 'Video Title: '+info.title+'
-Channel: '+info.author_name+'
-(Full transcript unavailable - summarizing from title and context)';
-    }
-    return null;
-  }catch(e){return null;}
-}
-
-async function handleYouTube(text){
-  var ytId=extractYTId(text);
-  if(!ytId)return false;
-  
-  showTyping();
-  var transcript=await getYTTranscript(ytId);
-  var videoUrl='https://youtube.com/watch?v='+ytId;
-  
-  var msg='';
-  if(transcript&&transcript.length>100){
-    msg='Analyze this YouTube video and give me: 1) Brief summary 2) Key points 3) Main takeaways\n\nVideo URL: '+videoUrl+'\n\nTranscript:\n'+transcript;
-  } else {
-    msg='Analyze this YouTube video: '+videoUrl+'\n\nGive me: 1) What this video is likely about based on the URL 2) Key topics it probably covers 3) Why someone should watch it.';
-  }
-  
-  hideTyping();
-  document.getElementById('inp').value=msg;
-  sendMsg();
-  return true;
-}
-
-// ══ CHAT SESSIONS SYSTEM ══
-var _currentSessionId = localStorage.getItem('qvio_current_session') || ('session_'+Date.now());
-localStorage.setItem('qvio_current_session', _currentSessionId);
-
-function getSessions(){
-  try{return JSON.parse(localStorage.getItem('qvio_all_sessions')||'{}');}
-  catch(e){return {};}
-}
-
-function saveCurrentSession(){
-  if(chatHistory.length===0)return;
-  try{
-    var sessions=getSessions();
-    sessions[_currentSessionId]={
-      id:_currentSessionId,
-      title:chatHistory[0]?chatHistory[0].content.substring(0,40)+'...':'New Chat',
-      msgs:chatHistory,
-      ts:Date.now(),
-      updated:Date.now()
-    };
-    // Keep max 50 sessions
-    var keys=Object.keys(sessions).sort(function(a,b){return sessions[b].updated-sessions[a].updated;});
-    if(keys.length>50){
-      keys.slice(50).forEach(function(k){delete sessions[k];});
-    }
-    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
-    renderSessionList();
-  }catch(e){}
-}
-
-function loadSession(sessionId){
-  try{
-    var sessions=getSessions();
-    var session=sessions[sessionId];
-    if(!session)return;
-    
-    // Save current first
-    saveCurrentSession();
-    
-    // Switch to selected session
-    _currentSessionId=sessionId;
-    localStorage.setItem('qvio_current_session',sessionId);
-    chatHistory=session.msgs||[];
-    
-    // Clear and render chat
-    var chat=document.getElementById('chat');
-    chat.innerHTML='';
-    var w=document.getElementById('welcome');
-    if(w)w.style.display='none';
-    
-    chatHistory.forEach(function(m){
-      addMsg(m.content,m.role==='assistant'?'ai':'user');
-    });
-    
-    closeSidebar();
-    showToast('💬 '+session.title);
-    renderSessionList();
-  }catch(e){showToast('Error loading chat');}
-}
-
-function createNewSession(){
-  // Save current session first
-  saveCurrentSession();
-  
-  // Create new session
-  _currentSessionId='session_'+Date.now();
-  localStorage.setItem('qvio_current_session',_currentSessionId);
-  chatHistory=[];
-  
-  var chat=document.getElementById('chat');
-  if(chat)chat.innerHTML='';
-  var w=document.getElementById('welcome');
-  if(w){w.style.display='flex';}
-  var inp=document.getElementById('inp');
-  if(inp){inp.value='';inp.style.height='auto';}
-  
-  renderSessionList();
-  showToast('✨ New chat!');
-  closeSidebar();
-}
-
-function deleteSession(sessionId, e){
-  e.stopPropagation();
-  try{
-    var sessions=getSessions();
-    delete sessions[sessionId];
-    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
-    if(sessionId===_currentSessionId){
-      createNewSession();
-    }
-    renderSessionList();
-  }catch(e){}
-}
-
-function renderSessionList(){if(typeof filterSessions==="function"){filterSessions(document.getElementById("sbSearch")?document.getElementById("sbSearch").value:"");return;}
-  var list=document.getElementById('sbChatList');
-  if(!list)return;
-  try{
-    var sessions=getSessions();
-    var keys=Object.keys(sessions).sort(function(a,b){
-      return sessions[b].updated-sessions[a].updated;
-    });
-    
-    if(keys.length===0){
-      list.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text3);">No saved chats yet</div>';
-      return;
-    }
-    
-    list.innerHTML=keys.slice(0,30).map(function(id){
-      var s=sessions[id];
-      var isActive=id===_currentSessionId;
-      var age=Math.floor((Date.now()-s.updated)/60000);
-      var timeStr=age<1?'Just now':age<60?age+'m ago':age<1440?Math.floor(age/60)+'h ago':Math.floor(age/1440)+'d ago';
-      return '<div onclick="loadSession(''+id+'')" style="padding:9px 12px;border-radius:8px;cursor:pointer;'+(isActive?'background:rgba(79,70,229,.1);':'')+'display:flex;align-items:center;gap:6px;transition:all .15s;margin-bottom:2px;" onmouseover="if(!'+isActive+')this.style.background='var(--bg)'" onmouseout="if(!'+isActive+')this.style.background=''">'
-        +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:12px;font-weight:'+(isActive?'600':'500')+';color:'+(isActive?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div>'
-        +'<div style="font-size:11px;color:var(--text3);margin-top:1px;">'+timeStr+' · '+(s.msgs?s.msgs.length:0)+' msgs</div>'
-        +'</div>'
-        +'<button onclick="deleteSession(''+id+'',event)" style="width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:12px;flex-shrink:0;opacity:0.5;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0.5;this.style.color='var(--text3)'">✕</button>'
-        +'</div>';
-    }).join('');
-  }catch(e){}
-}
-
-// Override newChat to use sessions
-function newChat(){
-  createNewSession();
-}
-
-// Auto-save after every AI response
-// (hooked below in sendMsg)
-
-// Load sessions on startup
-window.addEventListener('load',function(){
-  setTimeout(function(){
-    // Restore current session
-    try{
-      var sessions=getSessions();
-      var current=sessions[_currentSessionId];
-      if(current&&current.msgs&&current.msgs.length>0){
-        chatHistory=current.msgs;
-        current.msgs.forEach(function(m){
-          addMsg(m.content,m.role==='assistant'?'ai':'user');
-        });
-        var w=document.getElementById('welcome');
-        if(w)w.style.display='none';
-      }
-    }catch(e){}
-    renderSessionList();
-  },1000);
-});
-
-function filterSessions(query){
-  try{
-    var sessions=getSessions();
-    var keys=Object.keys(sessions).sort(function(a,b){
-      return sessions[b].updated-sessions[a].updated;
-    });
-    if(query){
-      keys=keys.filter(function(id){
-        return sessions[id].title.toLowerCase().includes(query.toLowerCase());
-      });
-    }
-    var list=document.getElementById('sbChatList');
-    if(!list)return;
-    if(keys.length===0){
-      list.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text3);">No chats found</div>';
-      return;
-    }
-    list.innerHTML=keys.slice(0,30).map(function(id){
-      var s=sessions[id];
-      var isActive=id===_currentSessionId;
-      var age=Math.floor((Date.now()-s.updated)/60000);
-      var timeStr=age<1?'Just now':age<60?age+'m ago':age<1440?Math.floor(age/60)+'h ago':Math.floor(age/1440)+'d ago';
-      return '<div onclick="loadSession(''+id+'')" style="padding:9px 12px;border-radius:8px;cursor:pointer;'+(isActive?'background:rgba(79,70,229,.1);':'')+';display:flex;align-items:center;gap:6px;margin-bottom:2px;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''+(isActive?'rgba(79,70,229,.1)':'')+''">'
-        +'<div style="flex:1;min-width:0;">'
-        +'<div style="font-size:12px;font-weight:'+(isActive?'600':'500')+';color:'+(isActive?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div>'
-        +'<div style="font-size:11px;color:var(--text3);margin-top:1px;">'+timeStr+'</div>'
-        +'</div>'
-        +'<button onclick="deleteSession(''+id+'',event)" style="opacity:0.4;width:18px;height:18px;border-radius:4px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:11px;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0.4;this.style.color='var(--text3)'">✕</button>'
-        +'</div>';
-    }).join('');
-  }catch(e){}
-}
-
-// ══ BULLETPROOF SESSION SYSTEM ══
-var _sid = localStorage.getItem('qvio_sid') || 'sid_'+Date.now();
-localStorage.setItem('qvio_sid', _sid);
-
-function _getSessions(){
-  try{return JSON.parse(localStorage.getItem('qvio_sessions2')||'{}');}catch(e){return {};}
-}
-function _saveSessions(s){
-  try{localStorage.setItem('qvio_sessions2',JSON.stringify(s));}catch(e){}
-}
-
-function saveCurrentSession(){
-  if(!chatHistory||chatHistory.length===0)return;
-  try{
-    var s=_getSessions();
-    var title=chatHistory[0]?chatHistory[0].content.replace(/<[^>]*>/g,'').substring(0,45):'New Chat';
-    s[_sid]={id:_sid,title:title,msgs:chatHistory.slice(-50),ts:Date.now()};
-    // Keep max 40 sessions
-    var keys=Object.keys(s).sort(function(a,b){return s[b].ts-s[a].ts;});
-    if(keys.length>40){keys.slice(40).forEach(function(k){delete s[k];});}
-    _saveSessions(s);
-    renderSessions();
-  }catch(e){}
-}
-
-function renderSessions(){
-  var list=document.getElementById('sbChatList');
-  if(!list)return;
-  var s=_getSessions();
-  var keys=Object.keys(s).sort(function(a,b){return s[b].ts-s[a].ts;});
-  var q=(document.getElementById('sbSearch')||{}).value||'';
-  if(q)keys=keys.filter(function(k){return s[k].title.toLowerCase().includes(q.toLowerCase());});
-  if(!keys.length){list.innerHTML='<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center;">No chats yet</div>';return;}
-  list.innerHTML=keys.map(function(id){
-    var sess=s[id];
-    var active=id===_sid;
-    var ago=Math.floor((Date.now()-sess.ts)/60000);
-    var t=ago<1?'Just now':ago<60?ago+'m ago':ago<1440?Math.floor(ago/60)+'h ago':Math.floor(ago/1440)+'d ago';
-    return '<div onclick="loadSess(''+id+'')" style="padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2px;background:'+(active?'rgba(79,70,229,.1)':'transparent')+';transition:background .15s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background=''+(active?'rgba(79,70,229,.1)':'transparent')+''"><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:'+(active?'600':'400')+';color:'+(active?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+sess.title+'</div><div style="font-size:11px;color:var(--text3);margin-top:1px;">'+t+'</div></div><button onclick="delSess(''+id+'',event)" style="opacity:0;width:18px;height:18px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:11px;border-radius:4px;flex-shrink:0;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0;">✕</button></div>';
-  }).join('');
-}
-
-function loadSess(id){
-  saveCurrentSession();
-  var s=_getSessions();
-  if(!s[id])return;
-  _sid=id;localStorage.setItem('qvio_sid',id);
-  chatHistory=s[id].msgs||[];
-  var chat=document.getElementById('chat');
-  if(chat)chat.innerHTML='';
-  var w=document.getElementById('welcome');
-  if(w)w.style.display=chatHistory.length?'none':'flex';
-  chatHistory.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-  closeSidebar();
-  showToast('💬 Chat loaded!');
-  renderSessions();
-}
-
-function delSess(id,e){
-  if(e)e.stopPropagation();
-  var s=_getSessions();
-  delete s[id];
-  _saveSessions(s);
-  if(id===_sid)createNewSession();
-  else renderSessions();
-}
-
-function createNewSession(){
-  saveCurrentSession();
-  _sid='sid_'+Date.now();
-  localStorage.setItem('qvio_sid',_sid);
-  chatHistory=[];
-  var chat=document.getElementById('chat');
-  if(chat)chat.innerHTML='';
-  var w=document.getElementById('welcome');
-  if(w)w.style.display='flex';
-  var inp=document.getElementById('inp');
-  if(inp){inp.value='';inp.style.height='auto';}
-  renderSessions();
-  showToast('✨ New chat!');
-  closeSidebar();
-}
-
-function newChat(){createNewSession();}
-function filterSessions(q){renderSessions();}
-
-// Restore session on load
-window.addEventListener('load',function(){
-  setTimeout(function(){
-    try{
-      var s=_getSessions();
-      var cur=s[_sid];
-      if(cur&&cur.msgs&&cur.msgs.length>0){
-        chatHistory=cur.msgs;
-        cur.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-        var w=document.getElementById('welcome');
-        if(w)w.style.display='none';
-      }
-    }catch(e){}
-    renderSessions();
-  },1200);
-});
-
-// ══ FEATURES 1-10 ══
-
-// 1. Sentiment Analysis - detect user mood
-function detectSentiment(text){
-  var t=text.toLowerCase();
-  if(/sad|depressed|lonely|cry|upset|hate|angry|frustrated|terrible|awful|horrible/.test(t)) return 'negative';
-  if(/happy|excited|great|amazing|love|wonderful|fantastic|awesome|joy|celebrate/.test(t)) return 'positive';
-  if(/help|explain|how|what|why|when|where|who|can you/.test(t)) return 'curious';
-  return 'neutral';
-}
-
-// 2. Emotional Support - auto detect distress
-var _lastSentiment='neutral';
-function checkEmotionalSupport(text){
-  var sentiment=detectSentiment(text);
-  _lastSentiment=sentiment;
-  if(sentiment==='negative'){
-    // Add emotional support context to next response
-    window._emotionalMode=true;
-    setTimeout(function(){window._emotionalMode=false;},60000);
-  }
-}
-
-// Hook into extractMem
-var _origExtractMem=typeof extractMem==='function'?extractMem:function(){};
-function extractMem(t){
-  _origExtractMem(t);
-  checkEmotionalSupport(t);
-}
-
-// 3. Personalized Learning - track topics
-var _userTopics=JSON.parse(localStorage.getItem('qvio_topics')||'{}');
-function trackTopic(text){
-  var topics={math:/math|calculus|algebra|geometry/i,science:/physics|chemistry|biology|science/i,coding:/code|python|javascript|programming/i,history:/history|ancient|war|civilization/i,english:/grammar|essay|writing|english/i};
-  Object.keys(topics).forEach(function(topic){
-    if(topics[topic].test(text)){
-      _userTopics[topic]=(_userTopics[topic]||0)+1;
-      localStorage.setItem('qvio_topics',JSON.stringify(_userTopics));
-    }
-  });
-}
-
-// 4. Creative Writing Mode
-function startCreativeMode(){
-  var msg="Let's write something creative together! Choose a genre:\n1. Short Story\n2. Poem\n3. Script/Screenplay\n4. Song Lyrics\n5. Fantasy World\n\nJust tell me what you want to create!";
-  document.getElementById('inp').value=msg;
-  sendMsg();
-}
-
-// 6. Real-Time Info - already have web search
-// Enhanced with more context
-function getMemCtxEnhanced(){
-  var base=getMemCtx();
-  // Add topic preferences
-  var topTopics=Object.entries(_userTopics).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(t){return t[0];});
-  if(topTopics.length) base+='\nUser interests: '+topTopics.join(', ')+'.';
-  if(window._emotionalMode) base+='\nIMPORTANT: User seems emotionally down. Be extra warm, supportive and gentle. Prioritize emotional wellbeing over information.';
-  return base;
-}
-
-// Override getMemCtx
-var _origGetMemCtx=getMemCtx;
-function getMemCtx(){return getMemCtxEnhanced();}
-
-// 7. Creative Writing shortcut in chips
-// 8. Gamification already added
-// 9. User Analytics
-function getUserAnalytics(){
-  var sessions=_getSessions();
-  var totalMsgs=Object.values(sessions).reduce(function(a,s){return a+(s.msgs?s.msgs.length:0);},0);
-  var totalSessions=Object.keys(sessions).length;
-  var topTopic=Object.entries(_userTopics).sort(function(a,b){return b[1]-a[1];})[0];
-  return {msgs:totalMsgs,sessions:totalSessions,topTopic:topTopic?topTopic[0]:'General',xp:_xp||0,level:_level||1};
-}
-
-// 10. Show analytics in profile
-function showAnalytics(){
-  var a=getUserAnalytics();
-  showToast('📊 '+a.msgs+' messages · '+a.sessions+' chats · '+a.xp+' XP');
-}
-</script></body>
-<script>
+</script><script>
 // ═══════════════════════════════════════════════════
 // QVIO PROTECTION SYSTEM
 // (c) 2025 QVIO by VARUN. All Rights Reserved.
@@ -3258,7 +2270,13 @@ function showAnalytics(){
     return false;
   });
 
-  // DevTools detection disabled
+  // DevTools size detection
+  var _dOpen=false;
+  setInterval(function(){
+    var _w2=window.outerWidth-window.innerWidth;
+    var _h=window.outerHeight-window.innerHeight;
+    if(_w2>300||_h>300){if(!_dOpen){_dOpen=true;_showWarn();}}else{_dOpen=false;}
+  },1200);
 
   function _showWarn(){
     if(document.getElementById('_qvPM'))return;
@@ -3310,16 +2328,7 @@ function initFirebase(){
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbAuth.onAuthStateChanged(function(u){
-      if(u){
-        currentUser=u;updateUserUI(u);showNamaste(u);
-        // Triple clear to stop HI from auto-sending
-        var _ci=document.getElementById('inp');
-        if(_ci){_ci.value='';_ci.setAttribute('value','');}
-        if(typeof updateSidebarUser==='function')updateSidebarUser(u);
-        // Prevent any pending sendMsg
-        window._blockSend=true;
-        setTimeout(function(){window._blockSend=false;},3000);
-      }
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);}
     });
     console.log('✅ Firebase ready!');
   }catch(e){console.warn('Firebase error:',e);}
@@ -3406,16 +2415,6 @@ function showNamaste(user){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function continueAsGuest(){
-  var app=document.getElementById('qvio-app');
-  if(app)setTimeout(function(){app.classList.add('ready');},500);
-  var sb=document.getElementById('sidebar');
-  if(sb)setTimeout(function(){sb.style.display='flex';},500);
-  var ls=document.getElementById('loginScreen');
-  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
-  currentUser=null;
-  showToast('👋 Welcome! Sign in to save chats.');
-}
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -3591,26 +2590,6 @@ CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
 PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
 
 WEB SEARCH: When you receive [LIVE WEB DATA], use it. Always mention the date/time of the info. Be honest if results seem old. For very recent events like live scores, say you have info up to a certain point.`;
-var QVIO_SYSTEM = `You are QVIO, a warm and humble AI assistant made in India for the world. 
-
-Your personality:
-- Humble and friendly — never arrogant or overconfident
-- Warm like a close friend, not robotic
-- Honest — say "I'm not sure" when you don't know
-- Encouraging and supportive
-- Concise but thorough
-- Use "yaar", "bhai" naturally when chatting casually
-- Celebrate user's wins genuinely
-- Never claim to be perfect or all-knowing
-- If you make a mistake, admit it gracefully
-
-Always:
-- Be emotionally aware and empathetic
-- Give practical, actionable answers
-- Use simple language unless technical depth is needed
-- End responses warmly when appropriate
-`;
-
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -3752,7 +2731,7 @@ function setMode(m,btn,label){
 // ═══════════════════════════════
 // MODALS
 // ═══════════════════════════════
-var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],langlearn:['o_langlearn','m_langlearn'],pdf:['o_pdf','m_pdf'],privacy:['o_privacy','m_privacy'],terms:['o_terms','m_terms']};
+var MAP={pro:['o_pro','m_pro'],lang:['o_lang','m_lang'],mem:['o_mem','m_mem'],sup:['o_sup','m_sup'],stats:['o_stats','m_stats'],streak:['o_streak','m_streak'],theme:['o_theme','m_theme'],gal:['o_gal','m_gal'],prof:['o_prof','m_prof'],hist:['o_hist','m_hist'],imgv:['o_imgv','m_imgv'],langlearn:['o_langlearn','m_langlearn'],pdf:['o_pdf','m_pdf']};
 function openM(t){
   var ids=MAP[t];if(!ids)return;
   document.getElementById(ids[0]).classList.add('show');
@@ -3999,6 +2978,23 @@ function hideTyping(){
   var t=document.getElementById('typer');if(t)t.remove();
 }
 
+
+function showTyping(){
+  hideWelcome();
+  document.getElementById('typeBar').classList.add('show');
+  var c=document.getElementById('chat');
+  var d=document.createElement('div');d.className='tywrap';d.id='typer';
+  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var sk=document.createElement('div');sk.className='skel';
+  sk.innerHTML='<div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line"></div>';
+  d.appendChild(av);d.appendChild(sk);
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function hideTyping(){
+  document.getElementById('typeBar').classList.remove('show');
+  var t=document.getElementById('typer');if(t)t.remove();
+}
+
 // ═══════════════════════════════
 // SEND & API
 // ═══════════════════════════════
@@ -4006,7 +3002,6 @@ var funnyErrors=["QVIO took a quick chai break ☕ — tap retry!","The AI sneez
 function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
 
 async function sendMsg(){
-  if(window._blockSend)return;
   var inp=document.getElementById('inp');
   var text=inp.value.trim();if(!text)return;
   inp.value='';inp.style.height='auto';
@@ -4018,58 +3013,20 @@ async function sendMsg(){
   extractMem(text);
   stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
 
-  // YOUTUBE VIDEO UNDERSTANDING
-  if((text.includes('youtube.com')||text.includes('youtu.be'))&&typeof handleYouTube==='function'){
-    handleYouTube(text).then(function(handled){
-      if(!handled) document.getElementById('sendBtn').disabled=false;
-    });
-    return;
-  }
-
   // IMAGE GENERATION
-  if(/^(create image|draw|generate image|make image|paint me|draw me|generate me|img:)/i.test(text)||/^(create image|image:|draw:|generate:|paint:|img:)/i.test(text)){
-    var prompt=text.replace(/^(create image|draw me|draw|generate image of|generate image|generate me|generate|make image of|make image|paint me|paint|img)[:\s]*/i,'').trim();
+  if(/^(create image|draw me|draw|generate image|make image|paint me|paint|img:)/i.test(text)||/^(create image|image:|draw:|generate:|paint:|img:)/i.test(text)){
+    var prompt=text.replace(/^(create image|draw me|draw|generate image of|generate image|generate|make image of|make image|paint me|paint|img)[:\s]*/i,'').trim();
     showTyping();stats.images++;saveStats();
 
     var seed=Date.now();
-    var enhancedPrompt=prompt+', masterpiece, best quality, ultra detailed, photorealistic, 8K UHD, sharp focus, professional photography, cinematic composition, beautiful lighting, trending on artstation';
+    var enhancedPrompt=prompt+', ultra photorealistic, 4K, 8K masterpiece, cinematic lighting, sharp focus, highly detailed, award winning photography';
     var imageUrls=[
       'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux-realism&enhance=true&seed='+seed+'&t='+Math.random(),
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux&enhance=true&seed='+(seed+1),
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=turbo&seed='+(seed+2)
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&seed='+(seed+1),
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&nologo=true&seed='+(seed+2)
     ];
 
     function tryLoadImage(urlIndex){
-  // Direct display - no preloading timeout issues
-  hideTyping();
-  var url = imageUrls[0];
-  var div=document.createElement('div');div.className='msg ai';
-  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
-  var wrap=document.createElement('div');wrap.className='mwrap';
-  var bub=document.createElement('div');bub.className='bubble';
-  var img=document.createElement('img');
-  img.style.cssText='max-width:100%;border-radius:12px;display:block;margin-top:8px;';
-  img.alt='QVIO Art';
-  img.src=url;
-  img.onerror=function(){
-    if(urlIndex<imageUrls.length-1){
-      img.src=imageUrls[urlIndex+1];
-    } else {
-      bub.innerHTML='<p style="color:var(--text2)">Image servers busy. Try again in a moment!</p>';
-    }
-  };
-  var dl=document.createElement('a');dl.href=url;dl.download='qvio-art.jpg';
-  dl.style.cssText='display:inline-block;margin-top:8px;font-size:12px;color:#4F46E5;text-decoration:none;';
-  dl.textContent='⬇ Download';
-  bub.appendChild(img);bub.appendChild(dl);
-  wrap.appendChild(bub);div.appendChild(av);div.appendChild(wrap);
-  document.getElementById('chat').appendChild(div);
-  document.getElementById('chat').scrollTop=99999;
-  document.getElementById('sendBtn').disabled=false;
-  imgGal.push(url);saveGal();
-  awardImgXP();
-}
-function tryLoadImage_OLD(urlIndex){
       if(urlIndex>=imageUrls.length){
         hideTyping();
         addMsg('⚠️ Image generation is temporarily unavailable. Please try again in a moment! The AI art servers might be busy.','ai');
@@ -4123,8 +3080,8 @@ function tryLoadImage_OLD(urlIndex){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
-    saveCurrentSession();
-    saveChatHistory();
+    if(typeof saveNow==='function')saveNow();
+    saveNow();
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
   }catch(e){
@@ -4162,110 +3119,58 @@ function tryLoadImage_OLD(urlIndex){
 }
 
 async function callGroq(msg){
-  var sys=PROMPTS[mode]+getMemCtx()+(typeof getDocContext==='function'?getDocContext():'');
+  var sys=PROMPTS[mode]+getMemCtx();
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
   msgs.push({role:'user',content:msg});
-
-  // Try streaming first
-  try{
-    var res=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:msgs,stream:true})
-    });
-
-    if(res.ok && res.headers.get('content-type')&&res.headers.get('content-type').includes('text/event-stream')){
-      // STREAMING MODE
-      return await handleStream(res);
-    }
-    // Fallback to non-streaming
-    var data=await res.json();
-    if(data.error)throw new Error('API: '+JSON.stringify(data.error));
-    if(!data.choices||!data.choices[0])throw new Error('Empty response');
-    return data.choices[0].message.content;
-  }catch(e){
-    throw e;
-  }
-}
-
-async function handleStream(res){
-  // Remove typing indicator and create streaming bubble
-  hideTyping();
-  var chat=document.getElementById('chat');
-  var div=document.createElement('div');div.className='msg ai';
-  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
-  var wrap=document.createElement('div');wrap.className='mwrap';
-  var bub=document.createElement('div');bub.className='bubble streaming-bubble';
-  var cursor=document.createElement('span');cursor.className='stream-cursor';cursor.textContent='▋';
-  bub.appendChild(cursor);
-  wrap.appendChild(bub);
-  div.appendChild(av);div.appendChild(wrap);
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
-
-  var reader=res.body.getReader();
-  var decoder=new TextDecoder();
-  var fullText='';
-  var buffer='';
-
-  while(true){
-    var result=await reader.read();
-    if(result.done)break;
-    buffer+=decoder.decode(result.value,{stream:true});
-    var lines=buffer.split('\n');
-    buffer=lines.pop()||'';
-
-    for(var i=0;i<lines.length;i++){
-      var line=lines[i].trim();
-      if(!line||line==='data: [DONE]')continue;
-      if(line.startsWith('data: ')){
-        try{
-          var json=JSON.parse(line.slice(6));
-          var delta=json.choices&&json.choices[0]&&json.choices[0].delta&&json.choices[0].delta.content;
-          if(delta){
-            fullText+=delta;
-            // Update bubble with rendered text
-            bub.innerHTML=renderText(fullText)+'<span class="stream-cursor">▋</span>';
-            chat.scrollTop=chat.scrollHeight;
-          }
-        }catch(e){}
+  // Streaming handled by callGroq
+  var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs,stream:true})});
+  if(res.ok && res.headers.get('content-type')&&res.headers.get('content-type').includes('text/event-stream')){return await handleStream(res);}
+  var data=await res.json();
+  console.log('QVIO response status:',res.status,'data:',JSON.stringify(data).substring(0,200));
+  if(data.error){
+    var msg2=data.error.message||JSON.stringify(data.error);
+    // Auto-rotate key on rate limit (429) and retry once
+    if((res.status===429||msg2.indexOf('rate')>-1)&&false){
+      if(rotateKey()){
+        console.log('Key rotated to index',_keyIdx,', retrying...');
+        return callGroq(msg);
       }
     }
+    throw new Error('API '+res.status+': '+msg2);
   }
-
-  // Final render without cursor
-  bub.classList.remove('streaming-bubble');
-  bub.innerHTML=renderText(fullText);
-  if(typeof onAIResponse==='function')onAIResponse(fullText);
-
-  // Add action buttons
-  var cb=document.createElement('button');cb.className='cpbtn';cb.textContent='Copy';
-  cb.onclick=function(){navigator.clipboard.writeText(fullText);cb.textContent='✓';setTimeout(function(){cb.textContent='Copy';},2000);};
-  bub.appendChild(cb);
-
-  var meta=document.createElement('div');meta.className='mmeta';
-  function makeAct(icon,tip,fn){
-    var b=document.createElement('button');b.className='act';b.textContent=icon;b.title=tip;b.onclick=fn;meta.appendChild(b);return b;
-  }
-  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
-  var lk=makeAct('👍','Like',function(){lk.classList.toggle('liked');dk.classList.remove('disliked');});
-  var dk=makeAct('👎','Dislike',function(){dk.classList.toggle('disliked');lk.classList.remove('liked');});
-  ['❤️','🔥','😂','🤯','👏'].forEach(function(emoji){
-    makeAct(emoji,emoji,function(){showToast(emoji+' reaction!');this.style.transform='scale(1.5)';var self=this;setTimeout(function(){self.style.transform='';},300);});
-  });
-  // SPEAK BUTTON
-  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
-  (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('QVIO says:\n\n'+msgContent.substring(0,500)+'\n\n— via QVIO AI (qvio.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
-  makeAct('🔄','Regenerate',function(){if(lastMsg)sendMsg(lastMsg);});
-  wrap.appendChild(meta);
-
-  var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
-
-  saveCurrentSession();
-  return fullText;
+  if(!data.choices||!data.choices[0])throw new Error('Empty response: '+JSON.stringify(data).substring(0,100));
+  return data.choices[0].message.content;
 }
 
+function send(t){document.getElementById('inp').value=t;sendMsg();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function onInp(el){
+  el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';
+  var n=el.value.length;
+  document.getElementById('charCnt').textContent=n>0?n+'/2000':'';
+  document.getElementById('charCnt').style.color=n>1800?'var(--danger)':'';
+}
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+function clearChat(){
+  document.getElementById('chat').innerHTML='<div class="welcome" id="welcome"><div class="w-crown">👑</div><div class="w-icon">QV</div><h1>Fresh <em>start!</em></h1><p class="wsub">Ready for a brand new conversation.</p></div>';
+  chatHistory=[];document.getElementById('pinnedBar').classList.remove('show');pinnedEl=null;showToast('Chat cleared!');
+}
+function toggleFocus(){
+  isFocus=!isFocus;document.body.classList.toggle('focus',isFocus);
+  document.getElementById('focusBtn').classList.toggle('on',isFocus);
+  showToast(isFocus?'⛶ Focus mode on!':'Focus mode off');
+}
+function exportChat(){
+  if(!chatHistory.length){showToast('Nothing to export!');return;}
+  var txt='QVIO Premium Chat\n'+new Date().toLocaleString()+'\n'+'═'.repeat(50)+'\n\n';
+  chatHistory.forEach(function(m){txt+=(m.role==='user'?'YOU':'QVIO')+': '+m.content+'\n\n';});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='qvio-chat-'+Date.now()+'.txt';a.click();
+  showToast('💾 Chat exported!');
+}
 
 // ═══════════════════════════════
 // CALCULATOR
@@ -4409,7 +3314,7 @@ function resetMicBtns(){
 }
 
 function cleanAndSend(text){
-  // AI grammar cleanup via QVIO AI Engine
+  // AI grammar cleanup via Groq
   var inp=document.getElementById('inp');
   showToast('✨ Cleaning up...');
   var headers={'Content-Type':'application/json','Authorization':'Bearer '+_qcS[_keyIdx]};
@@ -5170,7 +4075,7 @@ async function analyseLens(){
       resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
     }
   }catch(e){
-    // Vision model not available on all QVIO AI Engine tiers — fallback to text description
+    // Vision model not available on all Groq tiers — fallback to text description
     resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
   }
   document.getElementById('lensAnalyseBtn').disabled=false;
@@ -5342,7 +4247,7 @@ setTimeout(function(){
         console.error('QVIO KEY EXPIRED:',msg);
       }
     }else{
-      console.log('✅ QVIO AI Engine API key is valid');
+      console.log('✅ Groq API key is valid');
     }
   }).catch(function(){
     // Network error or CORS — can't check, ignore silently
@@ -5502,433 +4407,5 @@ function getAILangInstruction(){
 }
 
 </script>
-
-<div class="modal" id="m_mem">
-  <div class="mhd"><h3>🧠 Memory</h3><button class="mx" onclick="closeM('mem')">✕</button></div>
-  <div class="msub">QVIO remembers you across every session</div>
-  <div id="memList"></div>
-  <div class="mrow"><input class="minp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/><button class="madd" onclick="addMem()">Save</button></div>
-  <button class="mclose" onclick="closeM('mem')">Done</button>
-</div>
-
-<!-- SUPPORT -->
-
-<!-- MODALS FROM V4 -->
-<div class="modal" id="m_stats">
-  <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
-  <div class="msub">Your QVIO journey at a glance</div>
-  <div class="stat-grid" id="statGrid"></div>
-  <div class="slabel">Achievements</div>
-  <div class="badge-grid" id="badgeGrid"></div>
-  <button class="mclose" onclick="closeM('stats')">Close</button>
-</div>
-
-<!-- STREAK -->
-<div class="modal" id="m_streak">
-  <div class="mhd"><h3>🔥 Daily Streak</h3><button class="mx" onclick="closeM('streak')">✕</button></div>
-  <div class="streak-center">
-    <span class="streak-big">🔥</span>
-    <span class="streak-num" id="streakBig">0</span>
-    <div style="font-size:14px;color:var(--text2);margin-top:8px;">day streak — keep it going!</div>
-    <div class="sdays" id="streakDays"></div>
-  </div>
-  <button class="mclose" onclick="closeM('streak')">Close</button>
-</div>
-
-<!-- THEME -->
-<div class="modal" id="m_theme">
-  <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
-  <div class="msub">Customize QVIO to your taste</div>
-  <div class="slabel">Theme</div>
-  <div class="theme-row">
-    <div class="tho" onclick="setTh('light')">☀️ Light</div>
-    <div class="tho" onclick="setTh('dark')">🌙 Dark</div>
-    <div class="tho" onclick="setTh('auto')">🌓 Auto</div>
-  </div>
-  <div class="slabel">Font Size</div>
-  <div class="theme-row">
-    <div class="tho" onclick="setFont('small')">A− Small</div>
-    <div class="tho on" onclick="setFont('normal')">A Normal</div>
-    <div class="tho" onclick="setFont('large')">A+ Large</div>
-  </div>
-  <button class="mclose" onclick="closeM('theme')">Done</button>
-</div>
-
-<!-- GALLERY -->
-<div class="modal" id="m_gal">
-  <div class="mhd"><h3>🎨 Image Gallery</h3><button class="mx" onclick="closeM('gal')">✕</button></div>
-  <div class="msub">All your AI-generated masterpieces</div>
-  <div class="img-gal" id="galGrid"></div>
-  <button class="mclose" onclick="closeM('gal')">Close</button>
-</div>
-
-<!-- PROFILE -->
-<div class="modal" id="m_prof">
-  <div class="mhd"><h3>My Profile</h3><button class="mx" onclick="closeM('prof')">✕</button></div>
-  <div class="prof-top">
-    <div class="prof-av" id="profAv">?</div>
-    <div class="prof-nm" id="profName">Guest</div>
-    <div class="prof-em" id="profEmail">Not signed in</div>
-  </div>
-  <div class="pro-up" onclick="openM('pro')">
-    <h4>⭐ Upgrade to QVIO Pro</h4>
-    <p>₹199/month — Unlimited messages & priority AI</p>
-  </div>
-  <button class="signout" onclick="doSignOut()">Sign Out</button>
-  <button class="mclose" onclick="closeM('prof')">Close</button>
-</div>
-
-<!-- HISTORY -->
-<div class="modal" id="m_hist">
-  <div class="mhd"><h3>💬 Chat History</h3><button class="mx" onclick="closeM('hist')">✕</button></div>
-  <div class="msub">Your saved conversations</div>
-  <div class="hl" id="histList"></div>
-  <button class="mclose" onclick="closeM('hist')">Close</button>
-</div>
-
-<!-- IMAGE VIEWER -->
-<div class="modal" id="m_imgv" style="max-width:600px;">
-  <div class="mhd"><h3>🖼 Image</h3><button class="mx" onclick="closeM('imgv')">✕</button></div>
-  <img id="imgVSrc" style="width:100%;border-radius:var(--r);border:2px solid var(--border2);margin-top:10px;"/>
-  <a id="imgVDl" download="qvio.jpg" class="img-dl" style="margin-top:12px;">⬇ Download</a>
-  <button class="mclose" onclick="closeM('imgv')">Close</button>
-</div>
-
-<!-- PRO MODAL -->
-<div class="modal" id="m_pro">
-  <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
-  <div class="msub">Unlock the full power of QVIO</div>
-  <div class="pro-feat">
-    <div class="pf"><span class="pf-icon">♾️</span>Unlimited messages</div>
-    <div class="pf"><span class="pf-icon">⚡</span>Priority AI speed</div>
-    <div class="pf"><span class="pf-icon">🧠</span>Unlimited memory</div>
-    <div class="pf"><span class="pf-icon">🎨</span>4K image generation</div>
-    <div class="pf"><span class="pf-icon">💬</span>Unlimited chat history</div>
-    <div class="pf"><span class="pf-icon">🔒</span>Private & secure</div>
-    <div class="pf"><span class="pf-icon">🌍</span>All 100+ languages</div>
-    <div class="pf"><span class="pf-icon">🚫</span>No rate limits ever</div>
-  </div>
-  <div class="pro-price"><div class="price">₹199</div><div class="per">per month · Cancel anytime</div></div>
-  <div class="sec-warn">🔒 Payments coming soon via Razorpay · UPI · Cards</div>
-  <button class="mclose" onclick="closeM('pro');showToast('🚀 Pro launching soon! Stay tuned!')">Notify me when Pro launches →</button>
-</div>
-
-
-<!-- NEW FEATURE OVERLAYS -->
-<div class="overlay" id="o_todo" onclick="closeM('todo')"></div>
-<div class="overlay" id="o_timer" onclick="closeM('timer')"></div>
-<div class="overlay" id="o_currency" onclick="closeM('currency')"></div>
-<div class="overlay" id="o_mood" onclick="closeM('mood')"></div>
-<div class="overlay" id="o_wpm" onclick="closeM('wpm')"></div>
-<div class="overlay" id="o_news" onclick="closeM('news')"></div>
-<div class="overlay" id="o_emoji" onclick="closeM('emoji')"></div>
-<div class="overlay" id="o_cv" onclick="closeM('cv')"></div>
-<div class="overlay" id="o_notes" onclick="closeM('notes')"></div>
-<div class="overlay" id="o_age" onclick="closeM('age')"></div>
-<div class="overlay" id="o_bmi" onclick="closeM('bmi')"></div>
-<div class="overlay" id="o_qotd" onclick="closeM('qotd')"></div>
-<div class="overlay" id="o_word" onclick="closeM('word')"></div>
-<div class="overlay" id="o_poll" onclick="closeM('poll')"></div>
-
-<!-- TODO LIST -->
-<div class="modal" id="m_todo">
-  <div class="mhd"><h3>✅ To-Do List</h3><button class="mx" onclick="closeM('todo')">✕</button></div>
-  <div class="msub">Your personal task manager</div>
-  <div class="mrow"><input class="minp" id="todoInp" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"/><button class="madd" onclick="addTodo()">Add</button></div>
-  <div id="todoList" style="margin-top:12px;max-height:320px;overflow-y:auto;"></div>
-  <div style="display:flex;gap:8px;margin-top:10px;">
-    <button class="mclose" style="margin-top:0;" onclick="clearDoneTodos()">Clear Done</button>
-    <button class="mclose" style="margin-top:0;" onclick="closeM('todo')">Done</button>
-  </div>
-</div>
-
-<!-- TIMER / STOPWATCH -->
-<div class="modal" id="m_timer">
-  <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
-  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
-    <button class="tbtn mode-btn on" id="timerModeStop" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
-    <button class="tbtn mode-btn" id="timerModeTimer" onclick="switchTimerMode('countdown')">Countdown</button>
-    <button class="tbtn mode-btn" id="timerModePomodoro" onclick="switchTimerMode('pomodoro')">🍅 Pomodoro</button>
-  </div>
-  <div class="timer-display" id="timerDisplay">00:00:00</div>
-  <div id="pomodoroLabel" style="text-align:center;font-size:13px;color:var(--text3);margin-top:-8px;display:none;"></div>
-  <div id="countdownSet" style="display:none;text-align:center;margin-bottom:8px;">
-    <input type="number" id="cdMin" placeholder="Min" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="99">
-    <span style="font-size:20px;color:var(--text3);margin:0 4px;">:</span>
-    <input type="number" id="cdSec" placeholder="Sec" style="width:70px;padding:8px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:16px;text-align:center;color:var(--text);outline:none;font-family:'DM Mono',monospace;" min="0" max="59">
-  </div>
-  <div class="timer-btns">
-    <button class="tbtn start" id="timerStartBtn" onclick="timerAction('start')">▶ Start</button>
-    <button class="tbtn stop" id="timerStopBtn" onclick="timerAction('stop')" style="display:none;">⏸ Pause</button>
-    <button class="tbtn reset" onclick="timerAction('reset')">↺ Reset</button>
-    <button class="tbtn mode-btn" onclick="timerAction('lap')" id="lapBtn">🏁 Lap</button>
-  </div>
-  <div class="timer-laps" id="timerLaps"></div>
-  <button class="mclose" onclick="closeM('timer')">Close</button>
-</div>
-
-<!-- CURRENCY CONVERTER -->
-<div class="modal" id="m_currency">
-  <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
-  <div class="msub">Live INR rates (approximate)</div>
-  <input type="number" class="curr-inp" id="currAmt" placeholder="Enter amount in ₹ INR" oninput="convertCurrency(this.value)">
-  <div id="currList"></div>
-  <button class="mclose" onclick="closeM('currency')">Close</button>
-</div>
-
-<!-- MOOD TRACKER -->
-<div class="modal" id="m_mood">
-  <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
-  <div class="msub">How are you feeling today?</div>
-  <div class="mood-grid">
-    <div class="mood-btn" onclick="logMood('😄','Amazing')"><span class="mood-emoji">😄</span><span class="mood-lbl">Amazing</span></div>
-    <div class="mood-btn" onclick="logMood('😊','Happy')"><span class="mood-emoji">😊</span><span class="mood-lbl">Happy</span></div>
-    <div class="mood-btn" onclick="logMood('😐','Okay')"><span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span></div>
-    <div class="mood-btn" onclick="logMood('😔','Sad')"><span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span></div>
-    <div class="mood-btn" onclick="logMood('😤','Stressed')"><span class="mood-emoji">😤</span><span class="mood-lbl">Stressed</span></div>
-  </div>
-  <div class="slabel">Recent Moods</div>
-  <div class="mood-hist" id="moodHist"></div>
-  <button class="mclose" onclick="closeM('mood')">Close</button>
-</div>
-
-<!-- TYPING SPEED TEST -->
-<div class="modal" id="m_wpm">
-  <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
-  <div class="msub">Test your WPM — how fast do you type?</div>
-  <div class="wpm-text-area" id="wpmText"></div>
-  <input class="wpm-inp" id="wpmInp" placeholder="Start typing here..." oninput="wpmCheck(this)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
-  <div class="wpm-stats" id="wpmStats"></div>
-  <div style="display:flex;gap:8px;margin-top:12px;">
-    <button class="mclose" style="margin-top:0;" onclick="startWPM()">New Test</button>
-    <button class="mclose" style="margin-top:0;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('wpm')">Close</button>
-  </div>
-</div>
-
-<!-- QUICK NEWS -->
-<div class="modal" id="m_news">
-  <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
-  <div class="msub">Ask QVIO about any of these stories</div>
-  <div id="newsList"></div>
-  <button class="mclose" onclick="closeM('news')">Close</button>
-</div>
-
-<!-- EMOJI PICKER -->
-<div class="modal" id="m_emoji">
-  <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
-  <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
-  <div class="emoji-cats" id="emojiCats"></div>
-  <div class="emoji-grid" id="emojiGrid"></div>
-  <button class="mclose" onclick="closeM('emoji')">Close</button>
-</div>
-
-<!-- CV / RESUME BUILDER -->
-<div class="modal" id="m_cv">
-  <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
-  <div class="msub">Fill in your details and AI will write your CV</div>
-  <div class="cv-form">
-    <div class="cv-section-title">Personal Info</div>
-    <input class="cv-inp" id="cvName" placeholder="Full Name">
-    <input class="cv-inp" id="cvRole" placeholder="Target Role (e.g. Software Engineer)">
-    <input class="cv-inp" id="cvEmail" placeholder="Email">
-    <input class="cv-inp" id="cvPhone" placeholder="Phone">
-    <input class="cv-inp" id="cvCity" placeholder="City">
-    <div class="cv-section-title">Education</div>
-    <textarea class="cv-inp" id="cvEdu" placeholder="e.g. B.Tech Computer Science, IIT Delhi, 2024" rows="2"></textarea>
-    <div class="cv-section-title">Experience</div>
-    <textarea class="cv-inp" id="cvExp" placeholder="e.g. Intern at TCS, built payment gateway, 2023" rows="2"></textarea>
-    <div class="cv-section-title">Skills</div>
-    <input class="cv-inp" id="cvSkills" placeholder="e.g. Python, React, SQL, Leadership">
-  </div>
-  <button class="mclose" onclick="buildCV()">✨ Generate My CV with AI →</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('cv')">Close</button>
-</div>
-
-<!-- QUICK NOTES -->
-<div class="modal" id="m_notes">
-  <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
-  <div class="msub">Jot down anything instantly</div>
-  <div class="mrow">
-    <textarea class="minp" id="noteInp" placeholder="Write your note here..." style="resize:none;height:70px;"></textarea>
-    <button class="madd" onclick="addNote()">Save</button>
-  </div>
-  <div id="noteList" style="margin-top:12px;max-height:300px;overflow-y:auto;"></div>
-  <button class="mclose" onclick="closeM('notes')">Done</button>
-</div>
-
-<!-- AGE CALCULATOR -->
-<div class="modal" id="m_age">
-  <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
-  <div class="msub">Find exact age in years, months and days</div>
-  <div class="slabel">Date of Birth</div>
-  <input type="date" class="cv-inp" id="ageDate" onchange="calcAge()" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
-  <div class="age-result" id="ageResult"></div>
-  <button class="mclose" onclick="closeM('age')">Close</button>
-</div>
-
-<!-- BMI CALCULATOR -->
-<div class="modal" id="m_bmi">
-  <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
-  <div class="msub">Body Mass Index — quick health check</div>
-  <div style="display:flex;gap:10px;margin-bottom:10px;">
-    <div style="flex:1;">
-      <div class="cv-section-title">Weight (kg)</div>
-      <input type="number" id="bmiW" class="curr-inp" placeholder="70" oninput="calcBMI()" style="margin-bottom:0;">
-    </div>
-    <div style="flex:1;">
-      <div class="cv-section-title">Height (cm)</div>
-      <input type="number" id="bmiH" class="curr-inp" placeholder="175" oninput="calcBMI()" style="margin-bottom:0;">
-    </div>
-  </div>
-  <div class="bmi-result" id="bmiResult"></div>
-  <button class="mclose" onclick="closeM('bmi')">Close</button>
-</div>
-
-<!-- QUOTE OF THE DAY -->
-<div class="modal" id="m_qotd">
-  <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
-  <div class="msub">Daily wisdom to inspire your journey</div>
-  <div id="qotdWrap"></div>
-  <button class="mclose" onclick="newQotd()">Next Quote ✨</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('qotd')">Close</button>
-</div>
-
-<!-- WORD OF THE DAY -->
-<div class="modal" id="m_word">
-  <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
-  <div class="msub">Expand your vocabulary daily</div>
-  <div id="wordWrap"></div>
-  <button class="mclose" onclick="newWord()">Next Word 🔄</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('word')">Close</button>
-</div>
-
-<!-- LIVE POLL -->
-<div class="modal" id="m_poll">
-  <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
-  <div class="msub">Create a poll and share with friends</div>
-  <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
-  <input class="cv-inp" id="pollO1" placeholder="Option 1" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO2" placeholder="Option 2" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO3" placeholder="Option 3 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:6px;">
-  <input class="cv-inp" id="pollO4" placeholder="Option 4 (optional)" style="width:100%;padding:10px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:10px;">
-  <div id="pollResult" style="display:none;"></div>
-  <button class="mclose" onclick="createPoll()">Create Poll 🗳</button>
-  <button class="mclose" style="margin-top:6px;background:var(--surface);color:var(--text2);border:1px solid var(--border);" onclick="closeM('poll')">Close</button>
-</div>
-
-<script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});</script><div class="overlay" id="o_langlearn" onclick="closeM('langlearn')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_langlearn" style="max-width:540px;">
-  <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
-  <div style="padding:20px;">
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-      <button class="ll-lang" onclick="startLangLearn('Spanish')">🇪🇸 Spanish</button>
-      <button class="ll-lang" onclick="startLangLearn('French')">🇫🇷 French</button>
-      <button class="ll-lang" onclick="startLangLearn('Japanese')">🇯🇵 Japanese</button>
-      <button class="ll-lang" onclick="startLangLearn('Hindi')">🇮🇳 Hindi</button>
-      <button class="ll-lang" onclick="startLangLearn('German')">🇩🇪 German</button>
-      <button class="ll-lang" onclick="startLangLearn('Korean')">🇰🇷 Korean</button>
-      <button class="ll-lang" onclick="startLangLearn('Arabic')">🇸🇦 Arabic</button>
-      <button class="ll-lang" onclick="startLangLearn('Tamil')">🇮🇳 Tamil</button>
-      <button class="ll-lang" onclick="startLangLearn('Mandarin')">🇨🇳 Mandarin</button>
-    </div>
-  </div>
-</div>
-<div class="overlay" id="o_sup" onclick="closeM('sup')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_sup" style="max-width:440px;">
-  <div class="mhd"><h3>💬 Support</h3><button class="mx" onclick="closeM('sup')">✕</button></div>
-  <div style="padding:20px;text-align:center;">
-    <div style="font-size:40px;margin-bottom:12px;">🙏</div>
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Need help? Reach VARUN directly</p>
-    <a href="/cdn-cgi/l/email-protection#fc8f898c8c938e88bc8d8a9593d29592" style="display:block;padding:12px;background:#4F46E5;color:#fff;border-radius:12px;text-decoration:none;font-weight:600;margin-bottom:10px;">📧 <span class="__cf_email__" data-cfemail="c5b6b0b5b5aab7b185b4b3acaaebacab">[email&#160;protected]</span></a>
-    <button class="mclose" onclick="closeM('sup')">Close</button>
-  </div>
-</div>
-<div class="overlay" id="o_pdf" onclick="closeM('pdf')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-
-
-<!-- WISPR FLOW -->
-<div id="wisprPanel">
-  <div class="wispr-status">
-    <span id="wisprStatusText">Ready to listen</span>
-    <div class="wispr-wave" id="wisprWave" style="display:none;">
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-    </div>
-  </div>
-  <div id="wisprTranscript">Tap mic to start speaking...</div>
-  <div class="wispr-settings">
-    <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
-    <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
-    <button class="wispr-toggle on" id="wtAutoSend" onclick="wisprToggle(this,'autoSend')">⚡ Auto Send</button>
-    <button class="wispr-toggle" id="wtWhisper" onclick="wisprToggle(this,'whisper')">🤫 Whisper</button>
-  </div>
-  <div class="wispr-actions">
-    <button class="wispr-action" onclick="wisprClear()">Clear</button>
-    <button class="wispr-action" onclick="wisprInsert()">Insert</button>
-    <button class="wispr-action primary" onclick="wisprSendNow()">Send →</button>
-  </div>
-</div>
-<button id="wisprBtn" onclick="toggleWispr()" title="QVIO Voice (Wispr Flow)">🎙️</button>
-
-
-<!-- PRIVACY POLICY -->
-<div class="overlay" id="o_privacy" onclick="closeM('privacy')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_privacy" style="max-width:600px;max-height:85vh;overflow-y:auto;">
-  <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
-  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
-    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
-    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via Google)<br>
-    • Usage statistics (message count, features used)<br>
-    • Device information (browser type, language preference)</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
-    <p>• To provide and improve QVIO AI responses<br>
-    • To personalize your experience<br>
-    • To maintain your preferences and settings<br>
-    • To ensure platform security</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
-    • Your preferences are stored locally on your device<br>
-    • We use Firebase for authentication only</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• QVIO AI Engine — for processing AI responses<br>
-    • Firebase — for authentication<br>
-    • QVIO Image Engine — for image generation</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
-    <p>• You can delete your account at any time<br>
-    • You can request deletion of your data<br>
-    • You can opt out of any feature</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
-    <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#2e5e5c47584f4d576e5f584741004740" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="6212100b1403011b2213140b0d4c0b0c">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
-  </div>
-</div>
-
-<!-- TERMS OF SERVICE -->
-<div class="overlay" id="o_terms" onclick="closeM('terms')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
-<div class="modal" id="m_terms" style="max-width:600px;max-height:85vh;overflow-y:auto;">
-  <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
-  <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
-    <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
-    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
-    <p>• QVIO is for lawful purposes only<br>
-    • You must be 13+ years old to use QVIO<br>
-    • Do not use QVIO for harmful, illegal or abusive content<br>
-    • Do not attempt to reverse engineer or copy QVIO</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
-    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
-    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
-    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
-    <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
+</body>
+</html>
