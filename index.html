@@ -2683,6 +2683,25 @@ function updateUserUI(user){
 }
 
 // STREAK
+
+function awardImgXP(){
+  if(typeof addXP==='function') addXP(25,'Image created!');
+}
+function awardMsgXP(){
+  if(typeof addXP==='function') addXP(10,'Message sent!');
+  if(typeof checkBadge==='function'){
+    var mc=parseInt(localStorage.getItem('qvio_msgs')||'0')+1;
+    localStorage.setItem('qvio_msgs',mc);
+    if(mc===1)checkBadge('first_msg');
+    if(mc===10)checkBadge('msg_10');
+    if(mc===50)checkBadge('msg_50');
+    if(mc===100)checkBadge('msg_100');
+  }
+}
+function updatePdfBtn(){
+  var pb=document.getElementById('pdfBtn');
+  if(pb)pb.style.display=(typeof mode!=='undefined'&&mode==='student')?'inline-flex':'none';
+}
 </script></body>
 <script>
 // ═══════════════════════════════════════════════════
@@ -3340,7 +3359,6 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
-    // STOP if speaking
     if(window._qvIsSpeaking){
       if(window._qvAudio){window._qvAudio.pause();window._qvAudio.src='';window._qvAudio=null;}
       window.speechSynthesis.cancel();
@@ -3350,54 +3368,51 @@ function speakText(t,btn){
       window._qvBtn=null;
       return;
     }
-
     var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`~\[\]]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim().substring(0,250);
     if(!txt){showToast('Nothing to speak!');return;}
-
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
     if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
     showToast('🎵 Speaking...');
-
     var done=function(){
       window._qvIsSpeaking=false;window._qvBtn=null;window._qvAudio=null;
       clearInterval(window._qvResInt);
       if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
     };
-
-    // Detect language
     var detected=detectSpeakLang(txt);
     var langTag=(detected.tags&&detected.tags[0])||'en-IN';
     var langBase=langTag.split('-')[0];
     var lo={'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml','Bengali':'bn','Gujarati':'gu','Marathi':'mr','Punjabi':'pa','Urdu':'ur','Arabic':'ar','French':'fr','German':'de','Spanish':'es','Portuguese':'pt','Russian':'ru','Japanese':'ja','Korean':'ko','Chinese':'zh-CN','Italian':'it','Turkish':'tr'};
     if(typeof selectedAILang!=='undefined'&&selectedAILang&&lo[selectedAILang])langBase=lo[selectedAILang];
 
-    // Try /api/tts (Google TTS proxy - supports ALL Indian languages)
-    fetch('/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langBase))
-      .then(function(r){
-        if(!r.ok)throw new Error('tts-failed');
-        return r.blob();
-      })
+    // Race: try /api/tts AND Web Speech simultaneously
+    // Whoever wins first gets used
+    var _done=false;
+    var safeDone=function(){if(!_done){_done=true;done();}};
+
+    // Start Web Speech immediately as primary (most reliable)
+    _qvWS(txt, langTag, safeDone);
+
+    // Also try /api/tts in background for better quality
+    fetch('/api/tts?text='+encodeURIComponent(txt.substring(0,150))+'&lang='+encodeURIComponent(langBase))
+      .then(function(r){if(!r.ok)throw new Error('x');return r.blob();})
       .then(function(blob){
+        if(_done)return; // Web Speech already started
+        window.speechSynthesis.cancel(); // Stop Web Speech
         var url=URL.createObjectURL(blob);
         var audio=new Audio(url);
         window._qvAudio=audio;
-        audio.onended=function(){URL.revokeObjectURL(url);done();};
-        audio.onerror=function(){
-          URL.revokeObjectURL(url);
-          _qvWS(txt,langTag,done);
-        };
-        return audio.play();
-      })
-      .catch(function(){
-        // Fallback: Web Speech API
-        _qvWS(txt,langTag,done);
+        audio.onended=function(){URL.revokeObjectURL(url);safeDone();};
+        audio.onerror=function(){URL.revokeObjectURL(url);}; 
+        audio.play().catch(function(){});
+      }).catch(function(){
+        // /api/tts failed, Web Speech already handling it
       });
 
   }catch(e){
     window._qvIsSpeaking=false;
     if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
-    showToast('Voice error: '+e.message);
+    showToast('Error: '+e.message);
   }
 }
 
@@ -3405,6 +3420,7 @@ function _qvWS(txt,lang,done){
   try{
     window.speechSynthesis.cancel();
     setTimeout(function(){
+      if(!window._qvIsSpeaking){done();return;} // Already stopped
       var u=new SpeechSynthesisUtterance(txt);
       u.lang=lang||'en-IN';u.rate=0.88;u.pitch=1.05;u.volume=1;
       u.onend=done;
