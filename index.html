@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<!-- Firebase FIRST before anything else -->
+<!-- QVIO Authentication System FIRST before anything else -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script>
 function filterLangs(q){
@@ -1290,9 +1290,9 @@ header{
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
     <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
-    <button class="gbtn" onclick="signInGoogle()">
+    <button class="gbtn" onclick="signInQVIO Secure Login()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with Google
+      Continue with QVIO Secure Login
     </button>
     <div class="l-or"><span>or</span></div>
     <input class="lf" id="loginEmail" type="email" placeholder="Email address"/>
@@ -2221,7 +2221,7 @@ async function processWispr(text){
   if(!text) return;
 
   if(_wispr.autoClean || _wispr.autoPunct){
-    // Use Groq to clean up the transcript
+    // Use QVIO AI Engine to clean up the transcript
     try{
       var prompt = 'Clean up this voice transcript. ';
       if(_wispr.autoClean) prompt += 'Remove filler words (um, uh, like, you know, basically, literally). ';
@@ -2365,7 +2365,7 @@ document.addEventListener('keyup', function(e){
     <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
     <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via Google Sign-In)<br>
+    • Account information (name, email via QVIO Secure Login)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
@@ -2374,19 +2374,19 @@ document.addEventListener('keyup', function(e){
     • To maintain your preferences and settings<br>
     • To ensure platform security</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via Groq AI and are NOT permanently stored by QVIO<br>
+    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
     • Your preferences are stored locally on your device<br>
-    • We use Firebase for authentication only</p>
+    • We use QVIO Authentication System for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• Groq AI — for processing AI responses<br>
-    • Firebase (Google) — for authentication<br>
-    • Pollinations AI — for image generation</p>
+    <p>• QVIO AI Engine — for processing AI responses<br>
+    • QVIO Authentication System — for authentication<br>
+    • QVIO Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
     • You can request deletion of your data<br>
     • You can opt out of any feature</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
-    <p>For privacy concerns: <a href="mailto:privacy@qvio.in" style="color:#4F46E5;">privacy@qvio.in</a></p>
+    <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#4737352e3126243e0736312e28692e29" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="5424263d2235372d1425223d3b7a3d3a">[email&#160;protected]</span></a></p>
     <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
   </div>
 </div>
@@ -2414,12 +2414,12 @@ document.addEventListener('keyup', function(e){
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
     <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
-    <p>Questions: <a href="mailto:legal@qvio.in" style="color:#4F46E5;">legal@qvio.in</a></p>
+    <p>Questions: <a href="/cdn-cgi/l/email-protection#e38f8684828fa392958a8ccd8a8d" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="fc90999b9d90bc8d8a9593d29592">[email&#160;protected]</span></a></p>
     <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
   </div>
 </div>
 
-</body>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 <script>
 // ═══════════════════════════════════════════════════
 // QVIO PROTECTION SYSTEM
@@ -2524,19 +2524,19 @@ var firebaseConfig={
 };
 var fbAuth=null;
 
-function initFirebase(){
+function initQVIO Authentication System(){
   try{
-    if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
+    if(typeof firebase==='undefined'){setTimeout(initQVIO Authentication System,200);return;}
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbAuth.onAuthStateChanged(function(u){
       if(u){currentUser=u;updateUserUI(u);showNamaste(u);var _ci=document.getElementById('inp');if(_ci)_ci.value='';if(typeof updateSidebarUser==='function')updateSidebarUser(u);}
     });
-    console.log('✅ Firebase ready!');
-  }catch(e){console.warn('Firebase error:',e);}
+    console.log('✅ QVIO Authentication System ready!');
+  }catch(e){console.warn('QVIO Authentication System error:',e);}
 }
-// Init immediately — Firebase SDK already loaded in <head>
-initFirebase();
+// Init immediately — QVIO Authentication System SDK already loaded in <head>
+initQVIO Authentication System();
 
 // ═══════════════════════════════
 // GLOBALS
@@ -2617,12 +2617,12 @@ function showNamaste(user){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function signInGoogle(){
-  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
-  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+function signInQVIO Secure Login(){
+  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initQVIO Authentication System,500);return;}
+  fbAuth.signInWithPopup(new firebase.auth.QVIO Secure LoginAuthProvider())
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(e){
-      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for QVIO Secure Login login!');
       else showToast('Error: '+e.message);
     });
 }
@@ -2750,7 +2750,7 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
+var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, QVIO Secure Login or any other AI company. You are QVIO.
 
 1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
 
@@ -3069,24 +3069,112 @@ function findBestVoice(tags){
 }
 var curU=null;
 function speakText(t,btn){
-  if(curU&&window.speechSynthesis.speaking){window.speechSynthesis.cancel();if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;return;}
-  var clean=t.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/#+/g,'').replace(/`/g,'');
-  clean=clean.substring(0,2000);
-  var u=new SpeechSynthesisUtterance(clean);
-  var detected=detectSpeakLang(clean);
-  var voice=findBestVoice(detected.tags);
-  if(voice)u.voice=voice;
-  u.lang=detected.tags[0];
-  u.rate=0.93;u.pitch=1.0;u.volume=1.0;
-  showToast('🔊 Speaking in '+detected.lang+'...');
-  if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
-  u.onend=u.onerror=function(){if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}curU=null;};
-  curU=u;window.speechSynthesis.speak(u);
+  try{
+    // STOP
+    if(window._qvIsSpeaking){
+      if(window._qvAudio){window._qvAudio.pause();window._qvAudio=null;}
+      window.speechSynthesis.cancel();
+      clearInterval(window._qvResInt);
+      window._qvIsSpeaking=false;
+      if(window._qvBtn){window._qvBtn.textContent='🔊';window._qvBtn.classList.remove('speaking');}
+      window._qvBtn=null;
+      return;
+    }
+
+    var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`~\[\]]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim().substring(0,250);
+    if(!txt){showToast('Nothing to speak!');return;}
+
+    window._qvIsSpeaking=true;
+    window._qvBtn=btn;
+    if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
+    showToast('🎵 Speaking...');
+
+    var done=function(){
+      window._qvIsSpeaking=false;window._qvBtn=null;window._qvAudio=null;
+      clearInterval(window._qvResInt);
+      if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    };
+
+    // Detect language
+    var detected=detectSpeakLang(txt);
+    var langBase=(detected.tags&&detected.tags[0]||'en-IN').split('-')[0];
+    var lo={'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml','Bengali':'bn','Gujarati':'gu','Marathi':'mr','Punjabi':'pa','Urdu':'ur','Arabic':'ar','French':'fr','German':'de','Spanish':'es','Portuguese':'pt','Russian':'ru','Japanese':'ja','Korean':'ko','Chinese':'zh-CN','Italian':'it','Turkish':'tr'};
+    if(selectedAILang&&lo[selectedAILang])langBase=lo[selectedAILang];
+
+    // StreamElements voices - best free TTS
+    var seVoices={
+      'en':'Joanna','hi':'Aditi','ar':'Zeina','fr':'Celine',
+      'de':'Marlene','it':'Carla','ja':'Mizuki','ko':'Seoyeon',
+      'ru':'Tatyana','es':'Conchita','tr':'Filiz','pt':'Ines','nl':'Lotte'
+    };
+    var seVoice=seVoices[langBase]||'Joanna';
+    var seUrl='https://api.streamelements.com/kappa/v2/speech?voice='+seVoice+'&text='+encodeURIComponent(txt.substring(0,200));
+
+    var audio=new Audio(seUrl);
+    window._qvAudio=audio;
+    audio.onended=done;
+    audio.onerror=function(){
+      // Fallback: /api/tts (QVIO Secure Login proxy)
+      window._qvAudio=null;
+      fetch('/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langBase))
+        .then(function(r){if(!r.ok)throw new Error('x');return r.blob();})
+        .then(function(blob){
+          var url=URL.createObjectURL(blob);
+          var a=new Audio(url);
+          window._qvAudio=a;
+          a.onended=function(){URL.revokeObjectURL(url);done();};
+          a.onerror=function(){URL.revokeObjectURL(url);_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);};
+          a.play().catch(function(){_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);});
+        }).catch(function(){_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);});
+    };
+    audio.play().catch(function(){
+      window._qvAudio=null;
+      audio.onerror();
+    });
+
+  }catch(e){
+    window._qvIsSpeaking=false;
+    if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+    showToast('Error: '+e.message);
+  }
 }
 
-// ═══════════════════════════════
-// TYPING / SKELETON
-// ═══════════════════════════════
+function _qvWS(txt,lang,done){
+  try{
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      var u=new SpeechSynthesisUtterance(txt);
+      u.lang=lang||'en-IN';u.rate=0.88;u.pitch=1.05;u.volume=1;
+      u.onend=done;
+      u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')done();};
+      function go(vv){
+        var base=lang.split('-')[0],pick=null,bs=-999;
+        vv.forEach(function(v){
+          var n=v.name.toLowerCase(),sc=0;
+          if(v.lang===lang)sc+=100;
+          else if(v.lang.startsWith(base))sc+=50;
+          else return;
+          if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;
+          ['aria','jenny','sonia','libby','samantha','zira'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
+          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
+          if(sc>bs){bs=sc;pick=v;}
+        });
+        if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+        if(pick){u.voice=pick;u.lang=pick.lang;}
+        window.speechSynthesis.speak(u);
+        clearInterval(window._qvResInt);
+        window._qvResInt=setInterval(function(){
+          if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
+          if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+        },2500);
+      }
+      var v=window.speechSynthesis.getVoices();
+      if(v&&v.length)go(v);
+      else{window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};setTimeout(function(){go(window.speechSynthesis.getVoices());},800);}
+    },150);
+  }catch(e){done();}
+}
+
 function showTyping(){
   hideWelcome();
   document.getElementById('typeBar').classList.add('show');
@@ -3213,7 +3301,7 @@ function tryLoadImage_OLD(urlIndex){
       }catch(e){}
     }
     var finalMsg = searchCtx ? text + searchCtx : text;
-    var langInstr=getAILangInstruction();var reply=await callGroq(finalMsg+(langInstr||""));
+    var langInstr=getAILangInstruction();var reply=await callQVIO AI Engine(finalMsg+(langInstr||""));
     var spd=Date.now()-t0;
     hideTyping();
     addMsg(reply,'ai',false,spd);
@@ -3255,7 +3343,7 @@ function tryLoadImage_OLD(urlIndex){
   document.getElementById('sendBtn').disabled=false;
 }
 
-async function callGroq(msg){
+async function callQVIO AI Engine(msg){
   var sys=PROMPTS[mode]+getMemCtx()+(typeof getDocContext==='function'?getDocContext():'');
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
@@ -3500,7 +3588,7 @@ function resetMicBtns(){
 }
 
 function cleanAndSend(text){
-  // AI grammar cleanup via Groq
+  // AI grammar cleanup via QVIO AI Engine
   var inp=document.getElementById('inp');
   showToast('✨ Cleaning up...');
   var headers={'Content-Type':'application/json','Authorization':'Bearer '+_qcS[_keyIdx]};
@@ -4261,7 +4349,7 @@ async function analyseLens(){
       resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
     }
   }catch(e){
-    // Vision model not available on all Groq tiers — fallback to text description
+    // Vision model not available on all QVIO AI Engine tiers — fallback to text description
     resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
   }
   document.getElementById('lensAnalyseBtn').disabled=false;
@@ -4433,7 +4521,7 @@ setTimeout(function(){
         console.error('QVIO KEY EXPIRED:',msg);
       }
     }else{
-      console.log('✅ Groq API key is valid');
+      console.log('✅ QVIO AI Engine API key is valid');
     }
   }).catch(function(){
     // Network error or CORS — can't check, ignore silently
@@ -4503,7 +4591,7 @@ function webSearch(query){
   });
 }
 
-async function callGroqWithSearch(text){
+async function callQVIO AI EngineWithSearch(text){
   var searchContext = '';
   
   if(needsWebSearch(text)){
@@ -4975,7 +5063,7 @@ function getAILangInstruction(){
     <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
     <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via Google Sign-In)<br>
+    • Account information (name, email via QVIO Secure Login)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
@@ -4984,19 +5072,19 @@ function getAILangInstruction(){
     • To maintain your preferences and settings<br>
     • To ensure platform security</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via Groq AI and are NOT permanently stored by QVIO<br>
+    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
     • Your preferences are stored locally on your device<br>
-    • We use Firebase for authentication only</p>
+    • We use QVIO Authentication System for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• Groq AI — for processing AI responses<br>
-    • Firebase (Google) — for authentication<br>
-    • Pollinations AI — for image generation</p>
+    <p>• QVIO AI Engine — for processing AI responses<br>
+    • QVIO Authentication System — for authentication<br>
+    • QVIO Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
     • You can request deletion of your data<br>
     • You can opt out of any feature</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
-    <p>For privacy concerns: <a href="mailto:privacy@qvio.in" style="color:#4F46E5;">privacy@qvio.in</a></p>
+    <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#2e5e5c47584f4d576e5f584741004740" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="6212100b1403011b2213140b0d4c0b0c">[email&#160;protected]</span></a></p>
     <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
   </div>
 </div>
@@ -5023,11 +5111,3 @@ function getAILangInstruction(){
     <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
     <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
-    <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
-    <p>Questions: <a href="mailto:legal@qvio.in" style="color:#4F46E5;">legal@qvio.in</a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
-  </div>
-</div>
-
-</body>
-</html>
