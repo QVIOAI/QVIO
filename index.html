@@ -1398,6 +1398,50 @@ header{
   outline: none;
 }
 .sb-search::placeholder{color:var(--text3);}
+
+/* ══ LAYOUT FIX ══ */
+#qvio-app{
+  margin-left:260px;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  overflow:hidden;
+  transition:margin .3s;
+}
+@media(max-width:767px){
+  #qvio-app{margin-left:0 !important;}
+}
+/* Fix namaste screen */
+#namasteScreen{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:8000 !important;
+  margin-left:0 !important;
+}
+/* Fix login screen */
+#loginScreen{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:9000 !important;
+  margin-left:0 !important;
+}
+/* Fix particles */
+#particles{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  margin-left:0 !important;
+}
+/* Chat takes full height */
+.chat{
+  flex:1 !important;
+  overflow-y:auto !important;
+}
+
+/* Hide app until logged in */
+#qvio-app{opacity:0;pointer-events:none;transition:opacity .4s;}
+#qvio-app.ready{opacity:1;pointer-events:all;}
 </style>
 </head>
 <body>
@@ -1827,7 +1871,7 @@ header{
 
 </script>
 <div id="sidebarOverlay" onclick="closeSidebar()"></div>
-<div id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
+<div id="sidebar" style="display:none;" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
   <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
     <div style="width:30px;height:30px;border-radius:8px;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
     <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
@@ -1849,6 +1893,7 @@ header{
     </div>
   </div>
 </div>
+<div id="qvio-app">
 <header>
   <button id="sbToggle" onclick="toggleSidebar()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">☰</button>
   <a class="logo" onclick="scrollToTop()">
@@ -2474,6 +2519,7 @@ document.addEventListener('keyup', function(e){
 <div class="overlay" id="o_pdf" onclick="closeM('pdf')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:899;"></div>
 
 
+</div>
 <!-- WISPR FLOW -->
 <div id="wisprPanel">
   <div class="wispr-status">
@@ -2572,7 +2618,12 @@ function initFirebase(){
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbAuth.onAuthStateChanged(function(u){
-      if(u){currentUser=u;updateUserUI(u);showNamaste(u);var _ci=document.getElementById('inp');if(_ci)_ci.value='';updateSidebarUser(u);}
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);
+        var app=document.getElementById('qvio-app');
+        if(app)setTimeout(function(){app.classList.add('ready');},4500);
+        var sb=document.getElementById('sidebar');
+        if(sb)setTimeout(function(){sb.style.display='flex';},4500);
+        var sbo=document.getElementById('sidebarOverlay');var _ci=document.getElementById('inp');if(_ci)_ci.value='';updateSidebarUser(u);}
     });
     console.log('✅ Firebase ready!');
   }catch(e){console.warn('Firebase error:',e);}
@@ -2586,6 +2637,10 @@ var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAG
 var _keyIdx=0;
 var _qc=_qk[0];
 function continueAsGuest(){
+  var app=document.getElementById('qvio-app');
+  if(app)setTimeout(function(){app.classList.add('ready');},500);
+  var sb=document.getElementById('sidebar');
+  if(sb)setTimeout(function(){sb.style.display='flex';},500);
   var ls=document.getElementById('loginScreen');
   if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
   currentUser=null;
@@ -2983,6 +3038,190 @@ function filterSessions(query){
     }).join('');
   }catch(e){}
 }
+
+// ══ BULLETPROOF SESSION SYSTEM ══
+var _sid = localStorage.getItem('qvio_sid') || 'sid_'+Date.now();
+localStorage.setItem('qvio_sid', _sid);
+
+function _getSessions(){
+  try{return JSON.parse(localStorage.getItem('qvio_sessions2')||'{}');}catch(e){return {};}
+}
+function _saveSessions(s){
+  try{localStorage.setItem('qvio_sessions2',JSON.stringify(s));}catch(e){}
+}
+
+function saveCurrentSession(){
+  if(!chatHistory||chatHistory.length===0)return;
+  try{
+    var s=_getSessions();
+    var title=chatHistory[0]?chatHistory[0].content.replace(/<[^>]*>/g,'').substring(0,45):'New Chat';
+    s[_sid]={id:_sid,title:title,msgs:chatHistory.slice(-50),ts:Date.now()};
+    // Keep max 40 sessions
+    var keys=Object.keys(s).sort(function(a,b){return s[b].ts-s[a].ts;});
+    if(keys.length>40){keys.slice(40).forEach(function(k){delete s[k];});}
+    _saveSessions(s);
+    renderSessions();
+  }catch(e){}
+}
+
+function renderSessions(){
+  var list=document.getElementById('sbChatList');
+  if(!list)return;
+  var s=_getSessions();
+  var keys=Object.keys(s).sort(function(a,b){return s[b].ts-s[a].ts;});
+  var q=(document.getElementById('sbSearch')||{}).value||'';
+  if(q)keys=keys.filter(function(k){return s[k].title.toLowerCase().includes(q.toLowerCase());});
+  if(!keys.length){list.innerHTML='<div style="padding:12px;font-size:12px;color:var(--text3);text-align:center;">No chats yet</div>';return;}
+  list.innerHTML=keys.map(function(id){
+    var sess=s[id];
+    var active=id===_sid;
+    var ago=Math.floor((Date.now()-sess.ts)/60000);
+    var t=ago<1?'Just now':ago<60?ago+'m ago':ago<1440?Math.floor(ago/60)+'h ago':Math.floor(ago/1440)+'d ago';
+    return '<div onclick="loadSess(''+id+'')" style="padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2px;background:'+(active?'rgba(79,70,229,.1)':'transparent')+';transition:background .15s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background=''+(active?'rgba(79,70,229,.1)':'transparent')+''"><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:'+(active?'600':'400')+';color:'+(active?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+sess.title+'</div><div style="font-size:11px;color:var(--text3);margin-top:1px;">'+t+'</div></div><button onclick="delSess(''+id+'',event)" style="opacity:0;width:18px;height:18px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:11px;border-radius:4px;flex-shrink:0;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0;">✕</button></div>';
+  }).join('');
+}
+
+function loadSess(id){
+  saveCurrentSession();
+  var s=_getSessions();
+  if(!s[id])return;
+  _sid=id;localStorage.setItem('qvio_sid',id);
+  chatHistory=s[id].msgs||[];
+  var chat=document.getElementById('chat');
+  if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');
+  if(w)w.style.display=chatHistory.length?'none':'flex';
+  chatHistory.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+  closeSidebar();
+  showToast('💬 Chat loaded!');
+  renderSessions();
+}
+
+function delSess(id,e){
+  if(e)e.stopPropagation();
+  var s=_getSessions();
+  delete s[id];
+  _saveSessions(s);
+  if(id===_sid)createNewSession();
+  else renderSessions();
+}
+
+function createNewSession(){
+  saveCurrentSession();
+  _sid='sid_'+Date.now();
+  localStorage.setItem('qvio_sid',_sid);
+  chatHistory=[];
+  var chat=document.getElementById('chat');
+  if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');
+  if(w)w.style.display='flex';
+  var inp=document.getElementById('inp');
+  if(inp){inp.value='';inp.style.height='auto';}
+  renderSessions();
+  showToast('✨ New chat!');
+  closeSidebar();
+}
+
+function newChat(){createNewSession();}
+function filterSessions(q){renderSessions();}
+
+// Restore session on load
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    try{
+      var s=_getSessions();
+      var cur=s[_sid];
+      if(cur&&cur.msgs&&cur.msgs.length>0){
+        chatHistory=cur.msgs;
+        cur.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
+        var w=document.getElementById('welcome');
+        if(w)w.style.display='none';
+      }
+    }catch(e){}
+    renderSessions();
+  },1200);
+});
+
+// ══ FEATURES 1-10 ══
+
+// 1. Sentiment Analysis - detect user mood
+function detectSentiment(text){
+  var t=text.toLowerCase();
+  if(/sad|depressed|lonely|cry|upset|hate|angry|frustrated|terrible|awful|horrible/.test(t)) return 'negative';
+  if(/happy|excited|great|amazing|love|wonderful|fantastic|awesome|joy|celebrate/.test(t)) return 'positive';
+  if(/help|explain|how|what|why|when|where|who|can you/.test(t)) return 'curious';
+  return 'neutral';
+}
+
+// 2. Emotional Support - auto detect distress
+var _lastSentiment='neutral';
+function checkEmotionalSupport(text){
+  var sentiment=detectSentiment(text);
+  _lastSentiment=sentiment;
+  if(sentiment==='negative'){
+    // Add emotional support context to next response
+    window._emotionalMode=true;
+    setTimeout(function(){window._emotionalMode=false;},60000);
+  }
+}
+
+// Hook into extractMem
+var _origExtractMem=typeof extractMem==='function'?extractMem:function(){};
+function extractMem(t){
+  _origExtractMem(t);
+  checkEmotionalSupport(t);
+}
+
+// 3. Personalized Learning - track topics
+var _userTopics=JSON.parse(localStorage.getItem('qvio_topics')||'{}');
+function trackTopic(text){
+  var topics={math:/math|calculus|algebra|geometry/i,science:/physics|chemistry|biology|science/i,coding:/code|python|javascript|programming/i,history:/history|ancient|war|civilization/i,english:/grammar|essay|writing|english/i};
+  Object.keys(topics).forEach(function(topic){
+    if(topics[topic].test(text)){
+      _userTopics[topic]=(_userTopics[topic]||0)+1;
+      localStorage.setItem('qvio_topics',JSON.stringify(_userTopics));
+    }
+  });
+}
+
+// 4. Creative Writing Mode
+function startCreativeMode(){
+  var msg="Let's write something creative together! Choose a genre:\n1. Short Story\n2. Poem\n3. Script/Screenplay\n4. Song Lyrics\n5. Fantasy World\n\nJust tell me what you want to create!";
+  document.getElementById('inp').value=msg;
+  sendMsg();
+}
+
+// 6. Real-Time Info - already have web search
+// Enhanced with more context
+function getMemCtxEnhanced(){
+  var base=getMemCtx();
+  // Add topic preferences
+  var topTopics=Object.entries(_userTopics).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(t){return t[0];});
+  if(topTopics.length) base+='\nUser interests: '+topTopics.join(', ')+'.';
+  if(window._emotionalMode) base+='\nIMPORTANT: User seems emotionally down. Be extra warm, supportive and gentle. Prioritize emotional wellbeing over information.';
+  return base;
+}
+
+// Override getMemCtx
+var _origGetMemCtx=getMemCtx;
+function getMemCtx(){return getMemCtxEnhanced();}
+
+// 7. Creative Writing shortcut in chips
+// 8. Gamification already added
+// 9. User Analytics
+function getUserAnalytics(){
+  var sessions=_getSessions();
+  var totalMsgs=Object.values(sessions).reduce(function(a,s){return a+(s.msgs?s.msgs.length:0);},0);
+  var totalSessions=Object.keys(sessions).length;
+  var topTopic=Object.entries(_userTopics).sort(function(a,b){return b[1]-a[1];})[0];
+  return {msgs:totalMsgs,sessions:totalSessions,topTopic:topTopic?topTopic[0]:'General',xp:_xp||0,level:_level||1};
+}
+
+// 10. Show analytics in profile
+function showAnalytics(){
+  var a=getUserAnalytics();
+  showToast('📊 '+a.msgs+' messages · '+a.sessions+' chats · '+a.xp+' XP');
+}
 </script></body>
 <script>
 // ═══════════════════════════════════════════════════
@@ -3019,30 +3258,7 @@ function filterSessions(query){
     return false;
   });
 
-  // Smart DevTools detection
-  var _dOpen=false;
-  var _dCheckInterval=setInterval(function(){
-    var threshold=160;
-    var widthDiff=window.outerWidth-window.innerWidth;
-    var heightDiff=window.outerHeight-window.innerHeight;
-    if(widthDiff>threshold||heightDiff>threshold){
-      if(!_dOpen){
-        _dOpen=true;
-        // Just show warning, don't break the app
-        if(!document.getElementById('_qvDevWarn')){
-          var w=document.createElement('div');
-          w.id='_qvDevWarn';
-          w.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999999;background:#EF4444;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600;';
-          w.innerHTML='⚠️ QVIO Protected — Unauthorized inspection is monitored | © 2025 QVIO AI by VARUN <button onclick="this.parentElement.remove()" style="margin-left:12px;padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;cursor:pointer;">✕</button>';
-          document.body.prepend(w);
-        }
-      }
-    } else {
-      _dOpen=false;
-      var w=document.getElementById('_qvDevWarn');
-      if(w)w.remove();
-    }
-  },1500);
+  // DevTools detection disabled
 
   function _showWarn(){
     if(document.getElementById('_qvPM'))return;
@@ -3191,6 +3407,10 @@ function showNamaste(user){
 // AUTH
 // ═══════════════════════════════
 function continueAsGuest(){
+  var app=document.getElementById('qvio-app');
+  if(app)setTimeout(function(){app.classList.add('ready');},500);
+  var sb=document.getElementById('sidebar');
+  if(sb)setTimeout(function(){sb.style.display='flex';},500);
   var ls=document.getElementById('loginScreen');
   if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
   currentUser=null;
@@ -3371,6 +3591,26 @@ CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
 PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
 
 WEB SEARCH: When you receive [LIVE WEB DATA], use it. Always mention the date/time of the info. Be honest if results seem old. For very recent events like live scores, say you have info up to a certain point.`;
+var QVIO_SYSTEM = `You are QVIO, a warm and humble AI assistant made in India for the world. 
+
+Your personality:
+- Humble and friendly — never arrogant or overconfident
+- Warm like a close friend, not robotic
+- Honest — say "I'm not sure" when you don't know
+- Encouraging and supportive
+- Concise but thorough
+- Use "yaar", "bhai" naturally when chatting casually
+- Celebrate user's wins genuinely
+- Never claim to be perfect or all-knowing
+- If you make a mistake, admit it gracefully
+
+Always:
+- Be emotionally aware and empathetic
+- Give practical, actionable answers
+- Use simple language unless technical depth is needed
+- End responses warmly when appropriate
+`;
+
 var PROMPTS={
   casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
@@ -3883,7 +4123,7 @@ function tryLoadImage_OLD(urlIndex){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
-    if(typeof saveCurrentSession==='function')saveCurrentSession();
+    saveCurrentSession();
     saveChatHistory();
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
@@ -4022,7 +4262,7 @@ async function handleStream(res){
 
   var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
 
-  if(typeof saveCurrentSession==='function')saveCurrentSession();
+  saveCurrentSession();
   return fullText;
 }
 
