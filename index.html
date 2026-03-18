@@ -1253,6 +1253,110 @@ header{
   background:rgba(79,70,229,.1);
   border-color:#4F46E5;color:#4F46E5;
 }
+
+/* ══ PREMIUM LOGIN ══ */
+#loginScreen{
+  background:linear-gradient(135deg,#080C14 0%,#0D1220 50%,#080C14 100%) !important;
+}
+.lwrap{
+  text-align:center;
+  padding:40px 32px;
+  max-width:400px;
+  width:90%;
+  animation:ftWelcome .8s ease both;
+}
+.l-crown{display:none !important;}
+.l-mark{
+  width:76px !important;height:76px !important;
+  border-radius:22px !important;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED) !important;
+  font-size:24px !important;font-weight:900 !important;
+  color:#fff !important;
+  margin:0 auto 24px !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  box-shadow:0 0 40px rgba(79,70,229,.6) !important;
+  animation:quantumPulse 3s ease-in-out infinite !important;
+}
+@keyframes quantumPulse{
+  0%,100%{box-shadow:0 0 40px rgba(79,70,229,.4);}
+  50%{box-shadow:0 0 60px rgba(79,70,229,.8),0 0 100px rgba(79,70,229,.3);}
+}
+.l-h1{
+  font-size:38px !important;
+  font-weight:800 !important;
+  letter-spacing:-2px !important;
+  color:#fff !important;
+  margin:0 0 8px !important;
+}
+.l-h1 em{
+  font-style:normal !important;
+  background:linear-gradient(135deg,#818CF8,#A5B4FC) !important;
+  -webkit-background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+}
+.l-p{
+  font-size:14px !important;
+  color:rgba(255,255,255,.45) !important;
+  margin:0 0 32px !important;
+  line-height:1.6 !important;
+}
+.gbtn{
+  background:rgba(255,255,255,.07) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#fff !important;
+  border-radius:14px !important;
+  padding:14px 20px !important;
+  font-size:14px !important;font-weight:600 !important;
+  width:100% !important;
+  transition:all .2s !important;
+  margin-bottom:12px !important;
+}
+.gbtn:hover{background:rgba(255,255,255,.12) !important;}
+.l-or{color:rgba(255,255,255,.25) !important;font-size:12px !important;margin:12px 0 !important;}
+.linp{
+  background:rgba(255,255,255,.06) !important;
+  border:1px solid rgba(255,255,255,.1) !important;
+  color:#fff !important;
+  border-radius:12px !important;
+  padding:12px 16px !important;
+  font-size:14px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  margin-bottom:8px !important;
+  outline:none !important;
+}
+.linp:focus{border-color:rgba(79,70,229,.6) !important;}
+.linp::placeholder{color:rgba(255,255,255,.25) !important;}
+.lbtn{
+  padding:12px !important;
+  border-radius:12px !important;
+  font-size:14px !important;font-weight:600 !important;
+  cursor:pointer !important;
+  transition:all .15s !important;
+}
+.l-signin{background:#4F46E5 !important;border:none !important;color:#fff !important;}
+.l-signin:hover{background:#4338CA !important;}
+.l-signup{background:transparent !important;border:1px solid rgba(79,70,229,.4) !important;color:#818CF8 !important;}
+.l-signup:hover{background:rgba(79,70,229,.1) !important;}
+.l-guest{
+  background:transparent !important;border:none !important;
+  color:rgba(255,255,255,.25) !important;
+  font-size:13px !important;cursor:pointer !important;
+  margin-top:12px !important;
+  transition:color .15s !important;
+}
+.l-guest:hover{color:rgba(255,255,255,.5) !important;}
+.l-footer{font-size:11px !important;color:rgba(255,255,255,.2) !important;margin-top:20px !important;}
+.l-badge{
+  display:inline-block !important;
+  padding:4px 10px !important;
+  border-radius:20px !important;
+  background:rgba(79,70,229,.15) !important;
+  border:1px solid rgba(79,70,229,.3) !important;
+  color:#818CF8 !important;
+  font-size:11px !important;font-weight:600 !important;
+  margin:0 4px 8px !important;
+}
 </style>
 </head>
 <body>
@@ -1289,7 +1393,7 @@ header{
     <div class="l-crown">👑</div>
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
-    <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
+    <p class="l-p">India's most premium AI for the world.<br>150+ languages · Built for everyone, everywhere 🌍🇮🇳</p>
     <button class="gbtn" onclick="signInGoogle()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
@@ -2439,6 +2543,12 @@ initFirebase();
 var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAGQFJAgrPT0pPmMIJTUeKwQ7IT4BFgE='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
 var _keyIdx=0;
 var _qc=_qk[0];
+function continueAsGuest(){
+  var ls=document.getElementById('loginScreen');
+  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
+  currentUser=null;
+  showToast('👋 Welcome! Sign in to save chats.');
+}
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -2771,6 +2881,12 @@ function showNamaste(user){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
+function continueAsGuest(){
+  var ls=document.getElementById('loginScreen');
+  if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(function(){ls.style.display='none';},400);}
+  currentUser=null;
+  showToast('👋 Welcome! Sign in to save chats.');
+}
 function signInGoogle(){
   if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
   fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -3371,7 +3487,7 @@ async function sendMsg(){
     var seed=Date.now();
     var enhancedPrompt=prompt+', masterpiece, best quality, ultra detailed, photorealistic, 8K UHD, sharp focus, professional photography, cinematic composition, beautiful lighting, trending on artstation';
     var imageUrls=[
-      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux-realism&enhance=true&seed='+seed,
+      'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux-realism&enhance=true&seed='+seed+'&t='+Math.random(),
       'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=flux&enhance=true&seed='+(seed+1),
       'https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?width=1024&height=1024&nologo=true&model=turbo&seed='+(seed+2)
     ];
