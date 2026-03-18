@@ -1792,7 +1792,7 @@ header{
     <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
     <button onclick="closeSidebar()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;">✕</button>
   </div>
-  <button onclick="newChat();closeSidebar();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
+  <button onclick="createNewSession?createNewSession():newChat();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
   <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
   <div id="sbChatList" style="flex:1;overflow-y:auto;padding:4px 8px;">
     <div style="padding:9px 12px;border-radius:8px;font-size:13px;color:#4F46E5;background:rgba(79,70,229,.08);font-weight:500;">💬 Current Chat</div>
@@ -2702,6 +2702,212 @@ function updatePdfBtn(){
   var pb=document.getElementById('pdfBtn');
   if(pb)pb.style.display=(typeof mode!=='undefined'&&mode==='student')?'inline-flex':'none';
 }
+
+// ══ YOUTUBE VIDEO UNDERSTANDING ══
+function extractYTId(url){
+  var m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  return m?m[1]:null;
+}
+
+async function getYTTranscript(videoId){
+  try{
+    // Use YouTube's timedtext API - completely free
+    var infoUrl='https://www.youtube.com/watch?v='+videoId;
+    showToast('📺 Fetching video transcript...');
+    
+    // Try to get transcript via a free proxy
+    var r=await fetch('https://yt-transcript-api.vercel.app/api/transcript?videoId='+videoId);
+    if(r.ok){
+      var data=await r.json();
+      if(data&&data.transcript){
+        return data.transcript.map(function(t){return t.text;}).join(' ').substring(0,8000);
+      }
+    }
+    
+    // Fallback: use video info from noembed
+    var r2=await fetch('https://noembed.com/embed?url=https://youtube.com/watch?v='+videoId);
+    if(r2.ok){
+      var info=await r2.json();
+      return 'Video Title: '+info.title+'
+Channel: '+info.author_name+'
+(Full transcript unavailable - summarizing from title and context)';
+    }
+    return null;
+  }catch(e){return null;}
+}
+
+async function handleYouTube(text){
+  var ytId=extractYTId(text);
+  if(!ytId)return false;
+  
+  showTyping();
+  var transcript=await getYTTranscript(ytId);
+  var videoUrl='https://youtube.com/watch?v='+ytId;
+  
+  var msg='';
+  if(transcript&&transcript.length>100){
+    msg='Analyze this YouTube video and give me: 1) Brief summary 2) Key points 3) Main takeaways\n\nVideo URL: '+videoUrl+'\n\nTranscript:\n'+transcript;
+  } else {
+    msg='Analyze this YouTube video: '+videoUrl+'\n\nGive me: 1) What this video is likely about based on the URL 2) Key topics it probably covers 3) Why someone should watch it.';
+  }
+  
+  hideTyping();
+  document.getElementById('inp').value=msg;
+  sendMsg();
+  return true;
+}
+
+// ══ CHAT SESSIONS SYSTEM ══
+var _currentSessionId = localStorage.getItem('qvio_current_session') || ('session_'+Date.now());
+localStorage.setItem('qvio_current_session', _currentSessionId);
+
+function getSessions(){
+  try{return JSON.parse(localStorage.getItem('qvio_all_sessions')||'{}');}
+  catch(e){return {};}
+}
+
+function saveCurrentSession(){
+  if(chatHistory.length===0)return;
+  try{
+    var sessions=getSessions();
+    sessions[_currentSessionId]={
+      id:_currentSessionId,
+      title:chatHistory[0]?chatHistory[0].content.substring(0,40)+'...':'New Chat',
+      msgs:chatHistory,
+      ts:Date.now(),
+      updated:Date.now()
+    };
+    // Keep max 50 sessions
+    var keys=Object.keys(sessions).sort(function(a,b){return sessions[b].updated-sessions[a].updated;});
+    if(keys.length>50){
+      keys.slice(50).forEach(function(k){delete sessions[k];});
+    }
+    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
+    renderSessionList();
+  }catch(e){}
+}
+
+function loadSession(sessionId){
+  try{
+    var sessions=getSessions();
+    var session=sessions[sessionId];
+    if(!session)return;
+    
+    // Save current first
+    saveCurrentSession();
+    
+    // Switch to selected session
+    _currentSessionId=sessionId;
+    localStorage.setItem('qvio_current_session',sessionId);
+    chatHistory=session.msgs||[];
+    
+    // Clear and render chat
+    var chat=document.getElementById('chat');
+    chat.innerHTML='';
+    var w=document.getElementById('welcome');
+    if(w)w.style.display='none';
+    
+    chatHistory.forEach(function(m){
+      addMsg(m.content,m.role==='assistant'?'ai':'user');
+    });
+    
+    closeSidebar();
+    showToast('💬 '+session.title);
+    renderSessionList();
+  }catch(e){showToast('Error loading chat');}
+}
+
+function createNewSession(){
+  // Save current session first
+  saveCurrentSession();
+  
+  // Create new session
+  _currentSessionId='session_'+Date.now();
+  localStorage.setItem('qvio_current_session',_currentSessionId);
+  chatHistory=[];
+  
+  var chat=document.getElementById('chat');
+  if(chat)chat.innerHTML='';
+  var w=document.getElementById('welcome');
+  if(w){w.style.display='flex';}
+  var inp=document.getElementById('inp');
+  if(inp){inp.value='';inp.style.height='auto';}
+  
+  renderSessionList();
+  showToast('✨ New chat!');
+  closeSidebar();
+}
+
+function deleteSession(sessionId, e){
+  e.stopPropagation();
+  try{
+    var sessions=getSessions();
+    delete sessions[sessionId];
+    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
+    if(sessionId===_currentSessionId){
+      createNewSession();
+    }
+    renderSessionList();
+  }catch(e){}
+}
+
+function renderSessionList(){
+  var list=document.getElementById('sbChatList');
+  if(!list)return;
+  try{
+    var sessions=getSessions();
+    var keys=Object.keys(sessions).sort(function(a,b){
+      return sessions[b].updated-sessions[a].updated;
+    });
+    
+    if(keys.length===0){
+      list.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text3);">No saved chats yet</div>';
+      return;
+    }
+    
+    list.innerHTML=keys.slice(0,30).map(function(id){
+      var s=sessions[id];
+      var isActive=id===_currentSessionId;
+      var age=Math.floor((Date.now()-s.updated)/60000);
+      var timeStr=age<1?'Just now':age<60?age+'m ago':age<1440?Math.floor(age/60)+'h ago':Math.floor(age/1440)+'d ago';
+      return '<div onclick="loadSession(''+id+'')" style="padding:9px 12px;border-radius:8px;cursor:pointer;'+(isActive?'background:rgba(79,70,229,.1);':'')+'display:flex;align-items:center;gap:6px;transition:all .15s;margin-bottom:2px;" onmouseover="if(!'+isActive+')this.style.background='var(--bg)'" onmouseout="if(!'+isActive+')this.style.background=''">'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-size:12px;font-weight:'+(isActive?'600':'500')+';color:'+(isActive?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-top:1px;">'+timeStr+' · '+(s.msgs?s.msgs.length:0)+' msgs</div>'
+        +'</div>'
+        +'<button onclick="deleteSession(''+id+'',event)" style="width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:12px;flex-shrink:0;opacity:0.5;" onmouseover="this.style.opacity=1;this.style.color='#EF4444'" onmouseout="this.style.opacity=0.5;this.style.color='var(--text3)'">✕</button>'
+        +'</div>';
+    }).join('');
+  }catch(e){}
+}
+
+// Override newChat to use sessions
+function newChat(){
+  createNewSession();
+}
+
+// Auto-save after every AI response
+// (hooked below in sendMsg)
+
+// Load sessions on startup
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    // Restore current session
+    try{
+      var sessions=getSessions();
+      var current=sessions[_currentSessionId];
+      if(current&&current.msgs&&current.msgs.length>0){
+        chatHistory=current.msgs;
+        current.msgs.forEach(function(m){
+          addMsg(m.content,m.role==='assistant'?'ai':'user');
+        });
+        var w=document.getElementById('welcome');
+        if(w)w.style.display='none';
+      }
+    }catch(e){}
+    renderSessionList();
+  },1000);
+});
 </script></body>
 <script>
 // ═══════════════════════════════════════════════════
@@ -3487,6 +3693,14 @@ async function sendMsg(){
   extractMem(text);
   stats.msgs++;stats.words+=(text.match(/\S+/g)||[]).length;stats.chars+=text.length;saveStats();
 
+  // YOUTUBE VIDEO UNDERSTANDING
+  if((text.includes('youtube.com')||text.includes('youtu.be'))&&typeof handleYouTube==='function'){
+    handleYouTube(text).then(function(handled){
+      if(!handled) document.getElementById('sendBtn').disabled=false;
+    });
+    return;
+  }
+
   // IMAGE GENERATION
   if(/^(create image|draw|generate image|make image|paint me|draw me|generate me|img:)/i.test(text)||/^(create image|image:|draw:|generate:|paint:|img:)/i.test(text)){
     var prompt=text.replace(/^(create image|draw me|draw|generate image of|generate image|generate me|generate|make image of|make image|paint me|paint|img)[:\s]*/i,'').trim();
@@ -3584,6 +3798,7 @@ function tryLoadImage_OLD(urlIndex){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
+    if(typeof saveCurrentSession==='function')saveCurrentSession();
     saveChatHistory();
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
     saveChat();
@@ -3722,6 +3937,7 @@ async function handleStream(res){
 
   var ts=document.createElement('div');ts.className='ts';ts.textContent=getTime();wrap.appendChild(ts);
 
+  if(typeof saveCurrentSession==='function')saveCurrentSession();
   return fullText;
 }
 
