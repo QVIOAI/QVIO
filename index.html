@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<!-- QVIO Authentication System FIRST before anything else -->
+<!-- Firebase FIRST before anything else -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script>
 function filterLangs(q){
@@ -1290,9 +1290,9 @@ header{
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
     <p class="l-p">India's most premium AI. 150+ languages.<br>Built for every Indian, by a 17-year-old 🇮🇳</p>
-    <button class="gbtn" onclick="signInQVIO Secure Login()">
+    <button class="gbtn" onclick="signInGoogle()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with QVIO Secure Login
+      Continue with Google
     </button>
     <div class="l-or"><span>or</span></div>
     <input class="lf" id="loginEmail" type="email" placeholder="Email address"/>
@@ -2365,7 +2365,7 @@ document.addEventListener('keyup', function(e){
     <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
     <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via QVIO Secure Login)<br>
+    • Account information (name, email via Google)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
@@ -2376,10 +2376,10 @@ document.addEventListener('keyup', function(e){
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
     <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
     • Your preferences are stored locally on your device<br>
-    • We use QVIO Authentication System for authentication only</p>
+    • We use Firebase for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
     <p>• QVIO AI Engine — for processing AI responses<br>
-    • QVIO Authentication System — for authentication<br>
+    • Firebase — for authentication<br>
     • QVIO Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
@@ -2419,7 +2419,161 @@ document.addEventListener('keyup', function(e){
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+function initFirebase(){
+  try{
+    if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
+    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+    fbAuth=firebase.auth();
+    fbAuth.onAuthStateChanged(function(u){
+      if(u){currentUser=u;updateUserUI(u);showNamaste(u);var _ci=document.getElementById('inp');if(_ci)_ci.value='';updateSidebarUser(u);}
+    });
+    console.log('✅ Firebase ready!');
+  }catch(e){console.warn('Firebase error:',e);}
+}
+// Init immediately — Firebase SDK already loaded in <head>
+initFirebase();
+
+// GLOBALS
+// 🔑 API Key Rotation — auto-switches when one hits rate limit
+var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAGQFJAgrPT0pPmMIJTUeKwQ7IT4BFgE='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
+var _keyIdx=0;
+var _qc=_qk[0];
+function signInGoogle(){
+  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(e){
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
+      else showToast('Error: '+e.message);
+    });
+}
+function signInEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.signInWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function signUpEmail(){
+  if(!fbAuth){skipLogin();return;}
+  var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPass').value;
+  if(!e||!p){showToast('Enter email and password');return;}
+  fbAuth.createUserWithEmailAndPassword(e,p)
+    .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
+    .catch(function(er){showToast(er.message);});
+}
+function showNamaste(user){
+  var ls=document.getElementById('loginScreen');
+  ls.style.opacity='0';ls.style.transition='opacity .4s';
+  setTimeout(function(){ls.style.display='none';},400);
+  var ns=document.getElementById('namasteScreen');
+  ns.classList.add('show');
+  var nm=user.displayName||user.email||'Friend';
+  var first=nm.split(' ')[0].toUpperCase();
+  // Trigger text
+  setTimeout(function(){ revealNamasteText(first); }, 600);
+  // Dismiss after 4.5s
+  setTimeout(function(){
+    ns.classList.add('exiting');
+    setTimeout(function(){
+      ns.style.opacity='0';ns.style.transition='opacity .5s';
+      setTimeout(function(){
+        ns.classList.remove('show','exiting');ns.style.opacity='';
+        var g=document.getElementById('nsGreeting');
+        var u=document.getElementById('nsUsername');
+        var p=document.getElementById('nsPercent');
+        if(g)g.innerHTML='';if(u)u.innerHTML='';if(p)p.textContent='0%';
+        // Show the app!
+        try{setSmartGreeting();}catch(e){}
+        try{showOnboard();}catch(e){}
+      },500);
+    },300);
+  },4500);
+}
+
+// AUTH
+function revealNamasteText(name){
+  var greetEl=document.getElementById('nsGreeting');
+  if(greetEl){
+    greetEl.innerHTML='';
+
+    var eng=document.createElement('div');
+    eng.style.cssText='display:flex;justify-content:center;gap:2px;margin-top:4px;';
+    'WELCOME'.split('').forEach(function(ch,i){
+      var s=document.createElement('span');
+      s.className='ns-char';s.textContent=ch;
+      s.style.animationDelay=(.05+i*.07)+'s';
+      if(i===0){
+        s.style.background='linear-gradient(135deg,#D4A017,#F5C842)';
+        s.style.webkitBackgroundClip='text';s.style.webkitTextFillColor='transparent';s.style.backgroundClip='text';
+      }
+      eng.appendChild(s);
+    });
+    greetEl.appendChild(eng);
+  }
+  var unEl=document.getElementById('nsUsername');
+  if(unEl)unEl.innerHTML='Welcome back, <strong>'+name+'</strong>';
+  var pctEl=document.getElementById('nsPercent');
+  var pct=0;
+  var pTimer=setInterval(function(){
+    pct=Math.min(100,pct+Math.floor(Math.random()*9)+3);
+    if(pctEl)pctEl.textContent=pct+'%';
+    if(pct>=100)clearInterval(pTimer);
+  },32);
+  var msgs=['Authenticating...','Loading memory...','Calibrating AI...','All systems ready ✓'];
+  var mi=0,stEl=document.getElementById('nsStatusTxt');
+  var sTimer=setInterval(function(){
+    mi++;if(mi<msgs.length&&stEl)stEl.textContent=msgs[mi];
+    if(mi>=msgs.length-1)clearInterval(sTimer);
+  },600);
+  fireConfetti();
+}
+
+// ── API Key Health Check ──
+// Runs once on load — shows a warning toast if key is invalid/expired
+setTimeout(function(){
+  fetch((function(){var _e=atob('OSUlISJrfn4wITh/NiM+IH8yPjx+PiE0PzA4fidgfjI5MCV+Mj48IT00JTg+PyI='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})().replace('/chat/completions','/models'),{
+    headers:{'Authorization':'Bearer '+_qc}
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error){
+      var code=d.error.code||'';
+      var msg=d.error.message||'';
+      if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
+        showToast('⚠️ QVIO Brain needs a restart. Please refresh the page.');
+        console.error('QVIO KEY EXPIRED:',msg);
+      }
+    }else{
+      console.log('✅ Groq API key is valid');
+    }
+  }).catch(function(){
+    // Network error or CORS — can't check, ignore silently
+  });
+},3000);
+// QVIO WEB SEARCH
+var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
+  'war','match','score','ipl','election','price','stock','weather','who won','what happened',
+  'recently','this week','yesterday','trending','live','breaking'];
+
+function updateUserUI(user){
+  var nm=user.displayName||user.email||'User';
+  document.getElementById('uNm').textContent=nm.split(' ')[0];
+  document.getElementById('profName').textContent=nm;
+  document.getElementById('profEmail').textContent=user.email||'';
+  if(user.photoURL){
+    document.getElementById('uAv').innerHTML='<img src="'+user.photoURL+'">';
+    document.getElementById('profAv').innerHTML='<img src="'+user.photoURL+'">';
+  }else{
+    document.getElementById('uAv').textContent=nm[0].toUpperCase();
+    document.getElementById('profAv').textContent=nm[0].toUpperCase();
+  }
+  if(!memory.name){memory.name=nm.split(' ')[0];saveMem();}
+  updateMemUI();
+}
+
+// STREAK
+</script></body>
 <script>
 // ═══════════════════════════════════════════════════
 // QVIO PROTECTION SYSTEM
@@ -2524,19 +2678,19 @@ var firebaseConfig={
 };
 var fbAuth=null;
 
-function initQVIO Authentication System(){
+function initFirebase(){
   try{
-    if(typeof firebase==='undefined'){setTimeout(initQVIO Authentication System,200);return;}
+    if(typeof firebase==='undefined'){setTimeout(initFirebase,200);return;}
     if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbAuth.onAuthStateChanged(function(u){
       if(u){currentUser=u;updateUserUI(u);showNamaste(u);var _ci=document.getElementById('inp');if(_ci)_ci.value='';if(typeof updateSidebarUser==='function')updateSidebarUser(u);}
     });
-    console.log('✅ QVIO Authentication System ready!');
-  }catch(e){console.warn('QVIO Authentication System error:',e);}
+    console.log('✅ Firebase ready!');
+  }catch(e){console.warn('Firebase error:',e);}
 }
-// Init immediately — QVIO Authentication System SDK already loaded in <head>
-initQVIO Authentication System();
+// Init immediately — Firebase SDK already loaded in <head>
+initFirebase();
 
 // ═══════════════════════════════
 // GLOBALS
@@ -2617,12 +2771,12 @@ function showNamaste(user){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function signInQVIO Secure Login(){
-  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initQVIO Authentication System,500);return;}
-  fbAuth.signInWithPopup(new firebase.auth.QVIO Secure LoginAuthProvider())
+function signInGoogle(){
+  if(!fbAuth){showToast('Connecting... try again!');setTimeout(initFirebase,500);return;}
+  fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(e){
-      if(e.code==='auth/popup-blocked')showToast('Allow popups for QVIO Secure Login login!');
+      if(e.code==='auth/popup-blocked')showToast('Allow popups for Google login!');
       else showToast('Error: '+e.message);
     });
 }
@@ -2750,7 +2904,7 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, QVIO Secure Login or any other AI company. You are QVIO.
+var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
 
 1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
 
@@ -3114,7 +3268,7 @@ function speakText(t,btn){
     window._qvAudio=audio;
     audio.onended=done;
     audio.onerror=function(){
-      // Fallback: /api/tts (QVIO Secure Login proxy)
+      // Fallback: /api/tts (Google proxy)
       window._qvAudio=null;
       fetch('/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langBase))
         .then(function(r){if(!r.ok)throw new Error('x');return r.blob();})
@@ -3301,7 +3455,7 @@ function tryLoadImage_OLD(urlIndex){
       }catch(e){}
     }
     var finalMsg = searchCtx ? text + searchCtx : text;
-    var langInstr=getAILangInstruction();var reply=await callQVIO AI Engine(finalMsg+(langInstr||""));
+    var langInstr=getAILangInstruction();var reply=await callGroq(finalMsg+(langInstr||""));
     var spd=Date.now()-t0;
     hideTyping();
     addMsg(reply,'ai',false,spd);
@@ -3343,7 +3497,7 @@ function tryLoadImage_OLD(urlIndex){
   document.getElementById('sendBtn').disabled=false;
 }
 
-async function callQVIO AI Engine(msg){
+async function callGroq(msg){
   var sys=PROMPTS[mode]+getMemCtx()+(typeof getDocContext==='function'?getDocContext():'');
   var msgs=[{role:'system',content:sys}];
   chatHistory.slice(-14,-1).forEach(function(m){msgs.push({role:m.role==='assistant'?'assistant':'user',content:m.content});});
@@ -4591,7 +4745,7 @@ function webSearch(query){
   });
 }
 
-async function callQVIO AI EngineWithSearch(text){
+async function callGroqWithSearch(text){
   var searchContext = '';
   
   if(needsWebSearch(text)){
@@ -5063,7 +5217,7 @@ function getAILangInstruction(){
     <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
     <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
-    • Account information (name, email via QVIO Secure Login)<br>
+    • Account information (name, email via Google)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
@@ -5074,10 +5228,10 @@ function getAILangInstruction(){
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
     <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
     • Your preferences are stored locally on your device<br>
-    • We use QVIO Authentication System for authentication only</p>
+    • We use Firebase for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
     <p>• QVIO AI Engine — for processing AI responses<br>
-    • QVIO Authentication System — for authentication<br>
+    • Firebase — for authentication<br>
     • QVIO Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
