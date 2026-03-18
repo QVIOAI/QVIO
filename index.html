@@ -3340,9 +3340,9 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
-    // STOP
+    // STOP if speaking
     if(window._qvIsSpeaking){
-      if(window._qvAudio){window._qvAudio.pause();window._qvAudio=null;}
+      if(window._qvAudio){window._qvAudio.pause();window._qvAudio.src='';window._qvAudio=null;}
       window.speechSynthesis.cancel();
       clearInterval(window._qvResInt);
       window._qvIsSpeaking=false;
@@ -3367,45 +3367,37 @@ function speakText(t,btn){
 
     // Detect language
     var detected=detectSpeakLang(txt);
-    var langBase=(detected.tags&&detected.tags[0]||'en-IN').split('-')[0];
+    var langTag=(detected.tags&&detected.tags[0])||'en-IN';
+    var langBase=langTag.split('-')[0];
     var lo={'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml','Bengali':'bn','Gujarati':'gu','Marathi':'mr','Punjabi':'pa','Urdu':'ur','Arabic':'ar','French':'fr','German':'de','Spanish':'es','Portuguese':'pt','Russian':'ru','Japanese':'ja','Korean':'ko','Chinese':'zh-CN','Italian':'it','Turkish':'tr'};
-    if(selectedAILang&&lo[selectedAILang])langBase=lo[selectedAILang];
+    if(typeof selectedAILang!=='undefined'&&selectedAILang&&lo[selectedAILang])langBase=lo[selectedAILang];
 
-    // StreamElements voices - best free TTS
-    var seVoices={
-      'en':'Joanna','hi':'Aditi','ar':'Zeina','fr':'Celine',
-      'de':'Marlene','it':'Carla','ja':'Mizuki','ko':'Seoyeon',
-      'ru':'Tatyana','es':'Conchita','tr':'Filiz','pt':'Ines','nl':'Lotte'
-    };
-    var seVoice=seVoices[langBase]||'Joanna';
-    var seUrl='https://api.streamelements.com/kappa/v2/speech?voice='+seVoice+'&text='+encodeURIComponent(txt.substring(0,200));
-
-    var audio=new Audio(seUrl);
-    window._qvAudio=audio;
-    audio.onended=done;
-    audio.onerror=function(){
-      // Fallback: /api/tts (Google proxy)
-      window._qvAudio=null;
-      fetch('/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langBase))
-        .then(function(r){if(!r.ok)throw new Error('x');return r.blob();})
-        .then(function(blob){
-          var url=URL.createObjectURL(blob);
-          var a=new Audio(url);
-          window._qvAudio=a;
-          a.onended=function(){URL.revokeObjectURL(url);done();};
-          a.onerror=function(){URL.revokeObjectURL(url);_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);};
-          a.play().catch(function(){_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);});
-        }).catch(function(){_qvWS(txt,detected.tags&&detected.tags[0]||'en-IN',done);});
-    };
-    audio.play().catch(function(){
-      window._qvAudio=null;
-      audio.onerror();
-    });
+    // Try /api/tts (Google TTS proxy - supports ALL Indian languages)
+    fetch('/api/tts?text='+encodeURIComponent(txt)+'&lang='+encodeURIComponent(langBase))
+      .then(function(r){
+        if(!r.ok)throw new Error('tts-failed');
+        return r.blob();
+      })
+      .then(function(blob){
+        var url=URL.createObjectURL(blob);
+        var audio=new Audio(url);
+        window._qvAudio=audio;
+        audio.onended=function(){URL.revokeObjectURL(url);done();};
+        audio.onerror=function(){
+          URL.revokeObjectURL(url);
+          _qvWS(txt,langTag,done);
+        };
+        return audio.play();
+      })
+      .catch(function(){
+        // Fallback: Web Speech API
+        _qvWS(txt,langTag,done);
+      });
 
   }catch(e){
     window._qvIsSpeaking=false;
     if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
-    showToast('Error: '+e.message);
+    showToast('Voice error: '+e.message);
   }
 }
 
@@ -3706,6 +3698,8 @@ async function handleStream(res){
   ['❤️','🔥','😂','🤯','👏'].forEach(function(emoji){
     makeAct(emoji,emoji,function(){showToast(emoji+' reaction!');this.style.transform='scale(1.5)';var self=this;setTimeout(function(){self.style.transform='';},300);});
   });
+  // SPEAK BUTTON
+  (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
   (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('QVIO says:\n\n'+msgContent.substring(0,500)+'\n\n— via QVIO AI (qvio.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
   makeAct('🔄','Regenerate',function(){if(lastMsg)sendMsg(lastMsg);});
   wrap.appendChild(meta);
