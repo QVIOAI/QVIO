@@ -180,19 +180,9 @@ function newSess(){
   renderSess();showToast('✨ New chat!');closeSidebar();
 }
 function newChat(){newSess();}
-function toggleSidebar(){
-  var sb=document.getElementById('sidebar');
-  var ov=document.getElementById('sidebarOverlay');
-  var open=sb.style.transform==='translateX(0px)'||sb.style.transform==='translateX(0)';
-  sb.style.transform=open?'translateX(-260px)':'translateX(0)';
-  if(ov)ov.style.display=open?'none':'block';
-}
-function closeSidebar(){
-  var sb=document.getElementById('sidebar');
-  var ov=document.getElementById('sidebarOverlay');
-  if(sb)sb.style.transform='translateX(-260px)';
-  if(ov)ov.style.display='none';
-}
+
+
+
 function updateSidebarUser(user){
   var av=document.getElementById('sbAv');
   var nm=document.getElementById('sbNm');
@@ -1666,10 +1656,1145 @@ body, html, #root, .app, .page, .wrap,
 [style*="background:white"], [style*="background: white"] {
   background: #070B14 !important;
 }
+
+/* ══ QVIO SMOOTH ANIMATIONS ══ */
+
+/* Floating particles background */
+@keyframes float1{0%,100%{transform:translateY(0) translateX(0);}33%{transform:translateY(-30px) translateX(15px);}66%{transform:translateY(-15px) translateX(-10px);}}
+@keyframes float2{0%,100%{transform:translateY(0) translateX(0);}33%{transform:translateY(-20px) translateX(-20px);}66%{transform:translateY(-35px) translateX(10px);}}
+@keyframes float3{0%,100%{transform:translateY(0) translateX(0);}50%{transform:translateY(-25px) translateX(20px);}}
+
+/* Welcome icon bounce */
+.w-icon {
+  animation: iconFloat 3s ease-in-out infinite !important;
+}
+@keyframes iconFloat {
+  0%,100% { transform: translateY(0) scale(1); box-shadow: 0 8px 30px rgba(79,70,229,0.4); }
+  50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 20px 50px rgba(79,70,229,0.6); }
+}
+
+/* Welcome title shimmer */
+.welcome h1 {
+  animation: titleReveal 1s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes titleReveal {
+  from { opacity:0; transform: translateY(30px); }
+  to { opacity:1; transform: none; }
+}
+
+/* Subtitle fade */
+.wsub {
+  animation: fadeUp 1s ease .4s both !important;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(15px); }
+  to { opacity:1; transform: none; }
+}
+
+/* Chips stagger animation */
+.qr:nth-child(1){animation: chipIn .5s ease .5s both !important;}
+.qr:nth-child(2){animation: chipIn .5s ease .6s both !important;}
+.qr:nth-child(3){animation: chipIn .5s ease .7s both !important;}
+.qr:nth-child(4){animation: chipIn .5s ease .8s both !important;}
+.qr:nth-child(5){animation: chipIn .5s ease .9s both !important;}
+.qr:nth-child(6){animation: chipIn .5s ease 1s both !important;}
+@keyframes chipIn {
+  from { opacity:0; transform: translateY(10px) scale(0.9); }
+  to { opacity:1; transform: none; }
+}
+.qr {
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1) !important;
+}
+.qr:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(79,70,229,0.2) !important;
+}
+.qr:active { transform: scale(0.95) !important; }
+
+/* Input box pulse on focus */
+.inp-wrap {
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1) !important;
+  animation: inputReveal 1s ease .6s both !important;
+}
+@keyframes inputReveal {
+  from { opacity:0; transform: translateY(20px); }
+  to { opacity:1; transform: none; }
+}
+.inp-wrap:focus-within {
+  transform: scale(1.01) !important;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.15), 0 8px 30px rgba(79,70,229,0.1) !important;
+}
+
+/* Send button animations */
+.sendbtn {
+  transition: all 0.2s cubic-bezier(0.16,1,0.3,1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.sendbtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sendbtn:hover { transform: scale(1.1) !important; box-shadow: 0 8px 25px rgba(79,70,229,0.5) !important; }
+.sendbtn:hover::after { opacity: 1; }
+.sendbtn:active { transform: scale(0.92) !important; }
+
+/* Message animations */
+.msg {
+  animation: msgSlide 0.4s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes msgSlide {
+  from { opacity:0; transform: translateY(15px) scale(0.97); }
+  to { opacity:1; transform: none; }
+}
+.msg.user { animation: msgSlideRight 0.4s cubic-bezier(0.16,1,0.3,1) both !important; }
+@keyframes msgSlideRight {
+  from { opacity:0; transform: translateX(15px) scale(0.97); }
+  to { opacity:1; transform: none; }
+}
+
+/* Bubble hover */
+.msg.ai .bubble {
+  transition: box-shadow 0.2s ease !important;
+}
+.msg.ai .bubble:hover {
+  box-shadow: 0 4px 20px rgba(79,70,229,0.12) !important;
+}
+
+/* Header slide down */
+header {
+  animation: headerSlide 0.6s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes headerSlide {
+  from { opacity:0; transform: translateY(-100%); }
+  to { opacity:1; transform: none; }
+}
+
+/* Header button hover */
+.hico, header button {
+  transition: all 0.2s cubic-bezier(0.16,1,0.3,1) !important;
+}
+.hico:hover { transform: translateY(-2px) !important; }
+.hico:active { transform: scale(0.9) !important; }
+
+/* Sidebar slide */
+#sidebar {
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1) !important;
+}
+
+/* QV logo in header pulse */
+.lmark {
+  animation: logoBreath 3s ease-in-out infinite !important;
+  transition: transform 0.2s !important;
+}
+.lmark:hover { transform: scale(1.1) rotate(5deg) !important; }
+@keyframes logoBreath {
+  0%,100% { box-shadow: 0 0 10px rgba(79,70,229,0.4); }
+  50% { box-shadow: 0 0 20px rgba(79,70,229,0.7), 0 0 40px rgba(79,70,229,0.2); }
+}
+
+/* Typing dots */
+.tydot {
+  animation: tyBounce 1.2s ease-in-out infinite !important;
+}
+.tydot:nth-child(1){animation-delay:0s !important;}
+.tydot:nth-child(2){animation-delay:0.2s !important;}
+.tydot:nth-child(3){animation-delay:0.4s !important;}
+@keyframes tyBounce {
+  0%,60%,100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-8px) scale(1.2); }
+}
+
+/* Greeting bar slide in */
+#greetBar, .greet-bar {
+  animation: greetSlide 0.5s ease both !important;
+}
+@keyframes greetSlide {
+  from { opacity:0; transform: translateY(-100%); }
+  to { opacity:1; transform: none; }
+}
+
+/* Mode pill hover */
+#modePill {
+  transition: all 0.2s ease !important;
+}
+#modePill:hover { transform: scale(1.03) !important; }
+
+/* Pro button shine */
+.pro-hbtn {
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.2s !important;
+}
+.pro-hbtn::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 40%; height: 200%;
+  background: rgba(255,255,255,0.25);
+  transform: skewX(-20deg);
+  animation: proShine 3s ease infinite;
+}
+@keyframes proShine {
+  0% { left: -60%; }
+  30%,100% { left: 120%; }
+}
+.pro-hbtn:hover { transform: translateY(-2px) scale(1.05) !important; }
+
+/* Wispr button pulse */
+#wisprBtn {
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1) !important;
+  animation: wisprFloat 3s ease-in-out infinite !important;
+}
+@keyframes wisprFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+#wisprBtn:hover { transform: scale(1.12) translateY(-3px) !important; }
+
+/* Toast pop */
+#toast.show {
+  animation: toastPop 0.4s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes toastPop {
+  from { opacity:0; transform: translateY(20px) scale(0.8); }
+  to { opacity:1; transform: none; }
+}
+
+/* Modal animations */
+.modal {
+  animation: modalPop 0.35s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes modalPop {
+  from { opacity:0; transform: scale(0.94) translateY(15px); }
+  to { opacity:1; transform: none; }
+}
+
+/* Action buttons */
+.act {
+  transition: all 0.15s cubic-bezier(0.16,1,0.3,1) !important;
+}
+.act:hover { transform: scale(1.2) !important; }
+.act:active { transform: scale(0.9) !important; }
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth !important; }
+* { -webkit-font-smoothing: antialiased !important; }
+
+/* Subtle background dots */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(79,70,229,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  z-index: 0;
+  animation: dotsDrift 20s linear infinite;
+}
+@keyframes dotsDrift {
+  from { background-position: 0 0; }
+  to { background-position: 30px 30px; }
+}
+
+/* ══════════════════════════════════════
+   QVIO MEGA ANIMATIONS — FULL POWER 🔥
+══════════════════════════════════════ */
+
+/* ── MORPHING BACKGROUND ── */
+body {
+  background: linear-gradient(135deg, #f0f4ff, #faf5ff, #fff8f0, #f0f4ff) !important;
+  background-size: 400% 400% !important;
+  animation: bgMorph 15s ease infinite !important;
+}
+@keyframes bgMorph {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── MAGICAL FLOATING ORBS ── */
+body::before {
+  content: '' !important;
+  position: fixed !important;
+  width: 600px !important; height: 600px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(79,70,229,0.08), transparent 70%) !important;
+  top: -200px !important; left: -200px !important;
+  animation: orb1 12s ease-in-out infinite !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+body::after {
+  content: '' !important;
+  position: fixed !important;
+  width: 500px !important; height: 500px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(245,158,11,0.06), transparent 70%) !important;
+  bottom: -150px !important; right: -150px !important;
+  animation: orb2 15s ease-in-out infinite !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+@keyframes orb1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(80px,60px) scale(1.1); }
+  66% { transform: translate(-40px,80px) scale(0.9); }
+}
+@keyframes orb2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(-60px,-80px) scale(1.15); }
+  66% { transform: translate(80px,-40px) scale(0.95); }
+}
+
+/* ── HERO ICON MEGA ANIMATION ── */
+.w-icon {
+  animation: heroFloat 4s ease-in-out infinite, heroGlow 2s ease-in-out infinite alternate !important;
+  cursor: pointer !important;
+}
+@keyframes heroFloat {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(-3deg); }
+  75% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes heroGlow {
+  from { box-shadow: 0 8px 30px rgba(79,70,229,0.3), 0 0 0 0 rgba(79,70,229,0.1); }
+  to { box-shadow: 0 20px 60px rgba(79,70,229,0.6), 0 0 0 15px rgba(79,70,229,0.03); }
+}
+.w-icon:hover {
+  animation: heroSpin 0.6s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes heroSpin {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.3) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+/* ── TITLE WAVE ANIMATION ── */
+.welcome h1 {
+  animation: titleWave 1s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes titleWave {
+  0% { opacity:0; transform: translateY(40px) scale(0.9); filter: blur(10px); }
+  100% { opacity:1; transform: none; filter: blur(0); }
+}
+
+/* ── SUBTITLE TYPEWRITER FEEL ── */
+.wsub {
+  animation: subtitleIn 0.8s ease 0.6s both !important;
+  border-right: 2px solid transparent;
+}
+@keyframes subtitleIn {
+  from { opacity:0; letter-spacing: -5px; }
+  to { opacity:1; letter-spacing: normal; }
+}
+
+/* ── CHIP WAVE ── */
+.qrs { perspective: 1000px !important; }
+.qr {
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1) !important;
+  transform-origin: center bottom !important;
+}
+.qr:nth-child(1){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s both !important;}
+.qr:nth-child(2){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.5s both !important;}
+.qr:nth-child(3){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.6s both !important;}
+.qr:nth-child(4){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.7s both !important;}
+.qr:nth-child(5){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.8s both !important;}
+.qr:nth-child(6){animation: chipWave 0.6s cubic-bezier(0.16,1,0.3,1) 0.9s both !important;}
+@keyframes chipWave {
+  0% { opacity:0; transform: translateY(20px) rotateX(45deg) scale(0.8); }
+  100% { opacity:1; transform: none; }
+}
+.qr:hover {
+  transform: translateY(-5px) scale(1.08) !important;
+  box-shadow: 0 10px 30px rgba(79,70,229,0.25) !important;
+  background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(245,158,11,0.05)) !important;
+}
+.qr:active { transform: scale(0.93) !important; }
+
+/* ── MAGNETIC INPUT ── */
+.inp-wrap {
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1) !important;
+  animation: inputReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s both !important;
+}
+@keyframes inputReveal {
+  from { opacity:0; transform: translateY(30px) scale(0.95); }
+  to { opacity:1; transform: none; }
+}
+.inp-wrap:focus-within {
+  transform: scale(1.015) translateY(-2px) !important;
+  box-shadow: 0 20px 60px rgba(79,70,229,0.15), 0 0 0 3px rgba(79,70,229,0.1) !important;
+}
+
+/* ── PLASMA SEND BUTTON ── */
+.sendbtn {
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.sendbtn::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  transition: width 0.4s, height 0.4s;
+}
+.sendbtn:hover::before { width: 100px; height: 100px; }
+.sendbtn:hover {
+  transform: scale(1.15) rotate(5deg) !important;
+  box-shadow: 0 10px 35px rgba(79,70,229,0.6) !important;
+}
+.sendbtn:active { transform: scale(0.88) rotate(-5deg) !important; }
+
+/* ── MORPHING MESSAGES ── */
+.msg {
+  animation: msgMorph 0.5s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes msgMorph {
+  0% { opacity:0; transform: translateY(20px) scale(0.92); filter: blur(4px); }
+  100% { opacity:1; transform: none; filter: blur(0); }
+}
+.msg.user { animation: msgMorphRight 0.5s cubic-bezier(0.16,1,0.3,1) both !important; }
+@keyframes msgMorphRight {
+  0% { opacity:0; transform: translateX(20px) scale(0.92); filter: blur(4px); }
+  100% { opacity:1; transform: none; filter: blur(0); }
+}
+.msg.ai .bubble, .msg.user .bubble {
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.msg.ai .bubble:hover { transform: translateX(3px) !important; }
+.msg.user .bubble:hover { transform: translateX(-3px) !important; }
+
+/* ── ELASTIC HEADER ── */
+header {
+  animation: headerDrop 0.7s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes headerDrop {
+  0% { opacity:0; transform: translateY(-100%) scale(0.98); }
+  100% { opacity:1; transform: none; }
+}
+
+/* ── BOUNCY LOGO ── */
+.lmark {
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1) !important;
+  animation: logoBounce 4s ease-in-out infinite !important;
+}
+@keyframes logoBounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.lmark:hover { transform: scale(1.2) rotate(10deg) !important; }
+
+/* ── RAINBOW PRO BUTTON ── */
+.pro-hbtn {
+  background-size: 200% auto !important;
+  animation: proRainbow 3s linear infinite !important;
+  transition: all 0.2s !important;
+}
+@keyframes proRainbow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.pro-hbtn:hover { transform: scale(1.1) translateY(-2px) !important; box-shadow: 0 8px 25px rgba(245,158,11,0.4) !important; }
+
+/* ── PULSING TYPING DOTS ── */
+@keyframes tyPulse {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+.tydot { animation: tyPulse 1s ease infinite !important; }
+.tydot:nth-child(2) { animation-delay: 0.2s !important; }
+.tydot:nth-child(3) { animation-delay: 0.4s !important; }
+
+/* ── GLOWING STREAM CURSOR ── */
+.stream-cursor {
+  animation: cursorGlow 0.7s ease-in-out infinite alternate !important;
+}
+@keyframes cursorGlow {
+  from { opacity:1; text-shadow: 0 0 5px rgba(79,70,229,0.5); }
+  to { opacity:0.2; text-shadow: 0 0 15px rgba(79,70,229,0.9); }
+}
+
+/* ── FLOATING WISPR ── */
+#wisprBtn {
+  animation: wisprPulse 2s ease-in-out infinite !important;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1) !important;
+}
+@keyframes wisprPulse {
+  0%,100% { transform: translateY(0) scale(1); box-shadow: 0 4px 20px rgba(79,70,229,0.3); }
+  50% { transform: translateY(-6px) scale(1.05); box-shadow: 0 15px 40px rgba(79,70,229,0.5); }
+}
+#wisprBtn:hover { transform: scale(1.15) translateY(-4px) !important; }
+
+/* ── ELASTIC HICO BUTTONS ── */
+.hico {
+  transition: all 0.2s cubic-bezier(0.16,1,0.3,1) !important;
+}
+.hico:hover { transform: translateY(-3px) scale(1.1) !important; }
+.hico:active { transform: scale(0.88) !important; }
+
+/* ── SIDEBAR SMOOTH ── */
+#sidebar { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1) !important; }
+
+/* ── EPIC TOAST ── */
+#toast.show {
+  animation: toastEpic 0.5s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes toastEpic {
+  0% { opacity:0; transform: translateY(30px) scale(0.7) rotate(-5deg); }
+  70% { transform: translateY(-5px) scale(1.05) rotate(1deg); }
+  100% { opacity:1; transform: none; }
+}
+
+/* ── MODAL EPIC ── */
+.modal {
+  animation: modalEpic 0.4s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes modalEpic {
+  0% { opacity:0; transform: scale(0.8) translateY(30px) rotate(-2deg); }
+  100% { opacity:1; transform: none; }
+}
+
+/* ── ACTION BUTTONS ── */
+.act {
+  transition: all 0.15s cubic-bezier(0.16,1,0.3,1) !important;
+}
+.act:hover { transform: scale(1.25) rotate(5deg) !important; }
+.act:active { transform: scale(0.85) !important; }
+
+/* ── XP BAR LASER ── */
+#xpBar {
+  position: relative !important;
+  overflow: hidden !important;
+}
+#xpBar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: xpLaser 2s ease infinite;
+}
+@keyframes xpLaser {
+  from { left: -60%; }
+  to { left: 120%; }
+}
+
+/* ── SMOOTH EVERYTHING ── */
+* { -webkit-font-smoothing: antialiased !important; }
+html { scroll-behavior: smooth !important; }
+a, button { cursor: pointer !important; }
+
+/* ══ QVIO MOBILE FIRST ══ */
+
+/* ── BASE MOBILE ── */
+@media (max-width: 768px) {
+
+  /* Header */
+  header {
+    padding: 0 12px !important;
+    height: 52px !important;
+  }
+  .lname { font-size: 15px !important; }
+  #modePill { 
+    padding: 4px 10px !important; 
+    font-size: 11.5px !important;
+    max-width: 120px !important;
+  }
+  #modeLabel {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 80px !important;
+  }
+  .pro-hbtn { 
+    padding: 5px 10px !important; 
+    font-size: 11px !important;
+  }
+  .hico {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 13px !important;
+  }
+  .uchip .unm { display: none !important; }
+  .uchip { padding: 4px 6px !important; }
+
+  /* Welcome */
+  .welcome { padding: 40px 20px 24px !important; }
+  .w-icon { 
+    width: 60px !important; 
+    height: 60px !important;
+    font-size: 18px !important;
+    margin-bottom: 18px !important;
+  }
+  .welcome h1 { 
+    font-size: 28px !important; 
+    letter-spacing: -1px !important;
+  }
+  .wsub { font-size: 14px !important; }
+
+  /* Chat */
+  .chat { padding: 16px 12px !important; }
+  .msg.ai .bubble { 
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+    border-radius: 4px 14px 14px 14px !important;
+  }
+  .msg.user .bubble {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    border-radius: 14px 14px 4px 14px !important;
+    max-width: 85% !important;
+  }
+  .av { 
+    width: 28px !important; 
+    height: 28px !important;
+    font-size: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Input area */
+  .inp-wrap { 
+    border-radius: 16px !important;
+    padding: 8px 10px !important;
+  }
+  #inp { 
+    font-size: 16px !important; /* prevents iOS zoom */
+    line-height: 1.5 !important;
+    min-height: 24px !important;
+  }
+  .sendbtn {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    font-size: 18px !important;
+  }
+
+  /* Chips */
+  .qrs { 
+    padding: 8px 12px 16px !important;
+    gap: 7px !important;
+    justify-content: center !important;
+  }
+  .qr { 
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Input toolbar buttons */
+  #pdfBtn, button[onclick*="checkGrammar"], 
+  button[onclick*="toggleWispr"] {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+
+  /* Wispr floating button */
+  #wisprBtn {
+    width: 46px !important;
+    height: 46px !important;
+    bottom: 80px !important;
+    right: 14px !important;
+    font-size: 18px !important;
+  }
+
+  /* Sidebar */
+  #sidebar { width: 280px !important; }
+
+  /* Modals */
+  .modal {
+    width: 95% !important;
+    max-height: 88vh !important;
+    border-radius: 18px !important;
+    margin: 0 !important;
+  }
+  .mhd { padding: 14px 16px !important; }
+  .mhd h3 { font-size: 15px !important; }
+
+  /* Action buttons under messages */
+  .mmeta { flex-wrap: wrap !important; gap: 4px !important; }
+  .act { 
+    padding: 5px 7px !important;
+    font-size: 15px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
+  /* Language selector */
+  #langSelectModal { 
+    width: 96% !important; 
+    max-height: 85vh !important;
+  }
+
+  /* Code blocks */
+  .code-block code { 
+    font-size: 12px !important;
+    padding: 12px !important;
+  }
+
+  /* Toast */
+  #toast { 
+    bottom: 80px !important;
+    left: 12px !important;
+    right: 12px !important;
+    text-align: center !important;
+    font-size: 13px !important;
+  }
+
+  /* Hide desktop-only elements */
+  .streak-pill { display: none !important; }
+  #focusBtn { display: none !important; }
+  #toolsBtn { display: none !important; }
+}
+
+/* ── SMALL PHONES (iPhone SE etc) ── */
+@media (max-width: 380px) {
+  .welcome h1 { font-size: 24px !important; }
+  .pro-hbtn { display: none !important; }
+  header { gap: 6px !important; padding: 0 10px !important; }
+  .qr { padding: 5px 10px !important; font-size: 11.5px !important; }
+}
+
+/* ── TOUCH IMPROVEMENTS ── */
+@media (hover: none) {
+  /* Bigger tap targets on touch */
+  .act { min-width: 36px !important; min-height: 36px !important; }
+  .hico { min-width: 36px !important; min-height: 36px !important; }
+  .qr { min-height: 36px !important; display: flex !important; align-items: center !important; }
+  
+  /* Remove hover effects on touch (they stick) */
+  .qr:hover { transform: none !important; box-shadow: none !important; }
+  .hico:hover { transform: none !important; }
+  .sendbtn:hover { transform: none !important; }
+  
+  /* Add active states instead */
+  .qr:active { transform: scale(0.95) !important; opacity: 0.8 !important; }
+  .hico:active { transform: scale(0.9) !important; }
+  .sendbtn:active { transform: scale(0.92) !important; }
+}
+
+/* ── iOS SAFE AREA ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .input-area, .inp-wrap {
+    padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* ── PREVENT iOS BOUNCE ── */
+body { overscroll-behavior: none !important; }
+.chat { overscroll-behavior: contain !important; }
+
+/* ── FAST TAP (no 300ms delay) ── */
+* { touch-action: manipulation !important; }
+
+/* ══ DARK MODE FIX ══ */
+[data-theme="dark"] {
+  --bg: #070B14 !important;
+  --bg2: #0A0F1A !important;
+  --surface: #0D1424 !important;
+  --border: rgba(79,70,229,0.2) !important;
+  --text: #E2E8F0 !important;
+  --text2: #94A3B8 !important;
+  --text3: #475569 !important;
+}
+[data-theme="dark"] body {
+  background: #070B14 !important;
+  color: #E2E8F0 !important;
+}
+[data-theme="dark"] body::before {
+  background: radial-gradient(ellipse 80% 50% at 10% 20%, rgba(79,70,229,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 80% at 90% 80%, rgba(124,58,237,0.08) 0%, transparent 60%) !important;
+  animation: orbDark 15s ease-in-out infinite alternate !important;
+}
+@keyframes orbDark {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(3%, 2%); }
+}
+[data-theme="dark"] body::after {
+  background: radial-gradient(ellipse 60% 80% at 90% 80%, rgba(124,58,237,0.06) 0%, transparent 60%) !important;
+}
+[data-theme="dark"] header {
+  background: rgba(7,11,20,0.9) !important;
+  border-bottom: 1px solid rgba(79,70,229,0.15) !important;
+  box-shadow: 0 1px 0 rgba(79,70,229,0.1) !important;
+}
+[data-theme="dark"] .inp-wrap {
+  background: rgba(13,18,30,0.8) !important;
+  border-color: rgba(79,70,229,0.2) !important;
+}
+[data-theme="dark"] .msg.ai .bubble {
+  background: rgba(13,18,30,0.8) !important;
+  border-color: rgba(79,70,229,0.15) !important;
+  color: #E2E8F0 !important;
+}
+[data-theme="dark"] .qr {
+  background: rgba(13,18,30,0.7) !important;
+  border-color: rgba(79,70,229,0.15) !important;
+  color: #94A3B8 !important;
+}
+[data-theme="dark"] .qr:hover {
+  color: #A5B4FC !important;
+  background: rgba(79,70,229,0.12) !important;
+}
+[data-theme="dark"] #sidebar {
+  background: rgba(7,11,20,0.98) !important;
+  border-color: rgba(79,70,229,0.12) !important;
+}
+[data-theme="dark"] .modal {
+  background: rgba(7,11,20,0.98) !important;
+  border-color: rgba(79,70,229,0.15) !important;
+}
+[data-theme="dark"] #toast {
+  background: rgba(7,11,20,0.95) !important;
+  border-color: rgba(79,70,229,0.3) !important;
+  color: #E2E8F0 !important;
+}
+[data-theme="dark"] .welcome h1 { color: #F1F5F9 !important; }
+[data-theme="dark"] .wsub { color: #475569 !important; }
+[data-theme="dark"] #inp { color: #E2E8F0 !important; }
+[data-theme="dark"] #inp::placeholder { color: #334155 !important; }
+[data-theme="dark"] .hico {
+  border-color: rgba(79,70,229,0.15) !important;
+  color: #94A3B8 !important;
+}
+
+/* ══ PHONE-FOCUSED SMOOTH ANIMATIONS ══ */
+
+/* Smooth theme transition */
+body, header, .inp-wrap, .modal, .msg.ai .bubble, .qr, #sidebar {
+  transition: background 0.4s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* ── PHONE SCROLL MOMENTUM ── */
+.chat {
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+}
+
+/* ── SWIPE HINT on chips ── */
+.qrs {
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-snap-type: x mandatory !important;
+  padding-bottom: 8px !important;
+  scrollbar-width: none !important;
+}
+.qrs::-webkit-scrollbar { display: none !important; }
+.qr { scroll-snap-align: start !important; flex-shrink: 0 !important; }
+
+/* ── PHONE BUBBLE ANIMATIONS ── */
+@media (max-width: 768px) {
+  .msg { animation: msgSlidePhone 0.4s cubic-bezier(0.16,1,0.3,1) both !important; }
+  @keyframes msgSlidePhone {
+    from { opacity:0; transform: translateY(16px); }
+    to { opacity:1; transform: none; }
+  }
+
+  /* Bigger send button on phone */
+  .sendbtn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px !important;
+    font-size: 20px !important;
+  }
+
+  /* Input area sticky bottom */
+  .input-area {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 100 !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+  }
+
+  /* Welcome hero section */
+  .welcome {
+    padding-top: 30px !important;
+    min-height: auto !important;
+  }
+  .w-icon {
+    width: 70px !important;
+    height: 70px !important;
+    font-size: 24px !important;
+    margin-bottom: 20px !important;
+    animation: iconFloatPhone 3s ease-in-out infinite !important;
+  }
+  @keyframes iconFloatPhone {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.04); }
+  }
+
+  /* Phone tap ripple - bigger */
+  .qr:active { 
+    transform: scale(0.93) !important; 
+    transition: transform 0.1s !important;
+  }
+  .sendbtn:active { 
+    transform: scale(0.88) !important; 
+    transition: transform 0.1s !important;
+  }
+
+  /* Smooth page transitions */
+  .modal {
+    animation: modalSlideUp 0.4s cubic-bezier(0.16,1,0.3,1) both !important;
+  }
+  @keyframes modalSlideUp {
+    from { opacity:0; transform: translateY(100px) scale(0.96); }
+    to { opacity:1; transform: none; }
+  }
+
+  /* Full width modals on phone */
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    max-height: 90vh !important;
+  }
+
+  /* Overlay tap area */
+  .overlay {
+    background: rgba(0,0,0,0.5) !important;
+    backdrop-filter: blur(3px) !important;
+  }
+
+  /* Wispr phone position */
+  #wisprBtn {
+    bottom: 85px !important;
+    right: 16px !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  /* Toast phone */
+  #toast {
+    bottom: 90px !important;
+    left: 16px !important;
+    right: 16px !important;
+    text-align: center !important;
+  }
+
+  /* Hide unnecessary on phone */
+  #toolsBtn, #focusBtn { display: none !important; }
+}
+
+/* ── HAPTIC FEEDBACK VISUAL ── */
+.qr:active, .sendbtn:active, .act:active, .hico:active, button:active {
+  filter: brightness(0.88) !important;
+}
+
+/* ── SMOOTH OPEN KEYBOARD ADJUSTMENT ── */
+@media (max-height: 500px) {
+  .welcome { display: none !important; }
+  .chat { padding-top: 8px !important; }
+}
+
+/* ── QVIO VOICE ENGINE ── */
+@keyframes statusPulse {
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.3);opacity:0.7;}
+}
+.qvbar {
+  animation: barDance 1s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+@keyframes barDance {
+  from{transform:scaleY(0.3);}
+  to{transform:scaleY(1);}
+}
+#qvoicePanel {
+  animation: panelSlideUp .4s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes panelSlideUp {
+  from{opacity:0;transform:translateX(-50%) translateY(30px);}
+  to{opacity:1;transform:translateX(-50%) translateY(0);}
+}
+#qvoiceMicBtn.recording {
+  background:linear-gradient(135deg,#EF4444,#DC2626) !important;
+  animation:micPulse 1s ease-in-out infinite !important;
+}
+@keyframes micPulse{
+  0%,100%{box-shadow:0 8px 30px rgba(239,68,68,0.4);}
+  50%{box-shadow:0 8px 50px rgba(239,68,68,0.8),0 0 0 12px rgba(239,68,68,0.1);}
+}
+@keyframes voiceFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-5px);}
+}
+#qvoiceFloatBtn:hover{transform:scale(1.1) !important;}
+#qvoiceFloatBtn.active{background:linear-gradient(135deg,#EF4444,#DC2626) !important;}
+.qt-on{background:rgba(79,70,229,0.15) !important;border-color:#4F46E5 !important;color:#4F46E5 !important;}
+.qt-off{background:transparent !important;border-color:var(--border) !important;color:var(--text3) !important;}
+
+/* ══ ULTRA INSTINCT ANIMATIONS ══ */
+
+/* Magnetic cursor effect on desktop */
+@media (hover: hover) {
+  .sendbtn { transition: all .2s cubic-bezier(.16,1,.3,1) !important; }
+  .qr { transition: all .25s cubic-bezier(.16,1,.3,1) !important; }
+}
+
+/* Smooth sidebar open */
+#sidebar {
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s !important;
+}
+#sidebar[style*="translateX(0"] {
+  box-shadow: 4px 0 40px rgba(0,0,0,0.15) !important;
+}
+
+/* Chat item hover animation */
+#sbList > div {
+  transition: all .15s cubic-bezier(.16,1,.3,1) !important;
+  animation: itemFadeIn .3s ease both !important;
+}
+@keyframes itemFadeIn {
+  from { opacity:0; transform: translateX(-10px); }
+  to { opacity:1; transform: none; }
+}
+
+/* Staggered chat list */
+#sbList > div:nth-child(1){animation-delay:.02s!important}
+#sbList > div:nth-child(2){animation-delay:.04s!important}
+#sbList > div:nth-child(3){animation-delay:.06s!important}
+#sbList > div:nth-child(4){animation-delay:.08s!important}
+#sbList > div:nth-child(5){animation-delay:.10s!important}
+#sbList > div:nth-child(6){animation-delay:.12s!important}
+#sbList > div:nth-child(7){animation-delay:.14s!important}
+#sbList > div:nth-child(8){animation-delay:.16s!important}
+
+/* Smooth message appearance */
+.msg {
+  animation: ultraMsg .45s cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes ultraMsg {
+  0% { opacity:0; transform: translateY(12px) scale(0.98); filter: blur(3px); }
+  60% { filter: blur(0); }
+  100% { opacity:1; transform: none; filter: blur(0); }
+}
+.msg.user {
+  animation: ultraMsgUser .45s cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes ultraMsgUser {
+  0% { opacity:0; transform: translateX(12px) scale(0.98); }
+  100% { opacity:1; transform: none; }
+}
+
+/* Typing indicator bounce */
+.tydot {
+  animation: ultraBounce 1s cubic-bezier(.36,.07,.19,.97) infinite !important;
+}
+.tydot:nth-child(2){animation-delay:.15s!important}
+.tydot:nth-child(3){animation-delay:.30s!important}
+@keyframes ultraBounce {
+  0%,80%,100%{transform:scale(0.6);opacity:0.4}
+  40%{transform:scale(1.2);opacity:1}
+}
+
+/* Stream cursor pulse */
+.stream-cursor {
+  animation: ultraCursor .6s ease-in-out infinite alternate !important;
+}
+@keyframes ultraCursor {
+  from{opacity:1;transform:scaleY(1)}
+  to{opacity:.2;transform:scaleY(0.8)}
+}
+
+/* Send button ultra */
+.sendbtn:hover {
+  transform: scale(1.12) !important;
+  box-shadow: 0 8px 25px rgba(79,70,229,0.5) !important;
+}
+.sendbtn:active {
+  transform: scale(0.9) rotate(-5deg) !important;
+  transition: transform .1s !important;
+}
+
+/* Input focus glow */
+.inp-wrap:focus-within {
+  box-shadow: 0 0 0 3px rgba(79,70,229,.12), 0 8px 30px rgba(79,70,229,.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Chip tap */
+.qr:active {
+  transform: scale(0.94) !important;
+  transition: transform .08s !important;
+}
+
+/* Modal slide up on mobile */
+@media (max-width: 768px) {
+  .modal {
+    animation: sheetUp .4s cubic-bezier(.16,1,.3,1) both !important;
+  }
+  @keyframes sheetUp {
+    from{opacity:0;transform:translateY(60px)}
+    to{opacity:1;transform:none}
+  }
+}
+
+/* XP gain flash */
+@keyframes xpFlash {
+  0%{box-shadow:0 0 0 0 rgba(79,70,229,.8)}
+  100%{box-shadow:0 0 0 20px rgba(79,70,229,0)}
+}
+
+/* Sidebar overlay fade */
+#sidebarOverlay {
+  transition: opacity .3s ease !important;
+}
+
+/* Pro button shine */
+.pro-hbtn {
+  overflow: hidden !important;
+  position: relative !important;
+}
+.pro-hbtn::after {
+  content: '';
+  position: absolute;
+  top: -50%;left: -60%;
+  width: 40%;height: 200%;
+  background: rgba(255,255,255,.3);
+  transform: skewX(-15deg);
+  animation: proShine 2.5s ease-in-out infinite;
+}
+@keyframes proShine{0%{left:-60%}40%,100%{left:120%}}
+
+/* Smooth theme switch */
+*{transition:background-color .3s ease,color .3s ease,border-color .3s ease !important;}
+.msg,.modal,.inp-wrap{transition:all .3s ease !important;}
+
+/* Floating header space */
+.chat { padding-top: 60px !important; }
+.welcome { padding-top: 70px !important; }
+#floatMenu:hover, #floatMenu:active { background:rgba(79,70,229,0.15) !important; border-color:rgba(79,70,229,0.4) !important; }
+
+/* Fix z-index stacking */
+#sidebarOverlay { z-index: 498 !important; }
+#sidebar { z-index: 500 !important; }
+#floatMenu { z-index: 601 !important; }
+
+#sidebarOverlay { z-index: 498 !important; pointer-events: auto; }
+#sidebar { z-index: 9999 !important; }
 </style>
 </head>
 <body>
 
+<button onclick="toggleSidebar()" style="position:fixed;top:14px;left:14px;z-index:99999;width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.5);backdrop-filter:blur(20px);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseover="this.style.background='rgba(79,70,229,0.4)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">☰</button>
 <div id="particles"></div>
 <div style="display:none"><button onclick="continueAsGuest()" style="width:100%;padding:10px;border-radius:12px;border:none;background:transparent;color:rgba(255,255,255,.3);font-size:13px;cursor:pointer;margin-top:8px;">Continue as Guest →</button></div>
 
@@ -2029,50 +3154,73 @@ body, html, #root, .app, .page, .wrap,
   </div>
 </div>
 
-<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499;"></div>
-<div id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:500;transform:translateX(-260px);transition:transform .3s;">
-  <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-    <div style="width:28px;height:28px;border-radius:8px;background:#4F46E5;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;">QV</div>
-    <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
-    <button onclick="closeSidebar()" style="border:none;background:transparent;cursor:pointer;color:var(--text2);font-size:16px;">✕</button>
+<!-- sidebar overlay -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:499;display:none;backdrop-filter:blur(4px);transition:all .3s;"></div>
+<aside id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:260px;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-260px);transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:500;box-shadow:4px 0 30px rgba(0,0,0,0.15);">
+  
+  <!-- Header -->
+  <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4338CA,#4F46E5);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+    <span style="font-size:14px;font-weight:700;flex:1;color:var(--text);">QVIO</span>
+    <button onclick="closeSidebar()" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">✕</button>
   </div>
-  <button onclick="newSess()" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;text-align:left;">✏️ New Chat</button>
-  <input id="sbSearch" placeholder="🔍 Search chats..." oninput="renderSess()" style="margin:0 10px 8px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none;">
-  <div style="padding:4px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
+
+  <!-- New Chat -->
+  <div style="padding:10px 12px;flex-shrink:0;">
+    <button onclick="newSess()" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='var(--surface)';this.style.color='var(--text)'" onmouseout="this.style.background='transparent';this.style.color='var(--text2)'">
+      <span style="font-size:15px;">✏️</span> New Chat
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div style="padding:0 12px 8px;flex-shrink:0;">
+    <input id="sbSearch" placeholder="🔍  Search chats..." oninput="renderSessions()" style="width:100%;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#4F46E5'" onblur="this.style.borderColor='var(--border)'">
+  </div>
+
+  <!-- Section label -->
+  <div style="padding:4px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;flex-shrink:0;">Recent</div>
+
+  <!-- Chat list -->
   <div id="sbList" style="flex:1;overflow-y:auto;padding:4px 8px;"></div>
-  <div style="padding:12px;border-top:1px solid var(--border);">
-    <div onclick="openM('prof')" style="padding:9px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">
-      <div id="sbAv" style="width:28px;height:28px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">QV</div>
-      <div><div id="sbNm" style="font-size:13px;font-weight:500;">Guest</div><div style="font-size:11px;color:var(--text3);">Free Plan</div></div>
+
+  <!-- User profile -->
+  <div style="padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;">
+    <div onclick="openM('prof')" style="padding:8px 10px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
+      <div id="sbAv" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#4338CA,#4F46E5);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+      <div style="min-width:0;">
+        <div id="sbNm" style="font-size:13px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Guest</div>
+        <div style="font-size:11px;color:var(--text3);">Free Plan</div>
+      </div>
     </div>
+  </div>
+</aside>
+
+<!-- Floating hamburger -->
+
+
+<!-- Floating logo top center -->
+<div style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;background:rgba(7,11,20,0.8);backdrop-filter:blur(20px);border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.15);">
+  <div style="width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#4338CA,#4F46E5);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">QV</div>
+  <span style="font-size:13px;font-weight:700;color:var(--text);">QV<em style="font-style:normal;color:#818CF8;">IO</em></span>
+  <div id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--text2);">
+    <span style="width:5px;height:5px;border-radius:50%;background:#10B981;display:inline-block;"></span>
+    <span id="modeLabel">Auto Detect</span>
+    <span style="font-size:9px;">▾</span>
   </div>
 </div>
-<header>
-  <button id="sbBtn" onclick="toggleSidebar()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">☰</button>
-  <a class="logo" onclick="scrollToTop()" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;">
-    <div class="lmark">QV</div>
-    <span class="lname">QV<em>IO</em></span>
-  </a>
-  <div style="flex:1;display:flex;align-items:center;">
-    <div id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;">
-      <span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;flex-shrink:0;"></span>
-      <span id="modeLabel">Auto Detect</span>
-      <span style="color:var(--text3);font-size:10px;">▾</span>
-    </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-    <button onclick="openLangSelect()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;">🌍</button>
-    <button id="themeBtn" onclick="cycleTh()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;">🌙</button>
-    <button onclick="openM('pro')" style="padding:6px 12px;border-radius:8px;border:none;background:#F5A623;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">⭐ Pro</button>
-    <div onclick="openM('prof')" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
-      <div id="uAv" style="width:22px;height:22px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">?</div>
-      <span id="uNm" style="font-size:13px;font-weight:500;">Guest</span>
-    </div>
-  </div>
-  <div id="xpBarWrap" style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--border);">
-    <div id="xpBar" style="height:100%;background:#4F46E5;width:0%;transition:width .4s ease;"></div>
-  </div>
-</header>
+
+<!-- Floating right actions -->
+<div style="position:fixed;top:12px;right:12px;z-index:400;display:flex;align-items:center;gap:6px;">
+  <button onclick="openLangSelect()" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:rgba(7,11,20,0.8);backdrop-filter:blur(20px);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;">🌍</button>
+  <button id="themeBtn" onclick="cycleTh()" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:rgba(7,11,20,0.8);backdrop-filter:blur(20px);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;">🌙</button>
+  <button onclick="openM('pro')" style="padding:6px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#B45309,#D97706);color:#FEF3C7;font-size:11px;font-weight:700;cursor:pointer;height:34px;transition:all .2s;">⭐ Pro</button>
+  <div onclick="openM('prof')" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4338CA,#4F46E5);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(79,70,229,0.3);transition:all .2s;" id="uAv">?</div>
+</div>
+
+<!-- XP bar at very top -->
+<div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:401;background:rgba(79,70,229,0.1);">
+  <div id="xpBar" style="height:100%;background:linear-gradient(90deg,#4338CA,#4F46E5,#818CF8);width:0%;transition:width .4s ease;box-shadow:0 0 8px rgba(79,70,229,0.8);"></div>
+</div>
 
 
 <div class="sub-bar mem" id="memBar"></div>
@@ -2638,32 +3786,68 @@ function saveCurrentSession(){
 }
 
 function renderSessions(){
-  var list=document.getElementById('sbList')||document.getElementById('sbChatList');
+  var list=document.getElementById('sbList');
   if(!list)return;
   var d=typeof getSess==='function'?getSess():{};
   var sid=typeof _sid!=='undefined'?_sid:'';
   var q=(document.getElementById('sbSearch')||{}).value||'';
   var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
   if(q)keys=keys.filter(function(k){return d[k].title.toLowerCase().includes(q.toLowerCase());});
-  if(!keys.length){list.innerHTML="<div style=\"padding:12px;font-size:12px;color:#888;text-align:center;\">No chats yet</div>";return;}
-  var html="";
-  keys.slice(0,30).forEach(function(id){
-    var s=d[id];
-    var active=id===sid;
-    var ago=Math.floor((Date.now()-s.ts)/60000);
-    var t=ago<1?"Just now":ago<60?ago+"m ago":ago<1440?Math.floor(ago/60)+"h ago":Math.floor(ago/1440)+"d ago";
-    var bg=active?"rgba(79,70,229,.1)":"transparent";
-    html+="<div onclick=\"loadSess(\""+id+"\")\" style=\"padding:9px 12px;border-radius:8px;cursor:pointer;display:flex;gap:6px;margin-bottom:2px;background:"+bg+"\">";
-    html+="<div style=\"flex:1;min-width:0;overflow:hidden;\">";
-    html+="<div style=\"font-size:12.5px;font-weight:"+(active?"600":"400")+";color:"+(active?"#4F46E5":"inherit")+";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\">"+s.title+"</div>";
-    html+="<div style=\"font-size:11px;color:#888;\">"+t+"</div>";
-    html+="</div>";
-    html+="<span onclick=\"event.stopPropagation();delSess('"+id+"',event)\" style=\"opacity:0.4;cursor:pointer;font-size:12px;\" onmouseover=\"this.style.opacity=1;this.style.color='red'\" onmouseout=\"this.style.opacity=0.4;this.style.color='inherit'\">✕</span>";
-    html+="</div>";
+  if(!keys.length){
+    list.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">No chats yet</div>';
+    return;
+  }
+  var html='';
+  var today=new Date();today.setHours(0,0,0,0);
+  var yesterday=new Date(today);yesterday.setDate(yesterday.getDate()-1);
+  var lastWeek=new Date(today);lastWeek.setDate(lastWeek.getDate()-7);
+  var groups={'Today':[],'Yesterday':[],'Last 7 days':[],'Older':[]};
+  keys.forEach(function(id){
+    var dt=new Date(d[id].ts);dt.setHours(0,0,0,0);
+    if(dt>=today)groups['Today'].push(id);
+    else if(dt>=yesterday)groups['Yesterday'].push(id);
+    else if(dt>=lastWeek)groups['Last 7 days'].push(id);
+    else groups['Older'].push(id);
   });
-  list.innerHTML=html;
+  Object.keys(groups).forEach(function(grp){
+    if(!groups[grp].length)return;
+    html+='<div style="padding:6px 8px 2px;font-size:11px;font-weight:600;color:var(--text3);">'+grp+'</div>';
+    groups[grp].forEach(function(id){
+      var s=d[id];
+      var active=id===sid;
+      var ago=Math.floor((Date.now()-s.ts)/60000);
+      var t=ago<1?'Just now':ago<60?ago+'m ago':ago<1440?Math.floor(ago/60)+'h ago':Math.floor(ago/1440)+'d ago';
+      var el=document.createElement('div');
+      el.setAttribute('data-id',id);
+      el.style.cssText='padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:1px;background:'+(active?'rgba(79,70,229,0.1)':'transparent')+';border:1px solid '+(active?'rgba(79,70,229,0.2)':'transparent')+';transition:all .15s;display:flex;align-items:center;gap:8px;';
+      el.innerHTML='<span style="font-size:13px;flex-shrink:0;opacity:.6;">💬</span><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:'+(active?'600':'400')+';color:'+(active?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div><div style="font-size:11px;color:var(--text3);margin-top:1px;">'+t+'</div></div><button class="del-sess-btn" style="opacity:0;width:22px;height:22px;border-radius:6px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:12px;flex-shrink:0;">✕</button>';
+      el.addEventListener('click',function(){loadSess(this.dataset.id);});
+      el.querySelector('.del-sess-btn').addEventListener('click',function(e){e.stopPropagation();delSess(el.dataset.id,e);});
+      el.addEventListener('mouseover',function(){if(!active)this.style.background='var(--surface)';this.querySelector('.del-sess-btn').style.opacity='1';});
+      el.addEventListener('mouseout',function(){if(!active)this.style.background='transparent';this.querySelector('.del-sess-btn').style.opacity='0';});
+      list.appendChild(el);
+    });
+  });
+  list.innerHTML=html; list.innerHTML='';
+  // Use DOM approach
+  var tempDiv=document.createElement('div');
+  tempDiv.innerHTML=html;
+  groups['Today'].concat(groups['Yesterday']).concat(groups['Last 7 days']).concat(groups['Older']).forEach(function(id){
+    var s=d[id];var active=id===sid;
+    var ago=Math.floor((Date.now()-s.ts)/60000);
+    var t=ago<1?'Just now':ago<60?ago+'m ago':ago<1440?Math.floor(ago/60)+'h ago':Math.floor(ago/1440)+'d ago';
+    var row=document.createElement('div');
+    row.style.cssText='padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:1px;transition:all .15s;display:flex;align-items:center;gap:8px;background:'+(active?'rgba(79,70,229,0.1)':'transparent');
+    row.innerHTML='<span style="font-size:13px;opacity:.6;">💬</span><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:'+(active?600:400)+';color:'+(active?'#4F46E5':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div><div style="font-size:11px;color:var(--text3);">'+t+'</div></div>';
+    row.addEventListener('click',function(){loadSess(id);});
+    row.addEventListener('mouseover',function(){if(!active)this.style.background='var(--surface)';});
+    row.addEventListener('mouseout',function(){if(!active)this.style.background='transparent';});
+    list.appendChild(row);
+  });
 }
 function renderSess(){renderSessions();}
+
+
 
 
 function createNewSession(){
@@ -2780,7 +3964,7 @@ async function processWispr(text){
       var prompt = 'Clean up this voice transcript. ';
       if(_wispr.autoClean) prompt += 'Remove filler words (um, uh, like, you know, basically, literally). ';
       if(_wispr.autoPunct) prompt += 'Add proper punctuation, capitalization. ';
-      prompt += 'Return ONLY the cleaned text, nothing else:\n\n' + text;
+      prompt += "Return ONLY the cleaned text, nothing else:\n\n" + text;
 
       var res = await fetch('/api/chat',{
         method:'POST',
@@ -2891,6 +4075,208 @@ function continueAsGuest(){
     try{renderSessions();}catch(e){}
     showToast('👋 Welcome Guest! Sign in to save chats.');
   },500);
+}
+
+// ── CLICK RIPPLE EFFECT ──
+document.addEventListener('click', function(e) {
+  var ripple = document.createElement('div');
+  ripple.style.cssText = 'position:fixed;width:20px;height:20px;border-radius:50%;background:rgba(79,70,229,0.3);pointer-events:none;z-index:99999;transform:translate(-50%,-50%) scale(0);animation:rippleOut 0.6s ease both;left:'+e.clientX+'px;top:'+e.clientY+'px;';
+  document.body.appendChild(ripple);
+  setTimeout(function(){ripple.remove();}, 600);
+});
+
+// Add ripple animation
+var rippleStyle = document.createElement('style');
+rippleStyle.textContent = '@keyframes rippleOut{from{transform:translate(-50%,-50%) scale(0);opacity:1;}to{transform:translate(-50%,-50%) scale(8);opacity:0;}}';
+document.head.appendChild(rippleStyle);
+
+// ── ICON CLICK EXPLOSION ──
+window.addEventListener('load', function(){
+  var icon = document.querySelector('.w-icon');
+  if(icon) {
+    icon.addEventListener('click', function(){
+      if(typeof launchConfetti === 'function') launchConfetti();
+      if(typeof playSound === 'function') playSound('levelup');
+    });
+  }
+});
+
+// ══ QVIO VOICE ENGINE ══
+var _qv = {
+  active: false,
+  rec: null,
+  final: '',
+  autoClean: true,
+  autoPunct: true,
+  autoSend: true,
+  open: false
+};
+
+function openQVoice(){
+  var panel = document.getElementById('qvoicePanel');
+  if(!panel) return;
+  _qv.open = true;
+  panel.style.display = 'block';
+  document.getElementById('qvoiceFloatBtn').classList.add('active');
+  if(!_qv.active) startQVoiceRec();
+}
+
+function closeQVoice(){
+  var panel = document.getElementById('qvoicePanel');
+  if(panel) panel.style.display = 'none';
+  _qv.open = false;
+  stopQVoiceRec();
+  document.getElementById('qvoiceFloatBtn').classList.remove('active');
+}
+
+function toggleQVoiceRec(){
+  if(_qv.active) stopQVoiceRec();
+  else startQVoiceRec();
+}
+
+function startQVoiceRec(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    showToast('Voice not supported. Use Chrome or Edge!');
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _qv.rec = new SR();
+  _qv.rec.continuous = true;
+  _qv.rec.interimResults = true;
+  var langMap = {'Hindi':'hi-IN','Tamil':'ta-IN','Telugu':'te-IN','Kannada':'kn-IN','Malayalam':'ml-IN','Bengali':'bn-IN','English':'en-IN'};
+  _qv.rec.lang = (typeof selectedAILang !== 'undefined' && langMap[selectedAILang]) ? langMap[selectedAILang] : 'en-IN';
+
+  _qv.rec.onstart = function(){
+    _qv.active = true;
+    document.getElementById('qvoiceMicBtn').classList.add('recording');
+    document.getElementById('qvoiceMicBtn').textContent = '⏹';
+    document.getElementById('qvoiceStatus').style.background = '#EF4444';
+    document.getElementById('qvoiceStatusText').textContent = 'Listening...';
+    // Animate bars
+    document.querySelectorAll('.qvbar').forEach(function(b){
+      b.style.animationPlayState = 'running';
+    });
+  };
+
+  _qv.rec.onresult = function(e){
+    var interim = '', final = '';
+    for(var i = e.resultIndex; i < e.results.length; i++){
+      var t = e.results[i][0].transcript;
+      if(e.results[i].isFinal) final += t;
+      else interim += t;
+    }
+    if(final){
+      _qv.final += final + ' ';
+      // Clean with AI if enabled
+      if(_qv.autoClean || _qv.autoPunct) cleanTranscript(_qv.final.trim());
+      else updateTranscript(_qv.final.trim());
+    } else {
+      updateTranscript(_qv.final + interim);
+    }
+  };
+
+  _qv.rec.onerror = function(e){
+    if(e.error !== 'no-speech') { showToast('Mic: ' + e.error); stopQVoiceRec(); }
+  };
+  _qv.rec.onend = function(){ if(_qv.active) _qv.rec.start(); };
+  _qv.rec.start();
+}
+
+function stopQVoiceRec(){
+  _qv.active = false;
+  if(_qv.rec){ _qv.rec.stop(); _qv.rec = null; }
+  var btn = document.getElementById('qvoiceMicBtn');
+  if(btn){ btn.classList.remove('recording'); btn.textContent = '🎙️'; }
+  var st = document.getElementById('qvoiceStatus');
+  var stxt = document.getElementById('qvoiceStatusText');
+  if(st) st.style.background = '#10B981';
+  if(stxt) stxt.textContent = 'Ready';
+  document.querySelectorAll('.qvbar').forEach(function(b){
+    b.style.animationPlayState = 'paused';
+  });
+}
+
+function updateTranscript(text){
+  var el = document.getElementById('qvoiceTranscript');
+  if(el) el.textContent = text || 'Tap mic and start speaking...';
+}
+
+async function cleanTranscript(text){
+  if(!text) return;
+  try{
+    var parts = ["Clean this voice transcript. "];
+    if(_qv.autoClean) parts.push("Remove filler words. ");
+    if(_qv.autoPunct) parts.push("Add proper punctuation. ");
+    parts.push("Return ONLY cleaned text:\n\n" + text);
+    var prompt = parts.join("");
+    var r = await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt}]})});
+    var d = await r.json();
+    if(d.choices&&d.choices[0]){
+      var cleaned = d.choices[0].message.content.trim();
+      updateTranscript(cleaned);
+      _qv.final = cleaned + " ";
+      if(_qv.autoSend && cleaned.length > 5){
+        setTimeout(function(){ qvoiceSend(); }, 1500);
+      }
+    }
+  }catch(e){ updateTranscript(text); }
+}
+function qvoiceToggle(btn, key){
+  _qv[key] = !_qv[key];
+  btn.classList.toggle('qt-on', _qv[key]);
+  btn.classList.toggle('qt-off', !_qv[key]);
+}
+
+function qvoiceInsert(){
+  var text = document.getElementById('qvoiceTranscript').textContent;
+  if(!text || text === 'Tap mic and start speaking...') return;
+  var inp = document.getElementById('inp');
+  if(inp) inp.value = text;
+  closeQVoice();
+  _qv.final = '';
+  showToast('✅ Text inserted!');
+}
+
+function qvoiceSend(){
+  var text = document.getElementById('qvoiceTranscript').textContent;
+  if(!text || text === 'Tap mic and start speaking...') return;
+  var inp = document.getElementById('inp');
+  if(inp) inp.value = text;
+  closeQVoice();
+  _qv.final = '';
+  sendMsg();
+}
+
+function qvoiceClear(){
+  _qv.final = '';
+  updateTranscript('');
+}
+
+// Ctrl+Space shortcut
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.code === 'Space'){
+    e.preventDefault();
+    if(_qv.open) closeQVoice();
+    else openQVoice();
+  }
+});
+
+// ══ SIDEBAR CONTROL ══
+var _sbOpen = false;
+function toggleSidebar(){
+  _sbOpen = !_sbOpen;
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  if(sb) sb.style.transform = _sbOpen ? 'translateX(0px)' : 'translateX(-260px)';
+  if(ov) ov.style.display = _sbOpen ? 'block' : 'none';
+  if(_sbOpen) setTimeout(function(){ if(typeof renderSessions==='function') renderSessions(); }, 100);
+}
+function closeSidebar(){
+  _sbOpen = false;
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  if(sb) sb.style.transform = 'translateX(-260px)';
+  if(ov) ov.style.display = 'none';
 }
 </script><script>
 // ═══════════════════════════════════════════════════
@@ -3109,7 +4495,7 @@ function skipLogin(){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
   setTimeout(function(){ls.style.display='none';},400);
-  showToast('👑 Welcome to QVIO Premium!');
+  // welcome toast removed
 }
 function updateUserUI(user){
   var nm=user.displayName||user.email||'User';
@@ -4091,7 +5477,7 @@ document.addEventListener('DOMContentLoaded',function(){
   setTimeout(function(){
     setSmartGreeting();
     showOnboard();
-    showToast('👑 Welcome to QVIO Premium!');
+    // welcome toast removed
   },600);
 })();
 }); // DOMContentLoaded
@@ -5065,30 +6451,65 @@ function getAILangInstruction(){
 </script>
 
 <!-- WISPR FLOW -->
-<div id="wisprPanel" style="position:fixed;bottom:165px;right:20px;width:300px;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);z-index:888;display:none;flex-direction:column;gap:10px;">
-  <div style="font-size:13px;font-weight:600;color:#4F46E5;display:flex;align-items:center;gap:8px;">
-    <span id="wisprStatusText">Ready to listen</span>
-    <div id="wisprWave" style="display:none;align-items:center;gap:3px;height:20px;">
-      <div style="width:3px;border-radius:3px;background:#4F46E5;animation:wisprWave 1s infinite;height:6px;"></div>
-      <div style="width:3px;border-radius:3px;background:#4F46E5;animation:wisprWave 1s .1s infinite;height:12px;"></div>
-      <div style="width:3px;border-radius:3px;background:#4F46E5;animation:wisprWave 1s .2s infinite;height:18px;"></div>
-      <div style="width:3px;border-radius:3px;background:#4F46E5;animation:wisprWave 1s .3s infinite;height:12px;"></div>
-      <div style="width:3px;border-radius:3px;background:#4F46E5;animation:wisprWave 1s .4s infinite;height:6px;"></div>
+<!-- QVIO VOICE ENGINE -->
+<div id="qvoicePanel" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:92%;max-width:380px;z-index:8888;">
+  
+  <!-- Main Card -->
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.2);backdrop-filter:blur(30px);">
+    
+    <!-- Top bar -->
+    <div style="padding:12px 16px 0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="qvoiceStatus" style="width:8px;height:8px;border-radius:50%;background:#10B981;animation:statusPulse 1.5s ease-in-out infinite;"></div>
+        <span id="qvoiceStatusText" style="font-size:13px;font-weight:600;color:var(--text2);">Ready</span>
+      </div>
+      <button onclick="closeQVoice()" style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:18px;padding:4px;">✕</button>
+    </div>
+
+    <!-- Waveform visualizer -->
+    <div id="qvoiceWave" style="display:flex;align-items:center;justify-content:center;gap:3px;height:60px;padding:0 20px;">
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:8px;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:14px;animation-delay:.1s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:22px;animation-delay:.2s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:30px;animation-delay:.3s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:40px;animation-delay:.4s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:50px;animation-delay:.5s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:40px;animation-delay:.6s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:30px;animation-delay:.7s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:22px;animation-delay:.8s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:14px;animation-delay:.9s;"></div>
+      <div class="qvbar" style="width:3px;border-radius:3px;background:linear-gradient(#4F46E5,#818CF8);height:8px;animation-delay:1s;"></div>
+    </div>
+
+    <!-- Transcript -->
+    <div style="padding:0 16px 12px;">
+      <div id="qvoiceTranscript" style="min-height:48px;max-height:100px;overflow-y:auto;font-size:15px;line-height:1.6;color:var(--text);padding:10px 12px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">Tap mic and start speaking...</div>
+    </div>
+
+    <!-- Toggles -->
+    <div style="display:flex;gap:6px;padding:0 16px 12px;flex-wrap:wrap;">
+      <button id="qt_clean" onclick="qvoiceToggle(this,'autoClean')" style="padding:5px 12px;border-radius:20px;border:1.5px solid #4F46E5;background:rgba(79,70,229,0.1);color:#4F46E5;font-size:11.5px;font-weight:600;cursor:pointer;">✨ Auto Clean</button>
+      <button id="qt_punct" onclick="qvoiceToggle(this,'autoPunct')" style="padding:5px 12px;border-radius:20px;border:1.5px solid #4F46E5;background:rgba(79,70,229,0.1);color:#4F46E5;font-size:11.5px;font-weight:600;cursor:pointer;">📝 Punctuation</button>
+      <button id="qt_send" onclick="qvoiceToggle(this,'autoSend')" style="padding:5px 12px;border-radius:20px;border:1.5px solid #4F46E5;background:rgba(79,70,229,0.1);color:#4F46E5;font-size:11.5px;font-weight:600;cursor:pointer;">⚡ Auto Send</button>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:8px;padding:0 16px 16px;">
+      <button onclick="qvoiceClear()" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Clear</button>
+      <button onclick="qvoiceInsert()" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Insert</button>
+      <button onclick="qvoiceSend()" style="flex:1;padding:10px;border-radius:12px;border:none;background:#4F46E5;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Send →</button>
     </div>
   </div>
-  <div id="wisprTranscript" style="font-size:13px;color:var(--text2);min-height:40px;max-height:100px;overflow-y:auto;line-height:1.6;padding:8px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">Tap mic to start speaking...</div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;">
-    <button id="wtAutoClean" onclick="wisprToggle(this,'autoClean')" style="padding:4px 10px;border-radius:20px;border:1px solid #4F46E5;background:rgba(79,70,229,.1);color:#4F46E5;font-size:11px;cursor:pointer;">✨ Auto Clean</button>
-    <button id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')" style="padding:4px 10px;border-radius:20px;border:1px solid #4F46E5;background:rgba(79,70,229,.1);color:#4F46E5;font-size:11px;cursor:pointer;">📝 Punctuation</button>
-    <button id="wtAutoSend" onclick="wisprToggle(this,'autoSend')" style="padding:4px 10px;border-radius:20px;border:1px solid #4F46E5;background:rgba(79,70,229,.1);color:#4F46E5;font-size:11px;cursor:pointer;">⚡ Auto Send</button>
-  </div>
-  <div style="display:flex;gap:8px;">
-    <button onclick="wisprClear()" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;">Clear</button>
-    <button onclick="wisprInsert()" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;">Insert</button>
-    <button onclick="wisprSendNow()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#4F46E5;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">Send →</button>
+
+  <!-- Big mic button -->
+  <div style="display:flex;justify-content:center;margin-top:12px;">
+    <button id="qvoiceMicBtn" onclick="toggleQVoiceRec()" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 8px 30px rgba(79,70,229,0.5);transition:all .3s;">🎙️</button>
   </div>
 </div>
-<button id="wisprBtn" onclick="toggleWispr()" title="Voice Dictation" style="position:fixed;bottom:100px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,.4);z-index:888;display:flex;align-items:center;justify-content:center;">🎙️</button>
+
+<!-- Floating Voice Button -->
+<button id="qvoiceFloatBtn" onclick="openQVoice()" style="position:fixed;bottom:90px;right:16px;width:52px;height:52px;border-radius:50%;border:none;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 6px 25px rgba(79,70,229,0.5);z-index:888;display:flex;align-items:center;justify-content:center;transition:all .3s;animation:voiceFloat 3s ease-in-out infinite;">🎙️</button>
+
 
 </body>
 </html>
