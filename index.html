@@ -3233,19 +3233,11 @@ function showAnalytics(){
 
   // Block F12, Ctrl+U, Ctrl+Shift+I/J
   document.addEventListener('keydown',function(e){
-    if(e.key==='F12'||(e.ctrlKey&&e.key==='u')||(e.ctrlKey&&e.shiftKey&&'ijcIJC'.indexOf(e.key)>-1)){
-      e.preventDefault();
-      if(typeof showToast==='function')showToast('\ud83d\udd12 QVIO is protected. (c) VARUN 2025','error');
-      return false;
-    }
+    // F12 temporarily enabled for debugging
   });
 
   // Right-click disable
-  document.addEventListener('contextmenu',function(e){
-    e.preventDefault();
-    if(typeof showToast==='function')showToast('\ud83d\udd12 QVIO is protected. (c) VARUN 2025','error');
-    return false;
-  });
+  // Right click temporarily enabled for debugging
 
   // DevTools detection disabled
 
