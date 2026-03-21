@@ -298,7 +298,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes nsSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
 /* LOGIN */
-#loginScreen{position:fixed;inset:0;z-index:999999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+#loginScreen{position:fixed;inset:0;z-index:8888;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;}
 #loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,160,23,.09) 0%,transparent 65%);pointer-events:none;}
 .lwrap{width:92%;max-width:420px;display:flex;flex-direction:column;align-items:center;padding:40px 0;animation:lRise .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;}
 @keyframes lRise{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:translateY(0);}}
@@ -1255,7 +1255,9 @@ header{
 }
 
 /* ══ PREMIUM LOGIN ══ */
-
+#loginScreen{
+  background:linear-gradient(135deg,#080C14 0%,#0D1220 50%,#080C14 100%) !important;
+}
 .lwrap{
   text-align:center;
   padding:40px 32px;
@@ -1417,7 +1419,12 @@ header{
   margin-left:0 !important;
 }
 /* Fix login screen */
-
+#loginScreen{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:9000 !important;
+  margin-left:0 !important;
+}
 /* Fix particles */
 #particles{
   position:fixed !important;
@@ -1435,262 +1442,38 @@ header{
 /* App always ready - sidebar hidden instead */
 #qvio-app{opacity:1;pointer-events:all;}
 
-
+#loginScreen{position:fixed!important;inset:0!important;z-index:99999!important;background:#080C14!important;}
 #namasteScreen{z-index:99998!important;}
 #sidebar{display:none!important;}
 #sidebar.sb-visible{display:flex!important;}
-
-.chat{padding-top:60px!important;}
-.welcome{padding-top:70px!important;}
-body{background:#070B14!important;}
-[data-theme="light"]{--bg:#070B14!important;--text:#E2E8F0!important;}
-
-.chat { padding-top: 65px !important; }
-.welcome { padding-top: 75px !important; }
-
-/* Fix black space - login covers full screen */
-
-
-/* Fix Sign In button */
-.l-signin, button[onclick*="signInEmail"] {
-  background: #4F46E5 !important;
-  color: #fff !important;
-  border: none !important;
-  border-radius: 12px !important;
-  padding: 12px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  width: 100% !important;
-  cursor: pointer !important;
-}
-.l-signup, button[onclick*="signUpEmail"] {
-  background: transparent !important;
-  color: #818CF8 !important;
-  border: 1px solid rgba(79,70,229,0.4) !important;
-  border-radius: 12px !important;
-  padding: 12px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  width: 100% !important;
-  cursor: pointer !important;
-}
-
-
-/* Login covers everything */
-
-/* Make sure chat fills full width */
-.chat, #chat {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-/* Remove any left margin/padding from old sidebar */
-.app, .page, main, .main-content {
-  margin-left: 0 !important;
-  padding-left: 0 !important;
-  width: 100% !important;
-}
-/* Sign In button fix */
-.l-btns { display: flex !important; gap: 8px !important; }
-.lbtn {
-  flex: 1 !important;
-  padding: 12px !important;
-  border-radius: 12px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-}
-.lbtn.main { background: #4F46E5 !important; color: #fff !important; border: none !important; }
-.lbtn.ghost { background: transparent !important; color: #818CF8 !important; border: 1px solid rgba(79,70,229,0.4) !important; }
-
-/* Fix login inputs - dark not cream */
-.lf {
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  padding: 12px 16px !important;
-  font-size: 14px !important;
-  width: 100% !important;
-  outline: none !important;
-  box-sizing: border-box !important;
-  -webkit-appearance: none !important;
-}
-.lf::placeholder { color: rgba(255,255,255,0.3) !important; }
-.lf:focus { border-color: rgba(79,70,229,0.6) !important; background: rgba(255,255,255,0.08) !important; }
-/* Fix webkit autofill cream color */
-.lf:-webkit-autofill,
-.lf:-webkit-autofill:hover,
-.lf:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px rgba(13,18,30,0.9) inset !important;
-  -webkit-text-fill-color: #fff !important;
-  border-color: rgba(79,70,229,0.4) !important;
-}
-
-
-#namasteScreen { display: none !important; }
-
-/* Login screen truly full width */
-
-
-@media(max-width:768px){
-  .chat{padding:60px 12px 16px!important;}
-  .welcome{padding:70px 20px 30px!important;}
-  .msg.ai .bubble{font-size:14px!important;padding:12px 14px!important;}
-  .msg.user .bubble{font-size:14px!important;padding:10px 14px!important;}
-  .inp-wrap{border-radius:16px!important;}
-  #inp{font-size:16px!important;}
-  .sendbtn{width:42px!important;height:42px!important;}
-  .qr{padding:6px 12px!important;font-size:12px!important;}
-  .modal{width:96%!important;border-radius:20px!important;max-height:88vh!important;}
-  #toast{bottom:80px!important;left:12px!important;right:12px!important;text-align:center!important;}
-}
-*{touch-action:manipulation!important;}
-@supports(padding-bottom:env(safe-area-inset-bottom)){
-  .input-area{padding-bottom:max(12px,env(safe-area-inset-bottom))!important;}
-}
-
-
-
-
-
-#sidebar { visibility: hidden; }
-#sidebar.open { visibility: visible; transform: translateX(0px) !important; }
-
-/* Make login card wider - less black on sides */
-
-/* Give login a gradient to make the black sides look intentional */
-
-
-
-
-
-
-
-
-
-
-
-/* When login is showing, hide all background content */
-
-/* Fix cream inputs */
-.lf, #loginEmail, #loginPass {
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-}
-.lf:-webkit-autofill,
-.lf:-webkit-autofill:focus,
-#loginEmail:-webkit-autofill,
-#loginPass:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px #0D1525 inset !important;
-  -webkit-text-fill-color: #fff !important;
-}
-.lf::placeholder,
-#loginEmail::placeholder,
-#loginPass::placeholder {
-  color: rgba(255,255,255,0.3) !important;
-}
-
-/* ══ LOGIN FINAL ══ */
-
-#loginScreen .lwrap {
-  width: 90% !important;
-  max-width: 420px !important;
-  margin: 0 auto !important;
-}
-.lf, #loginEmail, #loginPass {
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-}
-.lf:-webkit-autofill, #loginEmail:-webkit-autofill, #loginPass:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px #0D1525 inset !important;
-  -webkit-text-fill-color: #fff !important;
-}
-
-#loginScreen {
-  position: fixed !important;
-  top: 0 !important; left: 0 !important;
-  width: 100vw !important; height: 100vh !important;
-  z-index: 999999 !important;
-  background: #080C14 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow-y: auto !important;
-}
-#loginScreen .lwrap {
-  width: 90% !important;
-  max-width: 420px !important;
-  margin: 0 auto !important;
-}
-.lf, #loginEmail, #loginPass {
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-}
-.lf:-webkit-autofill, #loginEmail:-webkit-autofill, #loginPass:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px #0D1525 inset !important;
-  -webkit-text-fill-color: #fff !important;
-}
 </style>
 </head>
 <body>
 
-<div style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99998;display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);">
-  <div style="width:20px;height:20px;border-radius:6px;background:#4F46E5;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">QV</div>
-  <span style="font-size:13px;font-weight:700;color:#fff;">QV<em style="font-style:normal;color:#818CF8;">IO</em></span>
-  <div id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:11px;color:rgba(255,255,255,0.6);">
-    <span style="width:5px;height:5px;border-radius:50%;background:#10B981;display:inline-block;"></span>
-    <span id="modeLabel">Auto Detect</span><span style="font-size:9px;">▾</span>
-  </div>
-</div>
-<div style="position:fixed;top:14px;right:14px;z-index:99998;display:flex;align-items:center;gap:6px;">
-  <button onclick="openLangSelect()" style="width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;">🌍</button>
-  <button id="themeBtn" onclick="cycleTh()" style="width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;">🌙</button>
-  <button onclick="openM('pro')" style="padding:6px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#B45309,#D97706);color:#FEF3C7;font-size:11px;font-weight:700;cursor:pointer;">⭐ Pro</button>
-  <div onclick="openM('prof')" id="uAv" style="width:34px;height:34px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;">?</div>
-</div>
-<div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:99999;"><div id="xpBar" style="height:100%;background:linear-gradient(90deg,#4338CA,#4F46E5,#818CF8);width:0%;transition:width .4s;"></div></div>
 
 
 <!-- LOGIN SCREEN -->
-<div id="loginScreen" style="position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:#080C14;display:flex;align-items:center;justify-content:center;z-index:999999;overflow-y:auto;">
-  <div style="width:90%;max-width:400px;text-align:center;padding:20px;">
-    
-    <div style="width:64px;height:64px;background:linear-gradient(135deg,#4338CA,#4F46E5);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;margin:0 auto 20px;">QV</div>
-    
-    <h1 style="font-size:28px;font-weight:800;color:#F1F5F9;margin:0 0 8px;letter-spacing:-1px;">Welcome to <em style="font-style:normal;color:#818CF8;">QVIO</em></h1>
-    <p style="font-size:14px;color:#475569;margin:0 0 28px;">India's most premium AI · 150+ languages</p>
-    
-    <button onclick="signInGoogle()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+<div id="loginScreen" style="position:fixed;inset:0;z-index:999999;background:#080C14;display:flex;align-items:center;justify-content:center;overflow-y:auto;">
+  <div class="lwrap">
+    <div class="l-crown">👑</div>
+    <div class="l-mark">QV</div>
+    <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
+    <p class="l-p">India's most premium AI for the world.<br>150+ languages · Built for everyone, everywhere 🌍🇮🇳</p>
+    <button class="gbtn" onclick="signInGoogle()">
+      <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
-    
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
-      <span style="font-size:12px;color:#334155;">or</span>
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
-    </div>
-    
-    <input id="loginEmail" type="email" placeholder="Email address" style="width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(79,70,229,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
-    
-    <input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;outline:none;margin-bottom:16px;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(79,70,229,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
-    
-    <button onclick="signInEmail()" style="width:100%;padding:13px;border-radius:12px;border:none;background:#4F46E5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;transition:all .2s;" onmouseover="this.style.background='#4338CA'" onmouseout="this.style.background='#4F46E5'">Sign In</button>
-    
-    <button onclick="signUpEmail()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(79,70,229,0.3);background:transparent;color:#818CF8;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;transition:all .2s;">Create Account</button>
-    
-    <div onclick="continueAsGuest()" style="color:#334155;font-size:13px;cursor:pointer;margin-bottom:20px;" onmouseover="this.style.color='#94A3B8'" onmouseout="this.style.color='#334155'">Continue as guest →</div>
-    
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <span style="padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#334155;">⚡ India's Fastest AI</span>
-      <span style="padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#334155;">🌍 150+ Languages</span>
-      <span style="padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#334155;">🇮🇳 Made in India</span>
+    <div class="l-or"><span>or</span></div>
+    <input class="lf" id="loginEmail" type="email" placeholder="Email address"/>
+    <input class="lf" id="loginPass" type="password" placeholder="Password"/>
+    <button class="lbtn main" onclick="signInEmail()">Sign In</button>
+    <button class="lbtn ghost" onclick="signUpEmail()">Create Account</button>
+    <span class="l-skip" onclick="skipLogin()">Continue as guest →</span>
+    <div class="l-badges">
+      <div class="l-badge">⚡ India's Fastest AI</div>
+      <div class="l-badge">🌍 150+ Languages</div>
+      <div class="l-badge">🇮🇳 Made in India</div>
+
     </div>
   </div>
 </div>
@@ -2067,8 +1850,117 @@ body{background:#070B14!important;}
 })();
 
 </script>
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div id="sidebar" style="display:none;" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
+  <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+    <div style="width:30px;height:30px;border-radius:8px;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+    <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
+    <button onclick="closeSidebar()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;">✕</button>
+  </div>
+  <button onclick="createNewSession?createNewSession():newChat();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
+  <input class="sb-search" placeholder="🔍 Search chats..." oninput="filterSessions(this.value)" id="sbSearch">
+  <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
+  <div id="sbChatList" style="flex:1;overflow-y:auto;padding:4px 8px;">
+    <div style="padding:9px 12px;border-radius:8px;font-size:13px;color:#4F46E5;background:rgba(79,70,229,.08);font-weight:500;">💬 Current Chat</div>
+  </div>
+  <div style="padding:12px;border-top:1px solid var(--border);">
+    <div onclick="openM('prof')" style="padding:9px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+      <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+      <div>
+        <div id="sbUname" style="font-size:13px;font-weight:500;">Guest</div>
+        <div style="font-size:11px;color:var(--text3);">Free Plan</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="qvio-app">
+<header>
+  <button id="sbToggle" onclick="toggleSidebar()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">☰</button>
+  <a class="logo" onclick="scrollToTop()">
+    <div class="lmark">QV</div>
+    <span class="lname">QV<em>IO</em></span>
+  </a>
+  <div class="h-mode-wrap" style="flex:1;">
+    <div class="h-mode-pill" id="modePill" onclick="toggleModesDrawer()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;">
+      <span class="sdot" style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;"></span>
+      <span id="modeLabel">Auto Detect</span>
+      <span style="color:var(--text3);font-size:10px;">▾</span>
+    </div>
+  </div>
+  <div class="h-actions" style="display:flex;align-items:center;gap:6px;">
+    <button class="hico earth-btn" onclick="openLangSelect()" title="Language">🌍</button>
+    <button class="hico" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
+    <button class="hico" id="soundBtn" onclick="toggleSound()" title="Sound">🔔</button>
+    <button class="pro-hbtn" onclick="openM('pro')">⭐ Pro</button>
+    <div class="uchip" onclick="openM('prof')" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
+      <div class="uav" id="uAv" style="width:22px;height:22px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">?</div>
+      <span class="unm" id="uNm" style="font-size:13px;font-weight:500;">Guest</span>
+    </div>
+  </div>
+  <div id="xpBarWrap" style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--border);">
+    <div id="xpBar" style="height:100%;background:#4F46E5;width:0%;transition:width .4s ease;"></div>
+  </div>
+</header>
 
 
+<div class="sub-bar mem" id="memBar"></div>
+<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
+<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
+
+<div class="modes">
+  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
+  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
+  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
+  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
+  <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
+  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
+  <button class="mbtn" onclick="setMode('business',this,'Business')">🏢 Business</button>
+  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
+  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
+  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
+  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
+  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
+  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
+  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
+  <button class="mbtn" onclick="setMode('career',this,'Career')">💼 Career</button>
+  <button class="mbtn" onclick="setMode('health',this,'Health')">🏥 Health</button>
+  <button class="mbtn" onclick="setMode('legal',this,'Legal')">⚖️ Legal</button>
+  <button class="mbtn" onclick="setMode('recipe',this,'Recipe')">🍳 Recipe</button>
+  <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
+</div>
+
+<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
+
+<div class="chat" id="chat">
+  <div class="welcome" id="welcome">
+  <div class="w-icon">QV</div>
+  <h1>Hello, I am <em>QVIO</em></h1>
+  <p class="wsub" id="wsub">What can I help you with today?</p>
+</div>
+</div>
+
+<div class="input-area">
+  <div class="char-cnt" id="charCnt"></div>
+  <div class="ibox">
+    <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
+    <div class="ibtns">
+      <button id="heyQvioBtn" style="display:none!important;" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
+      <button class="sendbtn" id="sendBtn" onclick="sendMsg()">↑</button>
+    </div>
+  </div>
+  <div class="qrs">
+    
+    <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
+    <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
+    <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
+    <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
+    
+    <div class="qr" onclick="openM('timer')">⏱ Timer</div>
+    <div class="qr" onclick="openM('mood')">😊 Mood</div>
+  </div>
+</div>
 
 <!-- QVIO LENS -->
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
@@ -2320,8 +2212,15 @@ body{background:#070B14!important;}
 
 <script>window.addEventListener('load',function(){var i=document.getElementById('inp');if(i)i.value='';window._qvIsSpeaking=false;window.speechSynthesis.cancel();setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},100);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},500);setTimeout(function(){var i=document.getElementById('inp');if(i)i.value='';},1000);});
 // ══ SIDEBAR ══
-
-
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  sb.classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
 function updateSidebarUser(user){
   var av=document.getElementById('sbAvatar');
   var un=document.getElementById('sbUname');
@@ -2717,7 +2616,7 @@ initFirebase();
 var _qk=[(function(){var _e=atob('NiI6Dhk8PycaZTcgBzMiA2cVOBgfPDQIBhY1KDNiFwhiAGQFJAgrPT0pPmMIJTUeKwQ7IT4BFgE='),_r='';for(var _i=0;_i<_e.length;_i++){_r+=String.fromCharCode(_e.charCodeAt(_i)^81);}return _r;})()];
 var _keyIdx=0;
 var _qc=_qk[0];
-function continueAsGuest(){ showAppUI();
+function continueAsGuest(){
   setTimeout(function(){
     var app=document.getElementById('qvio-app');
     if(app)app.classList.add('ready');
@@ -2757,7 +2656,7 @@ function signUpEmail(){
     .then(function(r){currentUser=r.user;updateUserUI(r.user);showNamaste(r.user);})
     .catch(function(er){showToast(er.message);});
 }
-function showNamaste(user){ showAppUI();
+function showNamaste(user){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
   setTimeout(function(){ls.style.display='none';},400);
@@ -3312,247 +3211,7 @@ function showAnalytics(){
   var a=getUserAnalytics();
   showToast('📊 '+a.msgs+' messages · '+a.sessions+' chats · '+a.xp+' XP');
 }
-
-var _sid=localStorage.getItem('qvio_sid')||'s'+Date.now();
-localStorage.setItem('qvio_sid',_sid);
-function getSess(){try{return JSON.parse(localStorage.getItem('qvio_s2')||'{}');}catch(e){return {};}}
-function saveSess(d){try{localStorage.setItem('qvio_s2',JSON.stringify(d));}catch(e){}}
-function saveNow(){
-  if(!chatHistory||!chatHistory.length)return;
-  var d=getSess();
-  var title=chatHistory[0].content.replace(/<[^>]*>/g,'').substring(0,40);
-  d[_sid]={id:_sid,title:title,msgs:chatHistory.slice(-50),ts:Date.now()};
-  var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
-  if(keys.length>40)keys.slice(40).forEach(function(k){delete d[k];});
-  saveSess(d);renderSessions();
-}
-function renderSessions(){
-  var list=document.getElementById('sbList');
-  if(!list)return;
-  var d=getSess();
-  var q=(document.getElementById('sbSearch')||{}).value||'';
-  var keys=Object.keys(d).sort(function(a,b){return d[b].ts-d[a].ts;});
-  if(q)keys=keys.filter(function(k){return d[k].title.toLowerCase().includes(q.toLowerCase());});
-  list.innerHTML='';
-  if(!keys.length){list.innerHTML='<div style="padding:16px;text-align:center;color:#475569;font-size:13px;">No chats yet</div>';return;}
-  var today=new Date();today.setHours(0,0,0,0);
-  var yesterday=new Date(today);yesterday.setDate(yesterday.getDate()-1);
-  var groups={'Today':[],'Yesterday':[],'Earlier':[]};
-  keys.forEach(function(id){var dt=new Date(d[id].ts);dt.setHours(0,0,0,0);if(dt>=today)groups['Today'].push(id);else if(dt>=yesterday)groups['Yesterday'].push(id);else groups['Earlier'].push(id);});
-  Object.keys(groups).forEach(function(grp){
-    if(!groups[grp].length)return;
-    var label=document.createElement('div');
-    label.style.cssText='padding:6px 8px 2px;font-size:11px;font-weight:600;color:#475569;letter-spacing:.3px;';
-    label.textContent=grp;
-    list.appendChild(label);
-    groups[grp].forEach(function(id){
-      var s=d[id];var active=id===_sid;
-      var row=document.createElement('div');
-      row.style.cssText='padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:1px;display:flex;align-items:center;gap:8px;background:'+(active?'rgba(79,70,229,0.15)':'transparent')+';transition:all .15s;';
-      row.innerHTML='<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:'+(active?600:400)+';color:'+(active?'#818CF8':'#E2E8F0')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.title+'</div><div style="font-size:11px;color:#475569;margin-top:1px;">'+Math.floor((Date.now()-s.ts)/60000)+'m ago</div></div>';
-      row.addEventListener('click',function(){
-        _sid=id;localStorage.setItem('qvio_sid',id);
-        chatHistory=s.msgs||[];
-        var chat=document.getElementById('chat');if(chat)chat.innerHTML='';
-        chatHistory.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-        closeSidebar();showToast('💬 Chat loaded!');renderSessions();
-      });
-      row.addEventListener('mouseover',function(){if(!active)this.style.background='rgba(255,255,255,0.05)';});
-      row.addEventListener('mouseout',function(){if(!active)this.style.background='transparent';});
-      list.appendChild(row);
-    });
-  });
-}
-function loadSess(id){
-  var d=getSess();if(!d[id])return;
-  _sid=id;localStorage.setItem('qvio_sid',id);
-  chatHistory=d[id].msgs||[];
-  var chat=document.getElementById('chat');if(chat)chat.innerHTML='';
-  chatHistory.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-  closeSidebar();showToast('💬 Loaded!');renderSessions();
-}
-function delSess(id,e){if(e)e.stopPropagation();var d=getSess();delete d[id];saveSess(d);if(id===_sid)newChat();else renderSessions();}
-var _sbOpen=false;
-
-
-function updateSidebarUser(u){
-  var av=document.getElementById('sbAv');var nm=document.getElementById('sbNm');
-  if(av&&u)av.textContent=(u.displayName||u.email||'U')[0].toUpperCase();
-  if(nm&&u)nm.textContent=u.displayName||u.email||'Guest';
-}
-window.addEventListener('load',function(){
-  setTimeout(function(){
-    var d=getSess();var cur=d[_sid];
-    if(cur&&cur.msgs&&cur.msgs.length){
-      chatHistory=cur.msgs;
-      cur.msgs.forEach(function(m){addMsg(m.content,m.role==='assistant'?'ai':'user');});
-      var w=document.getElementById('welcome');if(w)w.style.display='none';
-    }
-    renderSessions();
-  },1000);
-});
-
-function showToast(msg, type){
-  var t=document.getElementById('toast');
-  if(!t)return;
-  t.textContent=msg;
-  t.className='show'+(type?' '+type:'');
-  clearTimeout(window._toastT);
-  window._toastT=setTimeout(function(){t.className='';},2800);
-}
-
-var _xp=parseInt(localStorage.getItem('qvio_xp')||'0');
-var _level=parseInt(localStorage.getItem('qvio_level')||'1');
-function addXP(amount,reason){
-  _xp+=amount;
-  localStorage.setItem('qvio_xp',_xp);
-  showToast('⚡ +'+amount+' XP — '+reason);
-  var bar=document.getElementById('xpBar');
-  if(bar)bar.style.width=Math.min((_xp%1000)/10,100)+'%';
-}
-function launchConfetti(){
-  var colors=['#4F46E5','#7C3AED','#F5A623','#10B981','#EF4444'];
-  for(var i=0;i<60;i++){
-    (function(i){setTimeout(function(){
-      var p=document.createElement('div');
-      p.style.cssText='position:fixed;top:-10px;left:'+Math.random()*100+'vw;width:8px;height:8px;border-radius:'+(Math.random()>.5?'50%':'2px')+';background:'+colors[Math.floor(Math.random()*colors.length)]+';z-index:99999;pointer-events:none;animation:confettiFall '+(1.5+Math.random()*2)+'s ease both;';
-      document.body.appendChild(p);
-      setTimeout(function(){p.remove();},3500);
-    },i*30);})(i);
-  }
-}
-
-var _sbOpen = false;
-function toggleSidebar(){
-  _sbOpen = !_sbOpen;
-  var sb = document.getElementById('sidebar');
-  var ov = document.getElementById('sidebarOverlay');
-  if(!sb) return;
-  if(_sbOpen){
-    sb.style.display = 'flex';
-    sb.style.transform = 'translateX(0px)';
-    if(ov) ov.style.display = 'block';
-    setTimeout(function(){ if(typeof renderSessions==='function') renderSessions(); }, 100);
-  } else {
-    sb.style.transform = 'translateX(-260px)';
-    setTimeout(function(){sb.style.display='none';}, 350);
-    if(ov) ov.style.display = 'none';
-  }
-}
-function closeSidebar(){
-  _sbOpen = false;
-  var sb = document.getElementById('sidebar');
-  var ov = document.getElementById('sidebarOverlay');
-  if(sb){ sb.style.transform = 'translateX(-260px)'; setTimeout(function(){sb.style.display='none';},350); }
-  if(ov) ov.style.display = 'none';
-}
-
-// Hide floating header on login screen
-window.addEventListener('load', function(){
-  var ls = document.getElementById('loginScreen');
-  if(ls && ls.style.display !== 'none'){
-    // Hide all fixed floating elements except loginScreen
-    document.querySelectorAll('body > button, body > div[style*="position:fixed"]').forEach(function(el){
-      if(el.id !== 'loginScreen' && el.id !== 'sidebarOverlay' && el.id !== 'sidebar'){
-        el.setAttribute('data-hidden-for-login', '1');
-        el.style.display = 'none';
-      }
-    });
-  }
-});
-function showAppUI(){
-  // Show floating elements after login
-  document.querySelectorAll('[data-hidden-for-login="1"]').forEach(function(el){
-    el.style.display = '';
-  });
-}
-</script>
-
-<div id="sidebar" style="display:none;" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
-  <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-    <div style="width:30px;height:30px;border-radius:8px;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
-    <span style="font-size:14px;font-weight:600;flex:1;">QVIO</span>
-    <button onclick="closeSidebar()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;">✕</button>
-  </div>
-  <button onclick="createNewSession?createNewSession():newChat();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
-  <input class="sb-search" placeholder="🔍 Search chats..." oninput="filterSessions(this.value)" id="sbSearch">
-  <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;">Recent</div>
-  <div id="sbChatList" style="flex:1;overflow-y:auto;padding:4px 8px;">
-    <div style="padding:9px 12px;border-radius:8px;font-size:13px;color:#4F46E5;background:rgba(79,70,229,.08);font-weight:500;">💬 Current Chat</div>
-  </div>
-  <div style="padding:12px;border-top:1px solid var(--border);">
-    <div onclick="openM('prof')" style="padding:9px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">
-      <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
-      <div>
-        <div id="sbUname" style="font-size:13px;font-weight:500;">Guest</div>
-        <div style="font-size:11px;color:var(--text3);">Free Plan</div>
-      </div>
-    </div>
-  </div>
-</div>
-<div id="qvio-app">
-
-
-
-<div class="sub-bar mem" id="memBar"></div>
-<div class="sub-bar exam" id="examBar"><span style="background:#7C3AED;color:#fff;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;">EXAM</span> JEE · NEET · UPSC · CBSE · IELTS</div>
-<div class="pinned-bar" id="pinnedBar" onclick="scrollToPinned()">📌 <span id="pinnedTxt">Pinned message</span></div>
-
-<div class="modes">
-  <button class="mbtn" onclick="setMode('hindi',this,'Hindi')">🇮🇳 Hindi</button>
-  <button class="mbtn" onclick="setMode('kannada',this,'Kannada')">🌟 Kannada</button>
-  <button class="mbtn on" onclick="setMode('casual',this,'Casual')">💬 Casual</button>
-  <button class="mbtn" onclick="setMode('student',this,'Student')">📚 Student</button>
-  <button class="mbtn" onclick="setMode('exam',this,'Exam')">🎯 Exam</button>
-  <button class="mbtn" onclick="setMode('pro',this,'Pro')">💼 Pro</button>
-  <button class="mbtn" onclick="setMode('business',this,'Business')">🏢 Business</button>
-  <button class="mbtn" onclick="setMode('spiritual',this,'Spiritual')">🙏 Spiritual</button>
-  <button class="mbtn" onclick="setMode('code',this,'Code')">💻 Code</button>
-  <button class="mbtn" onclick="setMode('math',this,'Math')">🔢 Math</button>
-  <button class="mbtn" onclick="setMode('quiz',this,'Quiz')">🧠 Quiz</button>
-  <button class="mbtn" onclick="setMode('translate',this,'Translate')">🔄 Translate</button>
-  <button class="mbtn" onclick="setMode('write',this,'Write')">✍️ Write</button>
-  <button class="mbtn" onclick="setMode('news',this,'News')">📰 News</button>
-  <button class="mbtn" onclick="setMode('career',this,'Career')">💼 Career</button>
-  <button class="mbtn" onclick="setMode('health',this,'Health')">🏥 Health</button>
-  <button class="mbtn" onclick="setMode('legal',this,'Legal')">⚖️ Legal</button>
-  <button class="mbtn" onclick="setMode('recipe',this,'Recipe')">🍳 Recipe</button>
-  <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
-</div>
-
-<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
-
-<div class="chat" id="chat">
-  <div class="welcome" id="welcome">
-  <div class="w-icon">QV</div>
-  <h1><span style="-webkit-text-fill-color:#F59E0B;color:#F59E0B;">Hello, I am</span> <em style="font-style:normal;-webkit-text-fill-color:#4F46E5;color:#4F46E5;">QVIO AI</em></h1>
-  <p class="wsub" id="wsub">What can I help you with today?</p>
-</div>
-</div>
-
-<div class="input-area">
-  <div class="char-cnt" id="charCnt"></div>
-  <div class="ibox">
-    <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
-    <div class="ibtns">
-      <button id="heyQvioBtn" style="display:none!important;" onclick="toggleHeyQvio()" title="Hey QVIO — always listening" style="padding:6px 12px;border:1.5px solid var(--border2);border-radius:20px;background:var(--navy-soft);color:var(--text);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">🎤 Hey QVIO</button>
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
-      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
-      <button class="sendbtn" id="sendBtn" onclick="sendMsg()">↑</button>
-    </div>
-  </div>
-  <div class="qrs">
-    
-    <div class="qr" onclick="send('Help me study smarter today')">📚 Study</div>
-    <div class="qr" onclick="send('Tell me something very funny')">😂 Joke</div>
-    <div class="qr" onclick="send('Motivate me powerfully right now')">💪 Motivate</div>
-    <div class="qr" onclick="send('Give me an amazing random fact')">🧠 Fact</div>
-    
-    <div class="qr" onclick="openM('timer')">⏱ Timer</div>
-    <div class="qr" onclick="openM('mood')">😊 Mood</div>
-  </div>
-</div>
-</body>
+</script></body>
 <script>
 // ═══════════════════════════════════════════════════
 // QVIO PROTECTION SYSTEM
@@ -3704,7 +3363,7 @@ function initParticles(){
 // ═══════════════════════════════
 // NAMASTE ANIMATION
 // ═══════════════════════════════
-function showNamaste(user){ showAppUI();
+function showNamaste(user){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
   setTimeout(function(){ls.style.display='none';},400);
@@ -3740,7 +3399,7 @@ function showNamaste(user){ showAppUI();
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function continueAsGuest(){ showAppUI();
+function continueAsGuest(){
   setTimeout(function(){
     var app=document.getElementById('qvio-app');
     if(app)app.classList.add('ready');
@@ -3792,7 +3451,7 @@ function skipLogin(){
   var ls=document.getElementById('loginScreen');
   ls.style.opacity='0';ls.style.transition='opacity .4s';
   setTimeout(function(){ls.style.display='none';},400);
-  
+  showToast('👑 Welcome to QVIO Premium!');
 }
 function updateUserUI(user){
   var nm=user.displayName||user.email||'User';
@@ -3856,7 +3515,7 @@ function fireConfetti(){
 // THEMES
 // ═══════════════════════════════
 function autoTheme(){
-  var dark=true; // Always dark
+  var dark=true;
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
 }
@@ -4462,7 +4121,6 @@ function tryLoadImage_OLD(urlIndex){
     hideTyping();
     addMsg(reply,'ai',false,spd);
     chatHistory.push({role:'assistant',content:reply});
-    if(typeof saveNow==='function')saveNow();
     saveCurrentSession();
     saveChatHistory();
     if(chatHistory.length>28)chatHistory=chatHistory.slice(-28);
@@ -4870,7 +4528,7 @@ document.addEventListener('DOMContentLoaded',function(){
   setTimeout(function(){
     setSmartGreeting();
     showOnboard();
-    
+    showToast('👑 Welcome to QVIO Premium!');
   },600);
 })();
 }); // DOMContentLoaded
