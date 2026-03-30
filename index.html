@@ -169,7 +169,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ptc{position:absolute;border-radius:50%;animation:ptcFloat linear infinite;}
 @keyframes ptcFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg);}15%{opacity:1;}85%{opacity:.5;}100%{opacity:0;transform:translateY(-10vh) scale(1) rotate(360deg);}}
 
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--navy);color:#fff;padding:10px 24px;border-radius:var(--r-full);font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);pointer-events:none;white-space:nowrap;box-shadow:var(--s3);border:1px solid var(--navy3);}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(14px);background:linear-gradient(135deg,#1E1B4B,#312E81);color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9000;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(99,102,241,0.4);border:1px solid rgba(129,140,248,0.3);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 .confetti{position:fixed;top:-10px;pointer-events:none;z-index:9999;animation:cffall cubic-bezier(.25,.46,.45,.94) forwards;}
@@ -522,7 +522,7 @@ code{color:var(--gold2);font-family:"DM Mono",monospace;font-size:13px;}
 #inp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:"DM Sans",sans-serif;resize:none;max-height:140px;min-height:22px;line-height:1.5;}
 #inp::placeholder{color:var(--text3);}
 .ibtns{display:flex;gap:6px;align-items:center;}
-.micbtn{background:transparent;border:1px solid var(--border);color:var(--text3);cursor:pointer;font-size:15px;padding:7px 9px;border-radius:var(--r-sm);transition:all .17s;line-height:1;}
+.micbtn{background:transparent;border:1.5px solid rgba(99,102,241,0.15);color:rgba(99,102,241,0.6);cursor:pointer;font-size:15px;padding:6px 8px;border-radius:10px;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);line-height:1;}
 .micbtn:hover{background:var(--navy-soft);color:var(--navy);border-color:var(--navy3);}
 .micbtn.rec{background:rgba(185,28,28,.07);border-color:var(--danger);color:var(--danger);animation:recpulse 1s infinite;}
 @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.3);}50%{box-shadow:0 0 0 6px rgba(185,28,28,0);}}
@@ -4316,7 +4316,7 @@ html body button#sendBtn:hover {
 .fh-logo-orb { animation: qPulse 4s ease-in-out infinite !important; }
 
 /* 38. SEND BUTTON GLOW */
-#sendBtn, .sendbtn { animation: qGlow 2.5s ease-in-out infinite !important; }
+#sendBtn, .qsend-btn { animation: qSendGlow 2.5s ease-in-out infinite !important; }
 
 /* 39. SEND BUTTON SHINE on hover */
 #sendBtn::before, .sendbtn::before {
@@ -4453,6 +4453,187 @@ html body #sendBtn:active {
   transition: transform 0.08s !important;
 }
 
+
+/* ════════════════════════════════════════════════
+   QVIO MASTER DESIGN — SIMPLE · PROFESSIONAL · ∞
+   Clean. Fast. Futuristic. Every animation smooth.
+════════════════════════════════════════════════ */
+
+/* ── SEND BUTTON — NEW CLASS, ZERO CONFLICTS ── */
+.qsend-btn {
+  background: linear-gradient(135deg,#818CF8,#C084FC) !important;
+  width: 40px !important; height: 40px !important;
+  min-width: 40px !important; border-radius: 50% !important;
+  border: none !important; color: #fff !important;
+  cursor: pointer !important; display: flex !important;
+  align-items: center !important; justify-content: center !important;
+  padding: 0 !important; flex-shrink: 0 !important;
+  box-shadow: 0 0 0 4px rgba(129,140,248,0.18), 0 4px 20px rgba(129,140,248,0.55) !important;
+  position: relative !important; overflow: hidden !important;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s !important;
+}
+.qsend-btn:hover {
+  transform: scale(1.12) translateY(-2px) !important;
+  box-shadow: 0 0 0 6px rgba(129,140,248,0.22), 0 8px 28px rgba(129,140,248,0.7) !important;
+  background: linear-gradient(135deg,#6366F1,#A855F7) !important;
+}
+.qsend-btn:active {
+  transform: scale(0.9) !important;
+  transition: transform 0.08s !important;
+}
+.qsend-btn::before {
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent);
+  pointer-events:none;
+}
+
+/* ── KEYFRAMES — SMOOTH 60FPS ── */
+@keyframes qFU{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes qFD{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
+@keyframes qFL{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes qFR{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+@keyframes qSI{from{opacity:0;transform:scale(0.5) rotate(-15deg)}60%{transform:scale(1.08) rotate(3deg)}to{opacity:1;transform:none}}
+@keyframes qPOP{from{opacity:0;transform:scale(0.3)}60%{transform:scale(1.1)}to{opacity:1;transform:scale(1)}}
+@keyframes qFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes qFloatOrb{
+  0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 8px 32px rgba(99,102,241,0.5))}
+  50%{transform:translateY(-14px) scale(1.04);filter:drop-shadow(0 22px 48px rgba(168,85,247,0.7))}
+}
+@keyframes qRing{0%{opacity:0.6;transform:translate(-50%,-50%) scale(0.85)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
+@keyframes qAura{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes qPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes qGlow{0%,100%{box-shadow:0 4px 16px rgba(129,140,248,0.4)}50%{box-shadow:0 6px 28px rgba(129,140,248,0.8),0 0 50px rgba(192,132,252,0.3)}}
+@keyframes qSendGlow{0%,100%{box-shadow:0 0 0 4px rgba(129,140,248,0.18),0 4px 20px rgba(129,140,248,0.5)}50%{box-shadow:0 0 0 6px rgba(129,140,248,0.28),0 6px 32px rgba(129,140,248,0.75)}}
+@keyframes qDot{0%,60%,100%{transform:translateY(0);opacity:0.35;background:#818CF8}30%{transform:translateY(-9px);opacity:1;background:#C084FC}}
+@keyframes qCursor{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes qGreenPulse{0%,100%{box-shadow:0 0 4px rgba(16,185,129,0.5)}50%{box-shadow:0 0 14px rgba(16,185,129,1),0 0 30px rgba(16,185,129,0.35)}}
+@keyframes qToast{from{opacity:0;transform:translateX(-50%) translateY(18px) scale(0.82)}65%{transform:translateX(-50%) translateY(-4px) scale(1.04)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes qModal{from{opacity:0;transform:translate(-50%,-50%) scale(0.8)}65%{transform:translate(-50%,-50%) scale(1.03)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes qMsgAI{from{opacity:0;transform:translateY(14px) scale(0.94);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes qMsgMe{from{opacity:0;transform:translateX(18px) scale(0.94)}to{opacity:1;transform:none}}
+@keyframes qAv{from{opacity:0;transform:scale(0) rotate(-20deg)}65%{transform:scale(1.18) rotate(4deg)}to{opacity:1;transform:none}}
+@keyframes qSB{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes qChip{from{opacity:0;transform:scale(0.6) rotateY(60deg)}to{opacity:1;transform:scale(1) rotateY(0)}}
+@keyframes qBadge{from{opacity:0;transform:scale(0.3)}70%{transform:scale(1.12)}to{opacity:1;transform:scale(1)}}
+@keyframes qHdr{from{opacity:0;transform:translateX(-50%) translateY(-36px) scale(0.93)}65%{transform:translateX(-50%) translateY(3px) scale(1.01)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes qInput{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes qAmbient{0%,100%{opacity:1}50%{opacity:0.6;transform:scale(1.08)}}
+@keyframes qRecPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+@keyframes qShine{from{left:-120%}to{left:200%}}
+@keyframes qXpGlow{0%,100%{box-shadow:0 0 10px rgba(129,140,248,0.8)}50%{box-shadow:0 0 20px rgba(192,132,252,1),0 0 40px rgba(129,140,248,0.4)}}
+
+/* ── APPLY ALL ANIMATIONS ── */
+
+/* Header */
+#qvioHeader { animation: qHdr 0.9s cubic-bezier(0.34,1.56,0.64,1) both !important; }
+.fh-status-dot { animation: qGreenPulse 2s ease-in-out infinite !important; }
+
+/* Welcome */
+.welcome { animation: qFU 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s both !important; }
+.w-orb { animation: qSI 1s cubic-bezier(0.34,1.56,0.64,1) 0.15s both !important; }
+.w-orb-inner { animation: qFloatOrb 5s ease-in-out infinite !important; }
+.w-orb::before {
+  content:"";position:absolute;width:220%;height:220%;top:-60%;left:-60%;
+  background:conic-gradient(from 0deg,transparent,rgba(99,102,241,0.07) 60deg,transparent 120deg,rgba(168,85,247,0.05) 200deg,transparent 260deg,rgba(236,72,153,0.03) 310deg,transparent);
+  animation:qAura 12s linear infinite;border-radius:50%;z-index:0;pointer-events:none;
+}
+.w-orb-ring { position:absolute;border-radius:50%;top:50%;left:50%; }
+.w-orb-ring.r1 { width:155px;height:155px;border:1px solid rgba(99,102,241,0.22);animation:qRing 4s ease-out 0s infinite !important; }
+.w-orb-ring.r2 { width:200px;height:200px;border:1px solid rgba(168,85,247,0.14);animation:qRing 4s ease-out 1.3s infinite !important; }
+.w-orb-ring.r3 { width:248px;height:248px;border:1px solid rgba(99,102,241,0.07);animation:qRing 4s ease-out 2.6s infinite !important; }
+.w-title { animation: qFU 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both !important; }
+.wsub { animation: qFU 0.7s cubic-bezier(0.16,1,0.3,1) 0.64s both !important; }
+.w-badges { animation: qFU 0.7s cubic-bezier(0.16,1,0.3,1) 0.76s both !important; }
+.w-badge:nth-child(1){animation:qBadge 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.85s both !important}
+.w-badge:nth-child(2){animation:qBadge 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.0s  both !important}
+.w-badge:nth-child(3){animation:qBadge 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.15s both !important}
+
+/* Input */
+.input-area { animation: qInput 0.8s cubic-bezier(0.16,1,0.3,1) 0.35s both !important; }
+
+/* Send btn glow */
+.qsend-btn { animation: qSendGlow 2.5s ease-in-out infinite !important; }
+
+/* Messages */
+.msg.ai { animation: qMsgAI 0.5s cubic-bezier(0.16,1,0.3,1) both !important; }
+.msg.user { animation: qMsgMe 0.38s cubic-bezier(0.16,1,0.3,1) both !important; }
+.av { animation: qAv 0.45s cubic-bezier(0.34,1.56,0.64,1) both !important; }
+
+/* Mode chips */
+.mbtn { animation: qChip 0.4s ease both !important; }
+.mbtn:nth-child(1){animation-delay:0.04s!important}.mbtn:nth-child(2){animation-delay:0.08s!important}
+.mbtn:nth-child(3){animation-delay:0.12s!important}.mbtn:nth-child(4){animation-delay:0.16s!important}
+.mbtn:nth-child(5){animation-delay:0.20s!important}.mbtn:nth-child(6){animation-delay:0.24s!important}
+.mbtn:nth-child(7){animation-delay:0.28s!important}.mbtn:nth-child(8){animation-delay:0.32s!important}
+
+/* Sidebar */
+#sbChatList>div { animation: qSB 0.3s cubic-bezier(0.16,1,0.3,1) both !important; }
+#sbChatList>div:nth-child(1){animation-delay:0.04s!important}
+#sbChatList>div:nth-child(2){animation-delay:0.08s!important}
+#sbChatList>div:nth-child(3){animation-delay:0.12s!important}
+#sbChatList>div:nth-child(4){animation-delay:0.16s!important}
+#sbChatList>div:nth-child(5){animation-delay:0.20s!important}
+
+/* Typing */
+.tdots span{width:6px;height:6px;border-radius:50%;display:inline-block}
+.tdots span:nth-child(1){animation:qDot 1.3s ease-in-out 0s   infinite!important}
+.tdots span:nth-child(2){animation:qDot 1.3s ease-in-out 0.2s infinite!important}
+.tdots span:nth-child(3){animation:qDot 1.3s ease-in-out 0.4s infinite!important}
+
+/* Misc */
+.stream-cursor{display:inline-block;width:2px;height:1em;background:#818CF8;border-radius:2px;margin-left:2px;vertical-align:middle;animation:qCursor 0.8s ease-in-out infinite!important}
+#wisprBtn{animation:qFloat 3.5s ease-in-out infinite!important}
+.toast.show{animation:qToast 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards!important}
+.modal{animation:qModal 0.4s cubic-bezier(0.34,1.56,0.64,1) both!important}
+#xpBar,.fh-xp #xpBar{background:linear-gradient(90deg,#6366F1,#A855F7,#EC4899)!important;animation:qXpGlow 2s ease-in-out infinite!important;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)!important}
+
+/* ── MICRO-INTERACTIONS ── */
+.mbtn{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)!important;border-radius:99px!important}
+.mbtn:hover{transform:translateY(-3px) scale(1.07)!important}
+.mbtn:active{transform:scale(0.9)!important;transition:transform 0.08s!important}
+.qr{transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1)!important}
+.qr:hover{transform:translateY(-4px) scale(1.05)!important;box-shadow:0 10px 28px rgba(99,102,241,0.2)!important;border-color:rgba(99,102,241,0.4)!important}
+.qr:active{transform:scale(0.93)!important;transition:transform 0.08s!important}
+.ibox{transition:all 0.35s cubic-bezier(0.16,1,0.3,1)!important;background:#ffffff!important}
+.ibox:focus-within{transform:translateY(-2px)!important;box-shadow:0 0 0 3px rgba(129,140,248,0.18),0 14px 44px rgba(99,102,241,0.12)!important;border-color:rgba(99,102,241,0.4)!important}
+.fh-btn{transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1)!important}
+.fh-btn:hover{transform:scale(1.18) translateY(-2px)!important}
+.fh-btn:active{transform:scale(0.87)!important}
+.fh-ham{transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1)!important}
+.fh-ham:hover{transform:scale(1.1)!important;background:rgba(99,102,241,0.08)!important}
+.fh-mode{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)!important}
+.fh-mode:hover{transform:scale(1.04)!important;background:rgba(99,102,241,0.1)!important;border-color:rgba(99,102,241,0.35)!important}
+.fh-avatar{transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1)!important}
+.fh-avatar:hover{transform:scale(1.05)!important}
+.fh-logo-orb{transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)!important}
+.fh-logo-orb:hover{transform:scale(1.12) rotate(8deg)!important;box-shadow:0 8px 28px rgba(99,102,241,0.6)!important}
+.msg.ai .bubble{transition:all 0.25s cubic-bezier(0.16,1,0.3,1)!important}
+.msg.ai .bubble:hover{transform:translateX(5px)!important;box-shadow:-4px 0 20px rgba(99,102,241,0.1)!important}
+.msg.user .bubble{transition:all 0.25s cubic-bezier(0.16,1,0.3,1)!important}
+.msg.user .bubble:hover{transform:translateX(-5px)!important}
+.micbtn{transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1)!important;border-radius:10px!important;border:1.5px solid rgba(99,102,241,0.15)!important;color:rgba(99,102,241,0.7)!important}
+.micbtn:hover{transform:scale(1.15)!important;background:rgba(99,102,241,0.08)!important;border-color:rgba(99,102,241,0.4)!important;color:#6366F1!important}
+.micbtn.rec{animation:qRecPulse 1s ease-in-out infinite!important;border-color:#EF4444!important;color:#EF4444!important}
+.lsm-pill{transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1)!important}
+.lsm-pill:hover{transform:scale(1.08)!important;border-color:rgba(99,102,241,0.4)!important;background:rgba(99,102,241,0.08)!important}
+.lsm-pill.active{background:linear-gradient(135deg,#6366F1,#8B5CF6)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 4px 16px rgba(99,102,241,0.4)!important;transform:scale(1.06)!important}
+#sbChatList>div{transition:all 0.2s cubic-bezier(0.16,1,0.3,1)!important;border-radius:10px!important;cursor:pointer!important}
+#sbChatList>div:hover{background:rgba(99,102,241,0.07)!important;transform:translateX(5px)!important}
+.code-block{transition:transform 0.25s,box-shadow 0.25s!important}
+.code-block:hover{transform:translateY(-3px)!important;box-shadow:0 14px 44px rgba(0,0,0,0.35)!important}
+.overlay{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+.code-copy.copied{animation:qPOP 0.4s ease!important}
+
+/* ── AMBIENT GLOW BACKGROUND ── */
+#qvio-app::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 10% 20%,rgba(99,102,241,0.08) 0%,transparent 45%),
+    radial-gradient(circle at 90% 75%,rgba(168,85,247,0.07) 0%,transparent 45%),
+    radial-gradient(circle at 50% 50%,rgba(236,72,153,0.03) 0%,transparent 60%);
+  animation:qAmbient 16s ease-in-out infinite;
+}
+
 </style>
 </head>
 <body>
@@ -4486,7 +4667,7 @@ html body #sendBtn:active {
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" style="opacity:0;visibility:hidden;pointer-events:none;"></div>
 <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
 
 <!-- CALCULATOR -->
@@ -4998,14 +5179,14 @@ html body #sendBtn:active {
 </div>
 </div>
 
-<div class="input-area">
+<div class="input-area" style="background:rgba(255,255,255,0.95)!important;border-top:1px solid rgba(99,102,241,0.1)!important;backdrop-filter:blur(24px)!important;">
   <div class="char-cnt" id="charCnt"></div>
-  <div class="ibox">
+  <div class="ibox" style="background:#ffffff!important;border:1.5px solid rgba(167,139,250,0.2)!important;border-radius:20px!important;padding:10px 12px!important;display:flex!important;gap:8px!important;align-items:center!important;box-shadow:0 2px 20px rgba(124,58,237,0.08)!important;">
     <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
     <div class="ibtns">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
-      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything">🔍</button>
-      <button class="sendbtn" id="sendBtn" onclick="sendMsg()" style="background:linear-gradient(135deg,#818CF8,#A78BFA)!important;width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;border-radius:12px!important;border:none!important;color:#fff!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;flex-shrink:0!important;box-shadow:0 4px 16px rgba(129,140,248,0.6)!important;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input" style="background:transparent!important;border:1.5px solid rgba(99,102,241,0.15)!important;border-radius:10px!important;color:rgba(99,102,241,0.6)!important;padding:6px 8px!important;cursor:pointer!important;font-size:15px!important;line-height:1!important;">🎤</button>
+      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything" style="background:transparent!important;border:1.5px solid rgba(99,102,241,0.15)!important;border-radius:10px!important;color:rgba(99,102,241,0.6)!important;padding:6px 8px!important;cursor:pointer!important;font-size:15px!important;line-height:1!important;">🔍</button>
+      <button id="sendBtn" onclick="sendMsg()" class="qsend-btn" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);width:40px;height:40px;min-width:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;box-shadow:0 0 0 3px rgba(167,139,250,0.3),0 4px 20px rgba(124,58,237,0.6),0 0 30px rgba(167,139,250,0.4);position:relative;overflow:hidden;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
     </div>
   </div>
   <div class="qrs">
