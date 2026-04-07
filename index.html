@@ -6780,6 +6780,15 @@ body::after {
 #qvFloatHam.qv-hidden-login { opacity:0!important; pointer-events:none!important; transform:scale(0.5)!important; }
 #qvLiveCount.qv-hidden-login { opacity:0!important; pointer-events:none!important; }
 
+</style><style id="qvio-security">
+/* Disable text selection on code/sensitive areas */
+.lmark, .fl-mark, header, #qvioHeader {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+/* Disable image dragging */
+img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
 </style></head>
 <body>
 <!-- FLOATING HAMBURGER + QVIO ANIMATIONS v8 -->
@@ -9036,19 +9045,88 @@ window.addEventListener('load',function(){
   Object.defineProperty(console,'_qg',{get:function(){_cw();return '';}});
   console.log(console._qg);
 
-  // Block F12, Ctrl+U, Ctrl+Shift+I/J
-  document.addEventListener('keydown',function(e){
-    if(e.key==='F12'){e.preventDefault();showToast('🔒 QVIO is protected. (c) VARUN 2025');return false;}
-    if(e.ctrlKey&&e.key==='u'){e.preventDefault();showToast('🔒 Source protected. (c) VARUN 2025');return false;}
-    if(e.ctrlKey&&e.shiftKey&&'ijcIJC'.indexOf(e.key)>-1){e.preventDefault();showToast('🔒 QVIO is protected. (c) VARUN 2025');return false;}
-  });
+  // ══ QVIO NUCLEAR SECURITY — VARUN 2025 ══
+  
+  // Block ALL devtools shortcuts
+  document.addEventListener('keydown', function(e) {
+    var blocked = false;
+    
+    // F12
+    if(e.key === 'F12') blocked = true;
+    
+    // Ctrl+U (view source)
+    if(e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'u') blocked = true;
+    
+    // Ctrl+Shift+I (inspector)
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') blocked = true;
+    
+    // Ctrl+Shift+J (console)
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') blocked = true;
+    
+    // Ctrl+Shift+C (element picker)
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') blocked = true;
+    
+    // Ctrl+Shift+K (Firefox console)
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'k') blocked = true;
+    
+    // Ctrl+S (save page / view source trick)
+    if(e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 's') blocked = true;
+    
+    // Ctrl+A select all (prevents copy-paste source reading)
+    // Actually keep this - users need it for text selection
+    
+    // Cmd versions (Mac)
+    if(e.metaKey && e.key.toLowerCase() === 'u') blocked = true;
+    if(e.metaKey && e.shiftKey && e.key.toLowerCase() === 'i') blocked = true;
+    if(e.metaKey && e.shiftKey && e.key.toLowerCase() === 'j') blocked = true;
+    if(e.metaKey && e.shiftKey && e.key.toLowerCase() === 'c') blocked = true;
+    
+    if(blocked) {
+      e.preventDefault();
+      e.stopPropagation();
+      var msgs = [
+        '🔒 QVIO Protected — © VARUN 2025',
+        '⚡ India's AI stays secure!',
+        '🛡️ Protected by QVIO Security'
+      ];
+      if(typeof showToast === 'function') showToast(msgs[Math.floor(Math.random()*msgs.length)]);
+      return false;
+    }
+  }, true); // capture phase - runs before everything
 
-  // Right-click disable
-  document.addEventListener('contextmenu',function(e){
+  // Block right-click completely
+  document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
-    showToast('🔒 QVIO is protected. (c) VARUN 2025');
+    e.stopPropagation();
+    if(typeof showToast === 'function') showToast('🔒 QVIO Protected — © VARUN 2025');
+    return false;
+  }, true);
+  
+  // Block drag (prevents source drag to tab)
+  document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
     return false;
   });
+
+  // Override console methods to frustrate devtools usage
+  (function() {
+    var _c = console;
+    var _warn = function() {
+      _c.log('%c⛔ STOP!', 'font-size:40px;font-weight:900;color:#D4A017;background:#0D1B3E;padding:10px 18px;border-radius:8px;');
+      _c.log('%c🔒 Private property of VARUN. Unauthorized access is a criminal offence.', 'font-size:13px;color:#DC2626;font-weight:700;');
+      _c.log('%c⚖️ Indian Copyright Act 1957 | IT Act 2000 | IPC Section 66', 'font-size:12px;color:#374151;');
+      _c.log('%c© 2025 QVIO AI by VARUN. All Rights Reserved.', 'font-size:11px;color:#6B7280;');
+    };
+    // Show warning when console opens
+    var _shown = false;
+    Object.defineProperty(window, '_qvioDebugCheck', {
+      get: function() {
+        if(!_shown) { _shown=true; _warn(); }
+        return true;
+      }
+    });
+    _c.log(window._qvioDebugCheck);
+  })();
 
   // DevTools detection disabled
 
