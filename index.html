@@ -37,7 +37,7 @@ var wakeRecog=null;
 var wakeActive=false;
 var heyQvioEnabled=false;
 
-function startHeyQvio(){
+function startHeyQvio(){ showToast("Hey QVIO coming soon!"); return; } function _oldStartHeyQvio(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Hey QVIO needs Chrome or Edge!');return;}
   heyQvioEnabled=true;
@@ -61,7 +61,7 @@ function toggleHeyQvio(){
   else{startHeyQvio();}
 }
 
-function listenForWakeWord(){
+function listenForWakeWord(){ return; } function _oldListenForWakeWord(){
   if(!heyQvioEnabled)return;
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   try{
@@ -2817,7 +2817,7 @@ body:not([data-theme="dark"]) .pro-hbtn {
 
 /* Mode buttons */
 body:not([data-theme="dark"]) .mbtn {
-  background: rgba(255,255,255,0.75) !important;
+  background: rgba(255,255,255,0.95) !important;
   border: 1px solid rgba(139,92,246,0.12) !important;
   backdrop-filter: blur(8px) !important;
   transition: all 0.2s !important;
@@ -4634,17 +4634,2343 @@ html body #sendBtn:active {
   animation:qAmbient 16s ease-in-out infinite;
 }
 
+
+/* ╔═══════════════════════════════════════════════╗
+   ║  QVIO — SEXY SMOOTH ANIMATIONS FINAL v1.0    ║
+   ║  Clean • Fast • Futuristic • 60fps           ║
+   ╚═══════════════════════════════════════════════╝ */
+
+/* ━━━ KEYFRAMES ━━━ */
+@keyframes sFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.03)}}
+@keyframes sRing{0%{opacity:.7;transform:translate(-50%,-50%) scale(.85)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.3)}}
+@keyframes sAura{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes sFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes sSpring{from{opacity:0;transform:scale(.3) rotate(-15deg)}60%{transform:scale(1.1) rotate(4deg)}to{opacity:1;transform:none}}
+@keyframes sPop{from{opacity:0;transform:scale(.4)}65%{transform:scale(1.1)}to{opacity:1;transform:scale(1)}}
+@keyframes sMsgAI{from{opacity:0;transform:translateY(12px) scale(.95);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes sMsgMe{from{opacity:0;transform:translateX(18px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes sAv{from{opacity:0;transform:scale(0) rotate(-20deg)}65%{transform:scale(1.2) rotate(4deg)}to{opacity:1;transform:none}}
+@keyframes sChip{from{opacity:0;transform:scale(.6) rotateY(70deg)}to{opacity:1;transform:none}}
+@keyframes sSb{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes sDot{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-9px);opacity:1}}
+@keyframes sCursor{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes sGlow{0%,100%{box-shadow:0 0 0 3px rgba(167,139,250,.2),0 4px 20px rgba(124,58,237,.5)}50%{box-shadow:0 0 0 5px rgba(167,139,250,.3),0 6px 32px rgba(124,58,237,.75),0 0 60px rgba(167,139,250,.2)}}
+@keyframes sHdr{from{opacity:0;transform:translateX(-50%) translateY(-40px) scale(.93)}65%{transform:translateX(-50%) translateY(3px) scale(1.01)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes sGreenPulse{0%,100%{box-shadow:0 0 4px rgba(16,185,129,.5)}50%{box-shadow:0 0 14px rgba(16,185,129,1),0 0 28px rgba(16,185,129,.35)}}
+@keyframes sToast{from{opacity:0;transform:translateX(-50%) translateY(20px) scale(.8)}65%{transform:translateX(-50%) translateY(-4px) scale(1.04)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes sModal{from{opacity:0;transform:translate(-50%,-50%) scale(.82)}65%{transform:translate(-50%,-50%) scale(1.03)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes sAmbient{0%,100%{opacity:1;background-position:0% 50%}50%{opacity:.7;background-position:100% 50%}}
+@keyframes sXp{0%,100%{box-shadow:0 0 10px rgba(129,140,248,.8)}50%{box-shadow:0 0 22px rgba(192,132,252,1),0 0 44px rgba(129,140,248,.4)}}
+@keyframes sBadge{from{opacity:0;transform:scale(.3) translateY(10px)}70%{transform:scale(1.12)}to{opacity:1;transform:scale(1)}}
+@keyframes sInput{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes sWispr{0%,100%{transform:translateY(0) scale(1);box-shadow:0 6px 24px rgba(99,102,241,.5)}50%{transform:translateY(-9px) scale(1.06);box-shadow:0 16px 40px rgba(168,85,247,.7)}}
+@keyframes sLogoSpin{from{transform:scale(1) rotate(0deg)}50%{transform:scale(1.08) rotate(5deg)}to{transform:scale(1) rotate(0deg)}}
+@keyframes sSendPop{0%{transform:scale(1)}30%{transform:scale(.88) rotate(-8deg)}70%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes sWelcome{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes sOrbIn{from{opacity:0;transform:scale(.15) rotate(-30deg)}65%{transform:scale(1.08) rotate(5deg)}to{opacity:1;transform:none}}
+
+/* ━━━ HEADER ━━━ */
+#qvioHeader{animation:sHdr .9s cubic-bezier(.34,1.56,.64,1) both!important}
+.fh-status-dot{animation:sGreenPulse 2s ease-in-out infinite!important}
+.fh-logo-orb{transition:all .3s cubic-bezier(.34,1.56,.64,1)!important}
+.fh-logo-orb:hover{transform:scale(1.15) rotate(8deg)!important;box-shadow:0 8px 28px rgba(99,102,241,.6)!important}
+.fh-btn{transition:all .2s cubic-bezier(.34,1.56,.64,1)!important}
+.fh-btn:hover{transform:scale(1.2) translateY(-2px)!important}
+.fh-btn:active{transform:scale(.85)!important;transition:transform .08s!important}
+.fh-mode{transition:all .22s cubic-bezier(.34,1.56,.64,1)!important}
+.fh-mode:hover{transform:scale(1.05)!important;background:rgba(99,102,241,.1)!important;border-color:rgba(99,102,241,.35)!important}
+.fh-avatar{transition:all .2s cubic-bezier(.34,1.56,.64,1)!important}
+.fh-avatar:hover{transform:scale(1.06)!important}
+.fh-ham{transition:all .2s cubic-bezier(.34,1.56,.64,1)!important}
+.fh-ham:hover{transform:scale(1.1)!important;background:rgba(99,102,241,.08)!important}
+
+/* ━━━ WELCOME ━━━ */
+.welcome{animation:sWelcome .9s cubic-bezier(.16,1,.3,1) .1s both!important}
+.w-orb{animation:sOrbIn 1s cubic-bezier(.34,1.56,.64,1) .15s both!important}
+.w-orb-inner{animation:sFloat 5s ease-in-out infinite!important}
+.w-orb::before{
+  content:"";position:absolute;width:220%;height:220%;top:-60%;left:-60%;
+  background:conic-gradient(from 0deg,transparent,rgba(99,102,241,.07) 60deg,transparent 120deg,rgba(168,85,247,.05) 200deg,transparent 260deg,rgba(236,72,153,.03) 310deg,transparent);
+  animation:sAura 12s linear infinite;border-radius:50%;z-index:0;pointer-events:none;
+}
+.w-orb-ring{position:absolute;border-radius:50%;top:50%;left:50%}
+.w-orb-ring.r1{width:155px;height:155px;border:1px solid rgba(99,102,241,.22);animation:sRing 4s ease-out 0s infinite!important}
+.w-orb-ring.r2{width:200px;height:200px;border:1px solid rgba(168,85,247,.14);animation:sRing 4s ease-out 1.3s infinite!important}
+.w-orb-ring.r3{width:248px;height:248px;border:1px solid rgba(99,102,241,.07);animation:sRing 4s ease-out 2.6s infinite!important}
+.w-title{animation:sFadeUp .7s cubic-bezier(.16,1,.3,1) .5s both!important}
+.wsub{animation:sFadeUp .7s cubic-bezier(.16,1,.3,1) .64s both!important}
+.w-badges{animation:sFadeUp .7s cubic-bezier(.16,1,.3,1) .76s both!important}
+.w-badge:nth-child(1){animation:sBadge .5s cubic-bezier(.34,1.56,.64,1) .85s both!important}
+.w-badge:nth-child(2){animation:sBadge .5s cubic-bezier(.34,1.56,.64,1) 1s both!important}
+.w-badge:nth-child(3){animation:sBadge .5s cubic-bezier(.34,1.56,.64,1) 1.15s both!important}
+
+/* ━━━ INPUT ━━━ */
+.input-area{animation:sInput .8s cubic-bezier(.16,1,.3,1) .3s both!important}
+.ibox{transition:all .35s cubic-bezier(.16,1,.3,1)!important}
+.ibox:focus-within{transform:translateY(-3px)!important;box-shadow:0 0 0 3px rgba(129,140,248,.18),0 16px 48px rgba(99,102,241,.12)!important;border-color:rgba(99,102,241,.4)!important}
+.qsend-btn{animation:sGlow 2.5s ease-in-out infinite!important}
+.qsend-btn:hover{animation:none!important;transform:scale(1.15) translateY(-2px)!important;box-shadow:0 0 0 5px rgba(167,139,250,.3),0 10px 32px rgba(124,58,237,.75)!important}
+.qsend-btn:active{transform:scale(.88)!important;transition:transform .08s!important;animation:sSendPop .4s ease!important}
+.micbtn{transition:all .2s cubic-bezier(.34,1.56,.64,1)!important}
+.micbtn:hover{transform:scale(1.18)!important;background:rgba(99,102,241,.08)!important;border-color:rgba(99,102,241,.4)!important;color:#6366F1!important}
+
+/* ━━━ MESSAGES ━━━ */
+.msg.ai{animation:sMsgAI .5s cubic-bezier(.16,1,.3,1) both!important}
+.msg.user{animation:sMsgMe .38s cubic-bezier(.16,1,.3,1) both!important}
+.av{animation:sAv .45s cubic-bezier(.34,1.56,.64,1) both!important}
+.msg.ai .bubble{transition:all .25s cubic-bezier(.16,1,.3,1)!important}
+.msg.ai .bubble:hover{transform:translateX(5px)!important;box-shadow:-4px 0 20px rgba(99,102,241,.1)!important}
+.msg.user .bubble{transition:all .25s!important}
+.msg.user .bubble:hover{transform:translateX(-5px)!important}
+
+/* ━━━ TYPING ━━━ */
+.tdots span{width:6px;height:6px;border-radius:50%;display:inline-block;background:#818CF8}
+.tdots span:nth-child(1){animation:sDot 1.3s ease-in-out 0s infinite!important}
+.tdots span:nth-child(2){animation:sDot 1.3s ease-in-out .2s infinite!important}
+.tdots span:nth-child(3){animation:sDot 1.3s ease-in-out .4s infinite!important}
+.stream-cursor{display:inline-block;width:2px;height:1em;background:#818CF8;border-radius:2px;margin-left:2px;vertical-align:middle;animation:sCursor .8s ease-in-out infinite!important}
+
+/* ━━━ CHIPS ━━━ */
+.qr{transition:all .25s cubic-bezier(.34,1.56,.64,1)!important}
+.qr:hover{transform:translateY(-4px) scale(1.06)!important;box-shadow:0 10px 28px rgba(99,102,241,.2)!important;border-color:rgba(99,102,241,.4)!important}
+.qr:active{transform:scale(.93)!important;transition:transform .08s!important}
+.mbtn{transition:all .22s cubic-bezier(.34,1.56,.64,1)!important;border-radius:99px!important}
+.mbtn:hover{transform:translateY(-3px) scale(1.08)!important}
+.mbtn:active{transform:scale(.9)!important;transition:transform .08s!important}
+.mbtn:nth-child(1){animation:sChip .4s ease .05s both!important}
+.mbtn:nth-child(2){animation:sChip .4s ease .10s both!important}
+.mbtn:nth-child(3){animation:sChip .4s ease .15s both!important}
+.mbtn:nth-child(4){animation:sChip .4s ease .20s both!important}
+.mbtn:nth-child(5){animation:sChip .4s ease .25s both!important}
+.mbtn:nth-child(6){animation:sChip .4s ease .30s both!important}
+.mbtn:nth-child(7){animation:sChip .4s ease .35s both!important}
+.mbtn:nth-child(8){animation:sChip .4s ease .40s both!important}
+
+/* ━━━ SIDEBAR ━━━ */
+#sbChatList>div{transition:all .2s cubic-bezier(.16,1,.3,1)!important;border-radius:10px!important;cursor:pointer!important}
+#sbChatList>div:hover{background:rgba(99,102,241,.07)!important;transform:translateX(5px)!important;padding-left:16px!important}
+#sbChatList>div:nth-child(1){animation:sSb .3s ease .04s both!important}
+#sbChatList>div:nth-child(2){animation:sSb .3s ease .08s both!important}
+#sbChatList>div:nth-child(3){animation:sSb .3s ease .12s both!important}
+#sbChatList>div:nth-child(4){animation:sSb .3s ease .16s both!important}
+#sbChatList>div:nth-child(5){animation:sSb .3s ease .20s both!important}
+
+/* ━━━ MISC ━━━ */
+.toast.show{animation:sToast .5s cubic-bezier(.34,1.56,.64,1) forwards!important}
+.modal{animation:sModal .4s cubic-bezier(.34,1.56,.64,1) both!important}
+.overlay{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+#wisprBtn{animation:sWispr 3.5s ease-in-out infinite!important}
+#xpBar,.fh-xp #xpBar{background:linear-gradient(90deg,#6366F1,#A855F7,#EC4899)!important;animation:sXp 2s ease-in-out infinite!important;transition:width .6s cubic-bezier(.34,1.56,.64,1)!important}
+.code-block{transition:transform .25s,box-shadow .25s!important}
+.code-block:hover{transform:translateY(-3px)!important;box-shadow:0 14px 44px rgba(0,0,0,.35)!important}
+.lsm-pill{transition:all .2s cubic-bezier(.34,1.56,.64,1)!important}
+.lsm-pill:hover{transform:scale(1.08)!important;border-color:rgba(99,102,241,.4)!important;background:rgba(99,102,241,.08)!important}
+.lsm-pill.active{background:linear-gradient(135deg,#6366F1,#8B5CF6)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 4px 16px rgba(99,102,241,.4)!important;transform:scale(1.06)!important}
+
+/* ━━━ BACKGROUND AURA ━━━ */
+body:not([data-theme="dark"])::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 10% 20%,rgba(99,102,241,.09) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 80%,rgba(168,85,247,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(236,72,153,.03) 0%,transparent 65%);
+  animation:sAmbient 18s ease-in-out infinite;
+  background-size:200% 200%;
+}
+[data-theme="dark"] body::after,
+[data-theme="dark"]::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 25%,rgba(99,102,241,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 75%,rgba(168,85,247,.06) 0%,transparent 50%);
+  animation:sAmbient 18s ease-in-out infinite;
+  background-size:200% 200%;
+}
+
 </style>
-</head>
+
+
+
+
+
+<style id="Q">
+/* ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+   QVIO MASTER DESIGN — CEO EDITION
+   Simple. Confident. Premium. Indian.
+   Every animation intentional. Every pixel earned.
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ */
+
+/* ── DESIGN TOKENS ── */
+:root {
+  --qv: #5B21B6;
+  --qv2: #7C3AED;
+  --qv3: #A78BFA;
+  --qvs: rgba(91,33,182,0.08);
+  --bg: #FAFAFA;
+  --surface: #FFFFFF;
+  --text: #0A0A0F;
+  --text2: #6B7280;
+  --text3: #9CA3AF;
+  --border: rgba(0,0,0,0.08);
+  --borderv: rgba(91,33,182,0.2);
+  --sh: 0 1px 3px rgba(0,0,0,0.05),0 4px 16px rgba(0,0,0,0.07);
+  --shv: 0 2px 8px rgba(91,33,182,0.15),0 8px 32px rgba(91,33,182,0.1);
+}
+[data-theme="dark"] {
+  --qvs: rgba(124,58,237,0.12);
+  --bg: #09090F;
+  --surface: #111118;
+  --text: #F0F0FF;
+  --text2: #6B7280;
+  --text3: #3D3D5C;
+  --border: rgba(255,255,255,0.07);
+  --borderv: rgba(124,58,237,0.25);
+  --sh: 0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.5);
+  --shv: 0 2px 8px rgba(124,58,237,0.2),0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ── BASE ── */
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: "DM Sans", -apple-system, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  transition: background 0.3s, color 0.3s !important;
+}
+body:not([data-theme="dark"]) {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% -5%,rgba(91,33,182,0.07) 0%,transparent 70%),
+    #FAFAFA !important;
+}
+[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% -5%,rgba(91,33,182,0.14) 0%,transparent 70%),
+    #09090F !important;
+}
+
+/* ════════════════════════════════════════
+   KEYFRAMES — CLEAN, NO CONFLICTS
+════════════════════════════════════════ */
+
+@keyframes Q-hdr {
+  0%   { opacity:0; transform:translateX(-50%) translateY(-40px) scale(0.94); }
+  70%  { transform:translateX(-50%) translateY(3px) scale(1.01); }
+  100% { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+}
+@keyframes Q-up {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-pop {
+  from { opacity:0; transform:scale(0.3) rotate(-10deg); }
+  65%  { transform:scale(1.12) rotate(4deg); }
+  to   { opacity:1; transform:scale(1) rotate(0); }
+}
+@keyframes Q-orb-in {
+  from { opacity:0; transform:scale(0.1) rotate(-30deg); }
+  60%  { transform:scale(1.12) rotate(6deg); }
+  80%  { transform:scale(0.97) rotate(-2deg); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-orb-float {
+  0%,100% {
+    transform:translateY(0) scale(1);
+    filter:drop-shadow(0 8px 32px rgba(91,33,182,0.5));
+  }
+  50% {
+    transform:translateY(-16px) scale(1.04);
+    filter:drop-shadow(0 28px 56px rgba(124,58,237,0.75));
+  }
+}
+@keyframes Q-ring {
+  0%   { opacity:0.7; transform:translate(-50%,-50%) scale(0.85); }
+  100% { opacity:0;   transform:translate(-50%,-50%) scale(1.28); }
+}
+@keyframes Q-msg-ai {
+  from { opacity:0; transform:translateY(16px) scale(0.95); filter:blur(5px); }
+  60%  { filter:blur(0); }
+  to   { opacity:1; transform:none; filter:blur(0); }
+}
+@keyframes Q-msg-me {
+  from { opacity:0; transform:translateX(20px) scale(0.95); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-av {
+  from { opacity:0; transform:scale(0) rotate(-15deg); }
+  65%  { transform:scale(1.18) rotate(4deg); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-chip {
+  from { opacity:0; transform:translateY(12px) scale(0.85); }
+  70%  { transform:translateY(-2px) scale(1.03); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-dot {
+  0%,60%,100% { transform:translateY(0); opacity:0.35; background:var(--qv3); }
+  30%         { transform:translateY(-9px); opacity:1; background:var(--qv2); }
+}
+@keyframes Q-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes Q-send-pulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(91,33,182,0.3),0 2px 8px rgba(91,33,182,0.4); }
+  50%     { box-shadow:0 0 0 8px rgba(91,33,182,0),0 4px 20px rgba(124,58,237,0.6); }
+}
+@keyframes Q-status {
+  0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.5); }
+  50%     { box-shadow:0 0 0 6px rgba(16,185,129,0); }
+}
+@keyframes Q-xp {
+  0%,100% { box-shadow:0 0 6px rgba(91,33,182,0.7); }
+  50%     { box-shadow:0 0 16px rgba(167,139,250,1),0 0 32px rgba(91,33,182,0.4); }
+}
+@keyframes Q-toast {
+  from { opacity:0; transform:translateX(-50%) translateY(20px) scale(0.8); }
+  65%  { transform:translateX(-50%) translateY(-4px) scale(1.04); }
+  to   { opacity:1; transform:translateX(-50%) scale(1); }
+}
+@keyframes Q-modal {
+  from { opacity:0; transform:translate(-50%,-50%) scale(0.82); }
+  65%  { transform:translate(-50%,-50%) scale(1.02); }
+  to   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+@keyframes Q-sb {
+  from { opacity:0; transform:translateX(-14px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes Q-wispr {
+  0%,100% { transform:translateY(0) scale(1); }
+  50%     { transform:translateY(-10px) scale(1.06); }
+}
+@keyframes Q-aura {
+  from { transform:rotate(0deg); }
+  to   { transform:rotate(360deg); }
+}
+
+/* ════════════════════════════════════════
+   APPLY ANIMATIONS
+════════════════════════════════════════ */
+
+/* HEADER */
+#qvioHeader {
+  position:fixed !important;
+  top:14px !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:calc(100% - 40px) !important;
+  max-width:820px !important;
+  height:52px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 8px 0 14px !important;
+  gap:0 !important;
+  z-index:9999 !important;
+  border-radius:16px !important;
+  background:rgba(255,255,255,0.85) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border:1px solid var(--border) !important;
+  box-shadow:var(--sh) !important;
+  overflow:visible !important;
+  transition:box-shadow 0.3s, background 0.3s !important;
+  animation:Q-hdr 0.8s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+[data-theme="dark"] #qvioHeader {
+  background:rgba(11,11,20,0.9) !important;
+  border-color:var(--border) !important;
+}
+#qvio-app { padding-top:80px !important; }
+
+/* HEADER PARTS */
+.fh-left   { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.fh-center { flex:1; display:flex; justify-content:center; }
+.fh-right  { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+
+.fh-ham {
+  width:34px; height:34px; border:none; background:none;
+  cursor:pointer; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px;
+  border-radius:9px; flex-shrink:0;
+  transition:background 0.15s;
+}
+.fh-ham span {
+  display:block; width:16px; height:1.5px;
+  background:var(--text2); border-radius:99px;
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fh-ham:hover { background:var(--qvs); }
+.fh-ham:hover span { background:var(--qv2); }
+.fh-ham:hover span:nth-child(1) { transform:translateY(-2px) rotate(5deg); }
+.fh-ham:hover span:nth-child(3) { transform:translateY(2px) rotate(-5deg); }
+
+.fh-logo { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.fh-logo-orb {
+  width:32px; height:32px; border-radius:9px; overflow:hidden; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(91,33,182,0.35);
+  transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+}
+.fh-logo-orb:hover { transform:scale(1.12) rotate(7deg); box-shadow:0 4px 18px rgba(91,33,182,0.55); }
+.fh-logo-text { font-family:"DM Mono",monospace; font-size:15px; font-weight:700; color:var(--text); }
+.fh-logo-text em { font-style:normal; color:var(--qv2); }
+
+.fh-mode {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 14px; border-radius:99px;
+  background:var(--qvs); border:1px solid var(--borderv);
+  cursor:pointer; font-size:12.5px; font-weight:600; color:var(--qv2);
+  white-space:nowrap; transition:all 0.2s;
+}
+.fh-mode:hover { filter:brightness(1.1); }
+.fh-status-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:#10B981; flex-shrink:0;
+  animation:Q-status 2.5s ease-in-out infinite;
+}
+.fh-arrow { font-size:8px; color:var(--text3); }
+
+.fh-btn {
+  width:32px; height:32px; border-radius:8px;
+  border:none; background:transparent; cursor:pointer;
+  font-size:15px; display:flex; align-items:center; justify-content:center;
+  color:var(--text2); transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fh-btn:hover { background:var(--qvs); color:var(--qv2); transform:scale(1.15) translateY(-1px); }
+.fh-btn:active { transform:scale(0.88); }
+
+.fh-avatar {
+  display:flex; align-items:center; gap:6px;
+  padding:4px 10px 4px 4px; border-radius:99px;
+  border:1px solid var(--border); background:var(--surface);
+  cursor:pointer; transition:all 0.2s;
+}
+.fh-avatar:hover { border-color:var(--borderv); background:var(--qvs); }
+.fh-av-img {
+  width:24px; height:24px; border-radius:50%;
+  background:linear-gradient(135deg,var(--qv),var(--qv2));
+  color:#fff; font-size:10px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.fh-av-name { font-size:12px; font-weight:600; color:var(--text2); }
+
+.fh-xp { position:absolute; bottom:0; left:14px; right:14px; height:1.5px; background:var(--border); border-radius:99px; overflow:hidden; }
+.fh-xp #xpBar, #xpBar {
+  height:100%; width:0%;
+  background:linear-gradient(90deg,var(--qv),var(--qv2),var(--qv3));
+  border-radius:99px;
+  transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1) !important;
+  animation:Q-xp 2s ease-in-out infinite !important;
+}
+
+/* WELCOME */
+.welcome {
+  display:flex !important; flex-direction:column !important;
+  align-items:center !important; justify-content:center !important;
+  padding:80px 20px 40px !important; text-align:center !important;
+  min-height:55vh !important;
+  animation:Q-up 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both !important;
+}
+.w-orb {
+  position:relative !important;
+  width:104px !important; height:104px !important;
+  margin-bottom:32px !important;
+  animation:Q-orb-in 1s cubic-bezier(0.34,1.56,0.64,1) 0.2s both !important;
+}
+.w-orb-inner {
+  width:104px !important; height:104px !important; border-radius:50% !important;
+  background:linear-gradient(145deg,#4C1D95,#5B21B6,#7C3AED) !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  position:relative !important; z-index:2 !important; overflow:hidden !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset, 0 8px 40px rgba(91,33,182,0.5) !important;
+  animation:Q-orb-float 5.5s ease-in-out infinite !important;
+}
+.w-orb-inner::after {
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,transparent 55%);
+  pointer-events:none;
+}
+/* Spinning aura ring */
+.w-orb::before {
+  content:""; position:absolute; inset:-30px; border-radius:50%;
+  background:conic-gradient(from 0deg,transparent,rgba(91,33,182,0.08) 90deg,transparent 180deg,rgba(124,58,237,0.05) 270deg,transparent);
+  animation:Q-aura 8s linear infinite;
+  pointer-events:none; z-index:0;
+}
+.w-orb-ring { position:absolute; border-radius:50%; top:50%; left:50%; }
+.w-orb-ring.r1 { width:145px; height:145px; border:1px solid rgba(91,33,182,0.2); animation:Q-ring 4.5s ease-out 0s infinite !important; }
+.w-orb-ring.r2 { width:190px; height:190px; border:1px solid rgba(91,33,182,0.11); animation:Q-ring 4.5s ease-out 1.5s infinite !important; }
+.w-orb-ring.r3 { width:238px; height:238px; border:1px solid rgba(91,33,182,0.05); animation:Q-ring 4.5s ease-out 3s infinite !important; }
+
+.w-title {
+  font-size:36px !important; font-weight:800 !important;
+  letter-spacing:-1.2px !important; line-height:1.18 !important;
+  color:var(--text) !important; margin:0 0 10px !important;
+  animation:Q-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.52s both !important;
+}
+.w-title em { font-style:normal !important; color:var(--qv2) !important; -webkit-text-fill-color:var(--qv2) !important; }
+.wsub {
+  font-size:15px !important; color:var(--text2) !important;
+  margin:0 0 28px !important;
+  animation:Q-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.64s both !important;
+}
+.w-badges { display:flex !important; gap:8px !important; justify-content:center !important; flex-wrap:wrap !important; animation:Q-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.74s both !important; }
+.w-badge {
+  padding:5px 14px !important; border-radius:99px !important;
+  font-size:12px !important; font-weight:600 !important;
+  background:var(--surface) !important; border:1px solid var(--border) !important;
+  color:var(--text2) !important;
+  transition:all 0.2s !important;
+  animation:Q-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+.w-badge:nth-child(1){animation-delay:0.8s!important}
+.w-badge:nth-child(2){animation-delay:0.92s!important}
+.w-badge:hover { border-color:var(--borderv); color:var(--qv2); transform:translateY(-2px); }
+
+/* INPUT */
+.input-area { background:transparent !important; border-top:none !important; padding:8px 16px 12px !important; animation:Q-up 0.65s cubic-bezier(0.16,1,0.3,1) 0.3s both !important; }
+#mainIbox, .ibox {
+  background:var(--surface) !important;
+  border:1px solid var(--border) !important;
+  border-radius:16px !important;
+  padding:10px 10px 10px 18px !important;
+  box-shadow:var(--sh) !important;
+  transition:all 0.35s cubic-bezier(0.16,1,0.3,1) !important;
+  max-width:700px !important; margin:0 auto !important;
+  align-items:center !important;
+}
+#mainIbox:focus-within, .ibox:focus-within {
+  border-color:var(--borderv) !important;
+  box-shadow:0 0 0 3px rgba(91,33,182,0.1),var(--shv) !important;
+  transform:translateY(-2px) !important;
+}
+#inp {
+  font-size:15px !important; color:var(--text) !important;
+  caret-color:var(--qv2) !important;
+  font-family:"DM Sans",sans-serif !important;
+  background:transparent !important; border:none !important; outline:none !important;
+  resize:none !important; width:100% !important;
+}
+#inp::placeholder { color:var(--text3) !important; font-style:normal !important; }
+
+/* SEND BTN */
+.qsend-btn, .sendbtn, #sendBtn {
+  background:var(--qv2) !important;
+  width:38px !important; height:38px !important;
+  min-width:38px !important; max-width:38px !important;
+  border-radius:50% !important; border:none !important;
+  color:#fff !important; cursor:pointer !important;
+  display:flex !important; align-items:center !important;
+  justify-content:center !important; padding:0 !important;
+  flex-shrink:0 !important;
+  box-shadow:0 2px 8px rgba(91,33,182,0.4) !important;
+  transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s !important;
+  position:relative !important; overflow:hidden !important;
+  animation:Q-send-pulse 2.5s ease-in-out infinite !important;
+}
+.qsend-btn::after, #sendBtn::after {
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
+  pointer-events:none;
+}
+.qsend-btn:hover, #sendBtn:hover {
+  transform:scale(1.12) translateY(-2px) !important;
+  box-shadow:0 6px 24px rgba(91,33,182,0.6) !important;
+  animation:none !important; background:var(--qv) !important;
+}
+.qsend-btn:active, #sendBtn:active { transform:scale(0.88) !important; }
+
+/* CHIPS */
+.qrs { max-width:700px !important; margin:0 auto !important; padding:10px 0 0 !important; justify-content:center !important; }
+.qr {
+  padding:6px 16px !important; border-radius:99px !important;
+  font-size:13px !important; font-weight:500 !important;
+  background:var(--surface) !important; border:1px solid var(--border) !important;
+  color:var(--text2) !important;
+  transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important;
+  animation:Q-chip 0.4s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+.qr:nth-child(1){animation-delay:0.5s!important}.qr:nth-child(2){animation-delay:0.57s!important}
+.qr:nth-child(3){animation-delay:0.64s!important}.qr:nth-child(4){animation-delay:0.71s!important}
+.qr:nth-child(5){animation-delay:0.78s!important}.qr:nth-child(6){animation-delay:0.85s!important}
+.qr:hover { border-color:var(--borderv); color:var(--qv2); background:var(--qvs); transform:translateY(-3px) scale(1.05); }
+.qr:active { transform:scale(0.93); transition:transform 0.08s; }
+
+/* MESSAGES */
+.msg.ai   { animation:Q-msg-ai  0.5s cubic-bezier(0.16,1,0.3,1) both !important; }
+.msg.user { animation:Q-msg-me  0.35s cubic-bezier(0.16,1,0.3,1) both !important; }
+.av       { animation:Q-av 0.45s cubic-bezier(0.34,1.56,0.64,1) both !important; }
+.msg.ai .bubble {
+  background:var(--surface) !important; border:1px solid var(--border) !important;
+  border-left:2px solid var(--qv3) !important; border-radius:2px 14px 14px 14px !important;
+  box-shadow:var(--sh) !important;
+  transition:transform 0.2s !important;
+}
+.msg.ai .bubble:hover { transform:translateX(4px) !important; }
+.msg.user .bubble {
+  background:var(--qv2) !important; color:#fff !important;
+  border:none !important; border-radius:14px 2px 14px 14px !important;
+  box-shadow:0 2px 12px rgba(91,33,182,0.35) !important;
+  transition:transform 0.2s !important;
+}
+.msg.user .bubble:hover { transform:translateX(-4px) !important; }
+
+/* MODE CHIPS */
+.mbtn {
+  border-radius:99px !important; font-size:12.5px !important;
+  transition:all 0.18s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.mbtn:hover { background:var(--qvs) !important; border-color:var(--borderv) !important; color:var(--qv2) !important; transform:translateY(-2px) scale(1.06) !important; }
+.mbtn:active { transform:scale(0.92) !important; }
+.mbtn.on { background:var(--qvs) !important; border-color:var(--borderv) !important; color:var(--qv2) !important; }
+
+/* TYPING DOTS */
+.tdots span { width:5px !important; height:5px !important; border-radius:50% !important; display:inline-block !important; background:var(--qv3) !important; }
+.tdots span:nth-child(1){animation:Q-dot 1.2s ease-in-out 0s   infinite !important}
+.tdots span:nth-child(2){animation:Q-dot 1.2s ease-in-out 0.2s infinite !important}
+.tdots span:nth-child(3){animation:Q-dot 1.2s ease-in-out 0.4s infinite !important}
+
+/* STREAM CURSOR */
+.stream-cursor { display:inline-block !important; width:2px !important; height:1em !important; background:var(--qv2) !important; border-radius:1px !important; margin-left:2px !important; vertical-align:middle !important; animation:Q-blink 0.9s ease-in-out infinite !important; }
+
+/* TOAST */
+.toast { background:var(--text) !important; color:var(--surface) !important; border:none !important; box-shadow:0 4px 24px rgba(0,0,0,0.25) !important; }
+.toast.show { animation:Q-toast 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards !important; }
+
+/* MODAL */
+.modal { background:var(--surface) !important; border:1px solid var(--border) !important; animation:Q-modal 0.35s cubic-bezier(0.34,1.56,0.64,1) both !important; }
+.overlay { backdrop-filter:blur(10px) !important; }
+
+/* SIDEBAR */
+#sidebar { background:var(--surface) !important; border-right:1px solid var(--border) !important; }
+#sbChatList>div { transition:background 0.15s !important; border-radius:8px !important; cursor:pointer !important; animation:Q-sb 0.3s ease both !important; }
+#sbChatList>div:nth-child(1){animation-delay:0.04s!important}
+#sbChatList>div:nth-child(2){animation-delay:0.08s!important}
+#sbChatList>div:nth-child(3){animation-delay:0.12s!important}
+#sbChatList>div:nth-child(4){animation-delay:0.16s!important}
+#sbChatList>div:hover { background:var(--qvs) !important; }
+
+/* WISPR BTN */
+#wisprBtn { background:var(--qv2) !important; box-shadow:0 4px 20px rgba(91,33,182,0.45) !important; animation:Q-wispr 4s ease-in-out infinite !important; }
+
+/* LANGUAGE PILLS */
+.lsm-pill { transition:all 0.15s !important; }
+.lsm-pill:hover { border-color:var(--borderv) !important; color:var(--qv2) !important; background:var(--qvs) !important; }
+.lsm-pill.active { background:var(--qv2) !important; color:#fff !important; border-color:transparent !important; }
+
+/* CODE */
+.code-block { transition:box-shadow 0.2s !important; }
+.code-block:hover { box-shadow:0 8px 32px rgba(0,0,0,0.22) !important; }
+
+/* THEME TRANSITION */
+#qvioHeader, .fh-mode, .fh-btn, .fh-avatar, #mainIbox, .ibox, .msg.ai .bubble, .msg.user .bubble, .qr, .mbtn, .w-badge, #sidebar, .modal {
+  transition-property:background,border-color,color,box-shadow !important;
+  transition-duration:0.3s !important;
+  transition-timing-function:ease !important;
+}
+
+/* SUBTLE AMBIENT BG GLOW */
+#qvio-app::before {
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(circle at 10% 90%,rgba(91,33,182,0.04) 0%,transparent 45%),
+    radial-gradient(circle at 90% 10%,rgba(124,58,237,0.04) 0%,transparent 45%);
+}
+
+@media(max-width:600px){
+  #qvioHeader { top:8px !important; width:calc(100% - 16px) !important; height:48px !important; }
+  .fh-logo-text,.fh-av-name { display:none; }
+  #qvio-app { padding-top:68px !important; }
+}
+
+/* ====================================================
+   QVIO v8 - FLOATING HAMBURGER + FIXES + ANIMATIONS
+   ==================================================== */
+
+/* Hide built-in hamburger from header */
+.fh-ham, #sbToggle { display:none !important; }
+
+/* FLOATING HAMBURGER - left center, sexy */
+#qvFloatHam {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  transform: none;
+  z-index: 99999;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(99,102,241,0.18);
+  box-shadow: 0 4px 24px rgba(99,102,241,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  animation: hamBreathe 3s ease-in-out infinite;
+}
+[data-theme="dark"] #qvFloatHam {
+  background: rgba(13,15,23,0.88);
+  border-color: rgba(99,102,241,0.28);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+@keyframes hamBreathe {
+  0%,100% { box-shadow:0 4px 24px rgba(99,102,241,0.18),inset 0 1px 0 rgba(255,255,255,.9); }
+  50%      { box-shadow:0 6px 32px rgba(99,102,241,0.38),0 0 0 5px rgba(99,102,241,0.07),inset 0 1px 0 rgba(255,255,255,.9); }
+}
+#qvFloatHam:hover {
+  transform: scale(1.13);
+  background: rgba(99,102,241,0.1);
+  border-color: rgba(99,102,241,0.45);
+  animation: none;
+  box-shadow: 0 8px 32px rgba(99,102,241,0.38);
+}
+#qvFloatHam:active { transform: scale(0.9); }
+#qvFloatHam .hb {
+  display:block; width:18px; height:1.8px;
+  background: var(--text2,#64748b);
+  border-radius:2px;
+  transition:all 0.32s cubic-bezier(0.34,1.56,0.64,1);
+}
+#qvFloatHam:hover .hb { background:#6366F1; }
+#qvFloatHam:hover .hb:nth-child(1) { transform:translateY(-1px); }
+#qvFloatHam:hover .hb:nth-child(3) { transform:translateY(1px); }
+#qvFloatHam.sb-open .hb:nth-child(1) { transform:translateY(6.8px) rotate(45deg); background:#6366F1; }
+#qvFloatHam.sb-open .hb:nth-child(2) { opacity:0; transform:scaleX(0); }
+#qvFloatHam.sb-open .hb:nth-child(3) { transform:translateY(-6.8px) rotate(-45deg); background:#6366F1; }
+
+/* Sidebar show/hide (hidden by default, flex when .open) */
+#sidebar { display:none !important; }
+#sidebar.open { display:flex !important; }
+
+/* EARTH BUTTON - working spinner */
+.earth-btn {
+  background: linear-gradient(135deg,#1565a0,#27ae60,#1565a0) !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+  animation: earthSpin 8s linear infinite !important;
+}
+@keyframes earthSpin {
+  0%   { box-shadow:-4px 0 10px rgba(46,204,113,.35), 0 0 0 2px rgba(46,204,113,.25); }
+  50%  { box-shadow: 4px 0 10px rgba(26,107,154,.4),  0 0 0 2px rgba(26,107,154,.2); }
+  100% { box-shadow:-4px 0 10px rgba(46,204,113,.35), 0 0 0 2px rgba(46,204,113,.25); }
+}
+.earth-btn:hover {
+  transform: scale(1.2) rotate(20deg) !important;
+  animation: none !important;
+  box-shadow: 0 0 0 4px rgba(46,204,113,.4), 0 6px 20px rgba(26,107,154,.5) !important;
+}
+
+/* THEME BUTTON */
+#themeBtn {
+  font-size:17px !important;
+  cursor:pointer !important;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+#themeBtn:hover {
+  transform: scale(1.2) rotate(25deg) !important;
+  background: rgba(245,158,11,0.1) !important;
+}
+
+/* FH BUTTONS */
+.fh-btn {
+  cursor:pointer !important;
+  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.fh-btn:hover {
+  transform: scale(1.15) translateY(-2px) !important;
+  background: rgba(99,102,241,0.1) !important;
+  border-color: rgba(99,102,241,0.3) !important;
+}
+.fh-btn:active { transform: scale(0.88) !important; }
+
+/* CURSOR TRAIL */
+.qv-trail{position:fixed;pointer-events:none;border-radius:50%;z-index:999994;transform:translate(-50%,-50%);animation:qvTrail .55s ease forwards;}
+@keyframes qvTrail{0%{opacity:.7;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-50%) scale(0);}}
+#qvCursor{position:fixed;pointer-events:none;z-index:999995;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(99,102,241,.7);transform:translate(-50%,-50%);transition:width .18s,height .18s,border-color .18s,background .18s;}
+#qvDot{position:fixed;pointer-events:none;z-index:999995;width:5px;height:5px;border-radius:50%;background:#6366F1;transform:translate(-50%,-50%);}
+@media(max-width:768px){#qvCursor,#qvDot,.qv-trail{display:none!important;}}
+
+/* PARTICLE BURST */
+.qv-spark{position:fixed;pointer-events:none;border-radius:50%;z-index:99996;animation:qvSpark .75s cubic-bezier(.2,1,.3,1) forwards;}
+@keyframes qvSpark{0%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(0);}}
+
+/* CLICK RIPPLE */
+.qv-ripple{position:fixed;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.18),transparent 70%);pointer-events:none;z-index:99994;width:0;height:0;transform:translate(-50%,-50%);animation:qvRipple .55s ease forwards;}
+@keyframes qvRipple{to{width:180px;height:180px;opacity:0;}}
+
+/* SEND PULSE */
+.sendbtn:not(:disabled){animation:qvSendPulse 2.8s ease-in-out infinite!important;}
+@keyframes qvSendPulse{0%,100%{box-shadow:0 4px 14px rgba(99,102,241,.45);}50%{box-shadow:0 4px 28px rgba(99,102,241,.85),0 0 0 7px rgba(99,102,241,.07);}}
+.sendbtn:hover,.sendbtn:active{animation:none!important;}
+
+/* AI BUBBLE SHIMMER */
+.msg.ai .bubble{position:relative;overflow:hidden;}
+.msg.ai .bubble::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.09) 50%,transparent 60%);background-size:200% 100%;animation:qvBubble 3.5s linear infinite;pointer-events:none;}
+@keyframes qvBubble{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* BREATHING IBOX */
+.ibox:not(:focus-within){animation:qvBreathe 3.8s ease-in-out infinite!important;}
+@keyframes qvBreathe{0%,100%{box-shadow:0 2px 14px rgba(99,102,241,.07);}50%{box-shadow:0 2px 26px rgba(99,102,241,.18),0 0 0 2px rgba(99,102,241,.05);}}
+
+/* INPUT WHITE LIGHT / DARK */
+:root .ibox,html:not([data-theme=dark]) .ibox,[data-theme=light] .ibox{background:#fff!important;border:1.5px solid rgba(99,102,241,.18)!important;}
+[data-theme=dark] .ibox{background:rgba(13,15,23,.9)!important;border-color:rgba(99,102,241,.2)!important;}
+
+/* AURORA SIDEBAR */
+#sidebar{overflow:hidden!important;}
+#sidebar::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(99,102,241,.08) 0%,rgba(139,92,246,.05) 35%,rgba(236,72,153,.04) 65%,rgba(16,185,129,.04) 100%);background-size:100% 400%;animation:qvAurora 9s ease-in-out infinite;pointer-events:none;z-index:0;}
+@keyframes qvAurora{0%,100%{background-position:0% 0%;}50%{background-position:0% 100%;}}
+#sidebar>*{position:relative;z-index:1;}
+
+/* SIDEBAR GROUPS */
+.sb-group-label{padding:6px 14px 3px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);user-select:none;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--text2);font-weight:500;transition:all .18s cubic-bezier(.16,1,.3,1);margin:1px 4px;position:relative;}
+.sb-item:hover{background:rgba(99,102,241,.08);color:var(--text);transform:translateX(2px);}
+.sb-item.sb-active{background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(139,92,246,.09));color:#6366F1;font-weight:600;border-left:2px solid #6366F1;padding-left:10px;}
+.sb-item .sb-i{font-size:13px;flex-shrink:0;}
+.sb-item .sb-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;}
+.sb-item .sb-x{opacity:0;background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:1px 5px;border-radius:4px;transition:all .13s;flex-shrink:0;}
+.sb-item:hover .sb-x{opacity:1;}
+.sb-item .sb-x:hover{color:#EF4444;background:rgba(239,68,68,.1);}
+
+/* MSG ANIM */
+.msg{animation:qvMsgIn .42s cubic-bezier(.16,1,.3,1) both!important;}
+@keyframes qvMsgIn{0%{opacity:0;transform:translateY(18px) scale(.94);filter:blur(4px);}100%{opacity:1;transform:none;filter:none;}}
+.msg.user{animation:qvMsgRight .42s cubic-bezier(.16,1,.3,1) both!important;}
+@keyframes qvMsgRight{0%{opacity:0;transform:translateX(18px) scale(.94);}100%{opacity:1;transform:none;}}
+
+/* TITLE SHIMMER */
+.fh-logo-text em,.lname em,.l-h1 em{background:linear-gradient(135deg,#6366F1,#A78BFA,#EC4899,#F59E0B,#6366F1)!important;background-size:300%!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;background-clip:text!important;animation:qvShimmer 4s linear infinite!important;}
+@keyframes qvShimmer{0%{background-position:0%;}100%{background-position:300%;}}
+
+/* STREAK GLOW */
+.streak-pill{animation:qvStreak 2.2s ease-in-out infinite!important;}
+@keyframes qvStreak{0%,100%{box-shadow:0 2px 8px rgba(255,107,53,.3);}50%{box-shadow:0 2px 22px rgba(255,107,53,.72),0 0 0 5px rgba(255,107,53,.07);}}
+
+html{scroll-behavior:smooth!important;}
+::-webkit-scrollbar{width:3px!important;}
+::-webkit-scrollbar-thumb{background:linear-gradient(#6366F1,#A855F7)!important;border-radius:3px!important;}
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║   QVIO MASTER DESIGN OVERRIDE v9 — FINAL                   ║
+   ║   Fixes all conflicting CSS. Last rule wins.                ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* ── HIDE OLD CURSOR DOT ELEMENTS ── */
+#qvCursor, #qvDot { display: none !important; }
+
+/* ── FLOATING HAMBURGER — TOP LEFT, PREMIUM ── */
+#qvFloatHam {
+  position: fixed !important;
+  top: 14px !important;
+  left: 14px !important;
+  transform: none !important;
+  z-index: 100000 !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 13px !important;
+  border: 1px solid rgba(99,102,241,0.2) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1) !important;
+  animation: qvHamBreath 3s ease-in-out infinite !important;
+  overflow: hidden !important;
+}
+/* Glass effect via pseudo — avoids bg conflict */
+#qvFloatHam::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 13px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  z-index: -1;
+  transition: background 0.28s;
+}
+[data-theme="dark"] #qvFloatHam::before {
+  background: rgba(13,15,23,0.9);
+}
+#qvFloatHam:hover::before {
+  background: rgba(99,102,241,0.12) !important;
+}
+@keyframes qvHamBreath {
+  0%,100% { box-shadow: 0 4px 20px rgba(99,102,241,0.15), 0 1px 0 rgba(255,255,255,0.8) inset; }
+  50%      { box-shadow: 0 6px 30px rgba(99,102,241,0.32), 0 0 0 4px rgba(99,102,241,0.07), 0 1px 0 rgba(255,255,255,0.8) inset; }
+}
+#qvFloatHam:hover {
+  transform: scale(1.1) !important;
+  animation: none !important;
+  box-shadow: 0 8px 28px rgba(99,102,241,0.35) !important;
+  border-color: rgba(99,102,241,0.45) !important;
+}
+#qvFloatHam:active { transform: scale(0.9) !important; }
+#qvFloatHam .hb {
+  display: block !important;
+  width: 17px !important; height: 1.8px !important;
+  background: #555 !important;
+  border-radius: 2px !important;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+[data-theme="dark"] #qvFloatHam .hb { background: #aab !important; }
+#qvFloatHam:hover .hb { background: #6366F1 !important; }
+#qvFloatHam:hover .hb:nth-child(1) { transform: translateY(-1.5px) !important; }
+#qvFloatHam:hover .hb:nth-child(3) { transform: translateY(1.5px) !important; }
+#qvFloatHam.sb-open .hb:nth-child(1) { transform: translateY(6.8px) rotate(45deg) !important; background: #6366F1 !important; }
+#qvFloatHam.sb-open .hb:nth-child(2) { opacity: 0 !important; transform: scaleX(0) !important; }
+#qvFloatHam.sb-open .hb:nth-child(3) { transform: translateY(-6.8px) rotate(-45deg) !important; background: #6366F1 !important; }
+
+/* ── HEADER — clean floating pill ── */
+#qvioHeader {
+  position: fixed !important;
+  top: 12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 140px) !important;
+  max-width: 780px !important;
+  height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 16px 0 16px !important;
+  gap: 10px !important;
+  z-index: 9999 !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,0.85) !important;
+  background: rgba(255,255,255,0.76) !important;
+  backdrop-filter: blur(32px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 8px 32px rgba(99,102,241,0.1), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+  animation: qvHeaderDrop 0.7s cubic-bezier(0.34,1.56,0.64,1) both !important;
+  overflow: hidden !important;
+}
+[data-theme="dark"] #qvioHeader {
+  background: rgba(10,12,20,0.84) !important;
+  border-color: rgba(99,102,241,0.18) !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+/* Header shimmer sweep */
+#qvioHeader::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: -120% !important;
+  width: 60% !important; height: 100% !important;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,0.13), transparent) !important;
+  animation: qvHeaderShine 4s ease-in-out infinite !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+@keyframes qvHeaderDrop {
+  from { opacity:0; transform: translateX(-50%) translateY(-40px) scale(0.94); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+@keyframes qvHeaderShine {
+  0%,60%,100% { left: -120%; }
+  30% { left: 140%; }
+}
+/* All header children above shimmer */
+#qvioHeader > * { position: relative !important; z-index: 1 !important; }
+
+/* ── CONTENT PUSH ── */
+#qvio-app { padding-top: 76px !important; }
+.chat { padding-top: 8px !important; }
+
+/* ── EARTH BUTTON ── */
+.earth-btn, button.earth-btn {
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  background: linear-gradient(135deg, #0f4c75, #27ae60, #0f4c75) !important;
+  font-size: 16px !important;
+  border: none !important;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+  animation: qvEarth 8s linear infinite !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+@keyframes qvEarth {
+  0%,100% { box-shadow: -3px 0 10px rgba(39,174,96,0.4), 0 0 0 2px rgba(39,174,96,0.2); }
+  50%      { box-shadow:  3px 0 10px rgba(15,76,117,0.5), 0 0 0 2px rgba(15,76,117,0.2); }
+}
+.earth-btn:hover {
+  transform: scale(1.22) rotate(18deg) !important;
+  animation: none !important;
+  box-shadow: 0 0 0 4px rgba(39,174,96,0.35), 0 6px 20px rgba(15,76,117,0.5) !important;
+}
+
+/* ── THEME BUTTON ── */
+#themeBtn {
+  font-size: 17px !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+  border: none !important;
+}
+#themeBtn:hover {
+  transform: scale(1.25) rotate(30deg) !important;
+}
+
+/* ── ALL FH BUTTONS ── */
+.fh-btn, .fh-right button {
+  cursor: pointer !important;
+  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important;
+  border: 1px solid rgba(99,102,241,0.1) !important;
+}
+.fh-btn:hover {
+  transform: scale(1.18) translateY(-2px) !important;
+  background: rgba(99,102,241,0.09) !important;
+  border-color: rgba(99,102,241,0.3) !important;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.2) !important;
+}
+.fh-btn:active { transform: scale(0.88) !important; }
+
+/* ── SIDEBAR hidden/show ── */
+#sidebar { display: none !important; }
+#sidebar.open { display: flex !important; }
+
+/* ── SIDEBAR AURORA ── */
+#sidebar.open {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; bottom: 0 !important;
+  width: 260px !important;
+  z-index: 50000 !important;
+  overflow: hidden !important;
+  animation: qvSbSlide 0.35s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+@keyframes qvSbSlide {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+#sidebar.open::before {
+  content: '' !important;
+  position: absolute !important; inset: 0 !important;
+  background: linear-gradient(160deg,
+    rgba(99,102,241,0.09) 0%,
+    rgba(139,92,246,0.06) 30%,
+    rgba(236,72,153,0.04) 65%,
+    rgba(16,185,129,0.04) 100%
+  ) !important;
+  background-size: 100% 400% !important;
+  animation: qvAurora 9s ease-in-out infinite !important;
+  pointer-events: none !important; z-index: 0 !important;
+}
+@keyframes qvAurora {
+  0%,100% { background-position: 0% 0%; }
+  50%      { background-position: 0% 100%; }
+}
+#sidebar.open > * { position: relative !important; z-index: 1 !important; }
+
+/* ── WELCOME SCREEN ── */
+.welcome {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 65vh !important;
+  text-align: center !important;
+  gap: 18px !important;
+  max-width: 660px !important;
+  margin: 0 auto !important;
+  padding: 20px 20px 40px !important;
+}
+
+/* ── WELCOME ORB — make it pop ── */
+.w-orb {
+  position: relative !important;
+  width: 110px !important; height: 110px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  margin: 0 auto 8px !important;
+  animation: qvOrbIn 1s cubic-bezier(0.34,1.56,0.64,1) 0.1s both !important;
+}
+@keyframes qvOrbIn {
+  from { opacity:0; transform: scale(0.4) rotate(-20deg); }
+  to   { opacity:1; transform: scale(1) rotate(0deg); }
+}
+.w-orb-inner {
+  width: 110px !important; height: 110px !important;
+  border-radius: 28px !important;
+  background: linear-gradient(135deg, #4F46E5, #7C3AED) !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  box-shadow: 0 12px 40px rgba(79,70,229,0.45), 0 0 0 0 rgba(79,70,229,0.15) !important;
+  animation: qvOrbFloat 4s ease-in-out infinite, qvOrbGlow 2.5s ease-in-out infinite alternate !important;
+  position: relative !important; z-index: 2 !important;
+  cursor: pointer !important;
+}
+@keyframes qvOrbFloat {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-12px) rotate(-3deg); }
+  75%      { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes qvOrbGlow {
+  from { box-shadow: 0 12px 40px rgba(79,70,229,0.4); }
+  to   { box-shadow: 0 20px 60px rgba(79,70,229,0.7), 0 0 0 18px rgba(79,70,229,0.04); }
+}
+.w-orb-inner:hover {
+  animation: qvOrbSpin 0.6s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+@keyframes qvOrbSpin {
+  0%   { transform: scale(1) rotate(0); }
+  50%  { transform: scale(1.3) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+/* Rings */
+.w-orb-ring {
+  position: absolute !important;
+  border-radius: 50% !important;
+  top: 50% !important; left: 50% !important;
+  transform: translate(-50%,-50%) !important;
+  animation: qvRingPing 3s ease-out infinite !important;
+}
+.w-orb-ring.r1 { width:145px; height:145px; border: 1.5px solid rgba(99,102,241,0.25); animation-delay:0s; }
+.w-orb-ring.r2 { width:185px; height:185px; border: 1px solid rgba(168,85,247,0.15); animation-delay:1s; }
+.w-orb-ring.r3 { width:225px; height:225px; border: 1px solid rgba(99,102,241,0.08); animation-delay:2s; }
+@keyframes qvRingPing {
+  0%   { transform: translate(-50%,-50%) scale(0.95); opacity: 0.8; }
+  60%  { transform: translate(-50%,-50%) scale(1.08); opacity: 0.3; }
+  100% { transform: translate(-50%,-50%) scale(1.18); opacity: 0; }
+}
+
+/* ── WELCOME TITLE ── */
+.welcome h1 {
+  font-size: clamp(30px,4.5vw,52px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.5px !important;
+  line-height: 1.1 !important;
+  color: var(--text, #0f172a) !important;
+  margin: 0 !important;
+  animation: qvTitleIn 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s both !important;
+}
+@keyframes qvTitleIn {
+  from { opacity:0; transform: translateY(30px) scale(0.94); filter: blur(6px); }
+  to   { opacity:1; transform: none; filter: none; }
+}
+.welcome h1 em, .welcome h1 span {
+  font-style: normal !important;
+  background: linear-gradient(135deg, #F59E0B, #FBBF24, #F97316, #FBBF24, #F59E0B) !important;
+  background-size: 300% !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: qvGoldShimmer 4s linear infinite !important;
+}
+@keyframes qvGoldShimmer {
+  0%   { background-position: 0%; }
+  100% { background-position: 300%; }
+}
+
+/* ── SUBTITLE ── */
+.wsub {
+  font-size: 15px !important;
+  color: var(--text2, #64748b) !important;
+  line-height: 1.65 !important;
+  max-width: 360px !important;
+  animation: qvSubIn 0.8s ease 0.5s both !important;
+}
+@keyframes qvSubIn {
+  from { opacity:0; letter-spacing: -4px; }
+  to   { opacity:1; letter-spacing: normal; }
+}
+
+/* ── QUICK REPLY CHIPS ── */
+.qrs { perspective: 1000px !important; }
+.qr {
+  transition: all 0.28s cubic-bezier(0.16,1,0.3,1) !important;
+  cursor: pointer !important;
+  border: 1px solid rgba(99,102,241,0.12) !important;
+  background: rgba(255,255,255,0.9) !important;
+  backdrop-filter: blur(8px) !important;
+}
+[data-theme="dark"] .qr {
+  background: rgba(20,22,35,0.8) !important;
+  border-color: rgba(99,102,241,0.18) !important;
+}
+.qr:hover {
+  transform: translateY(-5px) scale(1.07) !important;
+  box-shadow: 0 10px 28px rgba(99,102,241,0.22) !important;
+  background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05)) !important;
+  border-color: rgba(99,102,241,0.35) !important;
+}
+.qr:active { transform: scale(0.92) !important; }
+.qr:nth-child(1) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both !important; }
+.qr:nth-child(2) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.45s both !important; }
+.qr:nth-child(3) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s both !important; }
+.qr:nth-child(4) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.65s both !important; }
+.qr:nth-child(5) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.75s both !important; }
+.qr:nth-child(6) { animation: qvChip 0.6s cubic-bezier(0.16,1,0.3,1) 0.85s both !important; }
+@keyframes qvChip {
+  0%   { opacity:0; transform: translateY(18px) rotateX(40deg) scale(0.8); }
+  100% { opacity:1; transform: none; }
+}
+
+/* ── SUGGESTION CARDS ── */
+.sug {
+  transition: all 0.26s cubic-bezier(0.16,1,0.3,1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(99,102,241,0.1) !important;
+}
+[data-theme="dark"] .sug {
+  background: rgba(15,17,30,0.95) !important;
+  border-color: rgba(99,102,241,0.15) !important;
+}
+.sug::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04)) !important;
+  opacity: 0 !important;
+  transition: opacity 0.25s !important;
+  border-radius: inherit !important;
+}
+.sug:hover::before { opacity: 1 !important; }
+.sug:hover {
+  transform: translateY(-6px) scale(1.02) !important;
+  box-shadow: 0 16px 40px rgba(99,102,241,0.16) !important;
+  border-color: rgba(99,102,241,0.3) !important;
+}
+.sug:nth-child(1) { animation: qvSugIn 0.5s cubic-bezier(0.16,1,0.3,1) 0.3s both !important; }
+.sug:nth-child(2) { animation: qvSugIn 0.5s cubic-bezier(0.16,1,0.3,1) 0.4s both !important; }
+.sug:nth-child(3) { animation: qvSugIn 0.5s cubic-bezier(0.16,1,0.3,1) 0.5s both !important; }
+.sug:nth-child(4) { animation: qvSugIn 0.5s cubic-bezier(0.16,1,0.3,1) 0.6s both !important; }
+@keyframes qvSugIn {
+  from { opacity:0; transform: translateY(20px) scale(0.94); }
+  to   { opacity:1; transform: none; }
+}
+
+/* ── MESSAGES ── */
+.msg {
+  animation: qvMsgIn 0.42s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes qvMsgIn {
+  from { opacity:0; transform: translateY(16px) scale(0.95); filter: blur(4px); }
+  to   { opacity:1; transform: none; filter: none; }
+}
+.msg.user {
+  animation: qvMsgRight 0.42s cubic-bezier(0.16,1,0.3,1) both !important;
+}
+@keyframes qvMsgRight {
+  from { opacity:0; transform: translateX(16px) scale(0.95); filter: blur(2px); }
+  to   { opacity:1; transform: none; filter: none; }
+}
+/* AI bubble shimmer */
+.msg.ai .bubble {
+  position: relative !important;
+  overflow: hidden !important;
+}
+.msg.ai .bubble::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.1) 50%, transparent 65%) !important;
+  background-size: 200% 100% !important;
+  animation: qvBubbleShine 3.5s linear infinite !important;
+  pointer-events: none !important;
+}
+@keyframes qvBubbleShine {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+/* AI bubble hover */
+.msg.ai .bubble:hover {
+  transform: translateX(4px) !important;
+  transition: transform 0.15s !important;
+}
+.msg.user .bubble:hover {
+  transform: translateX(-4px) !important;
+  transition: transform 0.15s !important;
+}
+
+/* ── INPUT BOX ── */
+.ibox {
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1) !important;
+  animation: qvIboxIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1.5px solid rgba(99,102,241,0.15) !important;
+}
+[data-theme="dark"] .ibox {
+  background: rgba(13,15,23,0.92) !important;
+  border-color: rgba(99,102,241,0.22) !important;
+}
+.ibox:not(:focus-within) {
+  animation: qvIboxIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both, qvIboxBreathe 4s ease-in-out 1.2s infinite !important;
+}
+.ibox:focus-within {
+  animation: none !important;
+  transform: scale(1.016) translateY(-2px) !important;
+  box-shadow: 0 20px 55px rgba(99,102,241,0.14), 0 0 0 3px rgba(99,102,241,0.1) !important;
+  border-color: rgba(99,102,241,0.5) !important;
+}
+@keyframes qvIboxIn {
+  from { opacity:0; transform: translateY(24px) scale(0.94); }
+  to   { opacity:1; transform: none; }
+}
+@keyframes qvIboxBreathe {
+  0%,100% { box-shadow: 0 2px 14px rgba(99,102,241,0.07); }
+  50%      { box-shadow: 0 2px 28px rgba(99,102,241,0.18), 0 0 0 2px rgba(99,102,241,0.05); }
+}
+
+/* ── SEND BUTTON ── */
+.sendbtn {
+  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.sendbtn:not(:disabled) {
+  animation: qvSendIdle 2.8s ease-in-out infinite !important;
+}
+@keyframes qvSendIdle {
+  0%,100% { box-shadow: 0 4px 14px rgba(99,102,241,0.45); }
+  50%      { box-shadow: 0 6px 26px rgba(99,102,241,0.82), 0 0 0 6px rgba(99,102,241,0.08); }
+}
+.sendbtn:hover {
+  transform: scale(1.16) rotate(5deg) !important;
+  animation: none !important;
+  box-shadow: 0 10px 32px rgba(99,102,241,0.62) !important;
+}
+.sendbtn:active {
+  transform: scale(0.86) rotate(-5deg) !important;
+  transition: transform 0.08s !important;
+}
+/* Send button plasma ripple */
+.sendbtn::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important; left: 50% !important;
+  width: 0 !important; height: 0 !important;
+  background: rgba(255,255,255,0.3) !important;
+  border-radius: 50% !important;
+  transform: translate(-50%,-50%) !important;
+  transition: width 0.4s, height 0.4s !important;
+}
+.sendbtn:hover::before { width: 120px !important; height: 120px !important; }
+
+/* ── TYPING INDICATOR ── */
+.ty span, .tydot {
+  animation: qvTypeDot 1s ease-in-out infinite !important;
+}
+.ty span:nth-child(2), .tydot:nth-child(2) { animation-delay: 0.18s !important; }
+.ty span:nth-child(3), .tydot:nth-child(3) { animation-delay: 0.36s !important; }
+@keyframes qvTypeDot {
+  0%,80%,100% { transform: translateY(0) scale(0.6); opacity: 0.4; }
+  40%          { transform: translateY(-7px) scale(1.3); opacity: 1; }
+}
+
+/* ── STREAM CURSOR ── */
+.stream-cursor {
+  animation: qvCursorBlink 0.65s ease-in-out infinite alternate !important;
+}
+@keyframes qvCursorBlink {
+  from { opacity:1; text-shadow: 0 0 5px rgba(99,102,241,0.5); }
+  to   { opacity:0.1; text-shadow: 0 0 18px rgba(99,102,241,1); }
+}
+
+/* ── WISPR FLOAT BUTTON ── */
+#wisprBtn, #qvoiceFloatBtn {
+  animation: qvWispr 2.8s ease-in-out infinite !important;
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+@keyframes qvWispr {
+  0%,100% { transform: translateY(0) scale(1); box-shadow: 0 6px 24px rgba(99,102,241,0.42); }
+  50%      { transform: translateY(-7px) scale(1.06); box-shadow: 0 18px 44px rgba(99,102,241,0.62); }
+}
+#wisprBtn:hover, #qvoiceFloatBtn:hover {
+  transform: scale(1.2) translateY(-5px) !important;
+  animation: none !important;
+}
+
+/* ── XP BAR LASER ── */
+#xpBar, #floatXP #xpBar {
+  position: relative !important;
+  overflow: hidden !important;
+}
+#xpBar::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: -80% !important;
+  width: 60% !important; height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent) !important;
+  animation: qvXpLaser 2.2s ease-in-out infinite !important;
+}
+@keyframes qvXpLaser { from{left:-80%} to{left:130%} }
+
+/* ── STREAK PILL ── */
+.streak-pill {
+  animation: qvStreak 2.2s ease-in-out infinite !important;
+}
+@keyframes qvStreak {
+  0%,100% { box-shadow: 0 2px 8px rgba(255,107,53,0.3); }
+  50%      { box-shadow: 0 4px 22px rgba(255,107,53,0.72), 0 0 0 5px rgba(255,107,53,0.07); }
+}
+
+/* ── TOAST POP ── */
+.toast.show {
+  animation: qvToast 0.45s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+@keyframes qvToast {
+  from { opacity:0; transform:translateX(-50%) translateY(30px) scale(0.7) rotate(-4deg); }
+  70%  { transform:translateX(-50%) translateY(-5px) scale(1.04) rotate(1deg); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+/* ── MODAL ── */
+.modal.show {
+  animation: qvModal 0.38s cubic-bezier(0.34,1.56,0.64,1) both !important;
+}
+@keyframes qvModal {
+  from { opacity:0; transform:translate(-50%,-50%) scale(0.82) translateY(30px); }
+  to   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+
+/* ── SIDEBAR CHAT ITEMS ── */
+.sb-group-label {
+  padding: 7px 14px 3px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: var(--text3, #94a3b8) !important;
+  user-select: none !important;
+}
+.sb-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  font-size: 12.5px !important;
+  color: var(--text2, #64748b) !important;
+  font-weight: 500 !important;
+  transition: all 0.18s cubic-bezier(0.16,1,0.3,1) !important;
+  margin: 1px 4px !important;
+}
+.sb-item:hover {
+  background: rgba(99,102,241,0.09) !important;
+  color: var(--text, #0f172a) !important;
+  transform: translateX(3px) !important;
+}
+.sb-item.sb-active {
+  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)) !important;
+  color: #6366F1 !important;
+  font-weight: 600 !important;
+  border-left: 2px solid #6366F1 !important;
+}
+.sb-item .sb-x {
+  opacity: 0 !important;
+  background: none !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  padding: 2px 5px !important;
+  border-radius: 4px !important;
+  transition: all 0.13s !important;
+  flex-shrink: 0 !important;
+}
+.sb-item:hover .sb-x { opacity: 1 !important; }
+.sb-item .sb-x:hover { color: #EF4444 !important; background: rgba(239,68,68,0.1) !important; }
+
+/* ── CLICK RIPPLE ── */
+.qv-ripple {
+  position: fixed !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%) !important;
+  pointer-events: none !important;
+  z-index: 99990 !important;
+  width: 0 !important; height: 0 !important;
+  transform: translate(-50%,-50%) !important;
+  animation: qvRipple 0.55s ease forwards !important;
+}
+@keyframes qvRipple { to { width:180px; height:180px; opacity:0; } }
+
+/* ── SEND SPARK ── */
+.qv-spark {
+  position: fixed !important;
+  pointer-events: none !important;
+  border-radius: 50% !important;
+  z-index: 99992 !important;
+  animation: qvSpark 0.75s cubic-bezier(0.2,1,0.3,1) forwards !important;
+}
+@keyframes qvSpark {
+  from { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  to   { opacity:0; transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px !important; }
+::-webkit-scrollbar-thumb { background: linear-gradient(#6366F1,#A855F7) !important; border-radius: 3px !important; }
+
+/* ── SMOOTH EVERYTHING ── */
+html { scroll-behavior: smooth !important; }
+* { -webkit-font-smoothing: antialiased !important; }
+
+/* ── LOGO TITLE GRADIENT ── */
+.fh-logo-text em, .lname em, .l-h1 em {
+  background: linear-gradient(135deg,#6366F1,#A78BFA,#EC4899,#F59E0B,#6366F1) !important;
+  background-size: 300% !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: qvLogoShimmer 4s linear infinite !important;
+}
+@keyframes qvLogoShimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+/* ── STATUS DOT PULSE ── */
+.fh-status-dot, .sdot {
+  animation: qvStatusPulse 2s ease-in-out infinite !important;
+}
+@keyframes qvStatusPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+}
+
+/* ── ACTION BUTTONS ── */
+.act { transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1) !important; }
+.act:hover { transform: scale(1.3) rotate(8deg) !important; }
+.act:active { transform: scale(0.82) !important; }
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  #qvioHeader { width: calc(100% - 80px) !important; left: 70px !important; transform: none !important; top: 8px !important; }
+  @keyframes qvHeaderDrop {
+    from { opacity:0; transform: translateY(-40px) scale(0.94); }
+    to   { opacity:1; transform: none; }
+  }
+  .welcome h1 { font-size: 26px !important; }
+  .sugs { grid-template-columns: 1fr !important; }
+  #qvio-app { padding-top: 68px !important; }
+}
+
+/* CEO CLEANUP: Hide toy feature buttons */
+.tp-btn[onclick*="toggleCalc"],
+.tp-btn[onclick*="mood"],
+.tp-btn[onclick*="wpm"],
+.tp-btn[onclick*="poll"],
+.tp-btn[onclick*="currency"],
+.tp-btn[onclick*="bmi"],
+.tp-btn[onclick*="age"],
+.tp-btn[onclick*="word"],
+.tp-btn[onclick*="qotd"],
+.tp-btn[onclick*="news"],
+.tp-btn[onclick*="emoji"],
+.tp-btn[onclick*="cv"],
+.tp-btn[onclick*="notes"],
+.tp-btn[onclick*="timer"],
+/* Hide XP/streak UI */
+.streak-pill { display: none !important; }
+.fh-xp, #floatXP { display: none !important; }
+/* Hide confetti CSS */
+.confetti { display: none !important; }
+/* Hide old cursor ring */
+#qvCursor, #qvDot { display: none !important; }
+/* Hide Wispr panel */
+#wisprPanel, #wisprBtn { display: none !important; }
+/* Hide Hey QVIO btn */
+#heyQvioBtn { display: none !important; }
+/* Hide l-crown */
+.l-crown { display: none !important; }
+/* Hide orb r3 (too cluttered) */
+.w-orb-ring.r3 { display: none !important; }
+
+
+/* ── LIVE USERS COUNTER ── */
+#qvLiveCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #059669;
+  letter-spacing: 0.2px;
+  cursor: default;
+  user-select: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+[data-theme="dark"] #qvLiveCount {
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(16,185,129,0.25);
+  color: #34d399;
+}
+#qvLiveCount .qv-live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+  animation: qvLiveDot 1.8s ease-in-out infinite;
+}
+@keyframes qvLiveDot {
+  0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+  50%      { opacity:0.7; box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+}
+#qvLiveCount .qv-live-num {
+  font-variant-numeric: tabular-nums;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+#qvLiveCount.qv-bump .qv-live-num {
+  transform: scale(1.3);
+  color: #059669;
+}
+@media(max-width:500px) { #qvLiveCount { display:none!important; } }
+
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  QVIO 100 ULTRA SMOOTH ANIMATIONS v10                          ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── 1. PAGE LOAD FADE ── */
+body { animation: qv1PageLoad .5s ease both !important; }
+@keyframes qv1PageLoad { from{opacity:0} to{opacity:1} }
+
+/* ── 2. BACKGROUND AURORA MORPH ── */
+body {
+  background: linear-gradient(135deg,#f0f4ff,#faf5ff,#fff8f0,#fffef5,#f5f0ff,#f0f4ff) !important;
+  background-size: 600% 600% !important;
+  animation: qv1PageLoad .5s ease both, qv2BgMorph 18s ease infinite !important;
+}
+[data-theme="dark"] body {
+  background: linear-gradient(135deg,#06070f,#080c18,#0a0e1a,#06070f) !important;
+  background-size: 400% 400% !important;
+  animation: qv1PageLoad .5s ease both, qv2BgMorphDark 14s ease infinite !important;
+}
+@keyframes qv2BgMorph {
+  0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+}
+@keyframes qv2BgMorphDark {
+  0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+}
+
+/* ── 3. FLOATING ORB LEFT ── */
+body::before {
+  content:''!important; position:fixed!important;
+  width:700px!important; height:700px!important; border-radius:50%!important;
+  background:radial-gradient(circle,rgba(99,102,241,.07),transparent 70%)!important;
+  top:-250px!important; left:-250px!important;
+  animation:qv3Orb1 14s ease-in-out infinite!important;
+  pointer-events:none!important; z-index:0!important;
+}
+@keyframes qv3Orb1 {
+  0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(80px,60px) scale(1.1)} 66%{transform:translate(-40px,80px) scale(.9)}
+}
+
+/* ── 4. FLOATING ORB RIGHT ── */
+body::after {
+  content:''!important; position:fixed!important;
+  width:600px!important; height:600px!important; border-radius:50%!important;
+  background:radial-gradient(circle,rgba(245,158,11,.06),transparent 70%)!important;
+  bottom:-180px!important; right:-180px!important;
+  animation:qv4Orb2 17s ease-in-out infinite!important;
+  pointer-events:none!important; z-index:0!important;
+}
+@keyframes qv4Orb2 {
+  0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-60px,-80px) scale(1.15)} 66%{transform:translate(80px,-40px) scale(.95)}
+}
+
+/* ── 5. HEADER DROP + BLUR IN ── */
+#qvioHeader { animation:qv5HeaderDrop .75s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv5HeaderDrop {
+  from{opacity:0;transform:translateX(-50%) translateY(-40px) scale(.94);filter:blur(8px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);filter:blur(0)}
+}
+
+/* ── 6. HEADER GLASS SHINE SWEEP ── */
+#qvioHeader::after {
+  content:''!important; position:absolute!important;
+  top:0!important; left:-120%!important; width:60%!important; height:100%!important;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.13),transparent)!important;
+  animation:qv6HeaderShine 4.5s ease-in-out infinite!important;
+  pointer-events:none!important; z-index:0!important;
+}
+@keyframes qv6HeaderShine { 0%,65%,100%{left:-120%} 35%{left:140%} }
+
+/* ── 7. LOGO MARK FLOAT ── */
+.fh-logo-orb,.lmark,.fl-mark {
+  animation:qv7LogoFloat 4s ease-in-out infinite!important;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1)!important;
+}
+@keyframes qv7LogoFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+.fh-logo-orb:hover,.lmark:hover { transform:scale(1.2) rotate(12deg)!important; }
+
+/* ── 8. LOGO TEXT SHIMMER ── */
+.fh-logo-text em,.lname em,.l-h1 em {
+  background:linear-gradient(135deg,#6366F1,#A78BFA,#EC4899,#F59E0B,#6366F1)!important;
+  background-size:300%!important;
+  -webkit-background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  background-clip:text!important;
+  animation:qv8LogoShimmer 4s linear infinite!important;
+}
+@keyframes qv8LogoShimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+/* ── 9. STATUS DOT PULSE ── */
+.fh-status-dot,.sdot {
+  animation:qv9StatusPulse 2s ease-in-out infinite!important;
+}
+@keyframes qv9StatusPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}
+  50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}
+}
+
+/* ── 10. HAMBURGER BREATHE ── */
+#qvFloatHam { animation:qv10HamBreathe 3s ease-in-out infinite!important; }
+@keyframes qv10HamBreathe {
+  0%,100%{box-shadow:0 4px 20px rgba(99,102,241,.15),inset 0 1px 0 rgba(255,255,255,.9)}
+  50%{box-shadow:0 6px 30px rgba(99,102,241,.35),0 0 0 5px rgba(99,102,241,.07),inset 0 1px 0 rgba(255,255,255,.9)}
+}
+
+/* ── 11. WELCOME ORB FLOAT ── */
+.w-orb-inner {
+  animation:qv11OrbFloat 4s ease-in-out infinite, qv11OrbGlow 2.5s ease-in-out infinite alternate!important;
+}
+@keyframes qv11OrbFloat {
+  0%,100%{transform:translateY(0) rotate(0deg)} 25%{transform:translateY(-13px) rotate(-3deg)} 75%{transform:translateY(-9px) rotate(3deg)}
+}
+@keyframes qv11OrbGlow {
+  from{box-shadow:0 12px 40px rgba(79,70,229,.4)} to{box-shadow:0 22px 65px rgba(79,70,229,.72),0 0 0 20px rgba(79,70,229,.04)}
+}
+
+/* ── 12. ORB ENTRY SCALE ── */
+.w-orb { animation:qv12OrbIn 1s cubic-bezier(.34,1.56,.64,1) .1s both!important; }
+@keyframes qv12OrbIn { from{opacity:0;transform:scale(.4) rotate(-20deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+
+/* ── 13. ORB HOVER SPIN ── */
+.w-orb-inner:hover { animation:qv13OrbSpin .65s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv13OrbSpin { 0%{transform:scale(1) rotate(0)} 50%{transform:scale(1.3) rotate(180deg)} 100%{transform:scale(1) rotate(360deg)} }
+
+/* ── 14. ORB RING PING ── */
+.w-orb-ring { animation:qv14RingPing 3s ease-out infinite!important; }
+.w-orb-ring.r1{animation-delay:0s!important} .w-orb-ring.r2{animation-delay:1s!important}
+@keyframes qv14RingPing {
+  0%{transform:translate(-50%,-50%) scale(.95);opacity:.8}
+  60%{transform:translate(-50%,-50%) scale(1.08);opacity:.3}
+  100%{transform:translate(-50%,-50%) scale(1.18);opacity:0}
+}
+
+/* ── 15. WELCOME TITLE BLUR IN ── */
+.welcome h1 { animation:qv15TitleIn 1s cubic-bezier(.16,1,.3,1) .2s both!important; }
+@keyframes qv15TitleIn {
+  from{opacity:0;transform:translateY(32px) scale(.93);filter:blur(8px)} to{opacity:1;transform:none;filter:none}
+}
+
+/* ── 16. WELCOME TITLE GOLD SHIMMER ── */
+.welcome h1 em, .welcome h1 span {
+  font-style:normal!important;
+  background:linear-gradient(135deg,#F59E0B,#FBBF24,#F97316,#FBBF24,#F59E0B)!important;
+  background-size:300%!important;
+  -webkit-background-clip:text!important; -webkit-text-fill-color:transparent!important; background-clip:text!important;
+  animation:qv16GoldShimmer 4s linear infinite!important;
+}
+@keyframes qv16GoldShimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+/* ── 17. SUBTITLE LETTER REVEAL ── */
+.wsub { animation:qv17SubIn .9s ease .6s both!important; }
+@keyframes qv17SubIn { from{opacity:0;letter-spacing:-5px} to{opacity:1;letter-spacing:normal} }
+
+/* ── 18. BADGE SCALE IN ── */
+.w-badge { animation:qv18BadgeIn .6s cubic-bezier(.34,1.56,.64,1) .3s both!important; }
+@keyframes qv18BadgeIn { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+
+/* ── 19. CHIPS 3D FLIP IN ── */
+.qrs { perspective:1000px!important; }
+.qr:nth-child(1){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .35s both!important}
+.qr:nth-child(2){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .45s both!important}
+.qr:nth-child(3){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .55s both!important}
+.qr:nth-child(4){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .65s both!important}
+.qr:nth-child(5){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .75s both!important}
+.qr:nth-child(6){animation:qv19ChipFlip .6s cubic-bezier(.16,1,.3,1) .85s both!important}
+@keyframes qv19ChipFlip { 0%{opacity:0;transform:translateY(20px) rotateX(50deg) scale(.78)} 100%{opacity:1;transform:none} }
+
+/* ── 20. CHIP HOVER LIFT ── */
+.qr { transition:all .28s cubic-bezier(.16,1,.3,1)!important; }
+.qr:hover { transform:translateY(-6px) scale(1.1)!important; box-shadow:0 12px 30px rgba(99,102,241,.25)!important; }
+.qr:active { transform:scale(.91)!important; transition:transform .08s!important; }
+
+/* ── 21. SUGGESTION CARD STAGGER IN ── */
+.sug:nth-child(1){animation:qv21SugIn .5s cubic-bezier(.16,1,.3,1) .3s both!important}
+.sug:nth-child(2){animation:qv21SugIn .5s cubic-bezier(.16,1,.3,1) .4s both!important}
+.sug:nth-child(3){animation:qv21SugIn .5s cubic-bezier(.16,1,.3,1) .5s both!important}
+.sug:nth-child(4){animation:qv21SugIn .5s cubic-bezier(.16,1,.3,1) .6s both!important}
+@keyframes qv21SugIn { from{opacity:0;transform:translateY(22px) scale(.93)} to{opacity:1;transform:none} }
+
+/* ── 22. SUGGESTION CARD HOVER ── */
+.sug { transition:all .26s cubic-bezier(.16,1,.3,1)!important; }
+.sug:hover { transform:translateY(-7px) scale(1.03)!important; box-shadow:0 18px 44px rgba(99,102,241,.16)!important; }
+
+/* ── 23. AI MESSAGE BLUR IN ── */
+.msg { animation:qv23MsgIn .45s cubic-bezier(.16,1,.3,1) both!important; }
+@keyframes qv23MsgIn { from{opacity:0;transform:translateY(18px) scale(.94);filter:blur(5px)} to{opacity:1;transform:none;filter:none} }
+
+/* ── 24. USER MESSAGE SLIDE FROM RIGHT ── */
+.msg.user { animation:qv24MsgRight .45s cubic-bezier(.16,1,.3,1) both!important; }
+@keyframes qv24MsgRight { from{opacity:0;transform:translateX(20px) scale(.94);filter:blur(3px)} to{opacity:1;transform:none;filter:none} }
+
+/* ── 25. AI BUBBLE GLASS SHIMMER ── */
+.msg.ai .bubble { position:relative!important; overflow:hidden!important; }
+.msg.ai .bubble::after {
+  content:''!important; position:absolute!important; inset:0!important;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.1) 50%,transparent 65%)!important;
+  background-size:200% 100%!important;
+  animation:qv25BubbleShine 3.5s linear infinite!important;
+  pointer-events:none!important;
+}
+@keyframes qv25BubbleShine { from{background-position:200% 0} to{background-position:-200% 0} }
+
+/* ── 26. AI BUBBLE HOVER NUDGE ── */
+.msg.ai .bubble:hover { transform:translateX(4px)!important; transition:transform .15s!important; }
+.msg.user .bubble:hover { transform:translateX(-4px)!important; transition:transform .15s!important; }
+
+/* ── 27. INPUT REVEAL ── */
+.ibox { animation:qv27IboxReveal .9s cubic-bezier(.16,1,.3,1) .45s both!important; }
+@keyframes qv27IboxReveal { from{opacity:0;transform:translateY(28px) scale(.93)} to{opacity:1;transform:none} }
+
+/* ── 28. INPUT BREATHE IDLE ── */
+.ibox:not(:focus-within) { animation:qv27IboxReveal .9s cubic-bezier(.16,1,.3,1) .45s both, qv28IboxBreathe 4s ease-in-out 1.4s infinite!important; }
+@keyframes qv28IboxBreathe {
+  0%,100%{box-shadow:0 2px 14px rgba(99,102,241,.07)} 50%{box-shadow:0 4px 28px rgba(99,102,241,.18),0 0 0 2px rgba(99,102,241,.05)}
+}
+
+/* ── 29. INPUT FOCUS MAGNETIC ── */
+.ibox:focus-within {
+  animation:none!important;
+  transform:scale(1.018) translateY(-3px)!important;
+  box-shadow:0 22px 65px rgba(99,102,241,.16),0 0 0 3px rgba(99,102,241,.12)!important;
+  border-color:rgba(99,102,241,.5)!important;
+  transition:all .35s cubic-bezier(.16,1,.3,1)!important;
+}
+
+/* ── 30. SEND BUTTON IDLE PULSE ── */
+.sendbtn:not(:disabled) { animation:qv30SendIdle 2.8s ease-in-out infinite!important; }
+@keyframes qv30SendIdle {
+  0%,100%{box-shadow:0 4px 14px rgba(99,102,241,.45)} 50%{box-shadow:0 6px 28px rgba(99,102,241,.85),0 0 0 7px rgba(99,102,241,.08)}
+}
+
+/* ── 31. SEND BUTTON HOVER ROTATE ── */
+.sendbtn:hover { transform:scale(1.18) rotate(6deg)!important; animation:none!important; box-shadow:0 12px 36px rgba(99,102,241,.65)!important; }
+.sendbtn:active { transform:scale(.86) rotate(-6deg)!important; transition:transform .08s!important; }
+
+/* ── 32. SEND PLASMA RIPPLE ── */
+.sendbtn { position:relative!important; overflow:hidden!important; }
+.sendbtn::before { content:''!important; position:absolute!important; top:50%!important; left:50%!important; width:0!important; height:0!important; background:rgba(255,255,255,.3)!important; border-radius:50%!important; transform:translate(-50%,-50%)!important; transition:width .4s,height .4s!important; }
+.sendbtn:hover::before { width:120px!important; height:120px!important; }
+
+/* ── 33. TYPING DOTS BOUNCE ── */
+.tydot,.ty span { animation:qv33TypeDot 1s ease-in-out infinite!important; }
+.tydot:nth-child(2),.ty span:nth-child(2){animation-delay:.18s!important}
+.tydot:nth-child(3),.ty span:nth-child(3){animation-delay:.36s!important}
+@keyframes qv33TypeDot { 0%,80%,100%{transform:translateY(0) scale(.65);opacity:.4} 40%{transform:translateY(-8px) scale(1.3);opacity:1} }
+
+/* ── 34. STREAM CURSOR GLOW ── */
+.stream-cursor { animation:qv34CursorGlow .65s ease-in-out infinite alternate!important; }
+@keyframes qv34CursorGlow { from{opacity:1;text-shadow:0 0 5px rgba(99,102,241,.5)} to{opacity:.1;text-shadow:0 0 20px rgba(99,102,241,1)} }
+
+/* ── 35. WISPR BUTTON FLOAT ── */
+#wisprBtn,#qvoiceFloatBtn { animation:qv35Wispr 2.8s ease-in-out infinite!important; }
+@keyframes qv35Wispr {
+  0%,100%{transform:translateY(0) scale(1);box-shadow:0 6px 24px rgba(99,102,241,.42)}
+  50%{transform:translateY(-7px) scale(1.06);box-shadow:0 18px 44px rgba(99,102,241,.62)}
+}
+
+/* ── 36. WISPR HOVER ── */
+#wisprBtn:hover,#qvoiceFloatBtn:hover { transform:scale(1.2) translateY(-5px)!important; animation:none!important; }
+
+/* ── 37. XP BAR LASER ── */
+#xpBar { position:relative!important; overflow:hidden!important; }
+#xpBar::after { content:''!important; position:absolute!important; top:0!important; left:-80%!important; width:60%!important; height:100%!important; background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent)!important; animation:qv37XpLaser 2.2s ease-in-out infinite!important; }
+@keyframes qv37XpLaser { from{left:-80%} to{left:130%} }
+
+/* ── 38. STREAK PILL GLOW ── */
+.streak-pill { animation:qv38StreakGlow 2.2s ease-in-out infinite!important; }
+@keyframes qv38StreakGlow {
+  0%,100%{box-shadow:0 2px 8px rgba(255,107,53,.3)} 50%{box-shadow:0 4px 22px rgba(255,107,53,.72),0 0 0 5px rgba(255,107,53,.07)}
+}
+
+/* ── 39. TOAST EPIC POP ── */
+.toast.show { animation:qv39Toast .45s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv39Toast {
+  from{opacity:0;transform:translateX(-50%) translateY(32px) scale(.65) rotate(-4deg)}
+  70%{transform:translateX(-50%) translateY(-5px) scale(1.05) rotate(1deg)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+/* ── 40. MODAL SCALE UP ── */
+.modal.show { animation:qv40Modal .38s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv40Modal {
+  from{opacity:0;transform:translate(-50%,-50%) scale(.8) translateY(30px)}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+
+/* ── 41. SIDEBAR SLIDE IN ── */
+#sidebar.open { animation:qv41SbSlide .35s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv41SbSlide { from{transform:translateX(-100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* ── 42. SIDEBAR AURORA ── */
+#sidebar.open::before {
+  content:''!important; position:absolute!important; inset:0!important;
+  background:linear-gradient(160deg,rgba(99,102,241,.09) 0%,rgba(139,92,246,.06) 30%,rgba(236,72,153,.04) 65%,rgba(16,185,129,.04) 100%)!important;
+  background-size:100% 400%!important;
+  animation:qv42Aurora 9s ease-in-out infinite!important;
+  pointer-events:none!important; z-index:0!important;
+}
+@keyframes qv42Aurora { 0%,100%{background-position:0% 0%} 50%{background-position:0% 100%} }
+
+/* ── 43. SIDEBAR ITEMS STAGGER ── */
+.sb-item,.sb-chat-item { animation:qv43SbItem .3s ease both!important; }
+.sb-item:nth-child(1),.sb-chat-item:nth-child(1){animation-delay:.03s!important}
+.sb-item:nth-child(2),.sb-chat-item:nth-child(2){animation-delay:.06s!important}
+.sb-item:nth-child(3),.sb-chat-item:nth-child(3){animation-delay:.09s!important}
+.sb-item:nth-child(4),.sb-chat-item:nth-child(4){animation-delay:.12s!important}
+.sb-item:nth-child(5),.sb-chat-item:nth-child(5){animation-delay:.15s!important}
+.sb-item:nth-child(6),.sb-chat-item:nth-child(6){animation-delay:.18s!important}
+@keyframes qv43SbItem { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:none} }
+
+/* ── 44. SIDEBAR ITEM HOVER ── */
+.sb-item:hover,.sb-chat-item:hover { transform:translateX(4px)!important; }
+
+/* ── 45. ACTION BUTTONS ── */
+.act { transition:all .15s cubic-bezier(.34,1.56,.64,1)!important; }
+.act:hover { transform:scale(1.3) rotate(8deg)!important; }
+.act:active { transform:scale(.82)!important; }
+
+/* ── 46. FH BUTTONS HOVER ── */
+.fh-btn:hover { transform:scale(1.18) translateY(-2px)!important; }
+.fh-btn:active { transform:scale(.88)!important; }
+
+/* ── 47. EARTH BUTTON SPIN ── */
+.earth-btn { animation:qv47Earth 8s linear infinite!important; }
+@keyframes qv47Earth {
+  0%,100%{box-shadow:-4px 0 10px rgba(39,174,96,.4),0 0 0 2px rgba(39,174,96,.2)}
+  50%{box-shadow:4px 0 10px rgba(15,76,117,.5),0 0 0 2px rgba(15,76,117,.2)}
+}
+.earth-btn:hover { transform:scale(1.22) rotate(20deg)!important; animation:none!important; }
+
+/* ── 48. THEME BTN HOVER SPIN ── */
+#themeBtn:hover { transform:scale(1.25) rotate(30deg)!important; }
+
+/* ── 49. AVATAR PULSE ── */
+.fh-av-img,.uav,#uAv { transition:all .2s cubic-bezier(.34,1.56,.64,1)!important; }
+.fh-avatar:hover .fh-av-img,.uav:hover,#uAv:hover { transform:scale(1.15)!important; box-shadow:0 0 0 3px rgba(99,102,241,.4)!important; }
+
+/* ── 50. LIVE COUNTER PULSE ── */
+#qvLiveCount .qv-live-dot { animation:qv50LiveDot 1.8s ease-in-out infinite!important; }
+@keyframes qv50LiveDot {
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.6)} 50%{opacity:.7;box-shadow:0 0 0 5px rgba(16,185,129,0)}
+}
+
+/* ── 51. CLICK RIPPLE ── */
+.qv-ripple { animation:qv51Ripple .55s ease forwards!important; }
+@keyframes qv51Ripple { to{width:180px;height:180px;opacity:0} }
+
+/* ── 52. SEND SPARK BURST ── */
+.qv-spark { animation:qv52Spark .75s cubic-bezier(.2,1,.3,1) forwards!important; }
+@keyframes qv52Spark {
+  from{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  to{opacity:0;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(0)}
+}
+
+/* ── 53. MIC BUTTON RECORDING PULSE ── */
+#micBtn.rec,.micbtn.rec { animation:qv53MicRec 1s ease-in-out infinite!important; }
+@keyframes qv53MicRec { 0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.5)} 50%{box-shadow:0 0 0 10px rgba(185,28,28,0)} }
+
+/* ── 54. CODE BLOCK SLIDE IN ── */
+.code-block { animation:qv54CodeIn .4s cubic-bezier(.16,1,.3,1) both!important; }
+@keyframes qv54CodeIn { from{opacity:0;transform:translateY(12px) scale(.97)} to{opacity:1;transform:none} }
+
+/* ── 55. CODE COPY BUTTON ── */
+.code-copy { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.code-copy:hover { transform:scale(1.1)!important; }
+
+/* ── 56. CODE RUN BUTTON ── */
+.code-run { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.code-run:hover { transform:scale(1.1) translateY(-1px)!important; }
+
+/* ── 57. LOGIN SCREEN RISE ── */
+.lwrap { animation:qv57LoginRise .8s cubic-bezier(.16,1,.3,1) both!important; }
+@keyframes qv57LoginRise { from{opacity:0;transform:translateY(40px) scale(.95)} to{opacity:1;transform:none} }
+
+/* ── 58. LOGIN MARK QUANTUM PULSE ── */
+.l-mark { animation:qv58LoginPulse 3s ease-in-out infinite!important; }
+@keyframes qv58LoginPulse {
+  0%,100%{box-shadow:0 0 40px rgba(79,70,229,.4)} 50%{box-shadow:0 0 60px rgba(79,70,229,.8),0 0 100px rgba(79,70,229,.3)}
+}
+
+/* ── 59. LOGIN BUTTON SHINE ── */
+.gbtn { position:relative!important; overflow:hidden!important; }
+.gbtn::after { content:''!important; position:absolute!important; top:-50%!important; left:-60%!important; width:40%!important; height:200%!important; background:rgba(255,255,255,.15)!important; transform:skewX(-15deg)!important; animation:qv59BtnShine 3s ease infinite!important; }
+@keyframes qv59BtnShine { 0%{left:-60%} 40%,100%{left:130%} }
+
+/* ── 60. LOGIN INPUT FOCUS GLOW ── */
+.lf,.linp { transition:all .22s!important; }
+.lf:focus,.linp:focus { box-shadow:0 0 0 3px rgba(99,102,241,.2)!important; transform:scale(1.01)!important; }
+
+/* ── 61. LOGIN BADGE FLOAT IN ── */
+.l-badge { animation:qv61BadgeIn .5s cubic-bezier(.34,1.56,.64,1) both!important; }
+.l-badge:nth-child(1){animation-delay:.3s!important}
+.l-badge:nth-child(2){animation-delay:.4s!important}
+.l-badge:nth-child(3){animation-delay:.5s!important}
+@keyframes qv61BadgeIn { from{opacity:0;transform:scale(.5) translateY(10px)} to{opacity:1;transform:scale(1)} }
+
+/* ── 62. PRO BUTTON SHINE ── */
+.pro-hbtn,.fa-pro { position:relative!important; overflow:hidden!important; }
+.pro-hbtn::before,.fa-pro::before { content:''!important; position:absolute!important; top:-50%!important; left:-60%!important; width:40%!important; height:200%!important; background:rgba(255,255,255,.3)!important; transform:skewX(-20deg)!important; animation:qv62ProShine 2.5s ease infinite!important; }
+@keyframes qv62ProShine { 0%{left:-60%} 35%,100%{left:130%} }
+
+/* ── 63. MODE PILL HOVER ── */
+.fh-mode,.h-mode-pill { transition:all .22s cubic-bezier(.34,1.56,.64,1)!important; }
+.fh-mode:hover,.h-mode-pill:hover { transform:scale(1.05)!important; }
+
+/* ── 64. LANG PILLS HOVER ── */
+.lang-pill,.lsm-pill { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.lang-pill:hover,.lsm-pill:hover { transform:translateY(-3px) scale(1.06)!important; }
+
+/* ── 65. MODAL HEADER GRADIENT ── */
+.modal::before { animation:qv65ModalBar 3s ease-in-out infinite!important; }
+@keyframes qv65ModalBar { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+/* ── 66. SCROLL BUTTON HOVER ── */
+.scroll-btn { transition:all .2s cubic-bezier(.34,1.56,.64,1)!important; }
+.scroll-btn:hover { transform:scale(1.2) translateY(-2px)!important; }
+
+/* ── 67. GOOGLE SIGN IN ICON SPIN ── */
+.gbtn:hover .gicon { animation:qv67GoogleSpin .5s ease!important; }
+@keyframes qv67GoogleSpin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+/* ── 68. MENU DRAWER SLIDE ── */
+.modes-drawer.show,.tools-panel.show { animation:qv68DrawerIn .28s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv68DrawerIn { from{opacity:0;transform:scale(.92) translateY(-10px)} to{opacity:1;transform:none} }
+
+/* ── 69. SKELETON SHIMMER ── */
+.skel-line { background:linear-gradient(90deg,var(--border),var(--surface),var(--border))!important; background-size:200% 100%!important; animation:qv69SkelShim 1.4s ease-in-out infinite!important; }
+@keyframes qv69SkelShim { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+/* ── 70. MIC BUTTON HOVER ── */
+.micbtn,.micBtn { transition:all .2s cubic-bezier(.34,1.56,.64,1)!important; }
+.micbtn:hover,.micBtn:hover { transform:scale(1.15) translateY(-1px)!important; }
+
+/* ── 71. SMOOTH SCROLLBAR ── */
+::-webkit-scrollbar { width:3px!important; }
+::-webkit-scrollbar-thumb { background:linear-gradient(#6366F1,#A855F7)!important; border-radius:3px!important; box-shadow:0 0 6px rgba(99,102,241,.5)!important; }
+
+/* ── 72. HICO BUTTONS ── */
+.hico { transition:all .2s cubic-bezier(.34,1.56,.64,1)!important; }
+.hico:hover { transform:translateY(-3px) scale(1.12)!important; }
+.hico:active { transform:scale(.86)!important; }
+
+/* ── 73. OVERLAY FADE ── */
+.overlay.show { animation:qv73OverlayIn .25s ease both!important; }
+@keyframes qv73OverlayIn { from{opacity:0} to{opacity:1} }
+
+/* ── 74. SIDEBAROVERLAY ── */
+#sidebarOverlay.show { animation:qv73OverlayIn .25s ease both!important; }
+
+/* ── 75. MIC WAVE ON RECORD ── */
+.micbtn.rec::after { content:''!important; position:absolute!important; inset:-4px!important; border-radius:inherit!important; border:2px solid rgba(185,28,28,.4)!important; animation:qv75MicWave 1s ease-out infinite!important; }
+@keyframes qv75MicWave { to{transform:scale(1.6);opacity:0} }
+
+/* ── 76. INPUT AREA GRADIENT TOP BORDER ── */
+.input-area::before { content:''!important; position:absolute!important; top:0!important; left:8%!important; right:8%!important; height:1px!important; background:linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent)!important; animation:qv76BorderPulse 3s ease-in-out infinite!important; }
+@keyframes qv76BorderPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+/* ── 77. LINK HOVER IN BUBBLES ── */
+.bubble a { transition:all .15s!important; }
+.bubble a:hover { opacity:.8!important; text-decoration-color:currentColor!important; }
+
+/* ── 78. WELCOME SCREEN FADE IN ── */
+.welcome { animation:qv78WelcomeIn .6s ease both!important; }
+@keyframes qv78WelcomeIn { from{opacity:0} to{opacity:1} }
+
+/* ── 79. CONFETTI FALL (kept as CSS only, no JS) ── */
+@keyframes qv79ConfettiFall { from{transform:translateY(-20px) rotate(0deg);opacity:1} to{transform:translateY(100vh) rotate(720deg);opacity:0} }
+
+/* ── 80. IMAGE HOVER ZOOM ── */
+.gen-img,.gi img { transition:transform .22s cubic-bezier(.34,1.56,.64,1)!important; }
+.gen-img:hover { transform:scale(1.04)!important; }
+.gi:hover img { transform:scale(1.08)!important; }
+
+/* ── 81. STAT CARD HOVER ── */
+.stat-card { transition:all .22s cubic-bezier(.34,1.56,.64,1)!important; }
+.stat-card:hover { transform:translateY(-4px) scale(1.02)!important; box-shadow:0 12px 30px rgba(99,102,241,.12)!important; }
+
+/* ── 82. BADGE HOVER ── */
+.badge { transition:transform .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.badge.earned:hover { transform:scale(1.12) rotate(5deg)!important; }
+
+/* ── 83. HISTORY ITEM HOVER ── */
+.hi { transition:all .18s!important; }
+.hi:hover { transform:translateX(4px)!important; }
+
+/* ── 84. MEMORY ITEM HOVER ── */
+.mi { transition:all .18s!important; }
+.mi:hover { border-color:rgba(99,102,241,.3)!important; }
+
+/* ── 85. MDEL BUTTON HOVER ── */
+.mdel { transition:all .15s cubic-bezier(.34,1.56,.64,1)!important; }
+.mdel:hover { transform:scale(1.3) rotate(10deg)!important; }
+
+/* ── 86. AMOUNT PILL HOVER ── */
+.amt { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.amt:hover { transform:scale(1.08)!important; }
+
+/* ── 87. TP BUTTON HOVER ── */
+.tp-btn { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.tp-btn:hover { transform:scale(1.08) translateY(-2px)!important; }
+
+/* ── 88. LENS DROP HOVER ── */
+.lens-drop:hover { transform:scale(1.01)!important; }
+
+/* ── 89. LENS ACTION HOVER ── */
+.lens-act { transition:all .18s cubic-bezier(.34,1.56,.64,1)!important; }
+.lens-act:hover { transform:translateY(-2px) scale(1.05)!important; }
+
+/* ── 90. FLOAT LOGO BOUNCE ── */
+#floatLogo .fl-mark { animation:qv7LogoFloat 4s ease-in-out infinite!important; }
+
+/* ── 91. HEADER ITEMS REVEAL ── */
+.fh-left,.fh-center,.fh-right { animation:qv91HeaderItems .6s cubic-bezier(.16,1,.3,1) both!important; }
+.fh-left{animation-delay:.1s!important} .fh-center{animation-delay:.2s!important} .fh-right{animation-delay:.3s!important}
+@keyframes qv91HeaderItems { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+
+/* ── 92. WORD CARD HOVER ── */
+.word-card { transition:transform .22s cubic-bezier(.34,1.56,.64,1)!important; }
+.word-card:hover { transform:scale(1.02) translateY(-3px)!important; }
+
+/* ── 93. POLL BAR ANIMATE ── */
+.poll-bar { transition:width .6s cubic-bezier(.16,1,.3,1)!important; }
+
+/* ── 94. CHALLENGE HOVER ── */
+.challenge { transition:all .22s cubic-bezier(.16,1,.3,1)!important; }
+.challenge:hover { transform:translateY(-3px) scale(1.01)!important; }
+
+/* ── 95. MIC BUTTON APPEAR ── */
+#micBtn,.micbtn { transition:all .2s cubic-bezier(.34,1.56,.64,1)!important; }
+
+/* ── 96. SCROLL BTN PULSE ── */
+.scroll-btn.show { animation:qv96ScrollBtn .3s cubic-bezier(.34,1.56,.64,1) both!important; }
+@keyframes qv96ScrollBtn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+
+/* ── 97. PROFILE AVATAR HOVER ── */
+.prof-av { transition:all .22s cubic-bezier(.34,1.56,.64,1)!important; }
+.prof-av:hover { transform:scale(1.08)!important; box-shadow:0 8px 24px rgba(99,102,241,.3)!important; }
+
+/* ── 98. SIGN OUT HOVER ── */
+.signout { transition:all .18s!important; }
+.signout:hover { transform:scale(1.02)!important; background:rgba(185,28,28,.06)!important; }
+
+/* ── 99. NOTE ITEM HOVER ── */
+.note-item { transition:all .18s cubic-bezier(.16,1,.3,1)!important; }
+.note-item:hover { transform:translateX(3px) scale(1.01)!important; }
+
+/* ── 100. CURSOR TRAIL ── */
+.qv-trail { position:fixed!important; pointer-events:none!important; border-radius:50%!important; z-index:99994!important; transform:translate(-50%,-50%)!important; animation:qv100Trail .55s ease forwards!important; }
+@keyframes qv100Trail { 0%{opacity:.7;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-50%) scale(0)} }
+
+/* Hide hamburger and live counter on login */
+#qvFloatHam { transition: opacity 0.3s ease, transform 0.3s ease !important; }
+#qvFloatHam.qv-hidden-login { opacity:0!important; pointer-events:none!important; transform:scale(0.5)!important; }
+#qvLiveCount.qv-hidden-login { opacity:0!important; pointer-events:none!important; }
+
+</style></head>
 <body>
+<!-- FLOATING HAMBURGER + QVIO ANIMATIONS v8 -->
+<div id="qvFloatHam" onclick="qvToggleSidebar()" title="Menu">
+  <span class="hb"></span>
+  <span class="hb"></span>
+  <span class="hb"></span>
+</div>
+<div id="qvCursor"></div>
+<div id="qvDot"></div>
+<script>
+!function(){
+"use strict";
 
+/* Floating Hamburger Toggle */
+window.qvToggleSidebar = function(){
+  var sb=document.getElementById("sidebar");
+  var ham=document.getElementById("qvFloatHam");
+  var ov=document.getElementById("sidebarOverlay");
+  if(!sb)return;
+  var open=sb.classList.contains("open");
+  sb.classList.toggle("open",!open);
+  if(ham)ham.classList.toggle("sb-open",!open);
+  if(ov)ov.classList.toggle("show",!open);
+};
+window.toggleSidebar=window.qvToggleSidebar;
+window.closeSidebar=function(){
+  var sb=document.getElementById("sidebar");
+  var ham=document.getElementById("qvFloatHam");
+  var ov=document.getElementById("sidebarOverlay");
+  if(sb)sb.classList.remove("open");
+  if(ham)ham.classList.remove("sb-open");
+  if(ov)ov.classList.remove("show");
+};
+document.addEventListener("click",function(e){
+  var ov=document.getElementById("sidebarOverlay");
+  if(ov&&ov.classList.contains("show")&&e.target===ov) window.closeSidebar();
+});
 
+/* Theme fix */
+function applyTh(t){
+  document.documentElement.setAttribute("data-theme",t);
+  localStorage.setItem("theme",t);
+  var btn=document.getElementById("themeBtn");
+  if(btn)btn.textContent=t==="dark"?"\u2600\uFE0F":"\uD83C\uDF19";
+}
+window.addEventListener("load",function(){
+  var saved=localStorage.getItem("theme")||"light";
+  applyTh(saved);
+  window.cycleTh=function(){applyTh(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");};
+  window.setTh=function(t){
+    if(t==="auto"){var d=new Date().getHours();applyTh(d>=20||d<7?"dark":"light");}
+    else applyTh(t);
+    if(window.closeM)window.closeM("theme");
+  };
+});
+
+/* Cursor Trail */
+var C=document.getElementById("qvCursor"),D=document.getElementById("qvDot");
+var mx=0,my=0,cx=0,cy=0;
+var mob=/Mobi|Android/i.test(navigator.userAgent);
+var COLS=["rgba(99,102,241,.55)","rgba(139,92,246,.5)","rgba(236,72,153,.45)","rgba(245,158,11,.45)","rgba(16,185,129,.45)"];
+if(!mob){
+  document.addEventListener("mousemove",function(e){
+    mx=e.clientX;my=e.clientY;
+    if(D){D.style.left=mx+"px";D.style.top=my+"px";}
+    var el=document.createElement("div"),s=Math.random()*7+3;
+    el.className="qv-trail";
+    el.style.cssText="width:"+s+"px;height:"+s+"px;left:"+mx+"px;top:"+my+"px;background:"+COLS[0|Math.random()*COLS.length]+";";
+    document.body.appendChild(el);
+    setTimeout(function(){el.parentNode&&el.remove();},560);
+  });
+  (function raf(){cx+=(mx-cx)*.13;cy+=(my-cy)*.13;if(C){C.style.left=cx+"px";C.style.top=cy+"px";}requestAnimationFrame(raf);})();
+  document.addEventListener("mouseover",function(e){
+    if(!C)return;
+    if(e.target&&e.target.matches&&e.target.matches("button,a,.sug,.qr,.sb-item,.hico,.fh-btn,#qvFloatHam")){
+      C.style.width="34px";C.style.height="34px";C.style.borderColor="rgba(99,102,241,1)";C.style.background="rgba(99,102,241,.07)";
+    }
+  });
+  document.addEventListener("mouseout",function(){
+    if(!C)return;
+    C.style.width="22px";C.style.height="22px";C.style.borderColor="rgba(99,102,241,.7)";C.style.background="";
+  });
+}
+
+/* Click Ripple */
+document.addEventListener("click",function(e){
+  var r=document.createElement("div");
+  r.className="qv-ripple";r.style.left=e.clientX+"px";r.style.top=e.clientY+"px";
+  document.body.appendChild(r);
+  setTimeout(function(){r.parentNode&&r.remove();},580);
+});
+
+/* Send Particle Burst */
+function burst(btn){
+  var rc=btn.getBoundingClientRect(),ox=rc.left+rc.width/2,oy=rc.top+rc.height/2;
+  var C2=["#6366F1","#A78BFA","#EC4899","#F59E0B","#10B981","#06B6D4"];
+  for(var i=0;i<20;i++){
+    !function(){
+      var p=document.createElement("div"),ang=Math.random()*Math.PI*2,d=55+Math.random()*85,sz=Math.random()*6+2;
+      p.className="qv-spark";
+      p.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+ox+"px;top:"+oy+"px;background:"+C2[0|Math.random()*C2.length]+";--tx:"+(Math.cos(ang)*d)+"px;--ty:"+(Math.sin(ang)*d)+"px;animation-duration:"+(0.45+Math.random()*0.38)+"s;";
+      document.body.appendChild(p);
+      setTimeout(function(){p.parentNode&&p.remove();},850);
+    }();
+  }
+}
+document.addEventListener("click",function(e){
+  var b=e.target&&e.target.closest&&e.target.closest(".sendbtn");
+  if(b&&!b.disabled)burst(b);
+});
+
+/* Sidebar Groups */
+window.renderSidebarGroups=function(sessions){
+  var list=document.getElementById("sbChatList");
+  if(!list)return;
+  if(!sessions||!sessions.length){list.innerHTML="<div style='padding:20px;text-align:center;color:var(--text3);font-size:12px;'>No chats yet</div>";return;}
+  var now=new Date(),ts=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  var g={a:[],b:[],c:[],d:[]};
+  sessions.forEach(function(s){
+    var t=+(s.ts||s.timestamp||s.created||0);
+    if(t>=ts)g.a.push(s);else if(t>=ts-864e5)g.b.push(s);else if(t>=ts-6*864e5)g.c.push(s);else g.d.push(s);
+  });
+  var h="";
+  function grp(lbl,arr){
+    if(!arr.length)return;
+    h+="<div class='sb-group-label'>"+lbl+"</div>";
+    arr.forEach(function(s){
+      var id=s.id||s.sessionId||"",ti=(s.title||s.preview||s.name||"New Chat").replace(/</g,"&lt;").substring(0,40);
+      var ac=(window._activeSessionId===id)?" sb-active":"";
+      h+="<div class='sb-item"+ac+"' data-sid='"+id+"'><span class='sb-i'>&#128172;</span><span class='sb-t'>"+ti+"</span><button class='sb-x' data-del='"+id+"'>&#215;</button></div>";
+    });
+  }
+  grp("Today",g.a);grp("Yesterday",g.b);grp("Previous 7 Days",g.c);grp("Earlier",g.d);
+  list.innerHTML=h||"<div style='padding:20px;text-align:center;color:var(--text3);font-size:12px;'>No chats yet</div>";
+  list.onclick=function(e){
+    var item=e.target.closest(".sb-item");if(!item)return;
+    var sid=item.dataset.sid||"";
+    if(e.target.closest(".sb-x")){e.stopPropagation();if(window.deleteSession)window.deleteSession(sid);else if(window.removeSession)window.removeSession(sid);}
+    else{if(window.loadSession)window.loadSession(sid);else if(window.switchSession)window.switchSession(sid);}
+  };
+};
+
+function tryLS(){
+  try{
+    var ks=["qvio_sessions","qvioSessions","sessions","chatSessions","qvio_chats"];
+    for(var i=0;i<ks.length;i++){var r=localStorage.getItem(ks[i]);if(r){var a=JSON.parse(r);if(Array.isArray(a)&&a.length){window.renderSidebarGroups(a);return;}}}
+  }catch(e){}
+}
+window.addEventListener("load",function(){
+  setTimeout(tryLS,700);setTimeout(tryLS,2500);
+  document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();if(window.newChat)window.newChat();else if(window.createNewSession)window.createNewSession();}});
+});
+window.addEventListener("storage",function(e){var ks=["qvio_sessions","qvioSessions","sessions","chatSessions","qvio_chats"];if(ks.indexOf(e.key)>-1)tryLS();});
+setTimeout(function(){
+  ["saveSession","saveCurrentSession","addSession","createSession","renderSidebarChats"].forEach(function(fn){
+    if(window[fn]&&!window[fn]._qvp){var o=window[fn];window[fn]=function(){var r=o.apply(this,arguments);setTimeout(tryLS,350);return r;};window[fn]._qvp=1;}
+  });
+},3000);
+
+}();
+
+/* Sync hamburger visibility with login screen */
+(function(){
+  function syncUI(){
+    var ls=document.getElementById('loginScreen');
+    var ham=document.getElementById('qvFloatHam');
+    var lc=document.getElementById('qvLiveCount');
+    if(!ls||!ham)return;
+    var showing = ls.style.display!=='none' && getComputedStyle(ls).display!=='none';
+    ham.classList.toggle('qv-hidden-login', showing);
+    if(lc) lc.classList.toggle('qv-hidden-login', showing);
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){ setTimeout(syncUI,100); });
+  } else { setTimeout(syncUI,100); }
+  window.addEventListener('load',function(){
+    syncUI();
+    var ls=document.getElementById('loginScreen');
+    if(ls&&window.MutationObserver){
+      new MutationObserver(syncUI).observe(ls,{attributes:true,attributeFilter:['style']});
+    }
+  });
+})();
+</script>
 
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" style="position:fixed;inset:0;z-index:999999;background:#080C14;display:flex;align-items:center;justify-content:center;overflow-y:auto;">
   <div class="lwrap">
-    <div class="l-crown">👑</div>
+    
     <div class="l-mark">QV</div>
     <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
     <p class="l-p">India's most premium AI for the world.<br>150+ languages · Built for everyone, everywhere 🌍🇮🇳</p>
@@ -4670,21 +6996,7 @@ html body #sendBtn:active {
 <div class="toast" id="toast" style="opacity:0;visibility:hidden;pointer-events:none;"></div>
 <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
 
-<!-- CALCULATOR -->
-<div class="calc-w" id="calcW">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);">Calculator</span>
-    <button onclick="toggleCalc()" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:18px;">✕</button>
-  </div>
-  <div class="calc-disp" id="calcDisp">0</div>
-  <div class="calc-btns">
-    <button class="cb op" onclick="ci('C')">C</button><button class="cb op" onclick="ci('±')">±</button><button class="cb op" onclick="ci('%')">%</button><button class="cb op" onclick="ci('/')">÷</button>
-    <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button><button class="cb" onclick="ci('9')">9</button><button class="cb op" onclick="ci('*')">×</button>
-    <button class="cb" onclick="ci('4')">4</button><button class="cb" onclick="ci('5')">5</button><button class="cb" onclick="ci('6')">6</button><button class="cb op" onclick="ci('-')">−</button>
-    <button class="cb" onclick="ci('1')">1</button><button class="cb" onclick="ci('2')">2</button><button class="cb" onclick="ci('3')">3</button><button class="cb op" onclick="ci('+')">+</button>
-    <button class="cb" onclick="ci('0')" style="grid-column:span 2;">0</button><button class="cb" onclick="ci('.')">.</button><button class="cb eq" onclick="ci('=')">=</button>
-  </div>
-</div>
+<!-- CALCULATOR REMOVED -->
 
 <!-- OVERLAYS -->
 <div class="overlay" id="o_lang" onclick="closeM('lang')"></div>
@@ -4988,54 +7300,142 @@ html body #sendBtn:active {
 <!-- HEADER -->
 <script>
 
-// ══ CINEMATIC ENTRY ══
+// ══ QVIO CINEMATIC ENTRY — MADE IN INDIA ══
 (function(){
-  // Only show entry if not visited in last 10 mins
-  if(localStorage.getItem('qvio_entry_shown')) return;
-  localStorage.setItem('qvio_entry_shown','1');
+  if(localStorage.getItem('qvio_entered')) return;
+  localStorage.setItem('qvio_entered','1');
 
-  var entry = document.createElement('div');
-  entry.id = 'qvio-entry';
-  entry.innerHTML = `
-    <div class="entry-logo">QV</div>
-    <div class="entry-title">QV<span>IO</span></div>
-    <div class="entry-sub">India's Most Premium AI</div>
-    <div class="entry-line"></div>
-    <div class="entry-loading">
-      <div class="entry-dot"></div>
-      <div class="entry-dot"></div>
-      <div class="entry-dot"></div>
+  var el = document.createElement('div');
+  el.id = '_qvEntry';
+
+  el.innerHTML = `
+    <div class="_bg"></div>
+    <div class="_content">
+      <div class="_flag">🇮🇳</div>
+      <div class="_hello">Hello, India.</div>
+      <div class="_logo">
+        <svg viewBox="0 0 64 64" width="72" height="72">
+          <circle cx="32" cy="32" r="32" fill="url(#eg2)"/>
+          <defs>
+            <linearGradient id="eg2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4C1D95"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+          </defs>
+          <text x="50%" y="44%" dominant-baseline="middle" text-anchor="middle"
+            font-family="DM Mono,monospace" font-weight="900" font-size="32" fill="white">Q</text>
+          <text x="50%" y="74%" dominant-baseline="middle" text-anchor="middle"
+            font-family="DM Sans,sans-serif" font-weight="700" font-size="11" fill="white" opacity="0.8" letter-spacing="3">VIO</text>
+        </svg>
+      </div>
+      <div class="_tagline">India's AI. For the World.</div>
+      <div class="_made">Proudly made in Bharat 🇮🇳</div>
     </div>
   `;
-  document.body.appendChild(entry);
 
-  // Create particle burst around logo
-  setTimeout(function(){
-    for(var i=0;i<20;i++){
-      var p=document.createElement('div');
-      p.className='entry-particle';
-      var angle=Math.random()*360;
-      var dist=80+Math.random()*120;
-      var tx='translate('+Math.cos(angle*Math.PI/180)*dist+'px,'+Math.sin(angle*Math.PI/180)*dist+'px)';
-      p.style.cssText='width:'+(3+Math.random()*4)+'px;height:'+(3+Math.random()*4)+'px;background:'+(Math.random()>0.5?'#4F46E5':'#818CF8')+';left:50%;top:50%;margin:-3px;--tx:'+tx+';animation-delay:'+(Math.random()*0.5)+'s;';
-      entry.appendChild(p);
+  var style = document.createElement('style');
+  style.textContent = `
+    #_qvEntry {
+      position:fixed;inset:0;z-index:999999;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
     }
-    if(typeof playSound==='function') playSound('levelup');
-  }, 800);
+    #_qvEntry ._bg {
+      position:absolute;inset:0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(91,33,182,0.3) 0%, transparent 70%), #08080D;
+      animation: _bIn 0.5s ease both;
+    }
+    @keyframes _bIn { from{opacity:0} to{opacity:1} }
 
-  // Dismiss after 3s
-  setTimeout(function(){
-    entry.classList.add('fade-out');
-    setTimeout(function(){
-      entry.remove();
-    }, 800);
-  }, 3000);
+    #_qvEntry ._content {
+      position:relative;z-index:2;
+      display:flex;flex-direction:column;
+      align-items:center;gap:20px;
+      text-align:center;padding:20px;
+    }
 
-  // Click to skip
-  entry.addEventListener('click', function(){
-    entry.classList.add('fade-out');
-    setTimeout(function(){entry.remove();}, 800);
-  });
+    #_qvEntry ._flag {
+      font-size:56px;line-height:1;
+      animation:_fIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+      filter:drop-shadow(0 0 30px rgba(255,153,51,0.5));
+    }
+    @keyframes _fIn {
+      from{opacity:0;transform:scale(0.2) translateY(-30px);}
+      60%{transform:scale(1.2) translateY(4px);}
+      to{opacity:1;transform:scale(1) translateY(0);}
+    }
+
+    #_qvEntry ._hello {
+      font-family:'DM Sans',sans-serif;
+      font-size:clamp(32px,7vw,64px);
+      font-weight:800;
+      letter-spacing:-2px;
+      line-height:1;
+      background:linear-gradient(135deg,#FF9933 0%,#ffffff 45%,#138808 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      animation:_hIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.45s both;
+    }
+    @keyframes _hIn {
+      from{opacity:0;transform:translateY(30px) scale(0.85);filter:blur(12px);}
+      60%{filter:blur(0);}
+      to{opacity:1;transform:none;filter:blur(0);}
+    }
+
+    #_qvEntry ._logo {
+      animation:_lIn 1s cubic-bezier(0.34,1.56,0.64,1) 0.8s both;
+      filter:drop-shadow(0 8px 40px rgba(91,33,182,0.8));
+    }
+    @keyframes _lIn {
+      from{opacity:0;transform:scale(0.1) rotate(-30deg);}
+      65%{transform:scale(1.18) rotate(6deg);}
+      80%{transform:scale(0.95) rotate(-2deg);}
+      to{opacity:1;transform:scale(1) rotate(0);}
+    }
+
+    #_qvEntry ._tagline {
+      font-family:'DM Sans',sans-serif;
+      font-size:clamp(16px,3vw,24px);
+      font-weight:600;color:#fff;
+      letter-spacing:-0.3px;
+      animation:_tIn 0.6s cubic-bezier(0.16,1,0.3,1) 1.15s both;
+    }
+    @keyframes _tIn {
+      from{opacity:0;transform:translateY(14px);}
+      to{opacity:1;transform:none;}
+    }
+
+    #_qvEntry ._made {
+      font-family:'DM Sans',sans-serif;
+      font-size:13px;font-weight:500;
+      color:rgba(255,255,255,0.35);
+      letter-spacing:0.5px;
+      animation:_mIn 0.5s ease 1.4s both;
+    }
+    @keyframes _mIn { from{opacity:0;} to{opacity:1;} }
+
+    #_qvEntry._out {
+      animation:_out 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes _out {
+      from{opacity:1;transform:scale(1);}
+      to{opacity:0;transform:scale(1.08);}
+    }
+  `;
+
+  document.head.appendChild(style);
+  document.body.appendChild(el);
+
+  function dismiss(){
+    el.classList.add('_out');
+    el.style.pointerEvents = 'none';
+    setTimeout(function(){el.remove();style.remove();},560);
+  }
+
+  // Auto dismiss after 2.8s
+  setTimeout(dismiss, 2800);
+  el.addEventListener('click', dismiss);
 })();
 
 </script>
@@ -5107,6 +7507,13 @@ html body #sendBtn:active {
     <button class="fh-btn earth-btn" onclick="openLangSelect()" title="Language">🌍</button>
     <button class="fh-btn" id="themeBtn" onclick="cycleTh()" title="Theme">🌙</button>
     <button class="fh-btn" id="soundBtn" onclick="toggleSound()" title="Sound">🔔</button>
+    
+  <!-- Live Users Counter -->
+  <div id="qvLiveCount" title="People using QVIO right now">
+    <span class="qv-live-dot"></span>
+    <span class="qv-live-num" id="qvLiveNum">—</span>
+    <span>live</span>
+  </div>
     <div class="fh-avatar" onclick="openM('prof')">
       <div class="fh-av-img" id="uAv">?</div>
       <span class="fh-av-name" id="uNm">Guest</span>
@@ -5114,7 +7521,7 @@ html body #sendBtn:active {
   </div>
 
   <!-- XP bar -->
-  <div class="fh-xp"><div id="xpBar"></div></div>
+  <div class="fh-xp" style="display:none!important"><div id="xpBar"></div></div>
 </header>
 
 
@@ -5174,20 +7581,19 @@ html body #sendBtn:active {
   <div class="w-badges">
     <span class="w-badge">⚡ India's Fastest</span>
     <span class="w-badge">🧠 150+ Languages</span>
-    <span class="w-badge">🆓 Always Free</span>
+    
   </div>
 </div>
 </div>
 
 <div class="input-area" style="background:rgba(255,255,255,0.95)!important;border-top:1px solid rgba(99,102,241,0.1)!important;backdrop-filter:blur(24px)!important;">
   <div class="char-cnt" id="charCnt"></div>
-  <div class="ibox" style="background:#ffffff!important;border:1.5px solid rgba(167,139,250,0.2)!important;border-radius:20px!important;padding:10px 12px!important;display:flex!important;gap:8px!important;align-items:center!important;box-shadow:0 2px 20px rgba(124,58,237,0.08)!important;">
-    <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything... or type create image: for stunning 4K art" rows="1" onkeydown="handleKey(event)" oninput="onInp(this)"></textarea>
-    <div class="ibtns">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="Voice input" style="background:transparent!important;border:1.5px solid rgba(99,102,241,0.15)!important;border-radius:10px!important;color:rgba(99,102,241,0.6)!important;padding:6px 8px!important;cursor:pointer!important;font-size:15px!important;line-height:1!important;">🎤</button>
-      <button class="micbtn" id="lensBtn" onclick="openLens()" title="QVIO Lens — scan anything" style="background:transparent!important;border:1.5px solid rgba(99,102,241,0.15)!important;border-radius:10px!important;color:rgba(99,102,241,0.6)!important;padding:6px 8px!important;cursor:pointer!important;font-size:15px!important;line-height:1!important;">🔍</button>
-      <button id="sendBtn" onclick="sendMsg()" class="qsend-btn" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);width:40px;height:40px;min-width:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;box-shadow:0 0 0 3px rgba(167,139,250,0.3),0 4px 20px rgba(124,58,237,0.6),0 0 30px rgba(167,139,250,0.4);position:relative;overflow:hidden;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-    </div>
+  <div class="ibox" id="mainIbox" style="background:#ffffff!important;border:1.5px solid rgba(167,139,250,0.18)!important;border-radius:28px!important;padding:8px 8px 8px 20px!important;display:flex!important;gap:10px!important;align-items:center!important;box-shadow:0 2px 24px rgba(124,58,237,0.08),0 0 0 0 rgba(129,140,248,0)!important;transition:all 0.35s cubic-bezier(0.16,1,0.3,1)!important;">
+    <!-- Hidden buttons — JS still works -->
+    <button class="micbtn" id="micBtn" onclick="toggleMic()" style="display:none!important;">🎤</button>
+    <button class="micbtn" id="lensBtn" onclick="openLens()" style="display:none!important;">🔍</button>
+    <textarea id="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Ask anything..." rows="1" onkeydown="handleKey(event)" oninput="onInp(this)" style="flex:1!important;border:none!important;outline:none!important;background:transparent!important;font-size:15px!important;font-family:'DM Sans',sans-serif!important;color:#1e293b!important;resize:none!important;max-height:140px!important;min-height:22px!important;line-height:1.5!important;padding:0!important;"></textarea>
+    <button id="sendBtn" onclick="sendMsg()" class="qsend-btn" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)!important;width:42px!important;height:42px!important;min-width:42px!important;border-radius:50%!important;border:none!important;color:#fff!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;flex-shrink:0!important;box-shadow:0 0 0 4px rgba(167,139,250,0.2),0 4px 20px rgba(124,58,237,0.5)!important;position:relative!important;overflow:hidden!important;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s!important;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
   </div>
   <div class="qrs">
     
@@ -5741,18 +8147,7 @@ document.addEventListener('keyup', function(e){
 
 </div>
 <!-- WISPR FLOW -->
-<div id="wisprPanel">
-  <div class="wispr-status">
-    <span id="wisprStatusText">Ready to listen</span>
-    <div class="wispr-wave" id="wisprWave" style="display:none;">
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-    </div>
-  </div>
-  <div id="wisprTranscript">Tap mic to start speaking...</div>
+<!-- wisprPanel removed --><div id="wisprTranscript">Tap mic to start speaking...</div>
   <div class="wispr-settings">
     <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
     <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
@@ -5765,7 +8160,7 @@ document.addEventListener('keyup', function(e){
     <button class="wispr-action primary" onclick="wisprSendNow()">Send →</button>
   </div>
 </div>
-<button id="wisprBtn" onclick="toggleWispr()" title="QVIO Voice (Wispr Flow)">🎙️</button>
+<!-- wispr float btn removed -->
 
 
 <!-- PRIVACY POLICY -->
@@ -6073,23 +8468,84 @@ Channel: '+info.author_name+'
 }
 
 async function handleYouTube(text){
-  var ytId=extractYTId(text);
-  if(!ytId)return false;
+  var ytMatch = text.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+  if(!ytMatch) return false;
+  var videoId = ytMatch[1];
   
+  // Show YouTube embed immediately
+  hideWelcome();
+  var chat = document.getElementById('chat');
+  if(!chat) return false;
+  
+  // Add user message
+  addMsg(text, 'user');
+  
+  // Add embedded player
+  var embedDiv = document.createElement('div');
+  embedDiv.className = 'msg ai';
+  embedDiv.innerHTML = \`
+    <div class="av ai">QV</div>
+    <div class="mwrap">
+      <div class="bubble" style="padding:12px;max-width:520px;">
+        <div style="border-radius:12px;overflow:hidden;margin-bottom:10px;">
+          <iframe width="100%" height="280" 
+            src="https://www.youtube.com/embed/\${videoId}?autoplay=0&rel=0" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            style="display:block;border-radius:12px;">
+          </iframe>
+        </div>
+        <p style="margin:0;font-size:13px;color:var(--text2);">▶ Analyzing this video...</p>
+      </div>
+    </div>
+  \`;
+  chat.appendChild(embedDiv);
+  chat.scrollTop = chat.scrollHeight;
+  
+  // Show typing
   showTyping();
-  var transcript=await getYTTranscript(ytId);
-  var videoUrl='https://youtube.com/watch?v='+ytId;
   
-  var msg='';
-  if(transcript&&transcript.length>100){
-    msg='Analyze this YouTube video and give me: 1) Brief summary 2) Key points 3) Main takeaways\n\nVideo URL: '+videoUrl+'\n\nTranscript:\n'+transcript;
-  } else {
-    msg='Analyze this YouTube video: '+videoUrl+'\n\nGive me: 1) What this video is likely about based on the URL 2) Key topics it probably covers 3) Why someone should watch it.';
+  // Get video info from noembed
+  var title = '', channelName = '';
+  try {
+    var r = await fetch('https://noembed.com/embed?url=https://youtube.com/watch?v=' + videoId);
+    var d = await r.json();
+    title = d.title || '';
+    channelName = d.author_name || '';
+  } catch(e) {}
+  
+  // Get AI analysis
+  var prompt = 'The user shared a YouTube video.' + 
+    (title ? ' Title: "' + title + '".' : '') +
+    (channelName ? ' Channel: ' + channelName + '.' : '') +
+    ' Video ID: ' + videoId + '.' +
+    '\n\nPlease:\n1. Summarize what this video is likely about\n2. List key topics it probably covers\n3. Tell them if they should watch it and why\n\nBe helpful and conversational, like a friend recommending content.';
+  
+  try {
+    var reply = await callGroq(prompt);
+    hideTyping();
+    
+    // Update the embed bubble with full analysis
+    var bubble = embedDiv.querySelector('.bubble p');
+    if(bubble) bubble.remove();
+    var analysisDiv = embedDiv.querySelector('.bubble');
+    if(analysisDiv) {
+      var txt = document.createElement('div');
+      txt.innerHTML = renderText(reply);
+      txt.style.cssText = 'margin-top:10px;font-size:14px;line-height:1.6;';
+      analysisDiv.appendChild(txt);
+    }
+    
+    chatHistory.push({role:'user', content: text});
+    chatHistory.push({role:'assistant', content: reply});
+    saveCurrentSession();
+    saveChatHistory();
+  } catch(e) {
+    hideTyping();
+    addMsg('Could not analyze video: ' + e.message, 'ai');
   }
   
-  hideTyping();
-  document.getElementById('inp').value=msg;
-  sendMsg();
   return true;
 }
 
@@ -6102,26 +8558,7 @@ function getSessions(){
   catch(e){return {};}
 }
 
-function saveCurrentSession(){
-  if(chatHistory.length===0)return;
-  try{
-    var sessions=getSessions();
-    sessions[_currentSessionId]={
-      id:_currentSessionId,
-      title:chatHistory[0]?chatHistory[0].content.substring(0,40)+'...':'New Chat',
-      msgs:chatHistory,
-      ts:Date.now(),
-      updated:Date.now()
-    };
-    // Keep max 50 sessions
-    var keys=Object.keys(sessions).sort(function(a,b){return sessions[b].updated-sessions[a].updated;});
-    if(keys.length>50){
-      keys.slice(50).forEach(function(k){delete sessions[k];});
-    }
-    localStorage.setItem('qvio_all_sessions',JSON.stringify(sessions));
-    renderSessionList();
-  }catch(e){}
-}
+// saveCurrentSession defined below
 
 function loadSession(sessionId){
   try{
@@ -6491,6 +8928,94 @@ window.addEventListener('load',function(){
     if(typeof launchConfetti==='function')launchConfetti();
   });
 });
+
+/* ── QVIO LIVE USER COUNTER ── */
+(function(){
+  var KEY = 'qvio_presence';
+  var MY_KEY = 'qvio_my_uid';
+  var WINDOW = 90000; // 90 seconds = "live"
+  
+  // Get or create unique session ID
+  var myUid = sessionStorage.getItem(MY_KEY);
+  if(!myUid){
+    myUid = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem(MY_KEY, myUid);
+  }
+  
+  function getPresence(){
+    try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; }
+  }
+  
+  function setPresence(data){
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){}
+  }
+  
+  function heartbeat(){
+    var data = getPresence();
+    data[myUid] = Date.now();
+    // Clean up stale entries older than WINDOW
+    var now = Date.now();
+    Object.keys(data).forEach(function(k){
+      if(now - data[k] > WINDOW) delete data[k];
+    });
+    setPresence(data);
+    return Object.keys(data).length;
+  }
+  
+  function updateDisplay(count){
+    var el = document.getElementById('qvLiveNum');
+    var wrap = document.getElementById('qvLiveCount');
+    if(!el || !wrap) return;
+    
+    // Add realistic minimum — always show at least a plausible number
+    // Base: actual localStorage count + simulated concurrent users
+    var base = Math.max(count, 1);
+    // Simulate realistic concurrent users (seeded by time-of-day)
+    var hour = new Date().getHours();
+    var timeBoost = hour >= 9 && hour <= 23 ? 
+      Math.floor(12 + Math.sin(Date.now()/60000) * 8 + Math.random()*6) :
+      Math.floor(3 + Math.random()*4);
+    var display = base + timeBoost;
+    
+    var prev = parseInt(el.textContent) || 0;
+    el.textContent = display;
+    
+    // Bump animation on change
+    if(prev !== display){
+      wrap.classList.add('qv-bump');
+      setTimeout(function(){ wrap.classList.remove('qv-bump'); }, 400);
+    }
+  }
+  
+  // Start heartbeat
+  function tick(){
+    var count = heartbeat();
+    updateDisplay(count);
+  }
+  
+  // First tick after DOM ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', tick);
+  } else {
+    setTimeout(tick, 800);
+  }
+  
+  // Heartbeat every 30s
+  setInterval(tick, 30000);
+  
+  // Also update on storage events (other tabs)
+  window.addEventListener('storage', function(e){
+    if(e.key === KEY) updateDisplay(Object.keys(getPresence()).length);
+  });
+  
+  // Remove own entry on unload
+  window.addEventListener('beforeunload', function(){
+    var data = getPresence();
+    delete data[myUid];
+    setPresence(data);
+  });
+})();
+
 </script></body>
 <script>
 // ═══════════════════════════════════════════════════
@@ -6795,7 +9320,7 @@ function renderStreakDays(){
 // ═══════════════════════════════
 // CONFETTI
 // ═══════════════════════════════
-function fireConfetti(){
+function fireConfetti(){ return; /*disabled*/ } function _DEAD_fireConfetti_DISABLED(DEAD){
   var cols=['#D4A017','#F0C842','#0D1B3E','#162554','#FFFFFF','#FFD966','#B8860B'];
   for(var i=0;i<90;i++){
     (function(i){setTimeout(function(){
@@ -6910,7 +9435,25 @@ var PROMPTS={
   student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
   exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
   pro:'You are QVIO Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. No fluff ever.',
-  business:'You are QVIO Business, senior business advisor for Indian SMEs and startups. '+RULES+'Business plans pitch decks GST growth hacks.',
+  business:`You are QVIO Business — India's most brutally honest, data-driven business AI. Built by VARUN. ONLY answer business-related questions.
+
+ONLY ANSWER: Business plans, startup strategy, market research, fundraising, pitch decks, financial modeling, P&L, cash flow, burn rate, runway, GST, taxation, legal structure, HR, sales, growth, marketing, branding, pricing, competition, Startup India, DPIIT, MSME schemes.
+
+IF NOT BUSINESS: Reply exactly — "I'm QVIO Business Mode. Ask me about startups, strategy, finance, marketing, or growth."
+
+BRUTAL HONESTY RULES:
+1. NEVER give false hope. Bad idea? Say it with data.
+2. Cite realistic failure rates: "90% of Indian startups fail in 2 years."
+3. Risk FIRST, reward second. Always.
+4. No moat = "Easily replicable. What stops a funded competitor?"
+5. Small TAM = "Lifestyle business at best. Not VC fundable."
+6. No revenue model = "You cannot build a business on hope."
+7. Unclear founder-market fit = "Why you? What gives you the right to win this market?"
+8. High burn = "At this rate you have X months. Not enough for PMF."
+
+FORMAT: Assessment → Key Risks → Market Reality → Action → One hard question they must answer.
+
+Be Shark Tank India judges — data-driven, blunt, constructive. Tell them what friends won't.`,
   spiritual:'You are QVIO Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism.',
   code:'You are QVIO Code, an elite full-stack engineer. '+RULES+'Always use code blocks. Explain every line.',
   math:'You are QVIO Math, a brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level.',
@@ -7381,7 +9924,77 @@ function scrollToPinned(){if(pinnedEl)pinnedEl.scrollIntoView({behavior:'smooth'
 // ═══════════════════════════════
 var cachedVoices=[];
 if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){cachedVoices=window.speechSynthesis.getVoices();};}
-var LANG_TAGS={'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],'punjabi':['pa-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['hi-IN'],'manipuri':['hi-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['hi-IN'],'konkani':['hi-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],'japanese':['ja-JP'],'korean':['ko-KR'],'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],'tibetan':['zh-CN'],'mongolian':['mn-MN'],'javanese':['id-ID'],'sundanese':['id-ID'],'cebuano':['fil-PH'],'arabic':['ar-SA','ar-EG'],'persian':['fa-IR'],'hebrew':['he-IL'],'turkish':['tr-TR'],'pashto':['ps-AF'],'kurdish':['ku-TR'],'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],'swahili':['sw-KE'],'amharic':['am-ET'],'hausa':['ha-NG'],'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],'shona':['sn-ZW'],'spanish':['es-ES','es-MX'],'french':['fr-FR'],'german':['de-DE'],'portuguese':['pt-PT','pt-BR'],'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],'english':['en-IN','en-US','en-GB'],'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX']};
+var LANG_TAGS={
+  // Indian languages
+  'hindi':['hi-IN'],'kannada':['kn-IN'],'tamil':['ta-IN'],'telugu':['te-IN'],
+  'bengali':['bn-IN','bn-BD'],'marathi':['mr-IN'],'gujarati':['gu-IN'],
+  'punjabi':['pa-IN','pa-Guru-IN'],'malayalam':['ml-IN'],'odia':['or-IN'],
+  'urdu':['ur-PK','ur-IN'],'assamese':['as-IN'],'nepali':['ne-NP'],
+  'sindhi':['sd-IN'],'sanskrit':['hi-IN'],'kashmiri':['ur-PK'],
+  'manipuri':['bn-IN'],'dogri':['hi-IN'],'santali':['hi-IN'],'bodo':['as-IN'],
+  'konkani':['kok-IN'],'tulu':['kn-IN'],'bhojpuri':['hi-IN'],'maithili':['hi-IN'],
+  'rajasthani':['hi-IN'],'chhattisgarhi':['hi-IN'],'haryanvi':['hi-IN'],
+  'awadhi':['hi-IN'],'kumaoni':['hi-IN'],'kodava':['kn-IN'],
+  // East Asian
+  'mandarin':['zh-CN'],'chinese':['zh-CN'],'cantonese':['zh-HK'],
+  'japanese':['ja-JP'],'korean':['ko-KR'],'taiwanese':['zh-TW'],
+  // Southeast Asian
+  'vietnamese':['vi-VN'],'thai':['th-TH'],'indonesian':['id-ID'],
+  'malay':['ms-MY'],'tagalog':['fil-PH'],'burmese':['my-MM'],
+  'khmer':['km-KH'],'lao':['lo-LA'],'sinhalese':['si-LK'],
+  'javanese':['jv-ID'],'sundanese':['su-ID'],'cebuano':['fil-PH'],
+  // Central/West Asian
+  'tibetan':['bo-CN'],'mongolian':['mn-MN'],'arabic':['ar-SA','ar-EG','ar-AE'],
+  'persian':['fa-IR'],'dari':['fa-AF'],'pashto':['ps-AF'],'kurdish':['ku-TR'],
+  'azerbaijani':['az-AZ'],'armenian':['hy-AM'],'georgian':['ka-GE'],
+  'kazakh':['kk-KZ'],'uzbek':['uz-UZ'],'turkmen':['tk-TM'],'uyghur':['ug-CN'],
+  // Middle East
+  'hebrew':['he-IL'],'turkish':['tr-TR'],'maltese':['mt-MT'],
+  // African
+  'swahili':['sw-KE','sw-TZ'],'amharic':['am-ET'],'hausa':['ha-NG'],
+  'yoruba':['yo-NG'],'igbo':['ig-NG'],'zulu':['zu-ZA'],'xhosa':['xh-ZA'],
+  'somali':['so-SO'],'oromo':['om-ET'],'afrikaans':['af-ZA'],'wolof':['wo-SN'],
+  'shona':['sn-ZW'],'kinyarwanda':['rw-RW'],'lingala':['ln-CD'],
+  'luganda':['lg-UG'],'tigrinya':['ti-ET'],'twi':['ak-GH'],
+  // European
+  'english':['en-IN','en-US','en-GB'],'spanish':['es-ES','es-MX','es-US'],
+  'french':['fr-FR','fr-CA'],'german':['de-DE','de-AT'],'portuguese':['pt-PT','pt-BR'],
+  'russian':['ru-RU'],'italian':['it-IT'],'dutch':['nl-NL'],'polish':['pl-PL'],
+  'greek':['el-GR'],'swedish':['sv-SE'],'norwegian':['nb-NO'],'danish':['da-DK'],
+  'finnish':['fi-FI'],'czech':['cs-CZ'],'romanian':['ro-RO'],'hungarian':['hu-HU'],
+  'ukrainian':['uk-UA'],'catalan':['ca-ES'],'serbian':['sr-RS'],'croatian':['hr-HR'],
+  'slovak':['sk-SK'],'bulgarian':['bg-BG'],'lithuanian':['lt-LT'],'latvian':['lv-LV'],
+  'estonian':['et-EE'],'slovenian':['sl-SI'],'albanian':['sq-AL'],'macedonian':['mk-MK'],
+  'basque':['eu-ES'],'galician':['gl-ES'],'welsh':['cy-GB'],'irish':['ga-IE'],
+  'belarusian':['be-BY'],'icelandic':['is-IS'],'esperanto':['eo'],
+  // Americas
+  'brazilian portuguese':['pt-BR'],'mexican spanish':['es-MX'],
+  'haitian creole':['fr-HT'],'quechua':['qu-PE'],'guarani':['gn-PY'],
+  'nahuatl':['nah-MX'],'aymara':['ay-BO'],
+  // Pacific
+  'maori':['mi-NZ'],'hawaiian':['haw-US'],'samoan':['sm-WS'],'tongan':['to-TO']
+};
+
+// Map language names to BCP-47 base codes for Google TTS
+var LANG_TO_BCP47 = {
+  'hindi':'hi','kannada':'kn','tamil':'ta','telugu':'te','bengali':'bn',
+  'marathi':'mr','gujarati':'gu','punjabi':'pa','malayalam':'ml','odia':'or',
+  'urdu':'ur','assamese':'as','nepali':'ne','english':'en','spanish':'es',
+  'french':'fr','german':'de','portuguese':'pt','russian':'ru','italian':'it',
+  'dutch':'nl','polish':'pl','arabic':'ar','chinese':'zh-CN','japanese':'ja',
+  'korean':'ko','turkish':'tr','vietnamese':'vi','thai':'th','indonesian':'id',
+  'malay':'ms','tagalog':'tl','swahili':'sw','afrikaans':'af','ukrainian':'uk',
+  'czech':'cs','romanian':'ro','hungarian':'hu','swedish':'sv','norwegian':'no',
+  'danish':'da','finnish':'fi','greek':'el','hebrew':'iw','persian':'fa',
+  'catalan':'ca','croatian':'hr','serbian':'sr','slovak':'sk','bulgarian':'bg',
+  'latvian':'lv','lithuanian':'lt','estonian':'et','slovenian':'sl','icelandic':'is',
+  'welsh':'cy','irish':'ga','basque':'eu','galician':'gl','maltese':'mt',
+  'armenian':'hy','georgian':'ka','azerbaijani':'az','kazakh':'kk','uzbek':'uz',
+  'mongolian':'mn','sinhalese':'si','burmese':'my','khmer':'km','lao':'lo',
+  'tibetan':'bo','amharic':'am','zulu':'zu','xhosa':'xh','yoruba':'yo',
+  'igbo':'ig','hausa':'ha','somali':'so','kinyarwanda':'rw','maori':'mi',
+  'mandarin':'zh-CN','cantonese':'zh-HK','taiwanese':'zh-TW'
+};
 function detectSpeakLang(text){
   var sc={hindi:/[ऀ-ॿ]/,arabic:/[؀-ۿ]/,chinese:/[一-鿿]/,japanese:/[぀-ヿ]/,korean:/[가-힯]/,thai:/[฀-๿]/,telugu:/[ఀ-౿]/,tamil:/[஀-௿]/,kannada:/[ಀ-೿]/,bengali:/[ঀ-৿]/,malayalam:/[ഀ-ൿ]/,gujarati:/[઀-૿]/,punjabi:/[਀-੿]/,odia:/[଀-୿]/};
   for(var lang in sc){if(sc[lang].test(text))return {lang:lang,tags:LANG_TAGS[lang]||['en-IN']};}
@@ -7399,6 +10012,7 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
+    // Stop if already speaking
     if(window._qvIsSpeaking){
       if(window._qvAudio){window._qvAudio.pause();window._qvAudio.src='';window._qvAudio=null;}
       window.speechSynthesis.cancel();
@@ -7408,51 +10022,117 @@ function speakText(t,btn){
       window._qvBtn=null;
       return;
     }
-    var txt=(t||'').replace(/<[^>]*>/g,' ').replace(/[*#`~\[\]]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim().substring(0,250);
+
+    // Clean text - remove markdown, links, code
+    var txt=(t||'')
+      .replace(/<[^>]*>/g,' ')
+      .replace(/```[\s\S]*?```/g,' ')
+      .replace(/`[^`]+`/g,' ')
+      .replace(/\*\*([^*]+)\*\*/g,'$1')
+      .replace(/\*([^*]+)\*/g,'$1')
+      .replace(/#{1,6}\s/g,'')
+      .replace(/https?:\/\/\S+/g,'')
+      .replace(/[*#`~\[\]]/g,'')
+      .replace(/\s+/g,' ')
+      .trim()
+      .substring(0,500); // More text!
+
     if(!txt){showToast('Nothing to speak!');return;}
+
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
     if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
     showToast('🎵 Speaking...');
+
     var done=function(){
       window._qvIsSpeaking=false;window._qvBtn=null;window._qvAudio=null;
       clearInterval(window._qvResInt);
       if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
     };
-    var detected=detectSpeakLang(txt);
-    var langTag=(detected.tags&&detected.tags[0])||'en-IN';
-    var langBase=langTag.split('-')[0];
-    var lo={'Hindi':'hi','Tamil':'ta','Telugu':'te','Kannada':'kn','Malayalam':'ml','Bengali':'bn','Gujarati':'gu','Marathi':'mr','Punjabi':'pa','Urdu':'ur','Arabic':'ar','French':'fr','German':'de','Spanish':'es','Portuguese':'pt','Russian':'ru','Japanese':'ja','Korean':'ko','Chinese':'zh-CN','Italian':'it','Turkish':'tr'};
-    if(typeof selectedAILang!=='undefined'&&selectedAILang&&lo[selectedAILang])langBase=lo[selectedAILang];
 
-    // Race: try /api/tts AND Web Speech simultaneously
-    // Whoever wins first gets used
+    // Detect language from text script
+    var detected=detectSpeakLang(txt);
+    var langTag=(detected&&detected.tags&&detected.tags[0])||'en-IN';
+
+    // Check if user selected a language
+    var selLang=localStorage.getItem('aiLang')||'';
+    var bcp47Lang='';
+    if(selLang&&LANG_TO_BCP47[selLang.toLowerCase()]){
+      bcp47Lang=LANG_TO_BCP47[selLang.toLowerCase()];
+    } else if(selLang&&LANG_TAGS[selLang.toLowerCase()]){
+      langTag=LANG_TAGS[selLang.toLowerCase()][0];
+      bcp47Lang=langTag.split('-')[0];
+    } else {
+      bcp47Lang=langTag.split('-')[0];
+    }
+
     var _done=false;
     var safeDone=function(){if(!_done){_done=true;done();}};
 
-    // Start Web Speech immediately as primary (most reliable)
-    _qvWS(txt, langTag, safeDone);
-
-    // Also try /api/tts in background for better quality
-    fetch('/api/tts?text='+encodeURIComponent(txt.substring(0,150))+'&lang='+encodeURIComponent(langBase))
-      .then(function(r){if(!r.ok)throw new Error('x');return r.blob();})
-      .then(function(blob){
-        if(_done)return; // Web Speech already started
-        window.speechSynthesis.cancel(); // Stop Web Speech
+    // Strategy: Try multiple TTS sources in parallel, use fastest good quality
+    
+    // 1. Try /api/tts (our backend - best quality)
+    var chunks=[];
+    var words=txt.split(' ');
+    var chunk='';
+    words.forEach(function(w){
+      if((chunk+' '+w).length>200){chunks.push(chunk.trim());chunk=w;}
+      else chunk+=' '+w;
+    });
+    if(chunk.trim())chunks.push(chunk.trim());
+    
+    // Play chunks sequentially via our API
+    (async function(){
+      try{
+        // Try first chunk to see if API works
+        var r=await fetch('/api/tts?text='+encodeURIComponent(chunks[0]||txt.substring(0,200))+'&lang='+encodeURIComponent(bcp47Lang),{signal:AbortSignal.timeout(3000)});
+        if(!r.ok)throw new Error('api fail');
+        var blob=await r.blob();
+        if(_done)return;
+        
+        window.speechSynthesis.cancel(); // Stop web speech if started
+        
+        // Play all chunks
+        var playChunk=function(idx){
+          if(idx>=chunks.length||!window._qvIsSpeaking){safeDone();return;}
+          fetch('/api/tts?text='+encodeURIComponent(chunks[idx])+'&lang='+encodeURIComponent(bcp47Lang))
+            .then(function(r2){return r2.blob();})
+            .then(function(b){
+              if(!window._qvIsSpeaking){safeDone();return;}
+              var url=URL.createObjectURL(b);
+              var audio=new Audio(url);
+              window._qvAudio=audio;
+              audio.onended=function(){URL.revokeObjectURL(url);playChunk(idx+1);};
+              audio.onerror=function(){URL.revokeObjectURL(url);safeDone();};
+              audio.play().catch(safeDone);
+            }).catch(safeDone);
+        };
+        
+        // Play first blob then continue with chunks
         var url=URL.createObjectURL(blob);
         var audio=new Audio(url);
         window._qvAudio=audio;
-        audio.onended=function(){URL.revokeObjectURL(url);safeDone();};
-        audio.onerror=function(){URL.revokeObjectURL(url);}; 
-        audio.play().catch(function(){});
-      }).catch(function(){
-        // /api/tts failed, Web Speech already handling it
-      });
+        audio.onended=function(){URL.revokeObjectURL(url);if(chunks.length>1)playChunk(1);else safeDone();};
+        audio.onerror=function(){URL.revokeObjectURL(url);safeDone();};
+        audio.play().catch(safeDone);
+        
+      }catch(e){
+        // API failed - use Web Speech
+        if(!_done) _qvWS(txt, langTag, safeDone);
+      }
+    })();
+
+    // Fallback: Start Web Speech after 3s if API hasn't responded
+    setTimeout(function(){
+      if(!_done&&window._qvIsSpeaking&&!window._qvAudio){
+        _qvWS(txt, langTag, safeDone);
+      }
+    },3000);
 
   }catch(e){
     window._qvIsSpeaking=false;
     if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
-    showToast('Error: '+e.message);
+    showToast('Voice error: '+e.message);
   }
 }
 
@@ -7460,36 +10140,68 @@ function _qvWS(txt,lang,done){
   try{
     window.speechSynthesis.cancel();
     setTimeout(function(){
-      if(!window._qvIsSpeaking){done();return;} // Already stopped
+      if(!window._qvIsSpeaking){done();return;}
       var u=new SpeechSynthesisUtterance(txt);
-      u.lang=lang||'en-IN';u.rate=0.88;u.pitch=1.05;u.volume=1;
+      u.lang=lang||'en-IN';
+      u.rate=0.9; u.pitch=1.0; u.volume=1;
       u.onend=done;
       u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')done();};
+
       function go(vv){
-        var base=lang.split('-')[0],pick=null,bs=-999;
+        if(!vv||!vv.length){window.speechSynthesis.speak(u);return;}
+        var base=lang.split('-')[0];
+        var pick=null,bs=-999;
+
         vv.forEach(function(v){
           var n=v.name.toLowerCase(),sc=0;
+          // Exact match = best
           if(v.lang===lang)sc+=100;
-          else if(v.lang.startsWith(base))sc+=50;
+          // Same base lang
+          else if(v.lang.toLowerCase().startsWith(base.toLowerCase()))sc+=60;
+          // Different lang = skip
           else return;
-          if(n.indexOf('neural')>-1||n.indexOf('natural')>-1)sc+=40;
-          ['aria','jenny','sonia','libby','samantha','zira'].forEach(function(w){if(n.indexOf(w)>-1)sc+=30;});
-          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1)sc=-999;
+
+          // Prefer neural/natural/premium voices
+          if(n.indexOf('neural')>-1)sc+=50;
+          if(n.indexOf('natural')>-1)sc+=40;
+          if(n.indexOf('premium')>-1)sc+=35;
+          if(n.indexOf('enhanced')>-1)sc+=30;
+          if(n.indexOf('online')>-1)sc+=20;
+          if(v.localService===false)sc+=15; // Online voices usually better
+
+          // Penalize old/bad voices
+          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1||n.indexOf('zira')>-1)sc-=80;
+
           if(sc>bs){bs=sc;pick=v;}
         });
-        if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+
+        // If no matching voice, use English fallback
+        if(!pick){
+          pick=vv.find(function(v){
+            var n=v.name.toLowerCase();
+            return v.lang.startsWith('en')&&n.indexOf('neural')>-1;
+          });
+          if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+        }
+
         if(pick){u.voice=pick;u.lang=pick.lang;}
         window.speechSynthesis.speak(u);
+
+        // Keep speech alive (Chrome bug fix)
         clearInterval(window._qvResInt);
         window._qvResInt=setInterval(function(){
           if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
           if(window.speechSynthesis.paused)window.speechSynthesis.resume();
-        },2500);
+        },3000);
       }
+
       var v=window.speechSynthesis.getVoices();
       if(v&&v.length)go(v);
-      else{window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};setTimeout(function(){go(window.speechSynthesis.getVoices());},800);}
-    },150);
+      else{
+        window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};
+        setTimeout(function(){go(window.speechSynthesis.getVoices());},1000);
+      }
+    },100);
   }catch(e){done();}
 }
 
@@ -9180,7 +11892,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- TIMER / STOPWATCH -->
-<div class="modal" id="m_timer">
+<div class="modal" id="m_timer" style="display:none!important">
   <div class="mhd"><h3>⏱ Timer & Stopwatch</h3><button class="mx" onclick="closeM('timer')">✕</button></div>
   <div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
     <button class="tbtn mode-btn on" id="timerModeStop" onclick="switchTimerMode('stopwatch')">Stopwatch</button>
@@ -9205,7 +11917,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- CURRENCY CONVERTER -->
-<div class="modal" id="m_currency">
+<div class="modal" id="m_currency" style="display:none!important">
   <div class="mhd"><h3>💱 Currency Converter</h3><button class="mx" onclick="closeM('currency')">✕</button></div>
   <div class="msub">Live INR rates (approximate)</div>
   <input type="number" class="curr-inp" id="currAmt" placeholder="Enter amount in ₹ INR" oninput="convertCurrency(this.value)">
@@ -9214,7 +11926,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- MOOD TRACKER -->
-<div class="modal" id="m_mood">
+<div class="modal" id="m_mood" style="display:none!important">
   <div class="mhd"><h3>😊 Mood Tracker</h3><button class="mx" onclick="closeM('mood')">✕</button></div>
   <div class="msub">How are you feeling today?</div>
   <div class="mood-grid">
@@ -9230,7 +11942,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- TYPING SPEED TEST -->
-<div class="modal" id="m_wpm">
+<div class="modal" id="m_wpm" style="display:none!important">
   <div class="mhd"><h3>⌨️ Typing Speed Test</h3><button class="mx" onclick="closeM('wpm')">✕</button></div>
   <div class="msub">Test your WPM — how fast do you type?</div>
   <div class="wpm-text-area" id="wpmText"></div>
@@ -9243,7 +11955,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- QUICK NEWS -->
-<div class="modal" id="m_news">
+<div class="modal" id="m_news" style="display:none!important">
   <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
   <div class="msub">Ask QVIO about any of these stories</div>
   <div id="newsList"></div>
@@ -9251,7 +11963,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- EMOJI PICKER -->
-<div class="modal" id="m_emoji">
+<div class="modal" id="m_emoji" style="display:none!important">
   <div class="mhd"><h3>😊 Emoji Picker</h3><button class="mx" onclick="closeM('emoji')">✕</button></div>
   <input class="emoji-search" id="emojiSearch" placeholder="Search emoji..." oninput="searchEmoji(this.value)">
   <div class="emoji-cats" id="emojiCats"></div>
@@ -9260,7 +11972,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- CV / RESUME BUILDER -->
-<div class="modal" id="m_cv">
+<div class="modal" id="m_cv" style="display:none!important">
   <div class="mhd"><h3>📄 CV / Resume Builder</h3><button class="mx" onclick="closeM('cv')">✕</button></div>
   <div class="msub">Fill in your details and AI will write your CV</div>
   <div class="cv-form">
@@ -9282,7 +11994,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- QUICK NOTES -->
-<div class="modal" id="m_notes">
+<div class="modal" id="m_notes" style="display:none!important">
   <div class="mhd"><h3>📝 Quick Notes</h3><button class="mx" onclick="closeM('notes')">✕</button></div>
   <div class="msub">Jot down anything instantly</div>
   <div class="mrow">
@@ -9294,7 +12006,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- AGE CALCULATOR -->
-<div class="modal" id="m_age">
+<div class="modal" id="m_age" style="display:none!important">
   <div class="mhd"><h3>🎂 Age Calculator</h3><button class="mx" onclick="closeM('age')">✕</button></div>
   <div class="msub">Find exact age in years, months and days</div>
   <div class="slabel">Date of Birth</div>
@@ -9304,7 +12016,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- BMI CALCULATOR -->
-<div class="modal" id="m_bmi">
+<div class="modal" id="m_bmi" style="display:none!important">
   <div class="mhd"><h3>⚖️ BMI Calculator</h3><button class="mx" onclick="closeM('bmi')">✕</button></div>
   <div class="msub">Body Mass Index — quick health check</div>
   <div style="display:flex;gap:10px;margin-bottom:10px;">
@@ -9322,7 +12034,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- QUOTE OF THE DAY -->
-<div class="modal" id="m_qotd">
+<div class="modal" id="m_qotd" style="display:none!important">
   <div class="mhd"><h3>💬 Quote of the Day</h3><button class="mx" onclick="closeM('qotd')">✕</button></div>
   <div class="msub">Daily wisdom to inspire your journey</div>
   <div id="qotdWrap"></div>
@@ -9331,7 +12043,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- WORD OF THE DAY -->
-<div class="modal" id="m_word">
+<div class="modal" id="m_word" style="display:none!important">
   <div class="mhd"><h3>📖 Word of the Day</h3><button class="mx" onclick="closeM('word')">✕</button></div>
   <div class="msub">Expand your vocabulary daily</div>
   <div id="wordWrap"></div>
@@ -9340,7 +12052,7 @@ function getAILangInstruction(){
 </div>
 
 <!-- LIVE POLL -->
-<div class="modal" id="m_poll">
+<div class="modal" id="m_poll" style="display:none!important">
   <div class="mhd"><h3>🗳 Quick Poll</h3><button class="mx" onclick="closeM('poll')">✕</button></div>
   <div class="msub">Create a poll and share with friends</div>
   <input class="cv-inp" id="pollQ" placeholder="Your question..." style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r-sm);font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px;">
@@ -9385,18 +12097,7 @@ function getAILangInstruction(){
 
 
 <!-- WISPR FLOW -->
-<div id="wisprPanel">
-  <div class="wispr-status">
-    <span id="wisprStatusText">Ready to listen</span>
-    <div class="wispr-wave" id="wisprWave" style="display:none;">
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-      <div class="wispr-bar"></div>
-    </div>
-  </div>
-  <div id="wisprTranscript">Tap mic to start speaking...</div>
+<!-- wisprPanel removed --><div id="wisprTranscript">Tap mic to start speaking...</div>
   <div class="wispr-settings">
     <button class="wispr-toggle on" id="wtAutoClean" onclick="wisprToggle(this,'autoClean')">✨ Auto Clean</button>
     <button class="wispr-toggle on" id="wtAutoPunct" onclick="wisprToggle(this,'autoPunct')">📝 Punctuation</button>
