@@ -10012,198 +10012,188 @@ function findBestVoice(tags){
 var curU=null;
 function speakText(t,btn){
   try{
-    // Stop if already speaking
+    // Toggle off if already speaking
     if(window._qvIsSpeaking){
-      if(window._qvAudio){window._qvAudio.pause();window._qvAudio.src='';window._qvAudio=null;}
-      window.speechSynthesis.cancel();
+      if(window._qvAudio){try{window._qvAudio.pause();window._qvAudio.src='';}catch(e){}window._qvAudio=null;}
+      try{window.speechSynthesis.cancel();}catch(e){}
       clearInterval(window._qvResInt);
       window._qvIsSpeaking=false;
-      if(window._qvBtn){window._qvBtn.textContent='🔊';window._qvBtn.classList.remove('speaking');}
+      if(window._qvBtn){try{window._qvBtn.textContent='🔊';window._qvBtn.classList.remove('speaking');}catch(e){}};
       window._qvBtn=null;
+      showToast('🔇 Stopped');
       return;
     }
 
-    // Clean text - remove markdown, links, code
+    // Clean text — strip markdown, HTML, code blocks
     var txt=(t||'')
       .replace(/<[^>]*>/g,' ')
-      .replace(/```[\s\S]*?```/g,' ')
+      .replace(/```[\s\S]*?```/g,' code block ')
       .replace(/`[^`]+`/g,' ')
       .replace(/\*\*([^*]+)\*\*/g,'$1')
       .replace(/\*([^*]+)\*/g,'$1')
       .replace(/#{1,6}\s/g,'')
-      .replace(/https?:\/\/\S+/g,'')
-      .replace(/[*#`~\[\]]/g,'')
+      .replace(/https?:\/\/\S+/g,' link ')
+      .replace(/[*#`~\[\]>|]/g,'')
       .replace(/\s+/g,' ')
       .trim()
-      .substring(0,500); // More text!
+      .substring(0,600);
 
-    if(!txt){showToast('Nothing to speak!');return;}
+    if(!txt||txt.length<2){showToast('Nothing to read!');return;}
 
     window._qvIsSpeaking=true;
     window._qvBtn=btn;
-    if(btn){btn.textContent='⏹';btn.classList.add('speaking');}
-    showToast('🎵 Speaking...');
+    if(btn){try{btn.textContent='⏹';btn.classList.add('speaking');}catch(e){}}
+    showToast('🔊 Reading...');
 
     var done=function(){
-      window._qvIsSpeaking=false;window._qvBtn=null;window._qvAudio=null;
+      window._qvIsSpeaking=false;
+      window._qvBtn=null;
+      window._qvAudio=null;
       clearInterval(window._qvResInt);
-      if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
+      if(btn){try{btn.textContent='🔊';btn.classList.remove('speaking');}catch(e){}}
     };
 
-    // Detect language from text script
+    // Detect language
     var detected=detectSpeakLang(txt);
     var langTag=(detected&&detected.tags&&detected.tags[0])||'en-IN';
-
-    // Check if user selected a language
     var selLang=localStorage.getItem('aiLang')||'';
-    var bcp47Lang='';
-    if(selLang&&LANG_TO_BCP47[selLang.toLowerCase()]){
+    var bcp47Lang=langTag;
+    if(selLang&&LANG_TO_BCP47&&LANG_TO_BCP47[selLang.toLowerCase()]){
       bcp47Lang=LANG_TO_BCP47[selLang.toLowerCase()];
-    } else if(selLang&&LANG_TAGS[selLang.toLowerCase()]){
-      langTag=LANG_TAGS[selLang.toLowerCase()][0];
-      bcp47Lang=langTag.split('-')[0];
-    } else {
-      bcp47Lang=langTag.split('-')[0];
+      langTag=bcp47Lang;
     }
 
     var _done=false;
     var safeDone=function(){if(!_done){_done=true;done();}};
 
-    // Strategy: Try multiple TTS sources in parallel, use fastest good quality
+    // Strategy 1: Try /api/tts backend (best quality)
+    // Use Promise.race with timeout instead of AbortSignal.timeout (better compat)
+    var apiTimeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},4000);});
+    var apiFetch=fetch('/api/tts?text='+encodeURIComponent(txt.substring(0,250))+'&lang='+encodeURIComponent(bcp47Lang));
     
-    // 1. Try /api/tts (our backend - best quality)
-    var chunks=[];
-    var words=txt.split(' ');
-    var chunk='';
-    words.forEach(function(w){
-      if((chunk+' '+w).length>200){chunks.push(chunk.trim());chunk=w;}
-      else chunk+=' '+w;
-    });
-    if(chunk.trim())chunks.push(chunk.trim());
-    
-    // Play chunks sequentially via our API
-    (async function(){
-      try{
-        // Try first chunk to see if API works
-        var r=await fetch('/api/tts?text='+encodeURIComponent(chunks[0]||txt.substring(0,200))+'&lang='+encodeURIComponent(bcp47Lang),{signal:AbortSignal.timeout(3000)});
-        if(!r.ok)throw new Error('api fail');
-        var blob=await r.blob();
-        if(_done)return;
-        
-        window.speechSynthesis.cancel(); // Stop web speech if started
-        
-        // Play all chunks
-        var playChunk=function(idx){
-          if(idx>=chunks.length||!window._qvIsSpeaking){safeDone();return;}
-          fetch('/api/tts?text='+encodeURIComponent(chunks[idx])+'&lang='+encodeURIComponent(bcp47Lang))
-            .then(function(r2){return r2.blob();})
-            .then(function(b){
-              if(!window._qvIsSpeaking){safeDone();return;}
-              var url=URL.createObjectURL(b);
-              var audio=new Audio(url);
-              window._qvAudio=audio;
-              audio.onended=function(){URL.revokeObjectURL(url);playChunk(idx+1);};
-              audio.onerror=function(){URL.revokeObjectURL(url);safeDone();};
-              audio.play().catch(safeDone);
-            }).catch(safeDone);
-        };
-        
-        // Play first blob then continue with chunks
+    Promise.race([apiFetch,apiTimeout])
+      .then(function(r){
+        if(!r.ok)throw new Error('api '+r.status);
+        return r.blob();
+      })
+      .then(function(blob){
+        if(_done||!window._qvIsSpeaking)return;
+        try{window.speechSynthesis.cancel();}catch(e){}
         var url=URL.createObjectURL(blob);
         var audio=new Audio(url);
         window._qvAudio=audio;
-        audio.onended=function(){URL.revokeObjectURL(url);if(chunks.length>1)playChunk(1);else safeDone();};
-        audio.onerror=function(){URL.revokeObjectURL(url);safeDone();};
-        audio.play().catch(safeDone);
-        
-      }catch(e){
-        // API failed - use Web Speech
-        if(!_done) _qvWS(txt, langTag, safeDone);
-      }
-    })();
-
-    // Fallback: Start Web Speech after 3s if API hasn't responded
-    setTimeout(function(){
-      if(!_done&&window._qvIsSpeaking&&!window._qvAudio){
-        _qvWS(txt, langTag, safeDone);
-      }
-    },3000);
+        audio.volume=1;
+        audio.onended=function(){URL.revokeObjectURL(url);safeDone();};
+        audio.onerror=function(){URL.revokeObjectURL(url);if(!_done)_qvWS(txt,langTag,safeDone);};
+        audio.play().catch(function(){if(!_done)_qvWS(txt,langTag,safeDone);});
+      })
+      .catch(function(){
+        // API unavailable — use Web Speech directly
+        if(!_done&&window._qvIsSpeaking)_qvWS(txt,langTag,safeDone);
+      });
 
   }catch(e){
     window._qvIsSpeaking=false;
-    if(btn){btn.textContent='🔊';btn.classList.remove('speaking');}
-    showToast('Voice error: '+e.message);
+    if(btn){try{btn.textContent='🔊';btn.classList.remove('speaking');}catch(e2){}}
+    console.warn('speakText error:',e);
+    // Last resort — try direct web speech
+    try{
+      var u2=new SpeechSynthesisUtterance(t.substring(0,300));
+      u2.lang='en-IN';u2.rate=0.9;
+      window.speechSynthesis.speak(u2);
+    }catch(e3){}
   }
 }
 
 function _qvWS(txt,lang,done){
   try{
-    window.speechSynthesis.cancel();
+    if(!window.speechSynthesis){done();return;}
+    try{window.speechSynthesis.cancel();}catch(e){}
+    
     setTimeout(function(){
       if(!window._qvIsSpeaking){done();return;}
+      
       var u=new SpeechSynthesisUtterance(txt);
       u.lang=lang||'en-IN';
-      u.rate=0.9; u.pitch=1.0; u.volume=1;
-      u.onend=done;
-      u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')done();};
+      u.rate=0.88;
+      u.pitch=1.0;
+      u.volume=1.0;
+      
+      u.onend=function(){done();};
+      u.onerror=function(ev){
+        if(ev.error==='interrupted'||ev.error==='canceled')return;
+        console.warn('SpeechSynthesis error:',ev.error);
+        done();
+      };
 
       function go(vv){
-        if(!vv||!vv.length){window.speechSynthesis.speak(u);return;}
-        var base=lang.split('-')[0];
-        var pick=null,bs=-999;
-
-        vv.forEach(function(v){
-          var n=v.name.toLowerCase(),sc=0;
-          // Exact match = best
-          if(v.lang===lang)sc+=100;
-          // Same base lang
-          else if(v.lang.toLowerCase().startsWith(base.toLowerCase()))sc+=60;
-          // Different lang = skip
-          else return;
-
-          // Prefer neural/natural/premium voices
-          if(n.indexOf('neural')>-1)sc+=50;
-          if(n.indexOf('natural')>-1)sc+=40;
-          if(n.indexOf('premium')>-1)sc+=35;
-          if(n.indexOf('enhanced')>-1)sc+=30;
-          if(n.indexOf('online')>-1)sc+=20;
-          if(v.localService===false)sc+=15; // Online voices usually better
-
-          // Penalize old/bad voices
-          if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1||n.indexOf('zira')>-1)sc-=80;
-
-          if(sc>bs){bs=sc;pick=v;}
-        });
-
-        // If no matching voice, use English fallback
-        if(!pick){
-          pick=vv.find(function(v){
-            var n=v.name.toLowerCase();
-            return v.lang.startsWith('en')&&n.indexOf('neural')>-1;
+        if(vv&&vv.length){
+          var base=lang.split('-')[0].toLowerCase();
+          var pick=null,bs=-999;
+          vv.forEach(function(v){
+            var n=v.name.toLowerCase(),sc=0;
+            if(v.lang===lang)sc+=100;
+            else if(v.lang.toLowerCase().startsWith(base))sc+=60;
+            else return;
+            if(n.indexOf('neural')>-1)sc+=50;
+            if(n.indexOf('natural')>-1)sc+=40;
+            if(n.indexOf('premium')>-1)sc+=35;
+            if(n.indexOf('enhanced')>-1)sc+=30;
+            if(v.localService===false)sc+=15;
+            if(n.indexOf('david')>-1||n.indexOf('mark')>-1||n.indexOf('fred')>-1||n.indexOf('zira')>-1)sc-=80;
+            if(sc>bs){bs=sc;pick=v;}
           });
-          if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+          // English fallback
+          if(!pick){
+            pick=vv.find(function(v){var n=v.name.toLowerCase();return v.lang.startsWith('en')&&(n.indexOf('neural')>-1||n.indexOf('natural')>-1);});
+            if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en-IN')||v.lang.startsWith('en-GB');});
+            if(!pick)pick=vv.find(function(v){return v.lang.startsWith('en');});
+          }
+          if(pick){u.voice=pick;u.lang=pick.lang;}
         }
-
-        if(pick){u.voice=pick;u.lang=pick.lang;}
-        window.speechSynthesis.speak(u);
-
-        // Keep speech alive (Chrome bug fix)
+        
+        try{window.speechSynthesis.speak(u);}catch(e){done();return;}
+        
+        // Chrome resume bug fix
         clearInterval(window._qvResInt);
         window._qvResInt=setInterval(function(){
           if(!window._qvIsSpeaking){clearInterval(window._qvResInt);return;}
-          if(window.speechSynthesis.paused)window.speechSynthesis.resume();
-        },3000);
+          try{if(window.speechSynthesis.paused)window.speechSynthesis.resume();}catch(e){}
+        },2500);
       }
 
-      var v=window.speechSynthesis.getVoices();
-      if(v&&v.length)go(v);
-      else{
-        window.speechSynthesis.onvoiceschanged=function(){go(window.speechSynthesis.getVoices());};
-        setTimeout(function(){go(window.speechSynthesis.getVoices());},1000);
+      var voices=window.speechSynthesis.getVoices();
+      if(voices&&voices.length){
+        go(voices);
+      } else {
+        // Wait for voices to load
+        var waited=false;
+        window.speechSynthesis.onvoiceschanged=function(){
+          if(waited)return;waited=true;
+          go(window.speechSynthesis.getVoices());
+        };
+        setTimeout(function(){
+          if(!waited){waited=true;go(window.speechSynthesis.getVoices());}
+        },1500);
       }
-    },100);
+    },80);
   }catch(e){done();}
 }
+
+// toggleSound — was missing, causing console errors
+var _qvSoundOn=true;
+function toggleSound(){
+  _qvSoundOn=!_qvSoundOn;
+  var btn=document.getElementById('soundBtn');
+  if(btn)btn.textContent=_qvSoundOn?'🔔':'🔕';
+  if(!_qvSoundOn){
+    try{window.speechSynthesis.cancel();}catch(e){}
+    if(window._qvAudio){try{window._qvAudio.pause();}catch(e){}window._qvAudio=null;}
+    window._qvIsSpeaking=false;
+  }
+  showToast(_qvSoundOn?'🔔 Sound on':'🔕 Sound off');
+}
+
 
 function showTyping(){
   hideWelcome();
