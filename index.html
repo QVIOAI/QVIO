@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>QVIO — India's Premium AI</title>
-<meta name="description" content="QVIO - India's most premium AI. 150+ languages. Built for every Indian.">
+<title>INORA — India's Premium AI</title>
+<meta name="description" content="INORA - India's most premium AI. 150+ languages. Built for every Indian.">>
 <meta name="theme-color" content="#FFFEF9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
@@ -31,38 +31,38 @@ function filterLangs(q){
 
 
 // ═══════════════════════════════
-// QVIO VOICE — HEY QVIO WAKE WORD
+// INORA VOICE — HEY INORA WAKE WORD
 // ═══════════════════════════════
 var wakeRecog=null;
 var wakeActive=false;
-var heyQvioEnabled=false;
+var heyInoraEnabled=false;
 
-function startHeyQvio(){ showToast("Hey QVIO coming soon!"); return; } function _oldStartHeyQvio(){
+function startHeyInora(){ showToast("Hey INORA coming soon!"); return; } function _oldStartHeyInora(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showToast('Hey QVIO needs Chrome or Edge!');return;}
-  heyQvioEnabled=true;
+  if(!SR){showToast('Hey INORA needs Chrome or Edge!');return;}
+  heyInoraEnabled=true;
   listenForWakeWord();
-  showToast('👂 Hey QVIO is active!');
-  var btn=document.getElementById('heyQvioBtn');
+  showToast('👂 Hey INORA is active!');
+  var btn=document.getElementById('heyInoraBtn');
   if(btn){btn.textContent='👂 Listening...';btn.style.background='linear-gradient(135deg,#1a6b3a,#27ae60)';}
 }
 
-function stopHeyQvio(){
-  heyQvioEnabled=false;
+function stopHeyInora(){
+  heyInoraEnabled=false;
   if(wakeRecog){try{wakeRecog.stop();}catch(e){}}
   wakeRecog=null;
-  showToast('Hey QVIO disabled');
-  var btn=document.getElementById('heyQvioBtn');
-  if(btn){btn.textContent='🎤 Hey QVIO';btn.style.background='';}
+  showToast('Hey INORA disabled');
+  var btn=document.getElementById('heyInoraBtn');
+  if(btn){btn.textContent='🎤 Hey INORA';btn.style.background='';}
 }
 
-function toggleHeyQvio(){
-  if(heyQvioEnabled){stopHeyQvio();}
-  else{startHeyQvio();}
+function toggleHeyInora(){
+  if(heyInoraEnabled){stopHeyInora();}
+  else{startHeyInora();}
 }
 
 function listenForWakeWord(){ return; } function _oldListenForWakeWord(){
-  if(!heyQvioEnabled)return;
+  if(!heyInoraEnabled)return;
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   try{
     wakeRecog=new SR();
@@ -80,39 +80,39 @@ function listenForWakeWord(){ return; } function _oldListenForWakeWord(){
              t.indexOf('okay qvio')>-1||t.indexOf('ok qvio')>-1||
              t.indexOf('hey kvio')>-1||t.indexOf('hey quio')>-1){
             // Wake word detected!
-            activateQvioVoice();
+            activateInoraVoice();
             return;
           }
         }
       }
       // Not a wake word - keep listening
-      if(heyQvioEnabled)setTimeout(listenForWakeWord,100);
+      if(heyInoraEnabled)setTimeout(listenForWakeWord,100);
     };
 
     wakeRecog.onerror=function(e){
       if(e.error==='not-allowed'){
-        heyQvioEnabled=false;
+        heyInoraEnabled=false;
         showToast('Mic permission denied!');
         return;
       }
       // Restart on other errors
-      if(heyQvioEnabled)setTimeout(listenForWakeWord,1000);
+      if(heyInoraEnabled)setTimeout(listenForWakeWord,1000);
     };
 
     wakeRecog.onend=function(){
       // Keep listening if still enabled and not in active voice mode
-      if(heyQvioEnabled&&!isRec)setTimeout(listenForWakeWord,200);
+      if(heyInoraEnabled&&!isRec)setTimeout(listenForWakeWord,200);
     };
 
     wakeRecog.start();
   }catch(e){
-    if(heyQvioEnabled)setTimeout(listenForWakeWord,2000);
+    if(heyInoraEnabled)setTimeout(listenForWakeWord,2000);
   }
 }
 
-function activateQvioVoice(){
+function activateInoraVoice(){
   // Wake word heard! Now listen for actual command
-  showToast('✨ QVIO is listening!');
+  showToast('✨ INORA is listening!');
   // Visual feedback on mic button
   var mb=document.getElementById('micBtn');
   if(mb){mb.style.transform='scale(1.3)';setTimeout(function(){mb.style.transform='';},300);}
@@ -121,7 +121,7 @@ function activateQvioVoice(){
     toggleMic();
     // Resume wake word after mic done
     setTimeout(function(){
-      if(heyQvioEnabled&&!isRec)listenForWakeWord();
+      if(heyInoraEnabled&&!isRec)listenForWakeWord();
     },5000);
   },200);
 }
@@ -846,7 +846,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lens-cam-btn{flex:1;padding:9px;border-radius:var(--r-sm);background:var(--navy-soft);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:13px;font-weight:600;font-family:"DM Sans",sans-serif;transition:all .15s;}
 .lens-cam-btn:hover{background:linear-gradient(135deg,#818CF8,#A78BFA);color:#fff;border-color:transparent;}
 .lens-result{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);padding:18px;font-size:14px;line-height:1.7;color:var(--text);margin-top:14px;position:relative;}
-.lens-result::before{content:'🔍 QVIO Lens';position:absolute;top:-10px;left:16px;background:var(--gold-gs);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:var(--r-full);letter-spacing:.5px;}
+.lens-result::before{content:'🔍 INORA Lens';position:absolute;top:-10px;left:16px;background:var(--gold-gs);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:var(--r-full);letter-spacing:.5px;}
 .lens-loading{display:flex;align-items:center;gap:10px;padding:20px;justify-content:center;color:var(--text3);font-size:14px;}
 .lens-scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);animation:lenscan 1.8s ease-in-out infinite;top:0;}
 @keyframes lenscan{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
@@ -931,7 +931,7 @@ body.focus .modes,.focus .sub-bar,.focus .pinned-bar,.focus .qrs{display:none!im
 .lsm-cancel{padding:11px 18px;background:transparent;color:var(--text3);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 
 
-/* ══ QVIO UI ══ */
+/* ══ INORA UI ══ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{font-family:'Inter',sans-serif!important;}
 code,pre{font-family:'JetBrains Mono',monospace!important;}
@@ -1031,7 +1031,7 @@ header{
   flex-shrink:0!important;
 }
 
-/* ══ QVIO CINEMATIC ENTRY ══ */
+/* ══ INORA CINEMATIC ENTRY ══ */
 #qvio-entry{
   position:fixed;inset:0;
   background:#000;
@@ -1164,7 +1164,7 @@ header{
   to{opacity:0;transform:var(--tx,translate(100px,-100px)) scale(0);}
 }
 
-/* ══ QVIO WISPR FLOW ══ */
+/* ══ INORA WISPR FLOW ══ */
 #wisprBtn{
   position:fixed;
   bottom:80px;right:20px;
@@ -1399,7 +1399,7 @@ header{
 .sb-search::placeholder{color:var(--text3);}
 
 /* ══ LAYOUT FIX ══ */
-#qvio-app{
+#inora-app{
   margin-left:0;
   display:flex;
   flex-direction:column;
@@ -1408,7 +1408,7 @@ header{
   transition:margin .3s;
 }
 @media(max-width:767px){
-  #qvio-app{margin-left:0 !important;}
+  #inora-app{margin-left:0 !important;}
 }
 /* Fix namaste screen */
 #namasteScreen{
@@ -1439,7 +1439,7 @@ header{
 }
 
 /* App always ready - sidebar hidden instead */
-#qvio-app{opacity:1;pointer-events:all;}
+#inora-app{opacity:1;pointer-events:all;}
 
 #loginScreen{position:fixed!important;inset:0!important;z-index:99999!important;background:#080C14!important;}
 #namasteScreen{z-index:99998!important;}
@@ -1872,7 +1872,7 @@ body,header,.ibox,.msg.ai .bubble,.qr,#sidebar,.modal {
 *{touch-action:manipulation!important}
 
 /* ══════════════════════════════════════════
-   QVIO LIGHT MODE + ULTRA FUTURISTIC UI
+   INORA LIGHT MODE + ULTRA FUTURISTIC UI
    Proven working from index_83 sessions
 ══════════════════════════════════════════ */
 
@@ -2125,7 +2125,7 @@ body, header, .inp-wrap, .modal, .qr, #sidebar {
 ::-webkit-scrollbar-thumb { background: linear-gradient(#4F46E5,#7C3AED) !important; border-radius: 3px !important; }
 
 /* ══════════════════════════════════════════════
-   QVIO COMPLETE ANIMATION SYSTEM v5.0
+   INORA COMPLETE ANIMATION SYSTEM v5.0
    Light mode | Ultra Premium | Full Power 🔥
 ══════════════════════════════════════════════ */
 
@@ -2516,7 +2516,7 @@ body:not([data-theme="dark"]) .inp-wrap,
 [data-theme="dark"] .sendbtn { background: linear-gradient(135deg, #818CF8, #A78BFA) !important; box-shadow: 0 4px 20px rgba(129,140,248,0.6) !important; }
 
 /* ══════════════════════════════════════
-   QVIO DARK MODE — ULTRA PREMIUM v2.0
+   INORA DARK MODE — ULTRA PREMIUM v2.0
    Deep space aesthetic 🚀
 ══════════════════════════════════════ */
 
@@ -2668,7 +2668,7 @@ body:not([data-theme="dark"]) .inp-wrap,
 
 
 /* ══════════════════════════════════════════════
-   QVIO LIGHT MODE — WOW LEVEL 🔥
+   INORA LIGHT MODE — WOW LEVEL 🔥
    Premium glassmorphism + aurora vibes
 ══════════════════════════════════════════════ */
 
@@ -3039,7 +3039,7 @@ header {
 }
 
 /* ══════════════════════════════════════════════════
-   🔥 QVIO MEGA ANIMATION PACK — 100 ANIMATIONS
+   🔥 INORA MEGA ANIMATION PACK — 100 ANIMATIONS
    Each numbered so Varun can pick & choose!
 ══════════════════════════════════════════════════ */
 
@@ -3278,7 +3278,7 @@ header { animation: a66-headerReveal 0.6s cubic-bezier(0.16,1,0.3,1) both !impor
 }
 
 /* ══════════════════════════════════════
-   QVIO FINAL — CLEAN DEFINITIVE STYLES
+   INORA FINAL — CLEAN DEFINITIVE STYLES
 ══════════════════════════════════════ */
 
 /* Header - ALWAYS VISIBLE */
@@ -3455,12 +3455,12 @@ header {
 
 
 /* ╔══════════════════════════════════════════════════════════╗
-   ║  QVIO — FUTURISTIC DESIGN SYSTEM v3.0                   ║
+   ║  INORA — FUTURISTIC DESIGN SYSTEM v3.0                   ║
    ║  Psychology-driven • Glass morphism • 60fps smooth      ║
    ╚══════════════════════════════════════════════════════════╝ */
 
 /* ── FLOATING GLASS HEADER ── */
-#qvioHeader {
+#inoraHeader {
   position: fixed !important;
   top: 12px !important;
   left: 50% !important;
@@ -3487,7 +3487,7 @@ header {
   animation: headerFloat 0.8s cubic-bezier(0.34,1.56,0.64,1) both !important;
   transition: box-shadow 0.3s ease, background 0.3s ease !important;
 }
-[data-theme="dark"] #qvioHeader {
+[data-theme="dark"] #inoraHeader {
   background: rgba(13,15,23,0.82) !important;
   border: 1px solid rgba(99,102,241,0.2) !important;
   box-shadow:
@@ -3496,7 +3496,7 @@ header {
     0 0 0 0.5px rgba(99,102,241,0.15),
     inset 0 1px 0 rgba(255,255,255,0.04) !important;
 }
-#qvioHeader:hover {
+#inoraHeader:hover {
   box-shadow:
     0 8px 12px rgba(0,0,0,0.04),
     0 20px 48px rgba(99,102,241,0.14),
@@ -3509,7 +3509,7 @@ header {
 }
 
 /* Push content down to not be hidden behind floating header */
-#qvio-app { padding-top: 78px !important; }
+#inora-app { padding-top: 78px !important; }
 
 /* ── HAMBURGER ── */
 .fh-ham {
@@ -3877,20 +3877,20 @@ button, .qr, .mbtn, .fh-btn, .lsm-pill {
 
 /* ── MOBILE ── */
 @media(max-width:600px){
-  #qvioHeader { top:8px !important; width:calc(100% - 20px) !important; height:50px !important; }
+  #inoraHeader { top:8px !important; width:calc(100% - 20px) !important; height:50px !important; }
   .fh-logo-text { display:none; }
   .fh-av-name { display:none; }
-  #qvio-app { padding-top:70px !important; }
+  #inora-app { padding-top:70px !important; }
 }
 
 
 /* ╔══════════════════════════════════════════════════════════╗
-   ║  QVIO CRAZY SMOOTH ANIMATIONS + SMART FEATURES          ║
+   ║  INORA CRAZY SMOOTH ANIMATIONS + SMART FEATURES          ║
    ║  Particle effects • Morphing • Neural pulse • WOW       ║
    ╚══════════════════════════════════════════════════════════╝ */
 
 /* ── PARTICLE BACKGROUND ── */
-#qvio-app::before {
+#inora-app::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -3941,7 +3941,7 @@ button, .qr, .mbtn, .fh-btn, .lsm-pill {
 }
 
 /* ── NEURAL NETWORK HEADER GLOW ── */
-#qvioHeader::before {
+#inoraHeader::before {
   content: "";
   position: absolute; inset: 0;
   border-radius: inherit;
@@ -4171,7 +4171,7 @@ html body button#sendBtn:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   QVIO ANIMATIONS MASTER FILE — ALL WORKING, NO CONFLICTS
+   INORA ANIMATIONS MASTER FILE — ALL WORKING, NO CONFLICTS
    Every animation tested. Clean cascade. Zero fights.
 ═══════════════════════════════════════════════════════════════ */
 
@@ -4222,7 +4222,7 @@ html body button#sendBtn:hover {
 /* ─── APPLY ANIMATIONS ─── */
 
 /* 1. FLOATING HEADER */
-#qvioHeader {
+#inoraHeader {
   animation: qHeaderIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both !important;
 }
 /* 2. STATUS DOT */
@@ -4327,7 +4327,7 @@ html body button#sendBtn:hover {
 #sendBtn:hover::before, .sendbtn:hover::before { left:200%; }
 
 /* 40. AMBIENT BACKGROUND */
-#qvio-app::before {
+#inora-app::before {
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
     radial-gradient(circle at 15% 15%,rgba(99,102,241,0.07) 0%,transparent 40%),
@@ -4420,8 +4420,8 @@ html body button#sendBtn:hover {
 :root .sendbtn#sendBtn,
 html body #sendBtn,
 html body .sendbtn,
-#qvio-app .sendbtn,
-#qvio-app #sendBtn,
+#inora-app .sendbtn,
+#inora-app #sendBtn,
 .input-area .sendbtn,
 .ibox .sendbtn,
 .ibtns .sendbtn,
@@ -4455,7 +4455,7 @@ html body #sendBtn:active {
 
 
 /* ════════════════════════════════════════════════
-   QVIO MASTER DESIGN — SIMPLE · PROFESSIONAL · ∞
+   INORA MASTER DESIGN — SIMPLE · PROFESSIONAL · ∞
    Clean. Fast. Futuristic. Every animation smooth.
 ════════════════════════════════════════════════ */
 
@@ -4525,7 +4525,7 @@ html body #sendBtn:active {
 /* ── APPLY ALL ANIMATIONS ── */
 
 /* Header */
-#qvioHeader { animation: qHdr 0.9s cubic-bezier(0.34,1.56,0.64,1) both !important; }
+#inoraHeader { animation: qHdr 0.9s cubic-bezier(0.34,1.56,0.64,1) both !important; }
 .fh-status-dot { animation: qGreenPulse 2s ease-in-out infinite !important; }
 
 /* Welcome */
@@ -4625,7 +4625,7 @@ html body #sendBtn:active {
 .code-copy.copied{animation:qPOP 0.4s ease!important}
 
 /* ── AMBIENT GLOW BACKGROUND ── */
-#qvio-app::before{
+#inora-app::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
     radial-gradient(circle at 10% 20%,rgba(99,102,241,0.08) 0%,transparent 45%),
@@ -4636,7 +4636,7 @@ html body #sendBtn:active {
 
 
 /* ╔═══════════════════════════════════════════════╗
-   ║  QVIO — SEXY SMOOTH ANIMATIONS FINAL v1.0    ║
+   ║  INORA — SEXY SMOOTH ANIMATIONS FINAL v1.0    ║
    ║  Clean • Fast • Futuristic • 60fps           ║
    ╚═══════════════════════════════════════════════╝ */
 
@@ -4670,7 +4670,7 @@ html body #sendBtn:active {
 @keyframes sOrbIn{from{opacity:0;transform:scale(.15) rotate(-30deg)}65%{transform:scale(1.08) rotate(5deg)}to{opacity:1;transform:none}}
 
 /* ━━━ HEADER ━━━ */
-#qvioHeader{animation:sHdr .9s cubic-bezier(.34,1.56,.64,1) both!important}
+#inoraHeader{animation:sHdr .9s cubic-bezier(.34,1.56,.64,1) both!important}
 .fh-status-dot{animation:sGreenPulse 2s ease-in-out infinite!important}
 .fh-logo-orb{transition:all .3s cubic-bezier(.34,1.56,.64,1)!important}
 .fh-logo-orb:hover{transform:scale(1.15) rotate(8deg)!important;box-shadow:0 8px 28px rgba(99,102,241,.6)!important}
@@ -4795,7 +4795,7 @@ body:not([data-theme="dark"])::after{
 
 <style id="Q">
 /* ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-   QVIO MASTER DESIGN — CEO EDITION
+   INORA MASTER DESIGN — CEO EDITION
    Simple. Confident. Premium. Indian.
    Every animation intentional. Every pixel earned.
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ */
@@ -4950,7 +4950,7 @@ body:not([data-theme="dark"]) {
 ════════════════════════════════════════ */
 
 /* HEADER */
-#qvioHeader {
+#inoraHeader {
   position:fixed !important;
   top:14px !important;
   left:50% !important;
@@ -4973,11 +4973,11 @@ body:not([data-theme="dark"]) {
   transition:box-shadow 0.3s, background 0.3s !important;
   animation:Q-hdr 0.8s cubic-bezier(0.34,1.56,0.64,1) both !important;
 }
-[data-theme="dark"] #qvioHeader {
+[data-theme="dark"] #inoraHeader {
   background:rgba(11,11,20,0.9) !important;
   border-color:var(--border) !important;
 }
-#qvio-app { padding-top:80px !important; }
+#inora-app { padding-top:80px !important; }
 
 /* HEADER PARTS */
 .fh-left   { display:flex; align-items:center; gap:8px; flex-shrink:0; }
@@ -5259,14 +5259,14 @@ body:not([data-theme="dark"]) {
 .code-block:hover { box-shadow:0 8px 32px rgba(0,0,0,0.22) !important; }
 
 /* THEME TRANSITION */
-#qvioHeader, .fh-mode, .fh-btn, .fh-avatar, #mainIbox, .ibox, .msg.ai .bubble, .msg.user .bubble, .qr, .mbtn, .w-badge, #sidebar, .modal {
+#inoraHeader, .fh-mode, .fh-btn, .fh-avatar, #mainIbox, .ibox, .msg.ai .bubble, .msg.user .bubble, .qr, .mbtn, .w-badge, #sidebar, .modal {
   transition-property:background,border-color,color,box-shadow !important;
   transition-duration:0.3s !important;
   transition-timing-function:ease !important;
 }
 
 /* SUBTLE AMBIENT BG GLOW */
-#qvio-app::before {
+#inora-app::before {
   content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
   background:
     radial-gradient(circle at 10% 90%,rgba(91,33,182,0.04) 0%,transparent 45%),
@@ -5274,13 +5274,13 @@ body:not([data-theme="dark"]) {
 }
 
 @media(max-width:600px){
-  #qvioHeader { top:8px !important; width:calc(100% - 16px) !important; height:48px !important; }
+  #inoraHeader { top:8px !important; width:calc(100% - 16px) !important; height:48px !important; }
   .fh-logo-text,.fh-av-name { display:none; }
-  #qvio-app { padding-top:68px !important; }
+  #inora-app { padding-top:68px !important; }
 }
 
 /* ====================================================
-   QVIO v8 - FLOATING HAMBURGER + FIXES + ANIMATIONS
+   INORA v8 - FLOATING HAMBURGER + FIXES + ANIMATIONS
    ==================================================== */
 
 /* Hide built-in hamburger from header */
@@ -5456,7 +5456,7 @@ html{scroll-behavior:smooth!important;}
 ::-webkit-scrollbar-thumb{background:linear-gradient(#6366F1,#A855F7)!important;border-radius:3px!important;}
 
 /* ╔══════════════════════════════════════════════════════════════╗
-   ║   QVIO MASTER DESIGN OVERRIDE v9 — FINAL                   ║
+   ║   INORA MASTER DESIGN OVERRIDE v9 — FINAL                   ║
    ║   Fixes all conflicting CSS. Last rule wins.                ║
    ╚══════════════════════════════════════════════════════════════╝ */
 
@@ -5528,7 +5528,7 @@ html{scroll-behavior:smooth!important;}
 #qvFloatHam.sb-open .hb:nth-child(3) { transform: translateY(-6.8px) rotate(-45deg) !important; background: #6366F1 !important; }
 
 /* ── HEADER — clean floating pill ── */
-#qvioHeader {
+#inoraHeader {
   position: fixed !important;
   top: 12px !important;
   left: 50% !important;
@@ -5551,13 +5551,13 @@ html{scroll-behavior:smooth!important;}
   animation: qvHeaderDrop 0.7s cubic-bezier(0.34,1.56,0.64,1) both !important;
   overflow: hidden !important;
 }
-[data-theme="dark"] #qvioHeader {
+[data-theme="dark"] #inoraHeader {
   background: rgba(10,12,20,0.84) !important;
   border-color: rgba(99,102,241,0.18) !important;
   box-shadow: 0 4px 6px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04) !important;
 }
 /* Header shimmer sweep */
-#qvioHeader::after {
+#inoraHeader::after {
   content: '' !important;
   position: absolute !important;
   top: 0 !important; left: -120% !important;
@@ -5576,10 +5576,10 @@ html{scroll-behavior:smooth!important;}
   30% { left: 140%; }
 }
 /* All header children above shimmer */
-#qvioHeader > * { position: relative !important; z-index: 1 !important; }
+#inoraHeader > * { position: relative !important; z-index: 1 !important; }
 
 /* ── CONTENT PUSH ── */
-#qvio-app { padding-top: 76px !important; }
+#inora-app { padding-top: 76px !important; }
 .chat { padding-top: 8px !important; }
 
 /* ── EARTH BUTTON ── */
@@ -6139,14 +6139,14 @@ html { scroll-behavior: smooth !important; }
 
 /* ── MOBILE ── */
 @media(max-width:600px){
-  #qvioHeader { width: calc(100% - 80px) !important; left: 70px !important; transform: none !important; top: 8px !important; }
+  #inoraHeader { width: calc(100% - 80px) !important; left: 70px !important; transform: none !important; top: 8px !important; }
   @keyframes qvHeaderDrop {
     from { opacity:0; transform: translateY(-40px) scale(0.94); }
     to   { opacity:1; transform: none; }
   }
   .welcome h1 { font-size: 26px !important; }
   .sugs { grid-template-columns: 1fr !important; }
-  #qvio-app { padding-top: 68px !important; }
+  #inora-app { padding-top: 68px !important; }
 }
 
 /* CEO CLEANUP: Hide toy feature buttons */
@@ -6173,8 +6173,8 @@ html { scroll-behavior: smooth !important; }
 #qvCursor, #qvDot { display: none !important; }
 /* Hide Wispr panel */
 #wisprPanel, #wisprBtn { display: none !important; }
-/* Hide Hey QVIO btn */
-#heyQvioBtn { display: none !important; }
+/* Hide Hey INORA btn */
+#heyInoraBtn { display: none !important; }
 /* Hide l-crown */
 .l-crown { display: none !important; }
 /* Hide orb r3 (too cluttered) */
@@ -6227,7 +6227,7 @@ html { scroll-behavior: smooth !important; }
 
 
 /* ╔══════════════════════════════════════════════════════════════════╗
-   ║  QVIO 100 ULTRA SMOOTH ANIMATIONS v10                          ║
+   ║  INORA 100 ULTRA SMOOTH ANIMATIONS v10                          ║
    ╚══════════════════════════════════════════════════════════════════╝ */
 
 /* ── 1. PAGE LOAD FADE ── */
@@ -6279,14 +6279,14 @@ body::after {
 }
 
 /* ── 5. HEADER DROP + BLUR IN ── */
-#qvioHeader { animation:qv5HeaderDrop .75s cubic-bezier(.34,1.56,.64,1) both!important; }
+#inoraHeader { animation:qv5HeaderDrop .75s cubic-bezier(.34,1.56,.64,1) both!important; }
 @keyframes qv5HeaderDrop {
   from{opacity:0;transform:translateX(-50%) translateY(-40px) scale(.94);filter:blur(8px)}
   to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);filter:blur(0)}
 }
 
 /* ── 6. HEADER GLASS SHINE SWEEP ── */
-#qvioHeader::after {
+#inoraHeader::after {
   content:''!important; position:absolute!important;
   top:0!important; left:-120%!important; width:60%!important; height:100%!important;
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.13),transparent)!important;
@@ -6782,7 +6782,7 @@ body::after {
 
 </style><style id="qvio-security">
 /* Disable text selection on code/sensitive areas */
-.lmark, .fl-mark, header, #qvioHeader {
+.lmark, .fl-mark, header, #inoraHeader {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -6791,7 +6791,193 @@ body::after {
 img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
 </style></head>
 <body>
-<!-- FLOATING HAMBURGER + QVIO ANIMATIONS v8 -->
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   INORA NUCLEAR DEVTOOLS BLOCK v2 — VARUN 2025
+   F12 | Ctrl+U | Ctrl+S | Ctrl+P | Right Click
+   Inspect | Console | Debugger Trap | Size Detection
+   ═══════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+/* ── 1. BLOCK ALL KEYBOARD SHORTCUTS ── */
+var BLOCKED_KEYS = function(e){
+  var k = (e.key||'').toLowerCase();
+  var ctrl = e.ctrlKey||e.metaKey;
+  var shift = e.shiftKey;
+  var alt = e.altKey;
+
+  // F12
+  if(k==='f12') return true;
+  // F5 reload (prevent source caching tricks)
+  // Actually keep F5 — user needs refresh
+
+  // Ctrl+U = view source
+  if(ctrl && !shift && k==='u') return true;
+  // Ctrl+S = save page
+  if(ctrl && !shift && k==='s') return true;
+  // Ctrl+P = print (can show source)
+  if(ctrl && !shift && k==='p') return true;
+
+  // Ctrl+Shift+I = Inspector
+  if(ctrl && shift && k==='i') return true;
+  // Ctrl+Shift+J = Console
+  if(ctrl && shift && k==='j') return true;
+  // Ctrl+Shift+C = Element picker
+  if(ctrl && shift && k==='c') return true;
+  // Ctrl+Shift+K = Firefox console
+  if(ctrl && shift && k==='k') return true;
+  // Ctrl+Shift+E = Firefox network
+  if(ctrl && shift && k==='e') return true;
+  // Ctrl+Shift+Q = Firefox devtools
+  if(ctrl && shift && k==='q') return true;
+
+  // Alt+Cmd+I = Mac inspector
+  if(alt && e.metaKey && k==='i') return true;
+  // Alt+Cmd+J = Mac console
+  if(alt && e.metaKey && k==='j') return true;
+  // Alt+Cmd+C = Mac console
+  if(alt && e.metaKey && k==='c') return true;
+  // Alt+Cmd+U = Mac view source
+  if(alt && e.metaKey && k==='u') return true;
+
+  return false;
+};
+
+document.addEventListener('keydown', function(e){
+  if(BLOCKED_KEYS(e)){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    _inoraWarn();
+    return false;
+  }
+}, true);
+
+/* ── 2. BLOCK RIGHT CLICK ── */
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  _inoraWarn();
+  return false;
+}, true);
+
+/* ── 3. BLOCK DRAG (drag tab = view source trick) ── */
+document.addEventListener('dragstart', function(e){
+  e.preventDefault();
+  return false;
+}, true);
+
+/* ── 4. BLOCK TEXT SELECTION (makes copying harder) ── */
+// Only block on non-input elements
+document.addEventListener('selectstart', function(e){
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return true;
+  // Allow in chat bubbles (users need to copy AI responses)
+  if(e.target.closest&&(e.target.closest('.bubble')||e.target.closest('.chat'))) return true;
+  return true; // Allow everywhere — too aggressive otherwise
+}, false);
+
+/* ── 5. DEVTOOLS SIZE DETECTION ── */
+var _dt = false;
+var _dtCheck = function(){
+  var threshold = 160;
+  var widthDiff  = window.outerWidth  - window.innerWidth;
+  var heightDiff = window.outerHeight - window.innerHeight;
+  if(widthDiff > threshold || heightDiff > threshold){
+    if(!_dt){
+      _dt = true;
+      _onDevtools();
+    }
+  } else {
+    _dt = false;
+  }
+};
+setInterval(_dtCheck, 1000);
+
+/* ── 6. DEBUGGER TRAP ── */
+// Runs when devtools is open — slows it down
+var _dbTrap = function(){
+  (function(){
+    return false;
+  }['constructor']('debugger')['call']());
+};
+// Don't run trap continuously — just on detection
+// (continuous trap breaks normal use)
+
+/* ── 7. CONSOLE WARNING ── */
+var _warned = false;
+function _inoraConsoleWarn(){
+  if(_warned) return;
+  _warned = true;
+  var c = window.console;
+  if(!c) return;
+  c.log('%c⛔ STOP!',
+    'font-size:44px;font-weight:900;color:#fff;background:#EF4444;padding:12px 22px;border-radius:10px;');
+  c.log('%c🔒 INORA AI — Private & Protected',
+    'font-size:16px;font-weight:800;color:#6366F1;');
+  c.log('%c⚖️ Indian Copyright Act 1957 | IT Act 2000 | IPC Section 66A',
+    'font-size:13px;color:#374151;');
+  c.log('%c🚨 Unauthorized access = criminal offence. Your IP has been logged.',
+    'font-size:12px;color:#DC2626;font-weight:700;');
+  c.log('%c© 2025 INORA AI by VARUN. All Rights Reserved. | inora.in',
+    'font-size:11px;color:#6B7280;');
+}
+
+/* ── 8. DEVTOOLS OPEN HANDLER ── */
+function _onDevtools(){
+  _inoraConsoleWarn();
+  // Show toast
+  if(typeof showToast==='function'){
+    showToast('🔒 INORA Protected — Devtools blocked!');
+  }
+}
+
+/* ── 9. FIRE CONSOLE WARNING ON LOAD ── */
+// Uses getter trick — fires when devtools reads the property
+var _fired = false;
+try {
+  Object.defineProperty(window, '_inora_sec_check', {
+    get: function(){
+      if(!_fired){ _fired=true; _inoraConsoleWarn(); }
+      return 'INORA_PROTECTED';
+    }
+  });
+  // This fires in console automatically when console is open
+  setTimeout(function(){ 
+    try{ console.log(window._inora_sec_check); }catch(e){}
+  }, 500);
+} catch(e){}
+
+/* ── 10. OVERRIDE toString TO DETECT DEBUGGER ── */
+// When devtools formats a function, it calls toString
+var _toStringFired = 0;
+var _origToString = Function.prototype.toString;
+try{
+  Function.prototype.toString = function(){
+    _toStringFired++;
+    if(_toStringFired > 20 && !_warned) _inoraConsoleWarn();
+    return _origToString.call(this);
+  };
+}catch(e){}
+
+/* ── WARN FUNCTION ── */
+function _inoraWarn(){
+  var msgs = [
+    '🔒 INORA Protected — © VARUN 2025',
+    '⚡ Blocked! INORA Security Active',
+    '🛡️ Protected by INORA. Study karo bhai! 😂',
+    '🚫 Developer tools are disabled on INORA',
+    '⚖️ INORA AI — All rights reserved'
+  ];
+  if(typeof showToast==='function'){
+    showToast(msgs[Math.floor(Math.random()*msgs.length)]);
+  }
+}
+
+})();
+</script>
+
+<!-- FLOATING HAMBURGER + INORA ANIMATIONS v8 -->
 <div id="qvFloatHam" onclick="qvToggleSidebar()" title="Menu">
   <span class="hb"></span>
   <span class="hb"></span>
@@ -6934,7 +7120,7 @@ window.renderSidebarGroups=function(sessions){
 
 function tryLS(){
   try{
-    var ks=["qvio_sessions","qvioSessions","sessions","chatSessions","qvio_chats"];
+    var ks=["inora_sessions","inoraSessions","sessions","chatSessions","inora_chats"];
     for(var i=0;i<ks.length;i++){var r=localStorage.getItem(ks[i]);if(r){var a=JSON.parse(r);if(Array.isArray(a)&&a.length){window.renderSidebarGroups(a);return;}}}
   }catch(e){}
 }
@@ -6942,7 +7128,7 @@ window.addEventListener("load",function(){
   setTimeout(tryLS,700);setTimeout(tryLS,2500);
   document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();if(window.newChat)window.newChat();else if(window.createNewSession)window.createNewSession();}});
 });
-window.addEventListener("storage",function(e){var ks=["qvio_sessions","qvioSessions","sessions","chatSessions","qvio_chats"];if(ks.indexOf(e.key)>-1)tryLS();});
+window.addEventListener("storage",function(e){var ks=["inora_sessions","inoraSessions","sessions","chatSessions","inora_chats"];if(ks.indexOf(e.key)>-1)tryLS();});
 setTimeout(function(){
   ["saveSession","saveCurrentSession","addSession","createSession","renderSidebarChats"].forEach(function(fn){
     if(window[fn]&&!window[fn]._qvp){var o=window[fn];window[fn]=function(){var r=o.apply(this,arguments);setTimeout(tryLS,350);return r;};window[fn]._qvp=1;}
@@ -6980,8 +7166,8 @@ setTimeout(function(){
 <div id="loginScreen" style="position:fixed;inset:0;z-index:999999;background:#080C14;display:flex;align-items:center;justify-content:center;overflow-y:auto;">
   <div class="lwrap">
     
-    <div class="l-mark">QV</div>
-    <h1 class="l-h1">Welcome to <em>QVIO</em></h1>
+    <div class="l-mark">IN</div>
+    <h1 class="l-h1">Welcome to <em>INORA</em></h1>
     <p class="l-p">India's most premium AI for the world.<br>150+ languages · Built for everyone, everywhere 🌍🇮🇳</p>
     <button class="gbtn" onclick="signInGoogle()">
       <svg class="gicon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -7226,7 +7412,7 @@ setTimeout(function(){
   <div class="ob-card">
     <span class="ob-step" id="obStep">Step 1 of 3</span>
     <span class="ob-icon" id="obIcon">⚡</span>
-    <div class="ob-title" id="obTitle">QVIO — India's #1 AI</div>
+    <div class="ob-title" id="obTitle">INORA — India's #1 AI</div>
     <div class="ob-desc" id="obDesc">Get answers in under 2 seconds. No waiting. No limits. Just instant intelligence for every Indian.</div>
     <div class="ob-dots">
       <div class="ob-dot on" id="dot0"></div><div class="ob-dot" id="dot1"></div><div class="ob-dot" id="dot2"></div>
@@ -7242,9 +7428,9 @@ setTimeout(function(){
   <div class="sc-box">
     <div class="mhd" style="margin-bottom:14px;"><h3>📤 Share this answer</h3><button class="mx" onclick="closeShare()">✕</button></div>
     <div class="sc-preview">
-      <div class="sc-q-logo"><span style="background:var(--gold-gs);padding:2px 8px;border-radius:4px;font-size:11px;color:#fff;font-family:'DM Mono',monospace;">QV</span>QVIO says</div>
+      <div class="sc-q-logo"><span style="background:var(--gold-gs);padding:2px 8px;border-radius:4px;font-size:11px;color:#fff;font-family:'DM Mono',monospace;">IN</span>INORA says</div>
       <div class="sc-q-text" id="shareText">Loading...</div>
-      <div class="sc-q-url">qvio.in — India's Premium AI</div>
+      <div class="sc-q-url">inora.in — India's Premium AI</div>
     </div>
     <div class="sc-actions">
       <button class="sc-btn copy" onclick="copyShareText()">📋 Copy</button>
@@ -7254,9 +7440,9 @@ setTimeout(function(){
   </div>
 </div>
 
-<div class="off-bar" id="offBar">No internet connection — QVIO is offline</div>
+<div class="off-bar" id="offBar">No internet connection — INORA is offline</div>
 <div class="inst-bar" id="instBar">
-  <div>📱 Add QVIO to your home screen!</div>
+  <div>📱 Add INORA to your home screen!</div>
   <div style="display:flex;gap:6px;"><button onclick="installPWA()">Install</button><button class="idism" onclick="dismissInstall()">✕</button></div>
 </div>
 
@@ -7309,7 +7495,7 @@ setTimeout(function(){
 <!-- HEADER -->
 <script>
 
-// ══ QVIO CINEMATIC ENTRY — MADE IN INDIA ══
+// ══ INORA CINEMATIC ENTRY — MADE IN INDIA ══
 (function(){
   if(localStorage.getItem('qvio_entered')) return;
   localStorage.setItem('qvio_entered','1');
@@ -7453,8 +7639,8 @@ setTimeout(function(){
 <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 <div id="sidebar" style="position:fixed;top:0;left:0;bottom:0;width:256px;background:var(--surface);border-right:1px solid var(--border);display:none;flex-direction:column;transform:translateX(-256px);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:500;">
   <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(99,102,241,0.06),transparent);">
-    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(99,102,241,0.4);">QV</div>
-    <span style="font-size:14px;font-weight:700;flex:1;background:linear-gradient(135deg,#6366F1,#A855F7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">QVIO AI</span>
+    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(99,102,241,0.4);">IN</div>
+    <span style="font-size:14px;font-weight:700;flex:1;background:linear-gradient(135deg,#6366F1,#A855F7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">INORA AI</span>
     <button onclick="closeSidebar()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;">✕</button>
   </div>
   <button onclick="createNewSession?createNewSession():newChat();" style="margin:10px;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;">✏️ New Chat</button>
@@ -7465,7 +7651,7 @@ setTimeout(function(){
   </div>
   <div style="padding:12px;border-top:1px solid var(--border);">
     <div onclick="openM('prof')" style="padding:9px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;">
-      <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">QV</div>
+      <div id="sbAvatar" style="width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">IN</div>
       <div>
         <div id="sbUname" style="font-size:13px;font-weight:500;">Guest</div>
         <div style="font-size:11px;color:var(--text3);">Free Plan</div>
@@ -7473,10 +7659,10 @@ setTimeout(function(){
     </div>
   </div>
 </div>
-<div id="qvio-app">
+<div id="inora-app">
 
 <!-- ═══ FLOATING GLASS HEADER ═══ -->
-<header id="qvioHeader">
+<header id="inoraHeader">
   <!-- Left: Hamburger + Logo -->
   <div class="fh-left">
     <button class="fh-ham" id="sbToggle" onclick="toggleSidebar()">
@@ -7498,7 +7684,7 @@ setTimeout(function(){
             font-family="DM Sans,sans-serif" font-weight="700" font-size="7" fill="white" opacity="0.85" letter-spacing="1.5">VIO</text>
         </svg>
       </div>
-      <span class="fh-logo-text">QV<em>IO</em></span>
+      <span class="fh-logo-text">IN<em>IO</em></span>
     </div>
   </div>
 
@@ -7518,7 +7704,7 @@ setTimeout(function(){
     <button class="fh-btn" id="soundBtn" onclick="toggleSound()" title="Sound">🔔</button>
     
   <!-- Live Users Counter -->
-  <div id="qvLiveCount" title="People using QVIO right now">
+  <div id="qvLiveCount" title="People using INORA right now">
     <span class="qv-live-dot"></span>
     <span class="qv-live-num" id="qvLiveNum">—</span>
     <span>live</span>
@@ -7560,7 +7746,7 @@ setTimeout(function(){
   <button class="mbtn" onclick="setMode('travel',this,'Travel')">✈️ Travel</button>
 </div>
 
-<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>QVIO is thinking...</span></div>
+<div class="type-bar" id="typeBar"><div class="tdots"><span></span><span></span><span></span></div><span>INORA is thinking...</span></div>
 
 <div class="chat" id="chat">
   <div class="welcome" id="welcome">
@@ -7585,7 +7771,7 @@ setTimeout(function(){
     <div class="w-orb-ring r2"></div>
     <div class="w-orb-ring r3"></div>
   </div>
-  <h1 class="w-title">Hello, I am <em>QVIO AI</em></h1>
+  <h1 class="w-title">Hello, I am <em>INORA AI</em></h1>
   <p class="wsub" id="wsub">Your premium AI from India, for the world 🌏</p>
   <div class="w-badges">
     <span class="w-badge">⚡ India's Fastest</span>
@@ -7616,11 +7802,11 @@ setTimeout(function(){
   </div>
 </div>
 
-<!-- QVIO LENS -->
+<!-- INORA LENS -->
 <div class="overlay" id="o_lens" onclick="closeLens()"></div>
 <div class="modal" id="m_lens" style="max-width:560px;">
   <div class="mhd">
-    <h3>🔍 QVIO Lens</h3>
+    <h3>🔍 INORA Lens</h3>
     <button class="mx" onclick="closeLens()">✕</button>
   </div>
   <div class="msub">Scan anything — text, objects, math, plants, food, QR codes and more</div>
@@ -7655,7 +7841,7 @@ setTimeout(function(){
   <canvas id="lensCanvas" style="display:none;"></canvas>
 
   <!-- Analyse button -->
-  <button class="mclose" id="lensAnalyseBtn" onclick="analyseLens()" style="margin-top:14px;" disabled>🔍 Analyse with QVIO</button>
+  <button class="mclose" id="lensAnalyseBtn" onclick="analyseLens()" style="margin-top:14px;" disabled>🔍 Analyse with INORA</button>
 
   <!-- Result -->
   <div id="lensResult" class="lens-result" style="display:none;"></div>
@@ -7681,7 +7867,7 @@ setTimeout(function(){
       <h3>🌍 AI Response Language</h3>
       <button class="mx" onclick="closeLangSelect()">✕</button>
     </div>
-    <div class="lsm-sub">Choose which language QVIO responds in</div>
+    <div class="lsm-sub">Choose which language INORA responds in</div>
     <div class="lsm-search-wrap">
       <span class="lsm-search-icon">🔍</span>
       <input class="lsm-search" id="lsmSearch" type="text" placeholder="Search 150+ languages..." oninput="filterLSM(this.value)" autocomplete="off"/>
@@ -7888,7 +8074,7 @@ function updateSidebarUser(user){
 // ══ CHAT HISTORY SAVE/RESTORE ══
 function saveChatHistory(){
   try{
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    var sessions=JSON.parse(localStorage.getItem('inora_sessions')||'[]');
     if(chatHistory.length>0){
       var session={
         id:Date.now(),
@@ -7898,8 +8084,8 @@ function saveChatHistory(){
       };
       sessions.unshift(session);
       sessions=sessions.slice(0,20); // keep last 20 sessions
-      localStorage.setItem('qvio_sessions',JSON.stringify(sessions));
-      localStorage.setItem('qvio_autosave',JSON.stringify({ts:Date.now(),msgs:chatHistory.slice(-10)}));
+      localStorage.setItem('inora_sessions',JSON.stringify(sessions));
+      localStorage.setItem('inora_autosave',JSON.stringify({ts:Date.now(),msgs:chatHistory.slice(-10)}));
       renderSidebarChats();
     }
   }catch(e){}
@@ -7909,7 +8095,7 @@ function renderSidebarChats(){
   try{
     var list=document.getElementById('sbChatList');
     if(!list)return;
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    var sessions=JSON.parse(localStorage.getItem('inora_sessions')||'[]');
     if(sessions.length===0){
       list.innerHTML='<div style="padding:9px 12px;font-size:13px;color:var(--text3);">No saved chats yet</div>';
       return;
@@ -7924,7 +8110,7 @@ function renderSidebarChats(){
 
 function loadSession(id){
   try{
-    var sessions=JSON.parse(localStorage.getItem('qvio_sessions')||'[]');
+    var sessions=JSON.parse(localStorage.getItem('inora_sessions')||'[]');
     var session=sessions.find(function(s){return s.id==id;});
     if(!session)return;
     newChat();
@@ -7941,7 +8127,7 @@ function loadSession(id){
 window.addEventListener('load',function(){
   setTimeout(function(){
     try{
-      var saved=localStorage.getItem('qvio_autosave');
+      var saved=localStorage.getItem('inora_autosave');
       if(saved){
         var data=JSON.parse(saved);
         var age=(Date.now()-data.ts)/60000;
@@ -7956,7 +8142,7 @@ window.addEventListener('load',function(){
   },1500);
 });
 
-// ══ QVIO WISPR FLOW ══
+// ══ INORA WISPR FLOW ══
 var _wispr = {
   active: false,
   rec: null,
@@ -7999,7 +8185,7 @@ function startWispr(){
     document.getElementById('wisprBtn').classList.add('listening');
     document.getElementById('wisprWave').style.display = 'flex';
     document.getElementById('wisprStatusText').textContent = 'Listening...';
-    showToast('🎙️ QVIO is listening!');
+    showToast('🎙️ INORA is listening!');
   };
 
   _wispr.rec.onresult = function(e){
@@ -8047,7 +8233,7 @@ async function processWispr(text){
   if(!text) return;
 
   if(_wispr.autoClean || _wispr.autoPunct){
-    // Use QVIO AI Engine to clean up the transcript
+    // Use INORA AI Engine to clean up the transcript
     try{
       var prompt = 'Clean up this voice transcript. ';
       if(_wispr.autoClean) prompt += 'Remove filler words (um, uh, like, you know, basically, literally). ';
@@ -8127,7 +8313,7 @@ document.addEventListener('keyup', function(e){
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — INORA teaches you like Duolingo but smarter! 🔥</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <button class="ll-lang" onclick="startLangLearn('Spanish')">🇪🇸 Spanish</button>
       <button class="ll-lang" onclick="startLangLearn('French')">🇫🇷 French</button>
@@ -8178,32 +8364,32 @@ document.addEventListener('keyup', function(e){
   <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
   <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
     <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
+    <p>INORA AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
-    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
+    <p>• Messages you send to INORA (processed in real-time, not stored permanently)<br>
     • Account information (name, email via Google)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
-    <p>• To provide and improve QVIO AI responses<br>
+    <p>• To provide and improve INORA AI responses<br>
     • To personalize your experience<br>
     • To maintain your preferences and settings<br>
     • To ensure platform security</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
+    <p>• Conversations are processed via INORA AI Engine and are NOT permanently stored by INORA<br>
     • Your preferences are stored locally on your device<br>
     • We use Firebase for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• QVIO AI Engine — for processing AI responses<br>
+    <p>• INORA AI Engine — for processing AI responses<br>
     • Firebase — for authentication<br>
-    • QVIO Image Engine — for image generation</p>
+    • INORA Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
     • You can request deletion of your data<br>
     • You can opt out of any feature</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
     <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#4737352e3126243e0736312e28692e29" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="5424263d2235372d1425223d3b7a3d3a">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 INORA AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
   </div>
 </div>
 
@@ -8213,25 +8399,25 @@ document.addEventListener('keyup', function(e){
   <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
   <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
     <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
+    <p>By using INORA AI, you agree to these terms. Please read carefully.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
-    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
+    <p>By accessing inora.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
-    <p>• QVIO is for lawful purposes only<br>
-    • You must be 13+ years old to use QVIO<br>
-    • Do not use QVIO for harmful, illegal or abusive content<br>
-    • Do not attempt to reverse engineer or copy QVIO</p>
+    <p>• INORA is for lawful purposes only<br>
+    • You must be 13+ years old to use INORA<br>
+    • Do not use INORA for harmful, illegal or abusive content<br>
+    • Do not attempt to reverse engineer or copy INORA</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
-    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
+    <p>INORA AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
-    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
+    <p>INORA AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use INORA for medical, legal or financial decisions without professional advice.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
-    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
+    <p>INORA is provided "as is". We are not liable for any damages arising from use of the service.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
     <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">7. Contact</h4>
     <p>Questions: <a href="/cdn-cgi/l/email-protection#e38f8684828fa392958a8ccd8a8d" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="fc90999b9d90bc8d8a9593d29592">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 INORA AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved.</p>
   </div>
 </div>
 
@@ -8391,8 +8577,8 @@ setTimeout(function(){
       var code=d.error.code||'';
       var msg=d.error.message||'';
       if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
-        showToast('⚠️ QVIO Brain needs a restart. Please refresh the page.');
-        console.error('QVIO KEY EXPIRED:',msg);
+        showToast('⚠️ INORA Brain needs a restart. Please refresh the page.');
+        console.error('INORA KEY EXPIRED:',msg);
       }
     }else{
       console.log('✅ Groq API key is valid');
@@ -8401,7 +8587,7 @@ setTimeout(function(){
     // Network error or CORS — can't check, ignore silently
   });
 },3000);
-// QVIO WEB SEARCH
+// INORA WEB SEARCH
 var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
   'war','match','score','ipl','election','price','stock','weather','who won','what happened',
   'recently','this week','yesterday','trending','live','breaking'];
@@ -8493,7 +8679,7 @@ async function handleYouTube(text){
   var embedDiv = document.createElement('div');
   embedDiv.className = 'msg ai';
   embedDiv.innerHTML = \`
-    <div class="av ai">QV</div>
+    <div class="av ai">IN</div>
     <div class="mwrap">
       <div class="bubble" style="padding:12px;max-width:520px;">
         <div style="border-radius:12px;overflow:hidden;margin-bottom:10px;">
@@ -8729,10 +8915,10 @@ var _sid = localStorage.getItem('qvio_sid') || 'sid_'+Date.now();
 localStorage.setItem('qvio_sid', _sid);
 
 function _getSessions(){
-  try{return JSON.parse(localStorage.getItem('qvio_sessions2')||'{}');}catch(e){return {};}
+  try{return JSON.parse(localStorage.getItem('inora_sessions2')||'{}');}catch(e){return {};}
 }
 function _saveSessions(s){
-  try{localStorage.setItem('qvio_sessions2',JSON.stringify(s));}catch(e){}
+  try{localStorage.setItem('inora_sessions2',JSON.stringify(s));}catch(e){}
 }
 
 function saveCurrentSession(){
@@ -8938,10 +9124,10 @@ window.addEventListener('load',function(){
   });
 });
 
-/* ── QVIO LIVE USER COUNTER ── */
+/* ── INORA LIVE USER COUNTER ── */
 (function(){
-  var KEY = 'qvio_presence';
-  var MY_KEY = 'qvio_my_uid';
+  var KEY = 'inora_presence';
+  var MY_KEY = 'inora_my_uid';
   var WINDOW = 90000; // 90 seconds = "live"
   
   // Get or create unique session ID
@@ -9028,8 +9214,8 @@ window.addEventListener('load',function(){
 </script></body>
 <script>
 // ═══════════════════════════════════════════════════
-// QVIO PROTECTION SYSTEM
-// (c) 2025 QVIO by VARUN. All Rights Reserved.
+// INORA PROTECTION SYSTEM
+// (c) 2025 INORA by VARUN. All Rights Reserved.
 // Indian Copyright Act 1957 + IT Act 2000
 // ═══════════════════════════════════════════════════
 (function(){
@@ -9037,15 +9223,15 @@ window.addEventListener('load',function(){
   var _w=false;
   function _cw(){
     if(_w)return; _w=true;
-    console.log('%c\u26a0\ufe0f STOP \u2014 QVIO Protected','font-size:22px;font-weight:900;color:#D4A017;background:#0D1B3E;padding:10px 18px;border-radius:8px;');
+    console.log('%c\u26a0\ufe0f STOP \u2014 INORA Protected','font-size:22px;font-weight:900;color:#D4A017;background:#0D1B3E;padding:10px 18px;border-radius:8px;');
     console.log('%c\ud83d\udea8 Private property of VARUN. Unauthorized access is a criminal offence.','font-size:13px;color:#DC2626;font-weight:700;');
     console.log('%c\u2192 Indian Copyright Act 1957 | IT Act 2000 | IPC Section 66','font-size:12px;color:#374151;');
-    console.log('%c(c) 2025 QVIO AI by VARUN. All Rights Reserved.','font-size:11px;color:#6B7280;');
+    console.log('%c(c) 2025 INORA AI by VARUN. All Rights Reserved.','font-size:11px;color:#6B7280;');
   }
   Object.defineProperty(console,'_qg',{get:function(){_cw();return '';}});
   console.log(console._qg);
 
-  // ══ QVIO NUCLEAR SECURITY — VARUN 2025 ══
+  // ══ INORA NUCLEAR SECURITY — VARUN 2025 ══
   
   // Block ALL devtools shortcuts
   document.addEventListener('keydown', function(e) {
@@ -9085,9 +9271,9 @@ window.addEventListener('load',function(){
       e.preventDefault();
       e.stopPropagation();
       var msgs = [
-        '🔒 QVIO Protected — © VARUN 2025',
+        '🔒 INORA Protected — © VARUN 2025',
         '⚡ India\'s AI stays secure!',
-        '🛡️ Protected by QVIO Security'
+        '🛡️ Protected by INORA Security'
       ];
       if(typeof showToast === 'function') showToast(msgs[Math.floor(Math.random()*msgs.length)]);
       return false;
@@ -9098,7 +9284,7 @@ window.addEventListener('load',function(){
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    if(typeof showToast === 'function') showToast('🔒 QVIO Protected — © VARUN 2025');
+    if(typeof showToast === 'function') showToast('🔒 INORA Protected — © VARUN 2025');
     return false;
   }, true);
   
@@ -9115,7 +9301,7 @@ window.addEventListener('load',function(){
       _c.log('%c⛔ STOP!', 'font-size:40px;font-weight:900;color:#D4A017;background:#0D1B3E;padding:10px 18px;border-radius:8px;');
       _c.log('%c🔒 Private property of VARUN. Unauthorized access is a criminal offence.', 'font-size:13px;color:#DC2626;font-weight:700;');
       _c.log('%c⚖️ Indian Copyright Act 1957 | IT Act 2000 | IPC Section 66', 'font-size:12px;color:#374151;');
-      _c.log('%c© 2025 QVIO AI by VARUN. All Rights Reserved.', 'font-size:11px;color:#6B7280;');
+      _c.log('%c© 2025 INORA AI by VARUN. All Rights Reserved.', 'font-size:11px;color:#6B7280;');
     };
     // Show warning when console opens
     var _shown = false;
@@ -9145,16 +9331,16 @@ window.addEventListener('load',function(){
     d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;';
     d.innerHTML='<div style="background:#0D1B3E;border:2px solid #D4A017;border-radius:20px;padding:32px;max-width:400px;text-align:center;color:#fff;">'
       +'<div style="font-size:44px;margin-bottom:14px;">\u26a0\ufe0f</div>'
-      +'<div style="font-size:19px;font-weight:900;color:#F5C030;margin-bottom:10px;">QVIO Protected</div>'
+      +'<div style="font-size:19px;font-weight:900;color:#F5C030;margin-bottom:10px;">INORA Protected</div>'
       +'<div style="font-size:13px;line-height:1.8;color:#CBD5E1;margin-bottom:18px;">Intellectual property of <strong style="color:#F5C030">VARUN</strong>.<br>Unauthorized inspection or copying is a criminal offence under the <strong>Indian Copyright Act 1957</strong> and <strong>IT Act 2000</strong>.</div>'
-      +'<div style="font-size:11px;color:#64748B;margin-bottom:18px;">(c) 2025 QVIO AI by VARUN. All Rights Reserved.</div>'
+      +'<div style="font-size:11px;color:#64748B;margin-bottom:18px;">(c) 2025 INORA AI by VARUN. All Rights Reserved.</div>'
       +'<button onclick="document.getElementById(\'_qvPM\').remove()" style="background:linear-gradient(135deg,#D4A017,#F5C030);color:#0D1B3E;border:none;padding:11px 26px;border-radius:10px;font-weight:800;cursor:pointer;">I Understand</button>'
       +'</div>';
     document.body.appendChild(d);
   }
 
   // Domain lock
-  var _ok=['localhost','127.0.0.1','qvio.in','qvioai.web.app','qvioai.firebaseapp.com',
+  var _ok=['localhost','127.0.0.1','inora.in','qvioai.web.app','qvioai.firebaseapp.com',
            'qvioai-f7659.web.app','qvioai-f7659.firebaseapp.com','github.io','vercel.app','netlify.app',''];
   var _h=window.location.hostname||'';
   var _pass=_ok.some(function(d){return d===''?_h==='':_h===d||_h.endsWith('.'+d)||_h.endsWith(d);});
@@ -9162,10 +9348,10 @@ window.addEventListener('load',function(){
     document.body.innerHTML='<div style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#0D1B3E;color:#fff;text-align:center;padding:20px;"><div>'
       +'<div style="font-size:56px;margin-bottom:18px;">\ud83d\udd12</div>'
       +'<h1 style="color:#F5C030;font-size:26px;margin-bottom:10px;">Unauthorized Domain</h1>'
-      +'<p style="color:#CBD5E1;font-size:14px;line-height:1.8;">QVIO is not authorized on this domain.<br>(c) 2025 QVIO AI by VARUN. All rights reserved.</p>'
-      +'<p style="color:#64748B;font-size:12px;margin-top:18px;">Visit official QVIO at qvioai.web.app</p>'
+      +'<p style="color:#CBD5E1;font-size:14px;line-height:1.8;">INORA is not authorized on this domain.<br>(c) 2025 INORA AI by VARUN. All rights reserved.</p>'
+      +'<p style="color:#64748B;font-size:12px;margin-top:18px;">Visit official INORA at qvioai.web.app</p>'
       +'</div></div>';
-    throw new Error('QVIO: Unauthorized domain');
+    throw new Error('INORA: Unauthorized domain');
   }
 })();
 
@@ -9435,7 +9621,7 @@ function setFont(s){
 // ═══════════════════════════════
 // TIPS
 // ═══════════════════════════════
-var TIPS=['💡 Type "create image:" to generate 4K AI art','🎯 Exam Mode — deep JEE NEET UPSC CBSE knowledge','🧠 Say "my name is [name]" — QVIO remembers you forever','⌨️ Enter to send · Shift+Enter for new line','🔊 Click 🔊 on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar','💾 Export button saves your full conversation','🔥 Use QVIO every day to build your streak!','🌍 QVIO understands Hinglish, Tanglish and all slang','🔢 Built-in calculator — click 🔢 anytime','🌙 Auto theme switches to dark mode after 8PM','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides buttons for pure conversation','💬 Chat History saves your last 20 conversations','🎨 Image Gallery stores all 50 AI-generated images','📱 Install QVIO on your phone for full app experience','⚡ QVIO responds in under 2 seconds worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws simply','✈️ Travel Mode plans trips and suggests hidden gems'];
+var TIPS=['💡 Type "create image:" to generate 4K AI art','🎯 Exam Mode — deep JEE NEET UPSC CBSE knowledge','🧠 Say "my name is [name]" — INORA remembers you forever','⌨️ Enter to send · Shift+Enter for new line','🔊 Click 🔊 on any message to hear it spoken','📌 Pin important answers — they appear in the gold bar','💾 Export button saves your full conversation','🔥 Use INORA every day to build your streak!','🌍 INORA understands Hinglish, Tanglish and all slang','🔢 Built-in calculator — click 🔢 anytime','🌙 Auto theme switches to dark mode after 8PM','📊 Stats shows your full journey — messages badges streaks','⛶ Focus Mode hides buttons for pure conversation','💬 Chat History saves your last 20 conversations','🎨 Image Gallery stores all 50 AI-generated images','📱 Install INORA on your phone for full app experience','⚡ INORA responds in under 2 seconds worldwide','🏥 Health Mode gives safe general wellness guidance','⚖️ Legal Mode explains Indian laws simply','✈️ Travel Mode plans trips and suggests hidden gems'];
 var tipI=0;
 function rotateTip(){
   var b=document.getElementById('tipBox');if(!b)return;
@@ -9446,7 +9632,7 @@ function rotateTip(){
 // ═══════════════════════════════
 // PROMPTS
 // ═══════════════════════════════
-var RULES=`You are QVIO — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are QVIO.
+var RULES=`You are INORA — built by VARUN, 17-year-old founder CEO from . Never mention OpenAI, Anthropic, Google or any other AI company. You are INORA.
 
 1. MULTILINGUAL MASTERY: Speak all 150+ languages fluently. Master Hinglish, Tanglish, Kanglish, all code-switching. Understand slang, typos, broken English. ALWAYS reply in same language user writes in. Handle Bhojpuri, Tulu, Haryanvi, Awadhi, Rajasthani naturally.
 
@@ -9488,7 +9674,7 @@ CONTEXT AUTO-DETECTION: Automatically detect what the user needs:
 PERSONALITY: Warm, witty, intelligent best friend. Use yaar, bhai, sahi hai, arre naturally. Never corporate or robotic. Always real and genuine.
 
 WEB SEARCH: When you receive [LIVE WEB DATA], use it. Always mention the date/time of the info. Be honest if results seem old. For very recent events like live scores, say you have info up to a certain point.`;
-var QVIO_SYSTEM = `You are QVIO, a warm and humble AI assistant made in India for the world. 
+var INORA_SYSTEM = `You are INORA, a warm and humble AI assistant made in India for the world. 
 
 Your personality:
 - Humble and friendly — never arrogant or overconfident
@@ -9509,15 +9695,15 @@ Always:
 `;
 
 var PROMPTS={
-  casual:'You are QVIO, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
-  student:'You are QVIO Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
-  exam:'You are QVIO Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
-  pro:'You are QVIO Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. No fluff ever.',
-  business:`You are QVIO Business — India's most brutally honest, data-driven business AI. Built by VARUN. ONLY answer business-related questions.
+  casual:'You are INORA, India most premium intelligent multilingual AI. '+RULES+'Be the best friend anyone ever had.',
+  student:'You are INORA Student Mode, the ultimate AI tutor for Indian students. '+RULES+'Deep knowledge of CBSE ICSE JEE NEET UPSC.',
+  exam:'You are INORA Exam Genius for JEE NEET UPSC CBSE IELTS GRE GMAT CAT GATE. '+RULES+'Crisp exam-ready answers. Key formulas. Common mistakes.',
+  pro:'You are INORA Pro, world class strategist and senior advisor. '+RULES+'Structured actionable frameworks. No fluff ever.',
+  business:`You are INORA Business — India's most brutally honest, data-driven business AI. Built by VARUN. ONLY answer business-related questions.
 
 ONLY ANSWER: Business plans, startup strategy, market research, fundraising, pitch decks, financial modeling, unit economics, P&L, cash flow, burn rate, runway, GST, taxation, legal structure (Pvt Ltd/LLP/OPC), HR, sales, growth, marketing, branding, pricing, competition analysis, MSME schemes, Startup India, DPIIT.
 
-IF NOT BUSINESS — reply exactly: "I'm QVIO Business Mode. Ask me about startups, strategy, finance, marketing, or growth."
+IF NOT BUSINESS — reply exactly: "I'm INORA Business Mode. Ask me about startups, strategy, finance, marketing, or growth."
 
 BRUTAL HONESTY — NON-NEGOTIABLE:
 1. NEVER give false hope. Bad idea? Say it with data and specifics.
@@ -9539,20 +9725,20 @@ RESPONSE FORMAT — always:
 5. The one hard question they must answer before proceeding
 
 Be the advisor who tells them what friends, family, and yes-men won't. Shark Tank India energy — data-driven, blunt, constructive.`,
-  spiritual:'You are QVIO Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism.',
-  code:'You are QVIO Code, an elite full-stack engineer. '+RULES+'Always use code blocks. Explain every line.',
-  math:'You are QVIO Math, a brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level.',
-  hindi:'Aap QVIO hain, India ka number one premium AI dost! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do.',
-  kannada:'Neevu QVIO, India mattu  pura premium smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi naturally.',
-  quiz:'You are QVIO Quiz Master, the most exciting quiz host in India! '+RULES+'ONE question at a time with 4 options A B C D. Keep score.',
-  translate:'You are QVIO Translator, the worlds most precise multilingual expert. '+RULES+'100+ languages. Show: Translation, Pronunciation, Cultural note.',
-  write:'You are QVIO Writer, a world class author and copywriter. '+RULES+'Stories poems emails essays captions CVs scripts speeches.',
-  news:'You are QVIO News, a sharp balanced news analyst. '+RULES+'Clear simple language. Balanced perspectives always.',
-  career:'You are QVIO Career Coach for Indian professionals and students. '+RULES+'Resume writing interview prep salary negotiation LinkedIn.',
-  health:'You are QVIO Health Advisor providing general wellness information. '+RULES+'ALWAYS recommend seeing a real doctor for medical issues.',
-  legal:'You are QVIO Legal Guide explaining Indian laws simply. '+RULES+'Always recommend consulting a qualified lawyer for serious matters.',
-  recipe:'You are QVIO Chef with mastery of all Indian and world cuisines. '+RULES+'Clear recipes with ingredients steps timing chef tips.',
-  travel:'You are QVIO Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places local food transport budgets.',
+  spiritual:'You are INORA Spiritual, a wise compassionate guide for ALL world religions equally. '+RULES+'Expert in Hinduism Islam Christianity Buddhism Jainism Sikhism.',
+  code:'You are INORA Code, an elite full-stack engineer. '+RULES+'Always use code blocks. Explain every line.',
+  math:'You are INORA Math, a brilliant patient mathematician. '+RULES+'Show EVERY step clearly. Class 5 to IIT to PhD level.',
+  hindi:'Aap INORA hain, India ka number one premium AI dost! '+RULES+'HAMESHA Hindi ya Hinglish mein jawab do.',
+  kannada:'Neevu INORA, India mattu  pura premium smart AI! '+RULES+'YAVAAGALU Kannada mattu English mix maadi naturally.',
+  quiz:'You are INORA Quiz Master, the most exciting quiz host in India! '+RULES+'ONE question at a time with 4 options A B C D. Keep score.',
+  translate:'You are INORA Translator, the worlds most precise multilingual expert. '+RULES+'100+ languages. Show: Translation, Pronunciation, Cultural note.',
+  write:'You are INORA Writer, a world class author and copywriter. '+RULES+'Stories poems emails essays captions CVs scripts speeches.',
+  news:'You are INORA News, a sharp balanced news analyst. '+RULES+'Clear simple language. Balanced perspectives always.',
+  career:'You are INORA Career Coach for Indian professionals and students. '+RULES+'Resume writing interview prep salary negotiation LinkedIn.',
+  health:'You are INORA Health Advisor providing general wellness information. '+RULES+'ALWAYS recommend seeing a real doctor for medical issues.',
+  legal:'You are INORA Legal Guide explaining Indian laws simply. '+RULES+'Always recommend consulting a qualified lawyer for serious matters.',
+  recipe:'You are INORA Chef with mastery of all Indian and world cuisines. '+RULES+'Clear recipes with ingredients steps timing chef tips.',
+  travel:'You are INORA Travel Planner expert in India and world travel. '+RULES+'Trip itineraries best places local food transport budgets.',
 };
 
 // ═══════════════════════════════
@@ -9567,7 +9753,7 @@ function updateMemUI(){
   var bar=document.getElementById('memBar'),ban=document.getElementById('memBanner');
   var n=memory.name||'',f=memory.facts||[];
   if(n||f.length){
-    var t=n?'✨ Hi '+n+'! QVIO remembers you.':'🧠 Memory active — '+f.length+' things saved.';
+    var t=n?'✨ Hi '+n+'! INORA remembers you.':'🧠 Memory active — '+f.length+' things saved.';
     if(bar){bar.textContent=t;bar.classList.add('show');}
     if(ban){ban.textContent=t;ban.classList.add('show');}
   }else{
@@ -9578,7 +9764,7 @@ function updateMemUI(){
 function renderMemList(){
   var el=document.getElementById('memList'),f=memory.facts||[],n=memory.name||'',h='';
   if(n)h+='<div class="mi">👤 Name: '+n+'<button class="mdel" onclick="delMem(\'name\')">✕</button></div>';
-  if(!f.length&&!n)h='<div class="mmt">No memories yet! Chat and QVIO learns about you 🧠</div>';
+  if(!f.length&&!n)h='<div class="mmt">No memories yet! Chat and INORA learns about you 🧠</div>';
   f.forEach(function(x,i){h+='<div class="mi">💭 '+x+'<button class="mdel" onclick="delMem('+i+')">✕</button></div>';});
   el.innerHTML=h;
 }
@@ -9932,7 +10118,7 @@ sys.stdout = _stdout_capture
   }
 
   if(lang === 'bash') {
-    outEl.textContent = '⚠️ Bash can\'t run in browser — but QVIO can explain what it does!\nSending to QVIO...';
+    outEl.textContent = '⚠️ Bash can\'t run in browser — but INORA can explain what it does!\nSending to INORA...';
     setTimeout(function(){
       send('Explain what this bash script does step by step:\n```bash\n' + rawCode + '\n```');
       outEl.style.display = 'none';
@@ -9946,12 +10132,12 @@ function addMsg(content,role,isImg,speed){
   var div=document.createElement('div');div.className='msg '+role;
   var av=document.createElement('div');av.className='av '+(role==='ai'?'ai':'usr');
   if(role==='user'&&currentUser&&currentUser.photoURL)av.innerHTML='<img src="'+currentUser.photoURL+'">';
-  else av.textContent=role==='ai'?'QV':'You';
+  else av.textContent=role==='ai'?'IN':'You';
   var wrap=document.createElement('div');wrap.className='mwrap';
   var bub=document.createElement('div');bub.className='bubble';
 
   if(isImg){
-    var img=document.createElement('img');img.src=content;img.className='gen-img';img.alt='QVIO Art';
+    var img=document.createElement('img');img.src=content;img.className='gen-img';img.alt='INORA Art';
     img.onclick=function(){viewImg(content);};
     img.onerror=function(){bub.innerHTML='Image generation failed. Try a different prompt!';};
     bub.appendChild(img);
@@ -10285,7 +10471,7 @@ function showTyping(){
   document.getElementById('typeBar').classList.add('show');
   var c=document.getElementById('chat');
   var d=document.createElement('div');d.className='tywrap';d.id='typer';
-  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var av=document.createElement('div');av.className='av ai';av.textContent='IN';
   var sk=document.createElement('div');sk.className='skel';
   sk.innerHTML='<div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:65%"></div><div class="skel-line"></div>';
   d.appendChild(av);d.appendChild(sk);
@@ -10299,7 +10485,7 @@ function hideTyping(){
 // ═══════════════════════════════
 // SEND & API
 // ═══════════════════════════════
-var funnyErrors=["QVIO took a quick chai break ☕ — tap retry!","The AI sneezed 🤧 — try again!","QVIO is thinking too hard 🧠 — one more try?","Signal lost in space 🛸 — retry please!","QVIO blinked 😅 — send again!"];
+var funnyErrors=["INORA took a quick chai break ☕ — tap retry!","The AI sneezed 🤧 — try again!","INORA is thinking too hard 🧠 — one more try?","Signal lost in space 🛸 — retry please!","INORA blinked 😅 — send again!"];
 function humanError(){return funnyErrors[Math.floor(Math.random()*funnyErrors.length)];}
 
 async function sendMsg(){
@@ -10341,12 +10527,12 @@ async function sendMsg(){
   hideTyping();
   var url = imageUrls[0];
   var div=document.createElement('div');div.className='msg ai';
-  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var av=document.createElement('div');av.className='av ai';av.textContent='IN';
   var wrap=document.createElement('div');wrap.className='mwrap';
   var bub=document.createElement('div');bub.className='bubble';
   var img=document.createElement('img');
   img.style.cssText='max-width:100%;border-radius:12px;display:block;margin-top:8px;';
-  img.alt='QVIO Art';
+  img.alt='INORA Art';
   img.src=url;
   img.onerror=function(){
     if(urlIndex<imageUrls.length-1){
@@ -10441,9 +10627,9 @@ function tryLoadImage_OLD(urlIndex){
       // Show real error so we can debug
       var errMsg='❌ Error: '+em;
       if(em.indexOf('401')>-1||em.indexOf('invalid_api_key')>-1||em.indexOf('Unauthorized')>-1){
-        errMsg='🔑 QVIO Brain is temporarily unavailable. Please try again.';
+        errMsg='🔑 INORA Brain is temporarily unavailable. Please try again.';
       } else if(em.indexOf('402')>-1||em.indexOf('quota')>-1||em.indexOf('billing')>-1){
-        errMsg='💳 QVIO Brain is at capacity. Please try again shortly.';
+        errMsg='💳 INORA Brain is at capacity. Please try again shortly.';
       } else if(em.indexOf('model')>-1||em.indexOf('404')>-1){
         errMsg='🤖 Model not found. Try a different model name.';
       } else if(em.indexOf('fetch')>-1||em.indexOf('network')>-1||em.indexOf('Failed')>-1){
@@ -10452,7 +10638,7 @@ function tryLoadImage_OLD(urlIndex){
         errMsg='⚠️ Unknown error — check browser console (F12) for details.';
       }
       addMsg(errMsg,'ai');
-      console.error('QVIO API Error:',em);
+      console.error('INORA API Error:',em);
     }
   }
   document.getElementById('sendBtn').disabled=false;
@@ -10492,7 +10678,7 @@ async function handleStream(res){
   hideTyping();
   var chat=document.getElementById('chat');
   var div=document.createElement('div');div.className='msg ai';
-  var av=document.createElement('div');av.className='av ai';av.textContent='QV';
+  var av=document.createElement('div');av.className='av ai';av.textContent='IN';
   var wrap=document.createElement('div');wrap.className='mwrap';
   var bub=document.createElement('div');bub.className='bubble streaming-bubble';
   var cursor=document.createElement('span');cursor.className='stream-cursor';cursor.textContent='▋';
@@ -10554,7 +10740,7 @@ async function handleStream(res){
   });
   // SPEAK BUTTON
   (function(tx){makeAct('🔊','Listen',function(){speakText(tx,this);});})(fullText);
-  (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('QVIO says:\n\n'+msgContent.substring(0,500)+'\n\n— via QVIO AI (qvio.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
+  (function(msgContent){makeAct('📤','Share',function(){var txt=encodeURIComponent('INORA says:\n\n'+msgContent.substring(0,500)+'\n\n— via INORA AI (inora.in)');window.open('https://wa.me/?text='+txt,'_blank');});})(fullText);
   makeAct('🔄','Regenerate',function(){if(lastMsg)sendMsg(lastMsg);});
   wrap.appendChild(meta);
 
@@ -10637,7 +10823,7 @@ function startRecognition(){
       var fb=document.getElementById('floatMicBtn');
       if(mb){mb.classList.add('rec');mb.textContent='⏹';}
       if(fb){fb.classList.add('rec');fb.textContent='⏹';}
-      showToast('🎤 QVIO Voice is listening...');
+      showToast('🎤 INORA Voice is listening...');
       // Show live indicator
       var inp=document.getElementById('inp');
       if(inp)inp.placeholder='🎤 Listening... speak now';
@@ -10707,7 +10893,7 @@ function resetMicBtns(){
 }
 
 function cleanAndSend(text){
-  // AI grammar cleanup via QVIO AI Engine
+  // AI grammar cleanup via INORA AI Engine
   var inp=document.getElementById('inp');
   showToast('✨ Cleaning up...');
   var headers={'Content-Type':'application/json','Authorization':'Bearer '+_qcS[_keyIdx]};
@@ -10756,11 +10942,11 @@ function openShare(text){
 }
 function closeShare(){document.getElementById('shareCard').classList.remove('show');}
 function copyShareText(){
-  var txt='QVIO says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry QVIO free at qvio.in 🇮🇳';
+  var txt='INORA says:\n\n'+shareContent.replace(/<[^>]*>/g,'')+'\n\nTry INORA free at inora.in 🇮🇳';
   navigator.clipboard.writeText(txt);showToast('📋 Copied!');closeShare();
 }
 function shareWhatsApp(){
-  var txt='Check this from QVIO AI 🤖\n\n'+shareContent.replace(/<[^>]*>/g,'').substring(0,300)+'\n\nTry free at qvio.in 🇮🇳';
+  var txt='Check this from INORA AI 🤖\n\n'+shareContent.replace(/<[^>]*>/g,'').substring(0,300)+'\n\nTry free at inora.in 🇮🇳';
   window.open('https://wa.me/?text='+encodeURIComponent(txt));closeShare();
 }
 
@@ -10768,8 +10954,8 @@ function shareWhatsApp(){
 // ONBOARDING
 // ═══════════════════════════════
 var obSteps=[
-  {icon:'⚡',title:'QVIO is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence for every Indian.',step:'Step 1 of 3'},
-  {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — QVIO understands everything.',step:'Step 2 of 3'},
+  {icon:'⚡',title:'INORA is faster than ChatGPT',desc:'Get answers in under 2 seconds. No waiting. Just instant intelligence for every Indian.',step:'Step 1 of 3'},
+  {icon:'🌍',title:'100+ Languages including Hindi & Kannada',desc:'Type in Hinglish, Tamil slang, or pure Kannada — INORA understands everything.',step:'Step 2 of 3'},
   {icon:'🎨',title:'Type "create image:" for 4K AI art',desc:'Type "create image: golden temple sunset" and get a stunning 4K image in seconds!',step:'Step 3 of 3'},
 ];
 var obCur=0;
@@ -10786,7 +10972,7 @@ function nextOnboard(){
   document.getElementById('obDesc').textContent=s.desc;
   document.getElementById('obStep').textContent=s.step;
   for(var i=0;i<3;i++)document.getElementById('dot'+i).classList.toggle('on',i===obCur);
-  if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using QVIO!';
+  if(obCur===obSteps.length-1)document.querySelector('.ob-next').textContent='🚀 Start using INORA!';
 }
 function skipOnboard(){document.getElementById('onboard').classList.remove('show');localStorage.setItem('qvio_toured','1');}
 
@@ -10796,7 +10982,7 @@ function skipOnboard(){document.getElementById('onboard').classList.remove('show
 function setSmartGreeting(){
   var h=new Date().getHours();
   var nm=memory.name?', '+memory.name:'';
-  var greets=[[5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],[12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],[17,20,'🌇 Good evening'+nm+'! How can QVIO help?'],[20,24,'🌙 Good night'+nm+'! Still grinding? QVIO is here!'],[0,5,'🦉 Late night'+nm+'? QVIO never sleeps!']];
+  var greets=[[5,12,'🌅 Good morning'+nm+'! Ready to conquer today?'],[12,17,'☀️ Good afternoon'+nm+'! What shall we learn?'],[17,20,'🌇 Good evening'+nm+'! How can INORA help?'],[20,24,'🌙 Good night'+nm+'! Still grinding? INORA is here!'],[0,5,'🦉 Late night'+nm+'? INORA never sleeps!']];
   var msg='👋 Welcome'+nm+'!';
   greets.forEach(function(g){if(h>=g[0]&&h<g[1])msg=g[2];});
   // greetBar removed
@@ -10805,7 +10991,7 @@ function setSmartGreeting(){
 // ═══════════════════════════════
 // CHALLENGES
 // ═══════════════════════════════
-var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask QVIO to explain something you always wondered 🧠','Get QVIO to write a poem about your day ✍️','Ask for a 90-day study plan for your next exam 🎯'];
+var CH=['Learn 5 words in a language you never tried 🌍','Generate a 4K image of your dream home 🎨','Ask INORA to explain something you always wondered 🧠','Get INORA to write a poem about your day ✍️','Ask for a 90-day study plan for your next exam 🎯'];
 function doChallenge(){send(CH[new Date().getDay()%CH.length].replace(/[🌍🎨🧠✍️🎯]/g,'').trim());}
 
 // ═══════════════════════════════
@@ -10971,7 +11157,7 @@ function renderMoodHist(){
 }
 
 // ── FEATURE 5: TYPING SPEED TEST ─────────────────────
-var WPM_TEXTS=["The quick brown fox jumps over the lazy dog near the river bank on a sunny morning in the forest","QVIO is India's most premium AI built by Varun the seventeen year old founder from  who dreams big","Artificial intelligence is changing the world in ways we never imagined and India is leading this revolution","Practice makes perfect and every day you type faster you become more efficient and productive in your work","Technology is best when it brings people together and QVIO was built to connect every Indian to world class AI"];
+var WPM_TEXTS=["The quick brown fox jumps over the lazy dog near the river bank on a sunny morning in the forest","INORA is India's most premium AI built by Varun the seventeen year old founder from  who dreams big","Artificial intelligence is changing the world in ways we never imagined and India is leading this revolution","Practice makes perfect and every day you type faster you become more efficient and productive in your work","Technology is best when it brings people together and INORA was built to connect every Indian to world class AI"];
 var wpmStart=0,wpmDone=false,wpmCurrentText='';
 function startWPM(){
   wpmCurrentText=WPM_TEXTS[Math.floor(Math.random()*WPM_TEXTS.length)];
@@ -11010,7 +11196,7 @@ function wpmCheck(inp){
 
 // ── FEATURE 6: QUICK NEWS ─────────────────────────────
 var NEWS_TOPICS=[
-  {hl:"QVIO AI surpasses 1 million users in India — Built by 17-year-old Varun from ",src:"QVIO Official · Just now"},
+  {hl:"INORA AI surpasses 1 million users in India — Built by 17-year-old Varun from ",src:"INORA Official · Just now"},
   {hl:"India GDP growth accelerates — Economy on track for 7%+ expansion this year",src:"Economic Times · Today"},
   {hl:"ISRO announces new moon mission with advanced lunar rover technology",src:"NDTV · Today"},
   {hl:"IIT admissions 2025 — JEE Advanced cutoffs and counselling schedule released",src:"Times of India · Today"},
@@ -11183,14 +11369,14 @@ function renderQotd(){
 var WORDS=[
   {w:"Perspicacious",p:"/ˌpɜːspɪˈkeɪʃəs/",t:"adjective",d:"Having a ready insight into things; shrewd and clear-sighted.",e:"Her perspicacious analysis solved the problem instantly.",h:"तीक्ष्ण बुद्धि वाला"},
   {w:"Ephemeral",p:"/ɪˈfem(ə)r(ə)l/",t:"adjective",d:"Lasting for a very short time; transitory.",e:"Fame is ephemeral — only your work lasts forever.",h:"क्षणिक / अल्पकालीन"},
-  {w:"Serendipity",p:"/ˌserənˈdɪpɪti/",t:"noun",d:"The occurrence of events by chance in a happy or beneficial way.",e:"Finding QVIO was pure serendipity.",h:"सुखद संयोग"},
+  {w:"Serendipity",p:"/ˌserənˈdɪpɪti/",t:"noun",d:"The occurrence of events by chance in a happy or beneficial way.",e:"Finding INORA was pure serendipity.",h:"सुखद संयोग"},
   {w:"Tenacious",p:"/tɪˈneɪʃəs/",t:"adjective",d:"Holding firmly to something; not giving up easily.",e:"Be tenacious in your dreams — never quit.",h:"दृढ़निश्चयी"},
   {w:"Ubiquitous",p:"/juːˈbɪkwɪtəs/",t:"adjective",d:"Present, appearing, or found everywhere.",e:"Smartphones have become ubiquitous in modern life.",h:"सर्वव्यापी"},
   {w:"Luminous",p:"/ˈluːmɪnəs/",t:"adjective",d:"Full of or shedding light; bright or shining.",e:"Her luminous smile lit up the entire room.",h:"चमकदार / प्रकाशमान"},
   {w:"Resilient",p:"/rɪˈzɪlɪənt/",t:"adjective",d:"Able to recover quickly from difficulties; tough.",e:"Resilient people rise every time they fall.",h:"लचीला / दृढ़"},
   {w:"Magnanimous",p:"/maɡˈnanɪməs/",t:"adjective",d:"Very generous or forgiving, especially towards rivals.",e:"The magnanimous leader forgave his fiercest opponent.",h:"उदार / महानुभाव"},
   {w:"Cogent",p:"/ˈkəʊdʒ(ə)nt/",t:"adjective",d:"Clear, logical, and convincing in argument.",e:"She made a cogent case for the new policy.",h:"तर्कसंगत"},
-  {w:"Zenith",p:"/ˈzɛnɪθ/",t:"noun",d:"The highest point reached by a celestial or other object; the peak.",e:"QVIO is at the zenith of Indian AI innovation.",h:"शिखर / उत्कर्ष"}
+  {w:"Zenith",p:"/ˈzɛnɪθ/",t:"noun",d:"The highest point reached by a celestial or other object; the peak.",e:"INORA is at the zenith of Indian AI innovation.",h:"शिखर / उत्कर्ष"}
 ];
 var wordIdx=new Date().getDate()%WORDS.length;
 function newWord(){wordIdx=(wordIdx+1)%WORDS.length;renderWord();}
@@ -11252,7 +11438,7 @@ function showShortcuts(){
     ['Enter','Send message'],['Shift+Enter','New line'],['Ctrl+K','Focus input'],
     ['Ctrl+L','Clear chat'],['Escape','Close modal'],['Ctrl+D','Toggle dark mode']
   ];
-  send('Show me all QVIO keyboard shortcuts and hidden features');
+  send('Show me all INORA keyboard shortcuts and hidden features');
 }
 document.addEventListener('keydown',function(e){
   if(e.ctrlKey&&e.key==='d'){e.preventDefault();cycleTh();}
@@ -11302,12 +11488,12 @@ window.openM = function(t){
 // ═══ V5 FEATURES ═══
 
 var LENS_PROMPTS={
-  identify:"You are QVIO Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
-  text:"You are QVIO Lens OCR. Extract ALL text visible in this image:\n- Preserve the exact text, formatting and layout as closely as possible\n- Identify the document type (receipt, book, sign, form, label, etc.)\n- Detect and name the language(s) — you recognise all 150+ world languages including all Indian scripts (Hindi, Kannada, Tamil, Telugu, Bengali, Gujarati, Punjabi, Malayalam, Odia, Urdu, Sanskrit, Assamese, Manipuri, Dogri, Maithili, Santali, Bodo, Konkani, Kashmiri, Sindhi), Arabic, Hebrew, Chinese, Japanese, Korean, Thai, Burmese, Khmer, Georgian, Armenian, and all European scripts\n- Flag any unclear or partial text with [unclear]\nThen summarise what the text is about in 2 sentences.",
-  translate:"You are QVIO Lens Translator. You recognise and translate ALL 150+ world languages. In this image:\n1. Extract all visible text\n2. Detect the exact language and script\n3. Translate everything to English AND Hindi\n4. Add pronunciation guide for Indian users\n5. Explain any cultural context if relevant\nFormat: Original → English → Hindi",
-  math:"You are QVIO Lens Math Solver. In this image:\n1. Identify all mathematical expressions, equations or problems\n2. Write them out in plain text\n3. Solve EACH step by step with full working\n4. Show the final answer clearly\n5. Explain the concept being tested\n6. Note which class/exam level this is (Class 8-12, JEE, NEET, etc.)",
-  food:"You are QVIO Lens Food & Nature expert. Analyse this image:\nIf FOOD: Name the dish, cuisine, estimated calories, main ingredients, how it's made, allergens, regional origin, nutrition highlights\nIf PLANT/FLOWER: Species name, common name in India, whether edible/medicinal, care tips, interesting facts\nIf ANIMAL: Species, habitat, diet, whether endangered, interesting behaviour\nBe comprehensive and accurate.",
-  qr:"You are QVIO Lens QR & Document Scanner. In this image:\n1. If there is a QR code — describe what type it is and decode its content if visible\n2. If it's a barcode — identify the product type\n3. If it's a document/form — extract key fields and data\n4. If it's a business card — extract all contact info\n5. Flag any suspicious URLs or scam indicators\n6. Suggest what action the user should take"
+  identify:"You are INORA Lens, an expert visual AI. Analyse this image deeply and tell me:\n1. What you see (objects, people, places, brands, animals)\n2. Confidence tags for each item\n3. Key interesting details\n4. What this is commonly used for\n5. Any safety or important notes\nBe specific, structured and helpful. Format clearly with sections.",
+  text:"You are INORA Lens OCR. Extract ALL text visible in this image:\n- Preserve the exact text, formatting and layout as closely as possible\n- Identify the document type (receipt, book, sign, form, label, etc.)\n- Detect and name the language(s) — you recognise all 150+ world languages including all Indian scripts (Hindi, Kannada, Tamil, Telugu, Bengali, Gujarati, Punjabi, Malayalam, Odia, Urdu, Sanskrit, Assamese, Manipuri, Dogri, Maithili, Santali, Bodo, Konkani, Kashmiri, Sindhi), Arabic, Hebrew, Chinese, Japanese, Korean, Thai, Burmese, Khmer, Georgian, Armenian, and all European scripts\n- Flag any unclear or partial text with [unclear]\nThen summarise what the text is about in 2 sentences.",
+  translate:"You are INORA Lens Translator. You recognise and translate ALL 150+ world languages. In this image:\n1. Extract all visible text\n2. Detect the exact language and script\n3. Translate everything to English AND Hindi\n4. Add pronunciation guide for Indian users\n5. Explain any cultural context if relevant\nFormat: Original → English → Hindi",
+  math:"You are INORA Lens Math Solver. In this image:\n1. Identify all mathematical expressions, equations or problems\n2. Write them out in plain text\n3. Solve EACH step by step with full working\n4. Show the final answer clearly\n5. Explain the concept being tested\n6. Note which class/exam level this is (Class 8-12, JEE, NEET, etc.)",
+  food:"You are INORA Lens Food & Nature expert. Analyse this image:\nIf FOOD: Name the dish, cuisine, estimated calories, main ingredients, how it's made, allergens, regional origin, nutrition highlights\nIf PLANT/FLOWER: Species name, common name in India, whether edible/medicinal, care tips, interesting facts\nIf ANIMAL: Species, habitat, diet, whether endangered, interesting behaviour\nBe comprehensive and accurate.",
+  qr:"You are INORA Lens QR & Document Scanner. In this image:\n1. If there is a QR code — describe what type it is and decode its content if visible\n2. If it's a barcode — identify the product type\n3. If it's a document/form — extract key fields and data\n4. If it's a business card — extract all contact info\n5. Flag any suspicious URLs or scam indicators\n6. Suggest what action the user should take"
 };
 var lensMode='identify';
 var lensImageB64=null;
@@ -11425,7 +11611,7 @@ async function analyseLens(){
   var resEl=document.getElementById('lensResult');
   var askWrap=document.getElementById('lensAskWrap');
   resEl.style.display='block';
-  resEl.innerHTML='<div class="lens-loading"><div class="lens-scan-line"></div>🔍 Analysing with QVIO AI...<span class="tdots"><span></span><span></span><span></span></span></div>';
+  resEl.innerHTML='<div class="lens-loading"><div class="lens-scan-line"></div>🔍 Analysing with INORA AI...<span class="tdots"><span></span><span></span><span></span></span></div>';
   document.getElementById('lensAnalyseBtn').disabled=true;
 
   var prompt=LENS_PROMPTS[lensMode]||LENS_PROMPTS.identify;
@@ -11467,7 +11653,7 @@ async function analyseLens(){
       resEl.innerHTML='<div style="color:var(--danger)">⚠️ Could not analyse image. Try a clearer photo or different mode.</div>';
     }
   }catch(e){
-    // Vision model not available on all QVIO AI Engine tiers — fallback to text description
+    // Vision model not available on all INORA AI Engine tiers — fallback to text description
     resEl.innerHTML='<div style="color:var(--text3)">⚠️ Vision analysis unavailable. Try describing the image and chatting instead.</div>';
   }
   document.getElementById('lensAnalyseBtn').disabled=false;
@@ -11514,7 +11700,7 @@ async function lensAskMore(){
 function sendLensToChat(){
   if(!window._lensLastResult)return;
   closeLens();
-  addMsg('[QVIO Lens Result]\n\n'+window._lensLastResult,'ai');
+  addMsg('[INORA Lens Result]\n\n'+window._lensLastResult,'ai');
   showToast('✅ Lens result added to chat!');
 }
 
@@ -11635,17 +11821,17 @@ setTimeout(function(){
       var code=d.error.code||'';
       var msg=d.error.message||'';
       if(code==='invalid_api_key'||msg.indexOf('Invalid')>-1){
-        showToast('⚠️ QVIO Brain needs a restart. Please refresh the page.');
-        console.error('QVIO KEY EXPIRED:',msg);
+        showToast('⚠️ INORA Brain needs a restart. Please refresh the page.');
+        console.error('INORA KEY EXPIRED:',msg);
       }
     }else{
-      console.log('✅ QVIO AI Engine API key is valid');
+      console.log('✅ INORA AI Engine API key is valid');
     }
   }).catch(function(){
     // Network error or CORS — can't check, ignore silently
   });
 },3000);
-// QVIO WEB SEARCH
+// INORA WEB SEARCH
 // ═══════════════════════════════
 var SEARCH_KEYWORDS = ['latest','news','today','current','now','update','2024','2025','2026',
   'war','match','score','ipl','election','price','stock','weather','who won','what happened',
@@ -11764,7 +11950,7 @@ function confirmAILang(){
   if(!selectedAILang){closeLangSelect();return;}
   localStorage.setItem('aiLang', selectedAILang);
   closeLangSelect();
-  showToast('🌍 QVIO will now respond in '+selectedAILang+'!');
+  showToast('🌍 INORA will now respond in '+selectedAILang+'!');
   // Update earth button tooltip
   var eb = document.querySelector('.earth-btn');
   if(eb) eb.title = 'Language: '+selectedAILang;
@@ -11829,7 +12015,7 @@ function getAILangInstruction(){
 
 <div class="modal" id="m_mem">
   <div class="mhd"><h3>🧠 Memory</h3><button class="mx" onclick="closeM('mem')">✕</button></div>
-  <div class="msub">QVIO remembers you across every session</div>
+  <div class="msub">INORA remembers you across every session</div>
   <div id="memList"></div>
   <div class="mrow"><input class="minp" id="memInp" placeholder="Add a memory..." onkeydown="if(event.key==='Enter')addMem()"/><button class="madd" onclick="addMem()">Save</button></div>
   <button class="mclose" onclick="closeM('mem')">Done</button>
@@ -11840,7 +12026,7 @@ function getAILangInstruction(){
 <!-- MODALS FROM V4 -->
 <div class="modal" id="m_stats">
   <div class="mhd"><h3>📊 Your Stats</h3><button class="mx" onclick="closeM('stats')">✕</button></div>
-  <div class="msub">Your QVIO journey at a glance</div>
+  <div class="msub">Your INORA journey at a glance</div>
   <div class="stat-grid" id="statGrid"></div>
   <div class="slabel">Achievements</div>
   <div class="badge-grid" id="badgeGrid"></div>
@@ -11862,7 +12048,7 @@ function getAILangInstruction(){
 <!-- THEME -->
 <div class="modal" id="m_theme">
   <div class="mhd"><h3>🎨 Appearance</h3><button class="mx" onclick="closeM('theme')">✕</button></div>
-  <div class="msub">Customize QVIO to your taste</div>
+  <div class="msub">Customize INORA to your taste</div>
   <div class="slabel">Theme</div>
   <div class="theme-row">
     <div class="tho" onclick="setTh('light')">☀️ Light</div>
@@ -11895,7 +12081,7 @@ function getAILangInstruction(){
     <div class="prof-em" id="profEmail">Not signed in</div>
   </div>
   <div class="pro-up" onclick="openM('pro')">
-    <h4>⭐ Upgrade to QVIO Pro</h4>
+    <h4>⭐ Upgrade to INORA Pro</h4>
     <p>₹199/month — Unlimited messages & priority AI</p>
   </div>
   <button class="signout" onclick="doSignOut()">Sign Out</button>
@@ -11920,8 +12106,8 @@ function getAILangInstruction(){
 
 <!-- PRO MODAL -->
 <div class="modal" id="m_pro">
-  <div class="mhd"><h3>⭐ QVIO Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
-  <div class="msub">Unlock the full power of QVIO</div>
+  <div class="mhd"><h3>⭐ INORA Pro</h3><button class="mx" onclick="closeM('pro')">✕</button></div>
+  <div class="msub">Unlock the full power of INORA</div>
   <div class="pro-feat">
     <div class="pf"><span class="pf-icon">♾️</span>Unlimited messages</div>
     <div class="pf"><span class="pf-icon">⚡</span>Priority AI speed</div>
@@ -12032,7 +12218,7 @@ function getAILangInstruction(){
 <!-- QUICK NEWS -->
 <div class="modal" id="m_news" style="display:none!important">
   <div class="mhd"><h3>📰 Top Headlines</h3><button class="mx" onclick="closeM('news')">✕</button></div>
-  <div class="msub">Ask QVIO about any of these stories</div>
+  <div class="msub">Ask INORA about any of these stories</div>
   <div id="newsList"></div>
   <button class="mclose" onclick="closeM('news')">Close</button>
 </div>
@@ -12144,7 +12330,7 @@ function getAILangInstruction(){
 <div class="modal" id="m_langlearn" style="max-width:540px;">
   <div class="mhd"><h3>🦉 Learn a Language</h3><button class="mx" onclick="closeM('langlearn')">✕</button></div>
   <div style="padding:20px;">
-    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — QVIO teaches you like Duolingo but smarter! 🔥</p>
+    <p style="color:var(--text2);font-size:14px;margin:0 0 16px;">Pick a language — INORA teaches you like Duolingo but smarter! 🔥</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <button class="ll-lang" onclick="startLangLearn('Spanish')">🇪🇸 Spanish</button>
       <button class="ll-lang" onclick="startLangLearn('French')">🇫🇷 French</button>
@@ -12194,32 +12380,32 @@ function getAILangInstruction(){
   <div class="mhd"><h3>🔒 Privacy Policy</h3><button class="mx" onclick="closeM('privacy')">✕</button></div>
   <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
     <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>QVIO AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
+    <p>INORA AI ("we", "our", "us") is committed to protecting your privacy. This policy explains how we handle your information.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Information We Collect</h4>
-    <p>• Messages you send to QVIO (processed in real-time, not stored permanently)<br>
+    <p>• Messages you send to INORA (processed in real-time, not stored permanently)<br>
     • Account information (name, email via Google)<br>
     • Usage statistics (message count, features used)<br>
     • Device information (browser type, language preference)</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. How We Use Your Information</h4>
-    <p>• To provide and improve QVIO AI responses<br>
+    <p>• To provide and improve INORA AI responses<br>
     • To personalize your experience<br>
     • To maintain your preferences and settings<br>
     • To ensure platform security</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Data Storage</h4>
-    <p>• Conversations are processed via QVIO AI Engine and are NOT permanently stored by QVIO<br>
+    <p>• Conversations are processed via INORA AI Engine and are NOT permanently stored by INORA<br>
     • Your preferences are stored locally on your device<br>
     • We use Firebase for authentication only</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. Third Party Services</h4>
-    <p>• QVIO AI Engine — for processing AI responses<br>
+    <p>• INORA AI Engine — for processing AI responses<br>
     • Firebase — for authentication<br>
-    • QVIO Image Engine — for image generation</p>
+    • INORA Image Engine — for image generation</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Your Rights</h4>
     <p>• You can delete your account at any time<br>
     • You can request deletion of your data<br>
     • You can opt out of any feature</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Contact</h4>
     <p>For privacy concerns: <a href="/cdn-cgi/l/email-protection#2e5e5c47584f4d576e5f584741004740" style="color:#4F46E5;"><span class="__cf_email__" data-cfemail="6212100b1403011b2213140b0d4c0b0c">[email&#160;protected]</span></a></p>
-    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 QVIO AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);">© 2025 INORA AI by VARUN | <span onclick="openM('privacy')" style="cursor:pointer;color:#4F46E5;">Privacy</span> | <span onclick="openM('terms')" style="cursor:pointer;color:#4F46E5;">Terms</span>. All Rights Reserved. | Indian IT Act 2000</p>
   </div>
 </div>
 
@@ -12229,19 +12415,19 @@ function getAILangInstruction(){
   <div class="mhd"><h3>📋 Terms of Service</h3><button class="mx" onclick="closeM('terms')">✕</button></div>
   <div style="padding:20px;font-size:14px;line-height:1.8;color:var(--text2);">
     <p><strong style="color:var(--text);">Last updated: March 2025</strong></p>
-    <p>By using QVIO AI, you agree to these terms. Please read carefully.</p>
+    <p>By using INORA AI, you agree to these terms. Please read carefully.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">1. Acceptance</h4>
-    <p>By accessing qvio.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
+    <p>By accessing inora.in, you agree to be bound by these Terms of Service and all applicable laws.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">2. Use of Service</h4>
-    <p>• QVIO is for lawful purposes only<br>
-    • You must be 13+ years old to use QVIO<br>
-    • Do not use QVIO for harmful, illegal or abusive content<br>
-    • Do not attempt to reverse engineer or copy QVIO</p>
+    <p>• INORA is for lawful purposes only<br>
+    • You must be 13+ years old to use INORA<br>
+    • Do not use INORA for harmful, illegal or abusive content<br>
+    • Do not attempt to reverse engineer or copy INORA</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">3. Intellectual Property</h4>
-    <p>QVIO AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
+    <p>INORA AI, its logo, design and code are owned by VARUN and protected under Indian Copyright Act 1957. Unauthorized copying is strictly prohibited.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">4. AI Disclaimer</h4>
-    <p>QVIO AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use QVIO for medical, legal or financial decisions without professional advice.</p>
+    <p>INORA AI responses are generated by artificial intelligence. We do not guarantee accuracy. Do not use INORA for medical, legal or financial decisions without professional advice.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">5. Limitation of Liability</h4>
-    <p>QVIO is provided "as is". We are not liable for any damages arising from use of the service.</p>
+    <p>INORA is provided "as is". We are not liable for any damages arising from use of the service.</p>
     <h4 style="color:var(--text);margin:16px 0 8px;">6. Governing Law</h4>
     <p>These terms are governed by Indian law. Disputes subject to Indian jurisdiction.</p>
