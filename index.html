@@ -6791,7 +6791,165 @@ body::after {
 img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
 </style></head>
 <body>
-<!-- ═══ UNDER CONSTRUCTION ═══ -->
+<!-- ═══ NUCLEAR LOCK — NO VIEW SOURCE / F12 / DEVTOOLS ═══ -->
+<script>
+(function(){
+  'use strict';
+
+  // 1. Block ALL keyboard shortcuts that expose source/devtools
+  document.addEventListener('keydown', function(e) {
+    var k = e.key || '';
+    var c = e.keyCode || e.which || 0;
+    var ctrl = e.ctrlKey || e.metaKey;
+    var shift = e.shiftKey;
+
+    // F12
+    if(k === 'F12' || c === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+U (View Source)
+    if(ctrl && (k === 'u' || k === 'U' || c === 85)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+I (DevTools)
+    if(ctrl && shift && (k === 'i' || k === 'I' || c === 73)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+J (Console)
+    if(ctrl && shift && (k === 'j' || k === 'J' || c === 74)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+C (Inspector)
+    if(ctrl && shift && (k === 'c' || k === 'C' || c === 67)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+K (Firefox Console)
+    if(ctrl && shift && (k === 'k' || k === 'K' || c === 75)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+E (Network tab Firefox)
+    if(ctrl && shift && (k === 'e' || k === 'E' || c === 69)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+M (Mobile view)
+    if(ctrl && shift && (k === 'm' || k === 'M' || c === 77)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+Shift+S (Screenshot/Source Firefox)
+    if(ctrl && shift && (k === 's' || k === 'S' || c === 83)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+S (Save Page)
+    if(ctrl && (k === 's' || k === 'S' || c === 83) && !shift) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+P (Print — reveals source)
+    if(ctrl && (k === 'p' || k === 'P' || c === 80)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+A (Select All)
+    if(ctrl && (k === 'a' || k === 'A' || c === 65)) { e.preventDefault(); e.stopPropagation(); return false; }
+    // Ctrl+C blocked on body (not input fields)
+    // Alt+F4 — don't block (closes window, that's fine)
+  }, true); // useCapture = true — fires BEFORE page handlers
+
+  // 2. Block right-click context menu
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); e.stopPropagation(); return false;
+  }, true);
+
+  // 3. Block view-source:// protocol navigation
+  (function() {
+    var orig = window.location.href;
+    if(orig.indexOf('view-source:') === 0) {
+      window.location.replace('https://qvio.in');
+    }
+  })();
+
+  // 4. DevTools detection — size-based (most reliable cross-browser)
+  var _dt = false;
+  var _dtWarn = false;
+  function checkDevTools() {
+    var w = window.outerWidth - window.innerWidth;
+    var h = window.outerHeight - window.innerHeight;
+    if(w > 160 || h > 160) {
+      if(!_dt) {
+        _dt = true;
+        if(!_dtWarn) {
+          _dtWarn = true;
+          showQvLock();
+        }
+      }
+    } else {
+      _dt = false;
+      _dtWarn = false;
+      hideQvLock();
+    }
+  }
+  setInterval(checkDevTools, 800);
+
+  // 5. Debugger trap — slows down devtools execution
+  setInterval(function() {
+    (function() {
+      var d = new Date();
+      debugger;
+      if(new Date() - d > 100) {
+        showQvLock();
+      }
+    })();
+  }, 3000);
+
+  // 6. Override console to kill it
+  var noop = function(){};
+  try {
+    window.console = {
+      log:noop, warn:noop, error:noop, info:noop,
+      debug:noop, trace:noop, table:noop, dir:noop,
+      group:noop, groupEnd:noop, time:noop, timeEnd:noop,
+      clear:noop, count:noop, assert:noop
+    };
+  } catch(e) {}
+
+  // 7. Block text selection on the whole page (hard to copy-scrape)
+  document.addEventListener('selectstart', function(e) {
+    if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault(); return false;
+    }
+  });
+
+  // 8. Block drag
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); return false; });
+
+  // 9. Lock overlay functions
+  function showQvLock() {
+    var el = document.getElementById('qvDevtoolsLock');
+    if(el) el.style.display = 'flex';
+  }
+  function hideQvLock() {
+    var el = document.getElementById('qvDevtoolsLock');
+    if(el) el.style.display = 'none';
+  }
+  window._hideQvLock = hideQvLock;
+})();
+</script>
+
+<!-- DevTools detected overlay — Under Construction -->
+<div id="qvDevtoolsLock" style="display:none;position:fixed;inset:0;z-index:99999999;background:#080C14;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Sans',system-ui,sans-serif;overflow:hidden;">
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;width:600px;height:600px;top:-200px;left:-100px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%);animation:ucOrb1 12s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:500px;height:500px;bottom:-150px;right:-100px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.14) 0%,transparent 70%);animation:ucOrb2 16s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:300px;height:300px;top:40%;left:60%;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,.10) 0%,transparent 70%);animation:ucOrb1 10s ease-in-out 2s infinite;"></div>
+  </div>
+  <div style="position:relative;margin-bottom:36px;">
+    <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(99,102,241,.5);animation:ucRing 2.5s ease-out infinite;"></div>
+    <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(168,85,247,.4);animation:ucRing 2.5s ease-out .8s infinite;"></div>
+    <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(236,72,153,.3);animation:ucRing 2.5s ease-out 1.6s infinite;"></div>
+    <div style="width:110px;height:110px;border-radius:28px;background:linear-gradient(135deg,#6366F1,#8B5CF6,#EC4899);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:900;color:#fff;box-shadow:0 20px 60px rgba(99,102,241,.5),0 0 0 1px rgba(255,255,255,.1) inset;animation:ucLogoFloat 4s ease-in-out infinite;position:relative;z-index:2;">Q</div>
+  </div>
+  <div style="text-align:center;">
+    <div style="font-size:clamp(32px,6vw,56px);font-weight:800;letter-spacing:-1.5px;background:linear-gradient(90deg,#fff 0%,#A78BFA 40%,#EC4899 70%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:ucShimmer 3s linear infinite;">QVIO AI</div>
+    <div style="font-size:clamp(14px,2.5vw,20px);font-weight:600;color:rgba(255,255,255,.45);margin-top:6px;letter-spacing:.5px;animation:ucGlitch 4s ease-in-out infinite;">🚧 &nbsp;UNDER CONSTRUCTION &nbsp;🚧</div>
+  </div>
+  <div style="width:280px;height:1px;background:linear-gradient(90deg,transparent,rgba(167,139,250,.4),transparent);margin:28px 0;"></div>
+  <div style="text-align:center;max-width:440px;padding:0 24px;">
+    <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;margin:0;">We're working hard to bring you something incredible.<br><span style="color:rgba(167,139,250,.8);font-weight:600;">India's premium AI</span> is getting even better — launching soon. 🇮🇳</p>
+  </div>
+  <div style="margin-top:32px;width:280px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+      <span style="font-size:11px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;letter-spacing:.5px;">PROGRESS</span>
+      <span style="font-size:11px;color:rgba(167,139,250,.7);font-family:'DM Mono',monospace;font-weight:700;">50%</span>
+    </div>
+    <div style="height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;">
+      <div style="height:100%;width:50%;border-radius:4px;background:linear-gradient(90deg,#6366F1,#A855F7,#EC4899);box-shadow:0 0 12px rgba(167,139,250,.6);"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;margin-top:28px;">
+    <div style="width:7px;height:7px;border-radius:50%;background:#6366F1;animation:ucDot 1.2s ease-in-out infinite;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#A855F7;animation:ucDot 1.2s ease-in-out .2s infinite;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#EC4899;animation:ucDot 1.2s ease-in-out .4s infinite;"></div>
+  </div>
+  <div style="position:absolute;bottom:24px;text-align:center;">
+    <div style="font-size:11px;color:rgba(255,255,255,.2);letter-spacing:.5px;">Built with 🔥 by <span style="color:rgba(167,139,250,.5);font-weight:600;">VARUN</span> &nbsp;·&nbsp; qvio.in</div>
+  </div>
+</div>
 <div id="qvioConstruction" style="
   position:fixed;inset:0;z-index:9999999;
   background:#080C14;
@@ -6813,7 +6971,7 @@ img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
     @keyframes ucShimmer{from{background-position:0% 50%;}to{background-position:200% 50%;}}
     @keyframes ucDot{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-10px);opacity:1;}}
     @keyframes ucFadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-    @keyframes ucBarLoad{from{width:0%;}to{width:73%;}}
+    @keyframes ucBarLoad{from{width:0%;}to{width:50%;}}
     @keyframes ucGlitch{0%,90%,100%{transform:translate(0);}92%{transform:translate(-2px,1px);}94%{transform:translate(2px,-1px);}96%{transform:translate(-1px,2px);}}
   </style>
 
@@ -6864,7 +7022,7 @@ img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
   <div style="margin-top:32px;width:280px;animation:ucFadeUp .8s .5s both;">
     <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
       <span style="font-size:11px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;letter-spacing:.5px;">PROGRESS</span>
-      <span style="font-size:11px;color:rgba(167,139,250,.7);font-family:'DM Mono',monospace;font-weight:700;">73%</span>
+      <span style="font-size:11px;color:rgba(167,139,250,.7);font-family:'DM Mono',monospace;font-weight:700;">50%</span>
     </div>
     <div style="height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;">
       <div style="height:100%;border-radius:4px;background:linear-gradient(90deg,#6366F1,#A855F7,#EC4899);animation:ucBarLoad 1.8s cubic-bezier(.34,1.56,.64,1) .6s both;box-shadow:0 0 12px rgba(167,139,250,.6);"></div>
